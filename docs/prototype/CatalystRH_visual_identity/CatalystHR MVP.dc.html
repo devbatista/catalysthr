@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>CatalystHR — Apresentação do produto e escopo do MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,700;1,800&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0;background:#E9EEF3;-webkit-font-smoothing:antialiased}
+a{color:#085087;text-decoration:none}a:hover{color:#0A6BB3;text-decoration:underline}
+doc-page:not(:defined){visibility:hidden}
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+<doc-page size="a4" orientation="landscape">
+
+<section class="page" data-screen-label="01 Capa" style="background:#062A4D;color:#FFFFFF;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:grid;grid-template-columns:1.25fr 1fr;padding:4.987cqw 5.343cqw 3.918cqw;gap:4.274cqw">
+<div style="display:flex;flex-direction:column;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:1.247cqw"><img src="assets/catalyst-symbol-dark.png" alt="Símbolo Catalyst" style="height:5.165cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:3.028cqw;letter-spacing:0.01em;color:#FFFFFF">CATALYST<span style="color:#5FD3BC">HR</span></span></div>
+<div style="display:flex;flex-direction:column;gap:1.959cqw">
+<div style="font-family:'JetBrains Mono', monospace;font-size:1.069cqw;letter-spacing:0.14em;text-transform:uppercase;color:#9CC9EE">Plataforma de RH white label com inteligência artificial</div>
+<h1 style="margin:0;font-size:4.452cqw;line-height:1.06;font-weight:800;letter-spacing:-0.025em;text-wrap:balance">Sua marca conectando pessoas, documentos e processos de RH.</h1>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;border-top:1px solid #24507A;padding-top:1.603cqw">
+<div style="font-size:1.514cqw;font-weight:700">Apresentação do produto e escopo do MVP</div>
+<div style="font-size:1.158cqw;color:#B8D3EA">Material para potenciais parceiros e referência funcional para o desenvolvimento · Versão 1 · Outubro de 2026</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;justify-content:flex-end;gap:2.315cqw">
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#0A3560;border:1px solid #24507A;border-radius:1.247cqw;padding:1.959cqw">
+<div style="font-family:'JetBrains Mono', monospace;font-size:0.935cqw;letter-spacing:0.12em;text-transform:uppercase;color:#9CC9EE">Como a plataforma chega ao colaborador</div>
+<div style="display:flex;flex-direction:column;gap:0.712cqw">
+<div style="display:flex;align-items:center;gap:1.069cqw;background:#FFFFFF;color:#062A4D;border-radius:0.801cqw;padding:0.98cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.98cqw;color:#085087">01</span><span style="font-size:1.336cqw;font-weight:800">CatalystHR</span><span style="margin-left:auto;font-size:1.069cqw;color:#4A5B70">tecnologia</span></div>
+<div style="display:flex;align-items:center;gap:1.069cqw;background:#E3F5F1;color:#062A4D;border-radius:0.801cqw;padding:0.98cqw 1.247cqw;margin-left:1.603cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.98cqw;color:#0D6B5B">02</span><span style="font-size:1.336cqw;font-weight:800">Parceiro</span><span style="margin-left:auto;font-size:1.069cqw;color:#33495E">sua marca</span></div>
+<div style="display:flex;align-items:center;gap:1.069cqw;background:#CFE6F8;color:#062A4D;border-radius:0.801cqw;padding:0.98cqw 1.247cqw;margin-left:3.206cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.98cqw;color:#085087">03</span><span style="font-size:1.336cqw;font-weight:800">Empresas clientes</span><span style="margin-left:auto;font-size:1.069cqw;color:#33495E">RH e gestores</span></div>
+<div style="display:flex;align-items:center;gap:1.069cqw;background:#A9D3F2;color:#062A4D;border-radius:0.801cqw;padding:0.98cqw 1.247cqw;margin-left:4.809cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.98cqw;color:#085087">04</span><span style="font-size:1.336cqw;font-weight:800">Colaboradores</span><span style="margin-left:auto;font-size:1.069cqw;color:#33495E">portal</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw">
+<div style="font-family:'JetBrains Mono', monospace;font-size:0.935cqw;letter-spacing:0.12em;text-transform:uppercase;color:#9CC9EE">Como ler este documento</div>
+<div style="display:flex;flex-wrap:wrap;gap:0.712cqw;font-size:1.069cqw;font-weight:600">
+<span style="display:inline-flex;align-items:center;gap:0.623cqw;padding:0.534cqw 0.98cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B"><span style="width:0.623cqw;height:0.623cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span>
+<span style="display:inline-flex;align-items:center;gap:0.623cqw;padding:0.534cqw 0.98cqw;border-radius:88.958cqw;background:#FCF1DC;color:#7A4E0A"><span style="width:0.623cqw;height:0.623cqw;border-radius:50%;background:#D9961F"></span>Hipótese comercial</span>
+<span style="display:inline-flex;align-items:center;gap:0.623cqw;padding:0.445cqw 0.89cqw;border-radius:88.958cqw;background:#EEF1F5;color:#3E4E61;border:1px dashed #8C9AAB"><span style="width:0.623cqw;height:0.623cqw;border-radius:50%;border:1.5px solid #6B7A8D"></span>Etapa futura</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="page" data-screen-label="02 Problema" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.959cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>02 — Problema e proposta de valor</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:1.55fr 1fr;gap:2.85cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.603cqw">
+<h2 style="margin:0;font-size:2.671cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A;text-wrap:balance">O RH operacional ainda depende de e-mails, mensagens e planilhas.</h2>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#6B7A8D;padding:0 0.356cqw"><span>O problema hoje</span><span></span><span>Como o CatalystHR responde</span></div>
+<div style="display:flex;flex-direction:column;border-top:1px solid #D8E1EB">
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Documentos espalhados entre e-mails, mensagens e pastas.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">Pasta digital por colaborador, com categorias, versões e histórico.</span></div>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Admissões sem acompanhamento centralizado.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">Fluxo de admissão com checklist, responsáveis e prazos.</span></div>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Solicitações sem responsável ou status claro.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">Cada solicitação tem status, responsável e histórico das etapas.</span></div>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Retrabalho na coleta e conferência de informações.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">IA sugere categoria e extrai campos para o RH revisar.</span></div>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Dificuldade de acompanhar várias empresas e unidades.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">Visão consolidada por empresa, unidade e carteira do parceiro.</span></div>
+<div style="display:grid;grid-template-columns:1fr 2.137cqw 1fr;align-items:center;padding:0.98cqw 0.356cqw;border-bottom:1px solid #E6ECF2;font-size:1.247cqw;line-height:1.4"><span style="font-weight:700">Perguntas repetidas sobre procedimentos internos.</span><span style="color:#5BB1E9;font-weight:700">→</span><span style="color:#33495E">Assistente responde com base nas políticas da empresa e cita a fonte.</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.247cqw;background:#062A4D;color:#FFFFFF;border-radius:1.247cqw;padding:2.315cqw 2.315cqw">
+<div style="font-family:'JetBrains Mono', monospace;font-size:0.935cqw;letter-spacing:0.12em;text-transform:uppercase;color:#5FD3BC">Proposta de valor</div>
+<div style="font-size:1.87cqw;line-height:1.3;font-weight:700;letter-spacing:-0.01em;text-wrap:pretty">Centralizar os processos de RH — com responsáveis, prazos, documentos e histórico — em uma plataforma que o parceiro oferece com a própria marca.</div>
+<div style="display:flex;flex-direction:column;gap:1.069cqw;margin-top:auto;border-top:1px solid #24507A;padding-top:1.425cqw">
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="font-size:1.069cqw;font-weight:700;color:#9CC9EE">Para o parceiro</span><span style="font-size:1.202cqw;line-height:1.45;color:#E6EFF7">Um produto com sua marca para ampliar o atendimento aos clientes.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="font-size:1.069cqw;font-weight:700;color:#9CC9EE">Para o RH da empresa</span><span style="font-size:1.202cqw;line-height:1.45;color:#E6EFF7">Menos cobrança manual e visibilidade sobre o que está pendente.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="font-size:1.069cqw;font-weight:700;color:#9CC9EE">Para o colaborador</span><span style="font-size:1.202cqw;line-height:1.45;color:#E6EFF7">Um único lugar para enviar documentos e acompanhar pedidos.</span></div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP</span><span>02 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="03 Público e white label" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.959cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>03 — Público e modelo white label</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><h2 style="margin:0;font-size:2.671cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Vendido pelo parceiro, com a marca do parceiro.</h2><p style="margin:0;font-size:1.336cqw;line-height:1.5;color:#4A5B70;max-width:67.676cqw">O parceiro comercializa e atende seus clientes. O CatalystHR fornece tecnologia, infraestrutura, atualizações e suporte técnico ao parceiro.</p></div>
+<div style="display:grid;grid-template-columns:1fr 2.493cqw 1fr 2.493cqw 1fr 2.493cqw 1fr;align-items:stretch">
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#062A4D;color:#FFFFFF;border-radius:1.069cqw;padding:1.425cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#9CC9EE;letter-spacing:0.08em">01 · TECNOLOGIA</span><span style="font-size:1.603cqw;font-weight:800">CatalystHR</span><span style="font-size:1.113cqw;line-height:1.45;color:#D6E5F2">Plataforma, infraestrutura, atualizações e suporte técnico ao parceiro.</span></div>
+<div style="display:flex;align-items:center;justify-content:center;color:#5BB1E9;font-size:1.781cqw;font-weight:700">→</div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#E3F5F1;border-radius:1.069cqw;padding:1.425cqw;border:1px solid #BFE6DC"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#0D6B5B;letter-spacing:0.08em">02 · COMPRADOR</span><span style="font-size:1.603cqw;font-weight:800;color:#0A2A4A">Parceiro</span><span style="font-size:1.113cqw;line-height:1.45;color:#33495E">Comercializa com sua marca, implanta e atende as empresas.</span></div>
+<div style="display:flex;align-items:center;justify-content:center;color:#5BB1E9;font-size:1.781cqw;font-weight:700">→</div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#EAF4FC;border-radius:1.069cqw;padding:1.425cqw;border:1px solid #CFE6F8"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087;letter-spacing:0.08em">03 · USUÁRIO</span><span style="font-size:1.603cqw;font-weight:800;color:#0A2A4A">Empresas clientes</span><span style="font-size:1.113cqw;line-height:1.45;color:#33495E">RH e gestores operam admissões, documentos e solicitações.</span></div>
+<div style="display:flex;align-items:center;justify-content:center;color:#5BB1E9;font-size:1.781cqw;font-weight:700">→</div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#EAF4FC;border-radius:1.069cqw;padding:1.425cqw;border:1px solid #CFE6F8"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087;letter-spacing:0.08em">04 · USUÁRIO</span><span style="font-size:1.603cqw;font-weight:800;color:#0A2A4A">Colaboradores</span><span style="font-size:1.113cqw;line-height:1.45;color:#33495E">Enviam documentos, abrem solicitações e consultam políticas.</span></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:1.781cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.89cqw;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.603cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Quem compra</span>
+<div style="display:flex;flex-direction:column;gap:0.712cqw;font-size:1.291cqw;font-weight:700;color:#0A2A4A"><span style="padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6">Consultorias de RH</span><span style="padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6">BPOs de departamento pessoal</span><span>Escritórios contábeis</span></div>
+<span style="margin-top:auto;font-size:1.113cqw;line-height:1.45;color:#4A5B70">Benefício: oferecer um produto próprio de RH sem desenvolver tecnologia.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.603cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Quem usa</span>
+<div style="display:flex;flex-direction:column;gap:0.712cqw;font-size:1.291cqw;font-weight:700;color:#0A2A4A"><span style="padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6">RH das empresas clientes</span><span style="padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6">Gestores</span><span>Colaboradores</span></div>
+<span style="margin-top:auto;font-size:1.113cqw;line-height:1.45;color:#4A5B70">Benefício: cada perfil vê apenas o que precisa para agir.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#F4F7FA;border-radius:1.069cqw;padding:1.603cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">O white label inclui</span>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;font-size:1.202cqw;line-height:1.4">
+<div style="display:flex;gap:0.89cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Logo, cores e nome comercial</span></div>
+<div style="display:flex;gap:0.89cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Domínio próprio</span></div>
+<div style="display:flex;gap:0.89cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Tela de acesso e portal personalizados</span></div>
+<div style="display:flex;gap:0.89cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Identidade dos e-mails e canal de suporte</span></div>
+<div style="display:flex;gap:0.89cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Plataforma compartilhada e configurável, com isolamento dos dados</span></div>
+</div>
+<span style="margin-top:auto;font-size:1.069cqw;line-height:1.45;color:#4A5B70;border-top:1px solid #D8E1EB;padding-top:0.801cqw">Todos os parceiros usam a mesma base de código. Não há versões exclusivas por parceiro.</span></div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP</span><span>03 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="04 White label na prática" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>04 — White label na prática · Painel do parceiro</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:24.043cqw 1fr;gap:2.671cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.404cqw;line-height:1.14;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">O cliente vê a marca do parceiro.</h2>
+<p style="margin:0;font-size:1.247cqw;line-height:1.55;color:#4A5B70">Exemplo com um parceiro fictício, <strong style="color:#0C1E33">Aurora Gestão de Pessoas</strong>, acompanhando sua carteira de empresas.</p>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;font-size:1.158cqw;line-height:1.45">
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Marca e domínio</strong><span style="color:#4A5B70">Logo, cores e endereço próprio em todas as telas.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Empresas atendidas e equipe</strong><span style="color:#4A5B70">Cada consultor acessa apenas as empresas atribuídas.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Modelos reutilizáveis</strong><span style="color:#4A5B70">Checklists e fluxos aplicados a novos clientes.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px"><strong>Pendências consolidadas</strong><span style="color:#4A5B70">Visão da carteira autorizada, sem abrir empresa por empresa.</span></div>
+</div>
+</div>
+<div style="position:relative;min-height:0">
+<div style="position:absolute;left:0;top:0;right:6.233cqw;bottom:3.562cqw;display:flex;flex-direction:column;border:1px solid #D3DDE8;border-radius:0.89cqw;background:#FFFFFF;box-shadow:0 1.247cqw 3.028cqw -1.247cqw rgba(8,53,95,0.28);overflow:hidden">
+<div style="display:flex;align-items:center;gap:0.89cqw;height:2.671cqw;padding:0 1.069cqw;background:#F1F3F7;border-bottom:1px solid #DDE3EA"><span style="display:flex;gap:0.445cqw"><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#D3D9E1"></span><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#D3D9E1"></span><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#D3D9E1"></span></span><span style="flex:1;max-width:24.933cqw;margin:0 auto;background:#FFFFFF;border-radius:0.534cqw;padding:0.267cqw 0.89cqw;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#4A5B70;text-align:center">rh.auroragestao.com.br/carteira</span><span style="font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:0.178cqw 0.534cqw;border-radius:0.356cqw">DADOS FICTÍCIOS</span></div>
+<div style="flex:1;display:grid;grid-template-columns:12.645cqw 1fr;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.267cqw;background:#2E1F5C;color:#E7E2F7;padding:1.247cqw 0.89cqw;font-size:0.935cqw">
+<div style="display:flex;align-items:center;gap:0.623cqw;padding:0 0.356cqw 1.247cqw"><span style="width:1.959cqw;height:1.959cqw;border-radius:0.623cqw;background:#B9A6F0;color:#2E1F5C;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.069cqw">A</span><span style="font-weight:800;font-size:1.069cqw;color:#FFFFFF;line-height:1.1">Aurora<br><span style="font-weight:500;font-size:0.801cqw;color:#C9BFEA">Gestão de Pessoas</span></span></div>
+<span style="background:#4A3786;color:#FFFFFF;padding:0.534cqw 0.712cqw;border-radius:0.534cqw;font-weight:700">Carteira</span><span style="padding:0.534cqw 0.712cqw">Empresas</span><span style="padding:0.534cqw 0.712cqw">Equipe</span><span style="padding:0.534cqw 0.712cqw">Modelos de processo</span><span style="padding:0.534cqw 0.712cqw">Marca e domínio</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.069cqw;padding:1.425cqw 1.603cqw;background:#FAFAFC;min-height:0">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:1.336cqw;font-weight:800;color:#1E1440">Carteira de clientes</span><span style="font-size:0.89cqw;color:#5E5878">Atualizado hoje, 08:00</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.712cqw">
+<div style="background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;padding:0.801cqw 0.89cqw"><div style="font-size:0.846cqw;color:#5E5878">Empresas ativas</div><div style="font-size:1.781cqw;font-weight:800;color:#1E1440">4</div></div>
+<div style="background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;padding:0.801cqw 0.89cqw"><div style="font-size:0.846cqw;color:#5E5878">Colaboradores ativos</div><div style="font-size:1.781cqw;font-weight:800;color:#1E1440">118</div></div>
+<div style="background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;padding:0.801cqw 0.89cqw"><div style="font-size:0.846cqw;color:#5E5878">Admissões em andamento</div><div style="font-size:1.781cqw;font-weight:800;color:#1E1440">5</div></div>
+<div style="background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;padding:0.801cqw 0.89cqw"><div style="font-size:0.846cqw;color:#5E5878">Pendências autorizadas</div><div style="font-size:1.781cqw;font-weight:800;color:#5B3FA8">23</div></div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;overflow:hidden;font-size:0.935cqw">
+<div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.8fr 0.8fr 0.8fr 0.9fr;padding:0.623cqw 1.069cqw;background:#F4F2F9;color:#5E5878;font-weight:700;font-size:0.846cqw"><span>Empresa</span><span>Unidades</span><span>Admissões</span><span>Documentos</span><span>Aprovações</span><span>Situação</span></div>
+<div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.8fr 0.8fr 0.8fr 0.9fr;padding:0.712cqw 1.069cqw;border-top:1px solid #EEECF4;align-items:center"><span style="font-weight:700">Metalúrgica Serra Azul</span><span>2</span><span>2</span><span>7</span><span>3</span><span style="justify-self:start;background:#FDE9E5;color:#9E3422;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">2 atrasos</span></div>
+<div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.8fr 0.8fr 0.8fr 0.9fr;padding:0.712cqw 1.069cqw;border-top:1px solid #EEECF4;align-items:center"><span style="font-weight:700">Clínica Bem Viver</span><span>1</span><span>1</span><span>3</span><span>2</span><span style="justify-self:start;background:#FCF1DC;color:#7A4E0A;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Atenção</span></div>
+<div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.8fr 0.8fr 0.8fr 0.9fr;padding:0.712cqw 1.069cqw;border-top:1px solid #EEECF4;align-items:center"><span style="font-weight:700">Padaria Trigo Fino</span><span>3</span><span>2</span><span>2</span><span>1</span><span style="justify-self:start;background:#E3F5F1;color:#0D6B5B;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Em dia</span></div>
+<div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.8fr 0.8fr 0.8fr 0.9fr;padding:0.712cqw 1.069cqw;border-top:1px solid #EEECF4;align-items:center"><span style="font-weight:700">Transportes Rota Sul</span><span>1</span><span>0</span><span>2</span><span>1</span><span style="justify-self:start;background:#E3F5F1;color:#0D6B5B;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Em dia</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#FFFFFF;border:1px solid #E4E1EE;border-radius:0.712cqw;padding:0.89cqw 1.069cqw;max-width:62%">
+<span style="font-size:0.935cqw;font-weight:800;color:#1E1440">Modelos de processo</span>
+<div style="display:flex;flex-wrap:wrap;gap:0.534cqw;font-size:0.846cqw"><span style="background:#F0ECFA;color:#3E2A82;padding:0.267cqw 0.712cqw;border-radius:0.445cqw">Admissão CLT padrão</span><span style="background:#F0ECFA;color:#3E2A82;padding:0.267cqw 0.712cqw;border-radius:0.445cqw">Admissão de estágio</span><span style="background:#F0ECFA;color:#3E2A82;padding:0.267cqw 0.712cqw;border-radius:0.445cqw">Solicitação de férias</span><span style="background:#F0ECFA;color:#3E2A82;padding:0.267cqw 0.712cqw;border-radius:0.445cqw">Declaração de vínculo</span></div>
+</div>
+</div>
+</div>
+</div>
+<div style="position:absolute;right:0;bottom:0;width:20.659cqw;display:flex;flex-direction:column;gap:0.801cqw;background:#FFFFFF;border:1px solid #D3DDE8;border-radius:1.069cqw;padding:1.603cqw;box-shadow:0 1.603cqw 3.562cqw -1.247cqw rgba(30,20,64,0.35)">
+<div style="display:flex;align-items:center;gap:0.623cqw"><span style="width:2.137cqw;height:2.137cqw;border-radius:0.623cqw;background:#5B3FA8;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.158cqw">A</span><span style="font-weight:800;font-size:1.158cqw;color:#1E1440">Aurora RH</span></div>
+<span style="font-size:1.158cqw;font-weight:700;color:#1E1440">Acesse o portal de RH</span>
+<div style="border:1px solid #DCD8E8;border-radius:0.534cqw;padding:0.623cqw 0.801cqw;font-size:0.89cqw;color:#6E6888">E-mail corporativo</div>
+<div style="border:1px solid #DCD8E8;border-radius:0.534cqw;padding:0.623cqw 0.801cqw;font-size:0.89cqw;color:#6E6888">Senha</div>
+<div style="background:#5B3FA8;color:#FFFFFF;border-radius:0.534cqw;padding:0.712cqw;font-size:0.98cqw;font-weight:700;text-align:center">Entrar</div>
+<span style="font-size:0.846cqw;color:#5E5878">Esqueci minha senha · suporte@auroragestao.com.br</span>
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.06em;color:#6B7A8D;border-top:1px solid #EEF2F6;padding-top:0.623cqw">TELA DE ACESSO PERSONALIZADA</span>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Parceiro e empresas fictícios</span><span>04 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="05 Quatro áreas" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.959cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>05 — Quatro áreas da plataforma</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><h2 style="margin:0;font-size:2.671cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Quatro áreas, cada uma com seu nível de acesso.</h2><p style="margin:0;font-size:1.336cqw;line-height:1.5;color:#4A5B70">Da gestão dos parceiros até o celular do colaborador, na mesma plataforma.</p></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:1.425cqw;min-height:0">
+<div style="display:flex;flex-direction:column;border:1px solid #D8E1EB;border-radius:1.069cqw;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:0.356cqw;background:#062A4D;color:#FFFFFF;padding:1.425cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#9CC9EE">01</span><span style="font-size:1.514cqw;font-weight:800;line-height:1.2">Administração CatalystHR</span><span style="font-size:1.024cqw;color:#B8D3EA">Usado pela equipe CatalystHR</span></div>
+<div style="display:flex;flex-direction:column;gap:0.801cqw;padding:1.425cqw;font-size:1.202cqw;line-height:1.4;flex:1">
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Parceiros, planos e situação das assinaturas</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Limites de empresas e colaboradores</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Consumo de armazenamento e IA</span></div>
+</div>
+<div style="padding:1.069cqw 1.425cqw;background:#F4F7FA;font-size:1.069cqw;line-height:1.45;color:#33495E"><strong style="color:#0A2A4A">Benefício:</strong> controle do uso de cada parceiro dentro do plano.</div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D8E1EB;border-radius:1.069cqw;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:0.356cqw;background:#085087;color:#FFFFFF;padding:1.425cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#BFE0F7">02</span><span style="font-size:1.514cqw;font-weight:800;line-height:1.2">Painel do parceiro</span><span style="font-size:1.024cqw;color:#CFE6F8">Usado pela equipe do parceiro</span></div>
+<div style="display:flex;flex-direction:column;gap:0.801cqw;padding:1.425cqw;font-size:1.202cqw;line-height:1.4;flex:1">
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Marca e domínio</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Empresas atendidas e equipe</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Modelos reutilizáveis de processos</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Visão consolidada das pendências autorizadas</span></div>
+</div>
+<div style="padding:1.069cqw 1.425cqw;background:#F4F7FA;font-size:1.069cqw;line-height:1.45;color:#33495E"><strong style="color:#0A2A4A">Benefício:</strong> implantar novos clientes reaproveitando modelos.</div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D8E1EB;border-radius:1.069cqw;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:0.356cqw;background:#CFE6F8;color:#062A4D;padding:1.425cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">03</span><span style="font-size:1.514cqw;font-weight:800;line-height:1.2">Painel da empresa</span><span style="font-size:1.024cqw;color:#33495E">Usado pelo RH e pelos gestores</span></div>
+<div style="display:flex;flex-direction:column;gap:0.801cqw;padding:1.425cqw;font-size:1.202cqw;line-height:1.4;flex:1">
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Colaboradores, unidades, departamentos e gestores</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Admissões, documentos, solicitações e aprovações</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#5BB1E9">■</span><span>Tarefas e indicadores</span></div>
+</div>
+<div style="padding:1.069cqw 1.425cqw;background:#F4F7FA;font-size:1.069cqw;line-height:1.45;color:#33495E"><strong style="color:#0A2A4A">Benefício:</strong> a rotina de RH em um lugar, com responsáveis.</div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D8E1EB;border-radius:1.069cqw;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:0.356cqw;background:#E3F5F1;color:#062A4D;padding:1.425cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#0D6B5B">04</span><span style="font-size:1.514cqw;font-weight:800;line-height:1.2">Portal do colaborador</span><span style="font-size:1.024cqw;color:#33495E">Usado no navegador e no celular</span></div>
+<div style="display:flex;flex-direction:column;gap:0.801cqw;padding:1.425cqw;font-size:1.202cqw;line-height:1.4;flex:1">
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86">■</span><span>Documentos e pendências pessoais</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86">■</span><span>Solicitações e respostas</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86">■</span><span>Atualizações cadastrais</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86">■</span><span>Checklist de integração</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86">■</span><span>Assistente de políticas internas</span></div>
+</div>
+<div style="padding:1.069cqw 1.425cqw;background:#F4F7FA;font-size:1.069cqw;line-height:1.45;color:#33495E"><strong style="color:#0A2A4A">Benefício:</strong> menos idas e vindas por e-mail e mensagem.</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP</span><span>05 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="06 Cadastros e permissões" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>06 — Cadastros e permissões</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:26.714cqw 1fr;gap:2.671cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.404cqw;line-height:1.14;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Estrutura organizada e acesso só para quem precisa.</h2>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;font-size:1.158cqw;line-height:1.45">
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Empresas, unidades e departamentos</strong><span style="color:#4A5B70">A estrutura real de cada cliente.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Colaboradores, cargos e gestores</strong><span style="color:#4A5B70">Aprovações chegam ao gestor certo.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Convites e recuperação de acesso</strong><span style="color:#4A5B70">Colaborador entra por convite, sem senha enviada pelo RH.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Permissões por empresa, unidade e função</strong><span style="color:#4A5B70">Cada perfil vê o escopo que lhe foi atribuído.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px"><strong>Histórico de movimentações</strong><span style="color:#4A5B70">Alterações cadastrais com data e autor.</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.247cqw;min-height:0">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:1.247cqw;font-weight:800;color:#0A2A4A">Exemplo de configuração de acesso</span><span style="font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D">ILUSTRATIVO · DEFINIDO POR EMPRESA, UNIDADE E FUNÇÃO</span></div>
+<div style="border:1px solid #D8E1EB;border-radius:0.89cqw;overflow:hidden;font-size:1.069cqw">
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;background:#062A4D;color:#FFFFFF;font-weight:700;font-size:1.024cqw"><span style="padding:0.89cqw 1.069cqw">Informação</span><span style="padding:0.89cqw 1.069cqw">Equipe do parceiro</span><span style="padding:0.89cqw 1.069cqw">RH da empresa</span><span style="padding:0.89cqw 1.069cqw">Gestor</span><span style="padding:0.89cqw 1.069cqw">Colaborador</span></div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;border-top:1px solid #E6ECF2"><span style="padding:0.801cqw 1.069cqw;font-weight:700">Dados pessoais</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Empresas autorizadas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Unidades atribuídas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Dados básicos da equipe</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Somente os próprios</span></div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;border-top:1px solid #E6ECF2;background:#FAFBFD"><span style="padding:0.801cqw 1.069cqw;font-weight:700">Documentos</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Empresas autorizadas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Unidades atribuídas</span><span style="padding:0.801cqw 1.069cqw;color:#6B7A8D">Sem acesso</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Somente os próprios</span></div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;border-top:1px solid #E6ECF2"><span style="padding:0.801cqw 1.069cqw;font-weight:700">Solicitações</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Empresas autorizadas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Unidades atribuídas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Da própria equipe</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Somente as próprias</span></div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;border-top:1px solid #E6ECF2;background:#FAFBFD"><span style="padding:0.801cqw 1.069cqw;font-weight:700">Notas internas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Empresas autorizadas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Unidades atribuídas</span><span style="padding:0.801cqw 1.069cqw;color:#33495E">Da própria equipe</span><span style="padding:0.801cqw 1.069cqw;color:#9E3422;font-weight:700">Nunca exibidas</span></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:1.247cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.712cqw;background:#F4F7FA;border-radius:0.89cqw;padding:1.247cqw 1.425cqw">
+<span style="font-size:1.113cqw;font-weight:800;color:#0A2A4A">Estrutura de uma empresa</span>
+<div style="display:flex;flex-direction:column;gap:0.445cqw;font-size:1.024cqw">
+<div style="display:flex;align-items:center;gap:0.712cqw"><span style="background:#062A4D;color:#FFFFFF;border-radius:0.445cqw;padding:0.267cqw 0.712cqw;font-weight:700">Metalúrgica Serra Azul</span></div>
+<div style="display:flex;align-items:center;gap:0.712cqw;padding-left:1.425cqw"><span style="color:#8C9AAB">└</span><span style="background:#CFE6F8;border-radius:0.445cqw;padding:0.267cqw 0.712cqw;font-weight:700">Unidade Caxias do Sul</span></div>
+<div style="display:flex;align-items:center;gap:0.712cqw;padding-left:3.206cqw"><span style="color:#8C9AAB">└</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:0.445cqw;padding:0.178cqw 0.712cqw">Produção · gestor Carlos Mendes</span></div>
+<div style="display:flex;align-items:center;gap:0.712cqw;padding-left:3.206cqw"><span style="color:#8C9AAB">└</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:0.445cqw;padding:0.178cqw 0.712cqw">Administrativo · gestora Bianca Lopes</span></div>
+<div style="display:flex;align-items:center;gap:0.712cqw;padding-left:1.425cqw"><span style="color:#8C9AAB">└</span><span style="background:#CFE6F8;border-radius:0.445cqw;padding:0.267cqw 0.712cqw;font-weight:700">Unidade Bento Gonçalves</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.712cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.247cqw 1.425cqw">
+<span style="font-size:1.113cqw;font-weight:800;color:#0A2A4A">Histórico de movimentações</span>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;font-size:1.024cqw;line-height:1.35">
+<div style="display:grid;grid-template-columns:3.918cqw 1fr;gap:0.712cqw"><span style="font-family:'JetBrains Mono', monospace;color:#6B7A8D">12/09</span><span><strong>Transferência de unidade</strong> · por Juliana Ribeiro (RH)</span></div>
+<div style="display:grid;grid-template-columns:3.918cqw 1fr;gap:0.712cqw"><span style="font-family:'JetBrains Mono', monospace;color:#6B7A8D">28/08</span><span><strong>Alteração de cargo</strong> · por Juliana Ribeiro (RH)</span></div>
+<div style="display:grid;grid-template-columns:3.918cqw 1fr;gap:0.712cqw"><span style="font-family:'JetBrains Mono', monospace;color:#6B7A8D">03/08</span><span><strong>Endereço atualizado</strong> · pelo colaborador, validado pelo RH</span></div>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:0.89cqw;align-items:flex-start;background:#E3F5F1;border-radius:0.89cqw;padding:0.98cqw 1.247cqw;font-size:1.113cqw;line-height:1.45;color:#0B4F43"><span style="font-weight:800">!</span><span>Dados pessoais e documentos aparecem apenas para usuários autorizados. Notas internas nunca são exibidas ao colaborador.</span></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Nomes fictícios</span><span>06 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="07 Admissão" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.603cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>07 — Admissão e integração</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<h2 style="margin:0;font-size:2.493cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Admissão acompanhada do cadastro à conclusão.</h2>
+<div style="display:flex;flex-direction:column;gap:0.534cqw">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.712cqw">
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #085087"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">01</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Cadastro inicial</span><span style="font-size:0.98cqw;color:#4A5B70">RH da empresa</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #085087"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">02</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Envio de documentos</span><span style="font-size:0.98cqw;color:#4A5B70">Colaborador, pelo portal</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #BFE6DC;background:#E3F5F1;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #1E9C86"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#0D6B5B">03 · IA</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Processamento pela IA</span><span style="font-size:0.98cqw;color:#33495E">Categoria e campos sugeridos</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #085087"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">04</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Revisão do RH</span><span style="font-size:0.98cqw;color:#4A5B70">Confirma ou pede correção</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #085087"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">05</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Encaminhamento à contabilidade</span><span style="font-size:0.98cqw;color:#4A5B70">Envio e recebimento registrados</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:0.98cqw 1.069cqw;border-top:0.267cqw solid #085087;background:#062A4D;color:#FFFFFF"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#9CC9EE">06</span><span style="font-size:1.158cqw;font-weight:800;line-height:1.25">Conclusão</span><span style="font-size:0.98cqw;color:#D6E5F2">Integração confirmada</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.712cqw"><div style="grid-column:2 / 5;display:flex;align-items:center;gap:0.712cqw;font-size:0.98cqw;color:#9E3422;font-weight:700"><span style="flex:1;border-top:1.5px dashed #E39A8C"></span><span>↺ Solicitação de correção volta ao colaborador</span><span style="flex:1;border-top:1.5px dashed #E39A8C"></span></div></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:25.824cqw 1fr;gap:2.493cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.801cqw;font-size:1.158cqw;line-height:1.45">
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span><strong>Checklists configuráveis</strong> por modelo de admissão</span></div>
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span><strong>Responsáveis e prazos</strong> em cada item</span></div>
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span><strong>Solicitação de correções</strong> com motivo visível ao colaborador</span></div>
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span><strong>Registro de encaminhamento</strong> e de recebimento pela contabilidade</span></div>
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span><strong>Etapas de integração</strong> e confirmação de conclusão</span></div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:0.534cqw;border:1px dashed #8C9AAB;background:#F6F8FA;border-radius:0.89cqw;padding:0.98cqw 1.158cqw;font-size:1.069cqw;line-height:1.45;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.846cqw;letter-spacing:0.08em;color:#4A5B70">FORA DO MVP</span><span>O encaminhamento é acompanhado no sistema. Integração automática com software contábil não faz parte do MVP.</span></div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D3DDE8;border-radius:0.89cqw;background:#FFFFFF;box-shadow:0 1.247cqw 3.028cqw -1.247cqw rgba(8,53,95,0.28);overflow:hidden;min-height:0">
+<div style="display:flex;align-items:center;gap:0.89cqw;height:2.85cqw;padding:0 1.247cqw;border-bottom:1px solid #E6ECF2"><img src="assets/catalyst-symbol.png" alt="" style="height:1.336cqw"><span style="font-size:0.935cqw;color:#4A5B70">Metalúrgica Serra Azul › Admissões</span><span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:0.178cqw 0.534cqw;border-radius:0.356cqw">DADOS FICTÍCIOS</span></div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;padding:1.247cqw 1.425cqw;min-height:0">
+<div style="display:flex;align-items:center;gap:1.069cqw"><span style="width:3.028cqw;height:3.028cqw;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.069cqw">RC</span><div style="display:flex;flex-direction:column"><span style="font-size:1.247cqw;font-weight:800">Rafael Moura Campos</span><span style="font-size:0.935cqw;color:#4A5B70">Auxiliar de produção · Unidade Caxias do Sul · início previsto 15/10</span></div><div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:0.356cqw"><span style="font-size:0.935cqw;font-weight:700;color:#085087">3 de 6 concluídos</span><span style="width:11.576cqw;height:0.534cqw;border-radius:0.267cqw;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:50%;height:100%;background:#085087"></span></span></div></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;overflow:hidden;font-size:0.98cqw">
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.623cqw 1.069cqw;background:#F4F7FA;color:#4A5B70;font-weight:700;font-size:0.89cqw"><span></span><span>Item do checklist</span><span>Responsável</span><span>Prazo</span><span>Status</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#1E9C86;font-weight:800">✓</span><span>Dados pessoais preenchidos</span><span>Colaborador</span><span>02/10</span><span style="justify-self:start;background:#E3F5F1;color:#0D6B5B;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Concluído</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#1E9C86;font-weight:800">✓</span><span>RG e CPF</span><span>Colaborador</span><span>03/10</span><span style="justify-self:start;background:#E3F5F1;color:#0D6B5B;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Validado pelo RH</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#1E9C86;font-weight:800">✓</span><span>Carteira de trabalho digital</span><span>Colaborador</span><span>03/10</span><span style="justify-self:start;background:#E3F5F1;color:#0D6B5B;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Validado pelo RH</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center;background:#FFF8F6"><span style="color:#C2412D;font-weight:800">!</span><span>Comprovante de residência</span><span>Colaborador</span><span style="color:#9E3422;font-weight:700">08/10</span><span style="justify-self:start;background:#FDE9E5;color:#9E3422;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Correção solicitada</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#8C9AAB">○</span><span>Encaminhar à contabilidade</span><span>Juliana Ribeiro (RH)</span><span>10/10</span><span style="justify-self:start;background:#EEF1F5;color:#3E4E61;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Aguardando</span></div>
+<div style="display:grid;grid-template-columns:1.959cqw 1.7fr 1.1fr 0.6fr 1fr;gap:0.712cqw;padding:0.712cqw 1.069cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#8C9AAB">○</span><span>Integração: boas-vindas e EPI</span><span>Carlos Mendes (gestor)</span><span>15/10</span><span style="justify-self:start;background:#EEF1F5;color:#3E4E61;padding:0.178cqw 0.623cqw;border-radius:88.958cqw;font-weight:700;font-size:0.846cqw">Aguardando</span></div>
+</div>
+<div style="display:flex;gap:0.712cqw;justify-content:flex-end"><span style="border:1px solid #C9D4E0;color:#0A2A4A;border-radius:0.534cqw;padding:0.534cqw 1.069cqw;font-size:0.98cqw;font-weight:700">Lembrar colaborador</span><span style="background:#085087;color:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 1.069cqw;font-size:0.98cqw;font-weight:700">Registrar envio à contabilidade</span></div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP</span><span>07 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="08 Gestão documental" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>08 — Gestão documental</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:24.043cqw 1fr;gap:2.493cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.404cqw;line-height:1.14;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Cada documento no lugar certo, com revisão rastreável.</h2>
+<div style="display:flex;flex-direction:column;gap:0.712cqw;font-size:1.158cqw;line-height:1.4">
+<div style="display:flex;gap:0.801cqw;padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6"><span style="color:#1E9C86;font-weight:800">✓</span><span>Pasta por colaborador</span></div>
+<div style="display:flex;gap:0.801cqw;padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6"><span style="color:#1E9C86;font-weight:800">✓</span><span>Upload de PDF e imagens</span></div>
+<div style="display:flex;gap:0.801cqw;padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6"><span style="color:#1E9C86;font-weight:800">✓</span><span>Categorias e versões</span></div>
+<div style="display:flex;gap:0.801cqw;padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6"><span style="color:#1E9C86;font-weight:800">✓</span><span>Revisão e pedido de substituição</span></div>
+<div style="display:flex;gap:0.801cqw;padding-bottom:0.712cqw;border-bottom:1px solid #EEF2F6"><span style="color:#1E9C86;font-weight:800">✓</span><span>Pendências e vencimentos configurados</span></div>
+<div style="display:flex;gap:0.801cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Histórico de envio e validação</span></div>
+</div>
+<p style="margin:auto 0 0;font-size:1.113cqw;line-height:1.5;color:#4A5B70"><strong style="color:#0C1E33">Benefício:</strong> o RH confere campos lado a lado com o cadastro, em vez de redigitar dados.</p>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D3DDE8;border-radius:0.89cqw;background:#FFFFFF;box-shadow:0 1.247cqw 3.028cqw -1.247cqw rgba(8,53,95,0.28);overflow:hidden;min-height:0">
+<div style="display:flex;align-items:center;gap:0.89cqw;height:2.85cqw;padding:0 1.247cqw;border-bottom:1px solid #E6ECF2"><img src="assets/catalyst-symbol.png" alt="" style="height:1.336cqw"><span style="font-size:0.935cqw;color:#4A5B70">Rafael Moura Campos › Documentos › Pessoais</span><span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:0.178cqw 0.534cqw;border-radius:0.356cqw">DADOS FICTÍCIOS</span></div>
+<div style="display:flex;gap:0.534cqw;padding:0.801cqw 1.247cqw;border-bottom:1px solid #EEF2F6;font-size:0.935cqw"><span style="background:#062A4D;color:#FFFFFF;padding:0.267cqw 0.801cqw;border-radius:0.445cqw;font-weight:700">Pessoais · 4</span><span style="background:#F4F7FA;padding:0.267cqw 0.801cqw;border-radius:0.445cqw">Admissão · 6</span><span style="background:#F4F7FA;padding:0.267cqw 0.801cqw;border-radius:0.445cqw">Saúde · 1</span><span style="background:#F4F7FA;padding:0.267cqw 0.801cqw;border-radius:0.445cqw">Declarações · 2</span></div>
+<div style="flex:1;display:grid;grid-template-columns:0.9fr 1.25fr;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.712cqw;padding:1.247cqw;background:#F4F7FA;border-right:1px solid #E6ECF2">
+<div style="flex:1;border-radius:0.534cqw;border:1px solid #D3DDE8;background:repeating-linear-gradient(135deg,#FFFFFF 0 0.712cqw,#EEF2F6 0.712cqw 1.425cqw);display:flex;align-items:center;justify-content:center;padding:1.069cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#4A5B70;text-align:center;background:#FFFFFF;padding:0.356cqw 0.712cqw;border-radius:0.356cqw">prévia do documento enviado<br>RG frente e verso · imagem fictícia</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;font-size:0.89cqw;color:#4A5B70"><span><strong style="color:#0C1E33">Versão 2</strong> · enviada em 03/10 às 14:22 pelo colaborador</span><span>Versão 1 substituída em 03/10 · imagem ilegível</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;padding:1.247cqw 1.425cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.267cqw;background:#E3F5F1;border:1px solid #BFE6DC;border-radius:0.712cqw;padding:0.801cqw 0.98cqw"><span style="font-size:0.935cqw;font-weight:800;color:#0B4F43">Sugestão da IA · Categoria: Documento de identidade (RG)</span><span style="font-size:0.89cqw;line-height:1.4;color:#245E53">Confira os campos antes de confirmar. A IA não comprova a autenticidade do documento.</span></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;overflow:hidden;font-size:0.935cqw">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.534cqw 0.89cqw;background:#F4F7FA;color:#4A5B70;font-weight:700;font-size:0.846cqw"><span>Campo</span><span>Extraído</span><span>No cadastro</span><span>Resultado</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.623cqw 0.89cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#4A5B70">Nome</span><span>Rafael Moura Campos</span><span>Rafael Moura Campos</span><span style="color:#0D6B5B;font-weight:700">Confere</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.623cqw 0.89cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#4A5B70">Nº do RG</span><span>00.000.000-0</span><span>00.000.000-0</span><span style="color:#0D6B5B;font-weight:700">Confere</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.623cqw 0.89cqw;border-top:1px solid #EEF2F6;align-items:center;background:#FFF8F6"><span style="color:#4A5B70">Nascimento</span><span style="font-weight:700;color:#9E3422">14/03/1996</span><span>14/03/1995</span><span style="justify-self:start;background:#FDE9E5;color:#9E3422;padding:0.178cqw 0.534cqw;border-radius:88.958cqw;font-weight:700;font-size:0.801cqw">Divergência</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.623cqw 0.89cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#4A5B70">Órgão emissor</span><span>SSP/RS</span><span>—</span><span style="color:#085087;font-weight:700">Novo campo</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;padding:0.623cqw 0.89cqw;border-top:1px solid #EEF2F6;align-items:center"><span style="color:#4A5B70">Emissão</span><span>20/05/2019</span><span>—</span><span style="color:#085087;font-weight:700">Novo campo</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;font-size:0.89cqw;color:#4A5B70;border-left:0.178cqw solid #D8E1EB;padding-left:0.801cqw"><span>03/10 14:22 · Enviado pelo colaborador</span><span>03/10 14:23 · Processado pela IA</span><span style="color:#0C1E33;font-weight:700">Aguardando revisão do RH</span></div>
+<div style="margin-top:auto;display:flex;gap:0.712cqw;justify-content:flex-end"><span style="border:1px solid #E3A99C;color:#9E3422;border-radius:0.534cqw;padding:0.623cqw 1.158cqw;font-size:0.98cqw;font-weight:700">Solicitar correção</span><span style="background:#085087;color:#FFFFFF;border-radius:0.534cqw;padding:0.623cqw 1.158cqw;font-size:0.98cqw;font-weight:700">Confirmar dados</span></div>
+</div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Mockup: revisão documental com IA</span><span>08 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="09 Solicitações" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.603cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>09 — Solicitações e aprovações</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<h2 style="margin:0;font-size:2.493cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Toda solicitação com responsável, status e histórico.</h2>
+<div style="display:flex;align-items:center;gap:0.712cqw;font-size:1.113cqw;font-weight:700">
+<span style="background:#EAF4FC;border:1px solid #CFE6F8;border-radius:0.712cqw;padding:0.801cqw 1.158cqw">Aberta</span><span style="color:#5BB1E9">→</span>
+<span style="background:#EAF4FC;border:1px solid #CFE6F8;border-radius:0.712cqw;padding:0.801cqw 1.158cqw">Em análise</span><span style="color:#5BB1E9">→</span>
+<span style="display:flex;flex-direction:column;gap:0.356cqw"><span style="background:#FCF1DC;border:1px solid #F0D9A8;border-radius:0.712cqw;padding:0.445cqw 1.069cqw;color:#7A4E0A">Aguardando informação</span><span style="background:#FCF1DC;border:1px solid #F0D9A8;border-radius:0.712cqw;padding:0.445cqw 1.069cqw;color:#7A4E0A">Aguardando aprovação</span></span><span style="color:#5BB1E9">→</span>
+<span style="background:#EAF4FC;border:1px solid #CFE6F8;border-radius:0.712cqw;padding:0.801cqw 1.158cqw">Em execução</span><span style="color:#5BB1E9">→</span>
+<span style="background:#062A4D;color:#FFFFFF;border-radius:0.712cqw;padding:0.801cqw 1.158cqw">Concluída</span>
+<span style="margin-left:auto;display:flex;align-items:center;gap:0.712cqw;border:1px dashed #E3A99C;border-radius:0.712cqw;padding:0.712cqw 1.069cqw;color:#9E3422;font-size:1.024cqw">Reprovada ou cancelada<span style="font-weight:500;color:#4A5B70">· sempre com justificativa</span></span>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:26.714cqw 1fr;gap:2.493cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.069cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Tipos iniciais</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.534cqw;font-size:1.113cqw;font-weight:600">
+<span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw">Férias</span><span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw">Atualização cadastral</span><span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw">Declarações e documentos</span><span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw">Envio de comprovantes</span><span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw">Solicitações gerais</span><span style="background:#F4F7FA;border-radius:0.534cqw;padding:0.623cqw 0.801cqw;border:1px solid #D8E1EB">Desligamento · <span style="font-weight:500;color:#4A5B70">só o RH abre</span></span>
+</div>
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D;margin-top:0.356cqw">Em cada solicitação</span>
+<div style="display:flex;flex-wrap:wrap;gap:0.534cqw;font-size:1.024cqw"><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Responsáveis</span><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Anexos</span><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Comentários</span><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Notas internas</span><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Histórico</span><span style="border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.356cqw 0.89cqw">Justificativas</span></div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:0.445cqw;border:1px dashed #8C9AAB;background:#F6F8FA;border-radius:0.89cqw;padding:0.98cqw 1.158cqw;font-size:1.069cqw;line-height:1.45;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.846cqw;letter-spacing:0.08em;color:#4A5B70">LIMITE DO MVP</span><span>Férias e desligamentos são fluxos administrativos. O MVP não calcula verbas, direitos ou obrigações legais.</span></div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D3DDE8;border-radius:0.89cqw;background:#FFFFFF;box-shadow:0 1.247cqw 3.028cqw -1.247cqw rgba(8,53,95,0.28);overflow:hidden;min-height:0">
+<div style="display:flex;align-items:center;gap:0.89cqw;height:2.85cqw;padding:0 1.247cqw;border-bottom:1px solid #E6ECF2"><img src="assets/catalyst-symbol.png" alt="" style="height:1.336cqw"><span style="font-size:0.935cqw;color:#4A5B70">Solicitações › SOL-0142</span><span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:0.178cqw 0.534cqw;border-radius:0.356cqw">DADOS FICTÍCIOS</span></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 17.809cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.89cqw;padding:1.247cqw 1.425cqw;min-height:0">
+<div style="display:flex;align-items:center;gap:0.89cqw"><span style="font-size:1.336cqw;font-weight:800">Férias · Ana Paula Ferreira</span><span style="background:#FCF1DC;color:#7A4E0A;padding:0.267cqw 0.801cqw;border-radius:88.958cqw;font-weight:700;font-size:0.89cqw">Aguardando aprovação</span></div>
+<div style="display:flex;flex-direction:column;gap:0.801cqw;font-size:0.98cqw;line-height:1.45">
+<div style="display:grid;grid-template-columns:2.315cqw 1fr;gap:0.712cqw"><span style="width:2.137cqw;height:2.137cqw;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.801cqw">AP</span><div style="display:flex;flex-direction:column"><span><strong>Ana Paula</strong> abriu a solicitação <span style="color:#6B7A8D">· 01/10 09:12</span></span><span style="color:#33495E">Período: 03/11 a 22/11/2026 (20 dias).</span></div></div>
+<div style="display:grid;grid-template-columns:2.315cqw 1fr;gap:0.712cqw"><span style="width:2.137cqw;height:2.137cqw;border-radius:50%;background:#E3F5F1;color:#0D6B5B;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.801cqw">JR</span><div style="display:flex;flex-direction:column"><span><strong>Juliana Ribeiro (RH)</strong> comentou <span style="color:#6B7A8D">· 01/10 14:40</span></span><span style="color:#33495E">Período registrado. Encaminhado ao gestor para aprovação.</span></div></div>
+<div style="display:grid;grid-template-columns:2.315cqw 1fr;gap:0.712cqw;background:#FFF6E5;border:1px solid #F0D9A8;border-radius:0.712cqw;padding:0.712cqw"><span style="width:2.137cqw;height:2.137cqw;border-radius:50%;background:#F0D9A8;color:#7A4E0A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.801cqw">JR</span><div style="display:flex;flex-direction:column"><span style="font-weight:700;color:#7A4E0A">Nota interna · não visível ao colaborador</span><span style="color:#5C3D0A">Confirmar com a unidade a cobertura do turno no período.</span></div></div>
+<div style="display:grid;grid-template-columns:2.315cqw 1fr;gap:0.712cqw"><span style="width:2.137cqw;height:2.137cqw;border-radius:50%;background:#EEF1F5;color:#3E4E61;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.801cqw">⏱</span><div style="display:flex;flex-direction:column"><span>Status alterado para <strong>Aguardando aprovação</strong> <span style="color:#6B7A8D">· 01/10 14:41</span></span></div></div>
+</div>
+<div style="margin-top:auto;display:flex;gap:0.712cqw;justify-content:flex-end;padding-top:0.712cqw;border-top:1px solid #EEF2F6"><span style="border:1px solid #E3A99C;color:#9E3422;border-radius:0.534cqw;padding:0.623cqw 1.069cqw;font-size:0.98cqw;font-weight:700">Reprovar com justificativa</span><span style="border:1px solid #C9D4E0;color:#0A2A4A;border-radius:0.534cqw;padding:0.623cqw 1.069cqw;font-size:0.98cqw;font-weight:700">Pedir informação</span><span style="background:#085087;color:#FFFFFF;border-radius:0.534cqw;padding:0.623cqw 1.069cqw;font-size:0.98cqw;font-weight:700">Aprovar</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;padding:1.247cqw;background:#F4F7FA;border-left:1px solid #E6ECF2;font-size:0.935cqw">
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="color:#6B7A8D">Tipo</span><span style="font-weight:700">Férias</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="color:#6B7A8D">Responsável atual</span><span style="font-weight:700">Carlos Mendes (gestor)</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="color:#6B7A8D">Unidade</span><span style="font-weight:700">Caxias do Sul · Produção</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="color:#6B7A8D">Prazo de resposta</span><span style="font-weight:700">06/10</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw"><span style="color:#6B7A8D">Anexos</span><span style="font-weight:700">Nenhum</span></div>
+</div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Mockup: solicitação com aprovação</span><span>09 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="10 IA no MVP" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.603cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>10 — Inteligência artificial no MVP</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><h2 style="margin:0;font-size:2.493cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Três funções de IA desde a primeira versão — com revisão humana.</h2><p style="margin:0;font-size:1.291cqw;line-height:1.5;color:#4A5B70">A IA sugere e organiza; a decisão continua com as pessoas.</p></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:1.425cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.89cqw;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.603cqw">
+<div style="display:flex;align-items:center;gap:0.89cqw"><span style="width:2.671cqw;height:2.671cqw;border-radius:0.712cqw;background:#062A4D;color:#5FD3BC;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.247cqw">A</span><span style="font-size:1.425cqw;font-weight:800;line-height:1.2">Conferência documental assistida</span></div>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;font-size:1.158cqw;line-height:1.4">
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Sugere a categoria do documento</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Extrai campos dos documentos definidos para o piloto</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Destaca divergências com o cadastro</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Exige revisão humana antes de atualizar dados ou aceitar documentos</span></div>
+</div>
+<div style="margin-top:auto;font-size:1.069cqw;line-height:1.45;color:#33495E;background:#F4F7FA;border-radius:0.712cqw;padding:0.801cqw 0.98cqw"><strong>Limite:</strong> não comprova autenticidade.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.603cqw">
+<div style="display:flex;align-items:center;gap:0.89cqw"><span style="width:2.671cqw;height:2.671cqw;border-radius:0.712cqw;background:#062A4D;color:#5FD3BC;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.247cqw">B</span><span style="font-size:1.425cqw;font-weight:800;line-height:1.2">Resumo operacional</span></div>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;font-size:1.158cqw;line-height:1.4">
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Resume admissões paradas, documentos faltantes e aprovações pendentes</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Visão por empresa, unidade e carteira autorizada do parceiro</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Links para os registros usados no resumo</span></div>
+</div>
+<div style="margin-top:auto;font-size:1.069cqw;line-height:1.45;color:#33495E;background:#F4F7FA;border-radius:0.712cqw;padding:0.801cqw 0.98cqw"><strong>Limite:</strong> considera apenas os registros que o usuário pode ver.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.603cqw">
+<div style="display:flex;align-items:center;gap:0.89cqw"><span style="width:2.671cqw;height:2.671cqw;border-radius:0.712cqw;background:#062A4D;color:#5FD3BC;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.247cqw">C</span><span style="font-size:1.425cqw;font-weight:800;line-height:1.2">Assistente de políticas internas</span></div>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;font-size:1.158cqw;line-height:1.4">
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Responde com base nos materiais cadastrados pela empresa</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Indica a fonte da resposta</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Encaminha ao RH quando não encontra informação suficiente</span></div>
+<div style="display:flex;gap:0.712cqw"><span style="color:#1E9C86;font-weight:800">✓</span><span>Respeita as permissões dos documentos</span></div>
+</div>
+<div style="margin-top:auto;font-size:1.069cqw;line-height:1.45;color:#33495E;background:#F4F7FA;border-radius:0.712cqw;padding:0.801cqw 0.98cqw"><strong>Limite:</strong> não substitui orientação jurídica nem toma decisões sobre funcionários.</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.712cqw">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Estados visíveis ao usuário</span><span style="font-size:1.069cqw;font-weight:700;color:#0A2A4A">O trabalho manual permanece disponível em todas as etapas.</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.89cqw;font-size:1.024cqw;line-height:1.4">
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #CFE6F8;background:#EAF4FC;border-radius:0.801cqw;padding:0.89cqw 1.069cqw"><span style="display:flex;align-items:center;gap:0.534cqw;font-weight:800;color:#085087"><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;border:0.178cqw solid #085087;border-right-color:transparent"></span>Processando</span><span style="color:#33495E">Lendo o documento. O RH pode seguir manualmente.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #F3C8BE;background:#FDF0EC;border-radius:0.801cqw;padding:0.89cqw 1.069cqw"><span style="display:flex;align-items:center;gap:0.534cqw;font-weight:800;color:#9E3422"><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#C2412D"></span>Falha</span><span style="color:#33495E">Não foi possível ler o arquivo. Conferência manual disponível.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #F0D9A8;background:#FCF5E6;border-radius:0.801cqw;padding:0.89cqw 1.069cqw"><span style="display:flex;align-items:center;gap:0.534cqw;font-weight:800;color:#7A4E0A"><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#D9961F"></span>Aguardando revisão</span><span style="color:#33495E">5 campos extraídos, 1 divergência para conferir.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #BFE6DC;background:#E3F5F1;border-radius:0.801cqw;padding:0.89cqw 1.069cqw"><span style="display:flex;align-items:center;gap:0.534cqw;font-weight:800;color:#0D6B5B"><span style="width:0.712cqw;height:0.712cqw;border-radius:50%;background:#1E9C86"></span>Revisado</span><span style="color:#33495E">Confirmado por Juliana Ribeiro (RH) em 03/10, 15:02.</span></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP</span><span>10 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="11 Portal do colaborador" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.603cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>11 — Portal do colaborador e assistente</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 22.262cqw 22.262cqw;gap:2.671cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.404cqw;line-height:1.14;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">No celular, o colaborador sabe o que falta e onde buscar respostas.</h2>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;font-size:1.158cqw;line-height:1.45">
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Pendências pessoais</strong><span style="color:#4A5B70">Documentos a enviar e correções pedidas pelo RH.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Solicitações e respostas</strong><span style="color:#4A5B70">Status de cada pedido, sem precisar perguntar.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Atualizações cadastrais</strong><span style="color:#4A5B70">Alterações passam pela validação do RH.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px;padding-bottom:0.801cqw;border-bottom:1px solid #EEF2F6"><strong>Checklist de integração</strong><span style="color:#4A5B70">Etapas dos primeiros dias, com confirmação.</span></div>
+<div style="display:flex;flex-direction:column;gap:1px"><strong>Assistente de políticas</strong><span style="color:#4A5B70">Responde com a fonte, ou encaminha ao RH.</span></div>
+</div>
+<span style="margin-top:auto;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D">NOMES E CONTEÚDO DAS POLÍTICAS SÃO FICTÍCIOS</span>
+</div>
+<div style="display:flex;flex-direction:column;border:0.623cqw solid #0C1E33;border-radius:2.671cqw;background:#F4F7FA;overflow:hidden;box-shadow:0 1.603cqw 3.206cqw -1.425cqw rgba(8,53,95,0.4)">
+<div style="display:flex;flex-direction:column;gap:0.178cqw;background:#062A4D;color:#FFFFFF;padding:1.959cqw 1.425cqw 1.247cqw"><span style="font-size:0.846cqw;color:#9CC9EE">Metalúrgica Serra Azul</span><span style="font-size:1.425cqw;font-weight:800">Olá, Rafael</span></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0.89cqw;padding:1.069cqw">
+<span style="font-size:0.89cqw;font-weight:800;color:#4A5B70;letter-spacing:0.04em">PENDÊNCIAS · 2</span>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;background:#FFFFFF;border:1px solid #F3C8BE;border-radius:0.89cqw;padding:0.89cqw"><span style="font-size:1.024cqw;font-weight:800">Reenviar comprovante de residência</span><span style="font-size:0.89cqw;color:#9E3422">Correção solicitada: documento com mais de 90 dias</span><span style="align-self:flex-start;margin-top:0.356cqw;background:#085087;color:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 0.89cqw;font-size:0.89cqw;font-weight:700">Enviar foto ou PDF</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:0.89cqw;padding:0.89cqw"><span style="font-size:1.024cqw;font-weight:800">Confirmar dados bancários</span><span style="font-size:0.89cqw;color:#4A5B70">Prazo: 10/10</span></div>
+<span style="font-size:0.89cqw;font-weight:800;color:#4A5B70;letter-spacing:0.04em;margin-top:0.178cqw">INTEGRAÇÃO · 2 DE 5</span>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:0.89cqw;padding:0.89cqw;font-size:0.935cqw">
+<span style="height:0.445cqw;border-radius:0.267cqw;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:40%;height:100%;background:#1E9C86"></span></span>
+<span><span style="color:#1E9C86;font-weight:800">✓</span> Boas-vindas da equipe</span><span><span style="color:#1E9C86;font-weight:800">✓</span> Leitura do código de conduta</span><span style="color:#4A5B70">○ Treinamento de segurança</span>
+</div>
+<div style="display:flex;justify-content:space-between;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:0.89cqw;padding:0.801cqw 0.89cqw;font-size:0.935cqw"><span style="font-weight:700">Declaração de vínculo</span><span style="color:#085087;font-weight:700">Em execução</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #E6ECF2;padding:0.712cqw 0.356cqw 0.89cqw;font-size:0.801cqw;text-align:center;color:#4A5B70"><span style="color:#085087;font-weight:800">Início</span><span>Documentos</span><span>Pedidos</span><span>Assistente</span></div>
+</div>
+<div style="display:flex;flex-direction:column;border:0.623cqw solid #0C1E33;border-radius:2.671cqw;background:#FFFFFF;overflow:hidden;box-shadow:0 1.603cqw 3.206cqw -1.425cqw rgba(8,53,95,0.4)">
+<div style="display:flex;flex-direction:column;gap:0.178cqw;background:#062A4D;color:#FFFFFF;padding:1.959cqw 1.425cqw 1.247cqw"><span style="font-size:0.846cqw;color:#9CC9EE">Baseado nos materiais da empresa</span><span style="font-size:1.425cqw;font-weight:800">Assistente</span></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0.801cqw;padding:1.069cqw;font-size:0.935cqw;line-height:1.45;background:#F4F7FA">
+<span style="align-self:flex-end;max-width:85%;background:#085087;color:#FFFFFF;border-radius:1.069cqw 1.069cqw 0.267cqw 1.069cqw;padding:0.712cqw 0.89cqw">Com quanto tempo de antecedência peço férias?</span>
+<div style="align-self:flex-start;max-width:92%;display:flex;flex-direction:column;gap:0.534cqw;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:1.069cqw 1.069cqw 1.069cqw 0.267cqw;padding:0.801cqw 0.89cqw"><span>Pela política da empresa, o pedido deve ser feito pelo portal com pelo menos 45 dias de antecedência e aprovado pelo gestor.</span><span style="align-self:flex-start;background:#E3F5F1;color:#0B4F43;border-radius:0.445cqw;padding:0.267cqw 0.623cqw;font-size:0.846cqw;font-weight:700">Fonte: Política de Férias 2026 · item 2.1</span></div>
+<span style="align-self:flex-end;max-width:85%;background:#085087;color:#FFFFFF;border-radius:1.069cqw 1.069cqw 0.267cqw 1.069cqw;padding:0.712cqw 0.89cqw">Posso trocar o dia da minha folga?</span>
+<div style="align-self:flex-start;max-width:92%;display:flex;flex-direction:column;gap:0.534cqw;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:1.069cqw 1.069cqw 1.069cqw 0.267cqw;padding:0.801cqw 0.89cqw"><span>Não encontrei essa informação nos materiais cadastrados pela empresa.</span><span style="align-self:flex-start;border:1px solid #085087;color:#085087;border-radius:0.534cqw;padding:0.445cqw 0.801cqw;font-size:0.846cqw;font-weight:700">Encaminhar ao RH</span></div>
+<span style="margin-top:auto;font-size:0.801cqw;color:#4A5B70;text-align:center">Não substitui orientação jurídica.</span>
+</div>
+<div style="display:flex;align-items:center;gap:0.534cqw;padding:0.801cqw 0.89cqw 0.98cqw;border-top:1px solid #E6ECF2"><span style="flex:1;border:1px solid #D8E1EB;border-radius:88.958cqw;padding:0.534cqw 0.89cqw;font-size:0.846cqw;color:#6B7A8D">Pergunte sobre políticas internas</span></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Mockups: portal no celular e assistente</span><span>11 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="12 Painéis e alertas" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.603cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>12 — Painéis e alertas</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#E3F5F1;color:#0D6B5B;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#1E9C86"></span>Escopo do MVP</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 22.262cqw;gap:2.315cqw;min-height:0">
+<div style="display:flex;flex-direction:column;border:1px solid #D3DDE8;border-radius:0.89cqw;background:#FFFFFF;box-shadow:0 1.247cqw 3.028cqw -1.247cqw rgba(8,53,95,0.28);overflow:hidden;min-height:0">
+<div style="display:flex;align-items:center;gap:0.89cqw;height:2.85cqw;padding:0 1.247cqw;border-bottom:1px solid #E6ECF2"><img src="assets/catalyst-symbol.png" alt="" style="height:1.336cqw"><span style="font-size:0.935cqw;color:#4A5B70">Metalúrgica Serra Azul › Painel do RH</span><span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:0.757cqw;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:0.178cqw 0.534cqw;border-radius:0.356cqw">NÚMEROS FICTÍCIOS</span></div>
+<div style="flex:1;display:grid;grid-template-columns:10.508cqw 1fr;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.267cqw;background:#F4F7FA;border-right:1px solid #E6ECF2;padding:1.069cqw 0.712cqw;font-size:0.935cqw;color:#33495E"><span style="background:#062A4D;color:#FFFFFF;padding:0.534cqw 0.712cqw;border-radius:0.534cqw;font-weight:700">Painel</span><span style="padding:0.534cqw 0.712cqw">Colaboradores</span><span style="padding:0.534cqw 0.712cqw">Admissões</span><span style="padding:0.534cqw 0.712cqw">Documentos</span><span style="padding:0.534cqw 0.712cqw">Solicitações</span><span style="padding:0.534cqw 0.712cqw">Tarefas</span></div>
+<div style="display:flex;flex-direction:column;gap:0.98cqw;padding:1.247cqw 1.425cqw;min-height:0">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.623cqw">
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#4A5B70;min-height:1.959cqw">Admissões em andamento</div><div style="font-size:1.692cqw;font-weight:800">3</div></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#4A5B70;min-height:1.959cqw">Documentos pendentes</div><div style="font-size:1.692cqw;font-weight:800">7</div></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#4A5B70;min-height:1.959cqw">Aprovações aguardando</div><div style="font-size:1.692cqw;font-weight:800">4</div></div>
+<div style="border:1px solid #F3C8BE;background:#FFF8F6;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#9E3422;min-height:1.959cqw">Tarefas atrasadas</div><div style="font-size:1.692cqw;font-weight:800;color:#9E3422">2</div></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#4A5B70;min-height:1.959cqw">Vencimentos em 30 dias</div><div style="font-size:1.692cqw;font-weight:800">5</div></div>
+<div style="border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.801cqw"><div style="font-size:0.801cqw;line-height:1.25;color:#4A5B70;min-height:1.959cqw">Colaboradores ativos</div><div style="font-size:1.692cqw;font-weight:800">46</div></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0.89cqw;min-height:0">
+<div style="display:flex;flex-direction:column;border:1px solid #E6ECF2;border-radius:0.712cqw;overflow:hidden;font-size:0.935cqw">
+<div style="padding:0.712cqw 0.98cqw;font-weight:800;font-size:0.98cqw;border-bottom:1px solid #EEF2F6">Pendências por unidade</div>
+<div style="display:grid;grid-template-columns:1.5fr 0.7fr 0.7fr 0.7fr;padding:0.534cqw 0.98cqw;background:#F4F7FA;color:#4A5B70;font-weight:700;font-size:0.846cqw"><span>Unidade</span><span>Docs</span><span>Aprov.</span><span>Atraso</span></div>
+<div style="display:grid;grid-template-columns:1.5fr 0.7fr 0.7fr 0.7fr;padding:0.623cqw 0.98cqw;border-top:1px solid #EEF2F6"><span style="font-weight:700">Caxias do Sul</span><span>2</span><span>3</span><span>0</span></div>
+<div style="display:grid;grid-template-columns:1.5fr 0.7fr 0.7fr 0.7fr;padding:0.623cqw 0.98cqw;border-top:1px solid #EEF2F6"><span style="font-weight:700">Bento Gonçalves</span><span>5</span><span>1</span><span style="color:#9E3422;font-weight:700">2</span></div>
+<div style="padding:0.712cqw 0.98cqw;font-weight:800;font-size:0.98cqw;border-top:1px solid #EEF2F6">Próximos vencimentos</div>
+<div style="display:grid;grid-template-columns:1.5fr 1fr;padding:0.534cqw 0.98cqw;border-top:1px solid #EEF2F6"><span>ASO periódico · Lívia Prado</span><span style="color:#7A4E0A;font-weight:700">18/10</span></div>
+<div style="display:grid;grid-template-columns:1.5fr 1fr;padding:0.534cqw 0.98cqw;border-top:1px solid #EEF2F6"><span>CNH · Marcos Teles</span><span style="color:#7A4E0A;font-weight:700">02/11</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.623cqw;background:#062A4D;color:#FFFFFF;border-radius:0.712cqw;padding:0.98cqw 1.069cqw;font-size:0.935cqw;line-height:1.45">
+<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:800;font-size:0.98cqw"><span style="color:#5FD3BC">●</span> Resumo operacional · IA</span><span style="font-size:0.801cqw;color:#9CC9EE">hoje, 08:00</span></div>
+<span><strong>2 admissões paradas</strong> há mais de 3 dias: <span style="color:#9CDBF5;text-decoration:underline">Rafael M. Campos</span> (correção pendente) e <span style="color:#9CDBF5;text-decoration:underline">Lívia S. Prado</span> (ASO).</span>
+<span><strong>5 documentos faltantes</strong> na unidade Bento Gonçalves, 2 com prazo vencido.</span>
+<span><strong>4 aprovações</strong> aguardando gestores; a mais antiga desde 01/10.</span>
+<span style="margin-top:auto;color:#9CDBF5;font-weight:700">Ver os 11 registros usados →</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.137cqw;line-height:1.15;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">O que precisa de atenção, sem montar relatório.</h2>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Notificações</span>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;font-size:1.024cqw">
+<div style="display:flex;flex-direction:column;gap:0.178cqw;border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.89cqw"><span style="font-weight:800">Por e-mail</span><span style="color:#4A5B70">“Você tem 2 aprovações aguardando”</span></div>
+<div style="display:flex;flex-direction:column;gap:0.178cqw;border:1px solid #E6ECF2;border-radius:0.712cqw;padding:0.712cqw 0.89cqw"><span style="font-weight:800">Dentro da plataforma</span><span style="color:#4A5B70">“Comprovante reenviado por Rafael M. Campos”</span></div>
+</div></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">Exportação</span><span style="font-size:1.113cqw;line-height:1.45;color:#33495E">Exportação de dados que o usuário tem permissão para ver.</span></div>
+<p style="margin:auto 0 0;font-size:1.113cqw;line-height:1.5;color:#4A5B70"><strong style="color:#0C1E33">Benefício:</strong> o RH começa o dia pelas pendências reais, com link para cada registro.</p>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #E6ECF2;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Mockup: dashboard do RH · todos os números são fictícios</span><span>12 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="13 Modelo comercial" style="background:#FFFCF6;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #EADFC8"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>13 — Modelo comercial proposto</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.356cqw 0.801cqw;border-radius:88.958cqw;background:#FCF1DC;color:#7A4E0A;font-weight:600"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;background:#D9961F"></span>Hipótese comercial</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><h2 style="margin:0;font-size:2.671cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Uma hipótese de preço para validar no piloto.</h2><p style="margin:0;font-size:1.336cqw;line-height:1.5;color:#4A5B70">Valores de referência para teste com parceiros. Não constituem tabela comercial definitiva.</p></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr 1.15fr;gap:1.425cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#FFFFFF;border:1px solid #EADFC8;border-radius:1.069cqw;padding:1.781cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#7A4E0A">Inicial</span>
+<div style="display:flex;align-items:baseline;gap:0.356cqw"><span style="font-size:2.671cqw;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">R$ 1.490</span><span style="font-size:1.158cqw;color:#4A5B70">/mês</span></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;border-top:1px solid #F1E8D6;padding-top:0.89cqw;font-size:1.202cqw;line-height:1.4"><span>Até <strong>5 empresas</strong></span><span>Até <strong>150 colaboradores ativos</strong> no total</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#FFFFFF;border:1px solid #EADFC8;border-radius:1.069cqw;padding:1.781cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#7A4E0A">Expansão</span>
+<div style="display:flex;align-items:baseline;gap:0.356cqw"><span style="font-size:2.671cqw;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">R$ 2.490</span><span style="font-size:1.158cqw;color:#4A5B70">/mês</span></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;border-top:1px solid #F1E8D6;padding-top:0.89cqw;font-size:1.202cqw;line-height:1.4"><span>Até <strong>15 empresas</strong></span><span>Até <strong>500 colaboradores ativos</strong> no total</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#FFFFFF;border:1px solid #EADFC8;border-radius:1.069cqw;padding:1.781cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#7A4E0A">Escala</span>
+<div style="display:flex;align-items:baseline;gap:0.356cqw"><span style="font-size:2.671cqw;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Sob proposta</span></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw;border-top:1px solid #F1E8D6;padding-top:0.89cqw;font-size:1.202cqw;line-height:1.4"><span>Volumes acima do plano Expansão</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw;background:#062A4D;color:#FFFFFF;border-radius:1.069cqw;padding:1.781cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#F2C46D">Implantação estimada para teste</span>
+<span style="font-size:2.315cqw;font-weight:800;letter-spacing:-0.02em;line-height:1.15">R$ 4.000 a R$ 8.000</span>
+<span style="font-size:1.158cqw;line-height:1.5;color:#D6E5F2;border-top:1px solid #24507A;padding-top:0.89cqw">Conforme marca, domínio, importação de dados e treinamento.</span>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.425cqw">
+<div style="display:flex;gap:1.069cqw;align-items:flex-start;border:1px dashed #D9B36A;border-radius:0.89cqw;padding:1.247cqw 1.425cqw;font-size:1.202cqw;line-height:1.5"><span style="font-weight:800;color:#7A4E0A">01</span><span>Armazenamento, uso de IA, suporte e excedentes terão limites definidos <strong>antes da contratação</strong>.</span></div>
+<div style="display:flex;gap:1.069cqw;align-items:flex-start;border:1px dashed #D9B36A;border-radius:0.89cqw;padding:1.247cqw 1.425cqw;font-size:1.202cqw;line-height:1.5"><span style="font-weight:800;color:#7A4E0A">02</span><span>Personalizações e integrações são <strong>cobradas separadamente</strong>.</span></div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #EADFC8;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Hipótese para validação</span><span>13 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="14 Limites do MVP" style="background:#F6F8FA;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 1.959cqw;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>14 — Limites do MVP</span><span style="display:inline-flex;align-items:center;gap:0.534cqw;padding:0.267cqw 0.712cqw;border-radius:88.958cqw;background:#EEF1F5;color:#3E4E61;font-weight:600;border:1px dashed #8C9AAB"><span style="width:0.534cqw;height:0.534cqw;border-radius:50%;border:1.5px solid #6B7A8D"></span>Etapa futura</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.534cqw"><h2 style="margin:0;font-size:2.671cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">O que fica para etapas posteriores.</h2><p style="margin:0;font-size:1.336cqw;line-height:1.5;color:#4A5B70">Nenhum destes itens faz parte da primeira entrega. A ordem de evolução será definida com base no piloto.</p></div>
+<div style="flex:1;display:grid;grid-template-columns:1.6fr 1fr;gap:2.315cqw;min-height:0">
+<div style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:0.89cqw">
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F1</span>Folha de pagamento</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F2</span>Ponto eletrônico</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F3</span>Recrutamento</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F4</span>Avaliação de desempenho</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F5</span>Assinatura digital</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F6</span>WhatsApp</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F7</span>Integrações contábeis e obrigações oficiais</div>
+<div style="display:flex;align-items:center;gap:1.069cqw;border:1px dashed #9AA7B6;border-radius:0.89cqw;padding:1.069cqw 1.425cqw;background:#FFFFFF;font-size:1.336cqw;font-weight:700;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#6B7A8D">F8</span>Cobrança automática entre parceiro e empresas</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.069cqw;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:1.069cqw;padding:1.781cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#0D6B5B">Como o MVP trata esses pontos</span>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;padding-bottom:0.98cqw;border-bottom:1px solid #EEF2F6"><span style="font-size:1.202cqw;font-weight:800">Contabilidade</span><span style="font-size:1.113cqw;line-height:1.45;color:#4A5B70">Encaminhamento e recebimento registrados manualmente no sistema.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;padding-bottom:0.98cqw;border-bottom:1px solid #EEF2F6"><span style="font-size:1.202cqw;font-weight:800">Férias e desligamento</span><span style="font-size:1.113cqw;line-height:1.45;color:#4A5B70">Fluxos administrativos, sem cálculo de verbas, direitos ou obrigações.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw;padding-bottom:0.98cqw;border-bottom:1px solid #EEF2F6"><span style="font-size:1.202cqw;font-weight:800">Documentos</span><span style="font-size:1.113cqw;line-height:1.45;color:#4A5B70">Envio, revisão e validação na plataforma, sem assinatura digital.</span></div>
+<div style="display:flex;flex-direction:column;gap:0.356cqw"><span style="font-size:1.202cqw;font-weight:800">Cobrança dos clientes</span><span style="font-size:1.113cqw;line-height:1.45;color:#4A5B70">Feita pelo parceiro, fora da plataforma.</span></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding-top:0.89cqw;border-top:1px solid #D8E1EB;font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#6B7A8D"><span>CatalystHR · Apresentação do produto e escopo do MVP · Itens futuros não estão disponíveis</span><span>14 / 15</span></div>
+</div>
+</section>
+
+<section class="page" data-screen-label="15 Piloto e evolução" style="background:#FFFFFF;color:#0C1E33;font-family:Manrope, sans-serif">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:2.85cqw 4.274cqw 0;gap:1.781cqw">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:1.069cqw;border-bottom:1px solid #D8E1EB"><div style="display:flex;align-items:center;gap:0.712cqw"><img src="assets/catalyst-symbol.png" alt="" style="height:1.959cqw"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:1.247cqw;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div><div style="display:flex;align-items:center;gap:1.069cqw;font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.08em;text-transform:uppercase;color:#4A5B70"><span>15 — Piloto e evolução</span></div></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1.35fr;gap:2.671cqw;min-height:0">
+<div style="display:flex;flex-direction:column;gap:1.247cqw">
+<h2 style="margin:0;font-size:2.493cqw;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Piloto com dois parceiros.</h2>
+<p style="margin:0;font-size:1.247cqw;line-height:1.5;color:#4A5B70">Cada parceiro começa com duas ou três empresas clientes.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.069cqw">
+<div style="display:flex;flex-direction:column;gap:0.712cqw;border:1px solid #BFE6DC;background:#E3F5F1;border-radius:1.069cqw;padding:1.247cqw"><span style="font-size:1.247cqw;font-weight:800;color:#0A2A4A">Parceiro 1</span><div style="display:flex;flex-direction:column;gap:0.445cqw;font-size:1.024cqw"><span style="background:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 0.801cqw">Empresa A</span><span style="background:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 0.801cqw">Empresa B</span><span style="border:1px dashed #7FBFB2;border-radius:0.534cqw;padding:0.445cqw 0.801cqw;color:#33495E">Empresa C (opcional)</span></div></div>
+<div style="display:flex;flex-direction:column;gap:0.712cqw;border:1px solid #BFE6DC;background:#E3F5F1;border-radius:1.069cqw;padding:1.247cqw"><span style="font-size:1.247cqw;font-weight:800;color:#0A2A4A">Parceiro 2</span><div style="display:flex;flex-direction:column;gap:0.445cqw;font-size:1.024cqw"><span style="background:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 0.801cqw">Empresa A</span><span style="background:#FFFFFF;border-radius:0.534cqw;padding:0.534cqw 0.801cqw">Empresa B</span><span style="border:1px dashed #7FBFB2;border-radius:0.534cqw;padding:0.445cqw 0.801cqw;color:#33495E">Empresa C (opcional)</span></div></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0.89cqw">
+<span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;letter-spacing:0.1em;text-transform:uppercase;color:#6B7A8D">O que vamos avaliar</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.89cqw">
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">01 · USO</span><span style="font-size:1.202cqw;font-weight:700">Uso dos fluxos de admissão e solicitações</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">02 · EFICIÊNCIA</span><span style="font-size:1.202cqw;font-weight:700">Tempo de conferência documental</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">03 · QUALIDADE DA IA</span><span style="font-size:1.202cqw;font-weight:700">Correções feitas nas sugestões da IA</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">04 · OPERAÇÃO</span><span style="font-size:1.202cqw;font-weight:700">Volume de suporte</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #D8E1EB;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#085087">05 · CUSTO</span><span style="font-size:1.202cqw;font-weight:700">Consumo de IA e armazenamento</span></div>
+<div style="display:flex;flex-direction:column;gap:0.267cqw;border:1px solid #F0D9A8;background:#FFFCF6;border-radius:0.89cqw;padding:1.069cqw 1.247cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.89cqw;color:#7A4E0A">06 · NEGÓCIO</span><span style="font-size:1.202cqw;font-weight:700">Disposição a pagar</span></div>
+</div>
+</div>
+</div>
+<div style="margin:0 -4.274cqw;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2.671cqw;background:#062A4D;color:#FFFFFF;padding:2.493cqw 4.274cqw 2.671cqw">
+<img src="assets/catalyst-symbol-dark.png" alt="" style="height:5.699cqw">
+<div style="display:flex;flex-direction:column;gap:0.712cqw"><span style="font-family:'JetBrains Mono', monospace;font-size:0.935cqw;letter-spacing:0.12em;text-transform:uppercase;color:#5FD3BC">Objetivo da primeira entrega</span><span style="font-size:2.137cqw;line-height:1.28;font-weight:800;letter-spacing:-0.015em;text-wrap:balance">Permitir que o parceiro coloque empresas em operação com sua marca e acompanhe os processos de RH de ponta a ponta.</span><span style="font-family:'JetBrains Mono', monospace;font-size:0.846cqw;color:#9CC9EE">CatalystHR · Apresentação do produto e escopo do MVP · 15 / 15</span></div>
+</div>
+</div>
+</section>
+
+</doc-page>
+</x-dc>
+</body>
+</html>

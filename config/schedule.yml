@@ -1,0 +1,7 @@
+# Scheduled jobs (sidekiq-cron, D-108). Times are in UTC.
+# Each spec adds its jobs here. Example:
+#
+# billing_daily_usage:
+#   cron: "0 4 * * *"            # 01:00 in Brasília
+#   class: "Billing::DailyUsageJob"
+#   queue: default

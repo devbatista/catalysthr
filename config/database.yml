@@ -1,0 +1,23 @@
+# PostgreSQL com pgvector (D-021, spec 20).
+# Desenvolvimento e teste usam o Postgres do compose.yml (porta 5433).
+# Produção usa DATABASE_URL, definida no Railway.
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  port: <%= ENV.fetch("DB_PORT", 5433) %>
+  username: <%= ENV.fetch("DB_USERNAME", "postgres") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "postgres") %>
+
+development:
+  <<: *default
+  database: catalyst_hr_development
+
+test:
+  <<: *default
+  database: catalyst_hr_test
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>

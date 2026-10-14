@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>CatalystHR — Telas do sistema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0;background:#F4F7FA;-webkit-font-smoothing:antialiased}
+a{color:#085087;text-decoration:none}a:hover{color:#0A6BB3;text-decoration:underline}
+input,button{font-family:inherit}
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh;font-family:Manrope, sans-serif;color:#0C1E33;background:#F4F7FA">
+
+<aside style="width:228px;flex-shrink:0;background:#062A4D;color:#D6E5F2;display:flex;flex-direction:column;gap:18px;padding:18px 12px;position:sticky;top:0;height:100vh;box-sizing:border-box;overflow-y:auto">
+<div style="display:flex;align-items:center;gap:8px;padding:0 6px"><img src="assets/catalyst-symbol-dark.png" alt="" style="height:26px"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:17px;color:#FFFFFF">CATALYST<span style="color:#5FD3BC">HR</span></span></div>
+<sc-for list="{{ nav }}" as="g" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:2px">
+<span style="font-family:'JetBrains Mono', monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7FA6CC;padding:0 10px 6px">{{ g.label }}</span>
+<sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+<button onClick="{{ it.go }}" style="display:flex;align-items:center;gap:8px;width:100%;border:0;cursor:pointer;text-align:left;padding:9px 10px;border-radius:7px;font-size:13.5px;font-weight:600;background:{{ it.bg }};color:{{ it.color }}" style-hover="{background:'#0F3E6E'}"><span style="flex:1">{{ it.label }}</span><sc-if value="{{ it.badge }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono', monospace;font-size:8.5px;letter-spacing:0.06em;padding:2px 5px;border-radius:4px;border:1px dashed #7FA6CC;color:#B8D3EA">FUTURO</span></sc-if></button>
+</sc-for>
+</div>
+</sc-for>
+<div style="margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px;border-top:1px solid #1C4870"><span style="width:30px;height:30px;border-radius:50%;background:#5FD3BC;color:#062A4D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">JR</span><span style="display:flex;flex-direction:column;font-size:12px;line-height:1.3"><strong style="color:#FFFFFF">Juliana Ribeiro</strong><span style="color:#9CC9EE">RH · Serra Azul</span></span></div>
+</aside>
+
+<main style="flex:1;min-width:0;display:flex;flex-direction:column">
+<header style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 28px;background:#FFFFFF;border-bottom:1px solid #D8E1EB;position:sticky;top:0;z-index:2">
+<span style="display:flex;align-items:center;gap:8px;border:1px solid #D8E1EB;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700">Metalúrgica Serra Azul <span style="color:#6B7A8D">▾</span></span>
+<span style="flex:1;min-width:180px;max-width:420px;border:1px solid #D8E1EB;background:#F4F7FA;border-radius:8px;padding:8px 12px;font-size:13px;color:#6B7A8D">Buscar colaborador, documento ou solicitação</span>
+<span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:10px;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:4px 8px;border-radius:5px">PROTÓTIPO · DADOS FICTÍCIOS</span>
+<span style="position:relative;width:34px;height:34px;border-radius:8px;border:1px solid #D8E1EB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#085087">7<span style="position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:#C2412D;border:2px solid #FFFFFF"></span></span>
+</header>
+
+<div style="padding:24px 28px 40px;display:flex;flex-direction:column;gap:18px">
+<sc-if value="{{ isFuture }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:10px;align-items:center;border:1px dashed #8C9AAB;background:#FFFFFF;border-radius:10px;padding:10px 14px;font-size:13px;color:#33495E"><span style="font-family:'JetBrains Mono', monospace;font-size:10px;letter-spacing:0.08em;padding:3px 7px;border-radius:4px;background:#EEF1F5;color:#3E4E61">ETAPA FUTURA</span><span>Módulo proposto para depois do MVP. Tela conceitual para validação com parceiros.</span></div>
+</sc-if>
+
+<sc-if value="{{ s.painel }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div style="font-size:13px;color:#4A5B70">Sábado, 10 de outubro</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Painel do RH</h1></div><div style="display:flex;gap:8px"><button style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:#0A2A4A;cursor:pointer">Exportar</button><button onClick="{{ goAdm }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Nova admissão</button></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+<div style="background:#FFFFFF;border:1px solid {{ k.border }};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4A5B70">{{ k.label }}</span><span style="font-size:26px;font-weight:800;color:{{ k.color }}">{{ k.value }}</span><span style="font-size:11.5px;color:#6B7A8D">{{ k.sub }}</span></div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+<div style="background:#062A4D;color:#FFFFFF;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.5">
+<div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-size:15px"><span style="color:#5FD3BC">●</span> Resumo operacional · IA</strong><span style="font-size:11.5px;color:#9CC9EE">gerado hoje, 08:00</span></div>
+<span><strong>2 admissões paradas</strong> há mais de 3 dias: <a onClick="{{ goAdm }}" style="color:#9CDBF5;text-decoration:underline;cursor:pointer">Rafael M. Campos</a> (correção pendente) e <a onClick="{{ goAdm }}" style="color:#9CDBF5;text-decoration:underline;cursor:pointer">Lívia S. Prado</a> (ASO).</span>
+<span><strong>5 documentos faltantes</strong> na unidade Bento Gonçalves, 2 com prazo vencido.</span>
+<span><strong>4 aprovações</strong> aguardando gestores; a mais antiga desde 01/10.</span>
+<span style="font-size:12px;color:#9CC9EE;border-top:1px solid #24507A;padding-top:10px">Sugestão baseada nos registros que você pode ver. Confira antes de agir.</span>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden">
+<div style="padding:14px 16px;font-weight:800;font-size:14px;border-bottom:1px solid #EEF2F6">Pendências por unidade</div>
+<div style="display:grid;grid-template-columns:1.6fr repeat(3,0.8fr);padding:9px 16px;background:#F4F7FA;font-size:12px;font-weight:700;color:#4A5B70"><span>Unidade</span><span>Documentos</span><span>Aprovações</span><span>Atrasos</span></div>
+<div style="display:grid;grid-template-columns:1.6fr repeat(3,0.8fr);padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><strong>Caxias do Sul</strong><span>2</span><span>3</span><span>0</span></div>
+<div style="display:grid;grid-template-columns:1.6fr repeat(3,0.8fr);padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><strong>Bento Gonçalves</strong><span>5</span><span>1</span><span style="color:#9E3422;font-weight:800">2</span></div>
+<div style="padding:12px 16px 6px;font-weight:800;font-size:14px;border-top:1px solid #EEF2F6">Próximos vencimentos</div>
+<div style="display:flex;justify-content:space-between;padding:8px 16px;font-size:13px"><span>ASO periódico · Lívia Prado</span><span style="color:#7A4E0A;font-weight:700">18/10</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 16px 14px;font-size:13px"><span>CNH · Marcos Teles</span><span style="color:#7A4E0A;font-weight:700">02/11</span></div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<strong style="font-size:14px">Atividade recente</strong>
+<sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:44px 1fr;gap:10px;font-size:13px;line-height:1.4"><span style="font-family:'JetBrains Mono', monospace;font-size:11px;color:#6B7A8D;padding-top:2px">{{ a.t }}</span><span>{{ a.text }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.colaboradores }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Colaboradores</h1><button style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Convidar colaborador</button></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600"><span style="background:#062A4D;color:#FFFFFF;border-radius:999px;padding:6px 12px">Todos · 46</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px">Caxias do Sul · 31</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px">Bento Gonçalves · 15</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px">Com pendências · 9</span></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow-x:auto">
+<div style="min-width:760px">
+<div style="display:grid;grid-template-columns:2fr 1.4fr 1.2fr 1.3fr 1fr 0.8fr;padding:10px 16px;background:#F4F7FA;font-size:12px;font-weight:700;color:#4A5B70"><span>Nome</span><span>Cargo</span><span>Unidade</span><span>Gestor</span><span>Situação</span><span>Pendências</span></div>
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:2fr 1.4fr 1.2fr 1.3fr 1fr 0.8fr;align-items:center;padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><span style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">{{ p.ini }}</span><strong>{{ p.name }}</strong></span><span>{{ p.role }}</span><span>{{ p.unit }}</span><span>{{ p.mgr }}</span><span style="justify-self:start;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ p.bg }};color:{{ p.fg }}">{{ p.status }}</span><span>{{ p.pend }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.admissoes }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Admissões</h1>
+<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700">
+<span style="background:#085087;color:#FFFFFF;border-radius:7px;padding:7px 11px">1 Cadastro inicial</span><span style="background:#085087;color:#FFFFFF;border-radius:7px;padding:7px 11px">2 Envio de documentos</span><span style="background:#1E9C86;color:#FFFFFF;border-radius:7px;padding:7px 11px">3 Processamento pela IA</span><span style="background:#FFFFFF;border:1.5px solid #085087;color:#085087;border-radius:7px;padding:6px 10px">4 Revisão do RH</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;color:#4A5B70;border-radius:7px;padding:7px 11px">5 Contabilidade</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;color:#4A5B70;border-radius:7px;padding:7px 11px">6 Conclusão</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden">
+<div style="padding:12px 16px;font-size:12px;font-weight:700;color:#4A5B70;background:#F4F7FA">Em andamento · 3</div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-left:3px solid #085087;background:#EAF4FC"><strong style="font-size:14px">Rafael Moura Campos</strong><span style="font-size:12px;color:#4A5B70">Auxiliar de produção · início 15/10</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-top:1px solid #EEF2F6"><strong style="font-size:14px">Lívia Santos Prado</strong><span style="font-size:12px;color:#4A5B70">Analista de qualidade · início 20/10</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-top:1px solid #EEF2F6"><strong style="font-size:14px">Diego Alves Rocha</strong><span style="font-size:12px;color:#4A5B70">Operador de máquinas · início 03/11</span></div>
+</div>
+<div style="grid-column:span 2;min-width:0;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="width:42px;height:42px;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800">RC</span><div style="display:flex;flex-direction:column"><strong style="font-size:17px">Rafael Moura Campos</strong><span style="font-size:12.5px;color:#4A5B70">Auxiliar de produção · Unidade Caxias do Sul · Modelo: Admissão CLT padrão</span></div><div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span style="font-size:12.5px;font-weight:700;color:#085087">{{ admDone }} de {{ admTotal }} concluídos</span><span style="width:160px;height:7px;border-radius:4px;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;height:100%;background:#085087;width:{{ admPct }}"></span></span></div></div>
+<div style="border:1px solid #E6ECF2;border-radius:10px;overflow:hidden">
+<sc-for list="{{ checklist }}" as="c" hint-placeholder-count="6">
+<div onClick="{{ c.toggle }}" style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid #EEF2F6;cursor:pointer;font-size:13px;background:{{ c.rowBg }}" style-hover="{background:'#F4F7FA'}"><span style="width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFFFFF;background:{{ c.boxBg }};border:1.5px solid {{ c.boxBorder }}">{{ c.mark }}</span><span style="display:flex;flex-direction:column;gap:1px"><strong>{{ c.label }}</strong><span style="font-size:12px;color:#4A5B70">{{ c.resp }} · prazo {{ c.due }}</span></span><span style="padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ c.bg }};color:{{ c.fg }}">{{ c.status }}</span></div>
+</sc-for>
+</div>
+<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:#0A2A4A;cursor:pointer">Lembrar colaborador</button><button style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Registrar envio à contabilidade</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.documentos }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div><div style="font-size:13px;color:#4A5B70">Rafael Moura Campos › Documentos › Pessoais</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Revisão de documento</h1></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600"><span style="background:#062A4D;color:#FFFFFF;border-radius:7px;padding:6px 12px">Pessoais · 4</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:7px;padding:6px 12px">Admissão · 6</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:7px;padding:6px 12px">Saúde · 1</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:7px;padding:6px 12px">Declarações · 2</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="min-height:340px;border-radius:8px;border:1px solid #D3DDE8;background:repeating-linear-gradient(135deg,#FFFFFF 0 10px,#EEF2F6 10px 20px);display:flex;align-items:center;justify-content:center"><span style="font-family:'JetBrains Mono', monospace;font-size:12px;color:#4A5B70;background:#FFFFFF;padding:6px 10px;border-radius:5px;text-align:center">prévia do documento enviado<br>RG frente e verso · imagem fictícia</span></div>
+<span style="font-size:12.5px;color:#4A5B70"><strong style="color:#0C1E33">Versão 2</strong> · enviada em 03/10 às 14:22 · versão 1 substituída (imagem ilegível)</span>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#E3F5F1;border:1px solid #BFE6DC;border-radius:9px;padding:11px 13px;display:flex;flex-direction:column;gap:3px"><strong style="font-size:13.5px;color:#0B4F43">Sugestão da IA · Documento de identidade (RG)</strong><span style="font-size:12.5px;color:#245E53">Confira os campos antes de confirmar. A IA não comprova a autenticidade do documento.</span></div>
+<div style="border:1px solid #E6ECF2;border-radius:9px;overflow:hidden;font-size:13px">
+<div style="display:grid;grid-template-columns:1fr 1.2fr 1.2fr 0.9fr;padding:9px 12px;background:#F4F7FA;font-size:11.5px;font-weight:700;color:#4A5B70"><span>Campo</span><span>Extraído</span><span>No cadastro</span><span>Resultado</span></div>
+<sc-for list="{{ fields }}" as="f" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:1fr 1.2fr 1.2fr 0.9fr;padding:10px 12px;border-top:1px solid #EEF2F6;align-items:center;background:{{ f.rowBg }}"><span style="color:#4A5B70">{{ f.k }}</span><span style="font-weight:700;color:{{ f.exColor }}">{{ f.ex }}</span><span>{{ f.cad }}</span><span style="font-weight:700;font-size:12px;color:{{ f.rc }}">{{ f.r }}</span></div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:#4A5B70;border-left:2px solid #D8E1EB;padding-left:10px"><span>03/10 14:22 · Enviado pelo colaborador</span><span>03/10 14:23 · Processado pela IA</span><span style="font-weight:800;color:{{ docStateColor }}">{{ docStateLabel }}</span></div>
+<div style="margin-top:auto;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button onClick="{{ docCorrect }}" style="border:1px solid #E3A99C;background:#FFFFFF;color:#9E3422;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Solicitar correção</button><button onClick="{{ docConfirm }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Confirmar dados</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.solicitacoes }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Solicitações</h1><button style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Nova solicitação</button></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden">
+<sc-for list="{{ reqList }}" as="r" hint-placeholder-count="5">
+<div onClick="{{ r.select }}" style="display:flex;flex-direction:column;gap:4px;padding:12px 16px;border-bottom:1px solid #EEF2F6;cursor:pointer;background:{{ r.rowBg }};border-left:3px solid {{ r.edge }}"><span style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:#6B7A8D;font-family:'JetBrains Mono', monospace"><span>{{ r.id }}</span><span>{{ r.date }}</span></span><strong style="font-size:14px">{{ r.type }} · {{ r.who }}</strong><span style="align-self:flex-start;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ r.bg }};color:{{ r.fg }}">{{ r.status }}</span></div>
+</sc-for>
+</div>
+<div style="grid-column:span 2;min-width:0;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><strong style="font-size:18px">{{ req.type }} · {{ req.who }}</strong><span style="padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:{{ req.bg }};color:{{ req.fg }}">{{ req.status }}</span><span style="margin-left:auto;font-family:'JetBrains Mono', monospace;font-size:12px;color:#6B7A8D">{{ req.id }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;background:#F4F7FA;border-radius:9px;padding:12px 14px;font-size:12.5px"><span style="display:flex;flex-direction:column"><span style="color:#6B7A8D">Responsável atual</span><strong>{{ req.owner }}</strong></span><span style="display:flex;flex-direction:column"><span style="color:#6B7A8D">Detalhe</span><strong>{{ req.detail }}</strong></span><span style="display:flex;flex-direction:column"><span style="color:#6B7A8D">Prazo de resposta</span><strong>{{ req.due }}</strong></span></div>
+<div style="display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:1.5">
+<div style="display:grid;grid-template-columns:32px 1fr;gap:10px"><span style="width:30px;height:30px;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">{{ req.ini }}</span><span><strong>{{ req.who }}</strong> abriu a solicitação<br><span style="color:#33495E">{{ req.msg }}</span></span></div>
+<div style="display:grid;grid-template-columns:32px 1fr;gap:10px"><span style="width:30px;height:30px;border-radius:50%;background:#E3F5F1;color:#0D6B5B;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">JR</span><span><strong>Juliana Ribeiro (RH)</strong> comentou<br><span style="color:#33495E">Registrado. Encaminhado ao responsável.</span></span></div>
+<div style="display:grid;grid-template-columns:32px 1fr;gap:10px;background:#FFF6E5;border:1px solid #F0D9A8;border-radius:9px;padding:10px"><span style="width:30px;height:30px;border-radius:50%;background:#F0D9A8;color:#7A4E0A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">JR</span><span><strong style="color:#7A4E0A">Nota interna · não visível ao colaborador</strong><br><span style="color:#5C3D0A">Confirmar com a unidade antes de concluir.</span></span></div>
+<sc-if value="{{ req.decided }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:32px 1fr;gap:10px"><span style="width:30px;height:30px;border-radius:50%;background:#EEF1F5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3E4E61">✓</span><span>Status alterado para <strong>{{ req.status }}</strong> · agora</span></div></sc-if>
+</div>
+<div style="display:flex;gap:8px;align-items:center;border:1px solid #D8E1EB;border-radius:9px;padding:6px 6px 6px 12px"><span style="flex:1;font-size:13px;color:#6B7A8D">Escreva um comentário ou nota interna</span><span style="font-size:12px;font-weight:700;color:#4A5B70;padding:6px 10px;border-radius:6px;background:#F4F7FA">Anexar</span></div>
+<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button onClick="{{ reqReject }}" style="border:1px solid #E3A99C;background:#FFFFFF;color:#9E3422;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Reprovar com justificativa</button><button onClick="{{ reqInfo }}" style="border:1px solid #C9D4E0;background:#FFFFFF;color:#0A2A4A;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Pedir informação</button><button onClick="{{ reqApprove }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Aprovar</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.assistente }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px;max-width:860px">
+<div><h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Assistente de políticas internas</h1><p style="margin:4px 0 0;font-size:14px;color:#4A5B70">Responde com base nos 6 materiais cadastrados pela empresa e indica a fonte.</p></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.55">
+<sc-for list="{{ chat }}" as="m" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:6px;max-width:78%;padding:11px 14px;border-radius:12px;align-self:{{ m.align }};background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.border }}"><span>{{ m.text }}</span><sc-if value="{{ m.src }}" hint-placeholder-val="{{ false }}"><span style="align-self:flex-start;background:#E3F5F1;color:#0B4F43;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Fonte: {{ m.src }}</span></sc-if><sc-if value="{{ m.fwd }}" hint-placeholder-val="{{ false }}"><button style="align-self:flex-start;border:1px solid #085087;background:#FFFFFF;color:#085087;border-radius:7px;padding:6px 11px;font-size:12.5px;font-weight:700;cursor:pointer">Encaminhar ao RH</button></sc-if></div>
+</sc-for>
+<div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid #EEF2F6"><sc-for list="{{ suggestions }}" as="q" hint-placeholder-count="3"><button onClick="{{ q.ask }}" style="border:1px solid #D8E1EB;background:#F4F7FA;border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;color:#0A2A4A">{{ q.text }}</button></sc-for></div>
+<span style="font-size:12px;color:#6B7A8D">Respostas baseadas nos materiais internos. Não substitui orientação jurídica nem toma decisões sobre funcionários.</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.folha }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div style="font-size:13px;color:#4A5B70">Competência</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Folha de pagamento · Outubro/2026</h1></div><div style="display:flex;gap:8px"><button style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:#0A2A4A;cursor:pointer">Prévia de holerites</button><button onClick="{{ closePayroll }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">{{ payrollBtn }}</button></div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700">
+<sc-for list="{{ payrollSteps }}" as="st" hint-placeholder-count="5"><span style="border-radius:7px;padding:7px 11px;background:{{ st.bg }};color:{{ st.fg }};border:1px solid {{ st.border }}">{{ st.label }}</span></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Proventos</div><div style="font-size:22px;font-weight:800">R$ 168.420,00</div></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Descontos</div><div style="font-size:22px;font-weight:800">R$ 31.905,40</div></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Líquido a pagar</div><div style="font-size:22px;font-weight:800;color:#085087">R$ 136.514,60</div></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Encargos estimados</div><div style="font-size:22px;font-weight:800">R$ 47.157,60</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start">
+<div style="grid-column:span 2;min-width:0;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow-x:auto">
+<div style="min-width:640px">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;padding:10px 16px;background:#F4F7FA;font-size:12px;font-weight:700;color:#4A5B70"><span>Colaborador</span><span>Base</span><span>Proventos</span><span>Descontos</span><span>Líquido</span><span>Conferência</span></div>
+<sc-for list="{{ payroll }}" as="p" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;align-items:center;padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><strong>{{ p.name }}</strong><span>{{ p.base }}</span><span>{{ p.prov }}</span><span>{{ p.desc }}</span><strong>{{ p.liq }}</strong><span style="justify-self:start;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ p.bg }};color:{{ p.fg }}">{{ p.status }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.45">
+<strong style="font-size:14px">Eventos importados</strong>
+<div style="display:flex;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid #EEF2F6"><span>Horas extras 50% · do ponto</span><strong>142h</strong></div>
+<div style="display:flex;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid #EEF2F6"><span>Adicional noturno · do ponto</span><strong>88h</strong></div>
+<div style="display:flex;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid #EEF2F6"><span>Faltas não justificadas</span><strong>3</strong></div>
+<div style="display:flex;justify-content:space-between;gap:8px"><span>Férias no período</span><strong>2</strong></div>
+<div style="background:#FCF1DC;border-radius:8px;padding:10px 12px;color:#5C3D0A;font-size:12.5px"><strong>2 divergências</strong> entre ponto e lançamentos manuais aguardam conferência.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.ponto }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div style="font-size:13px;color:#4A5B70">Espelho de ponto · 01 a 10/10/2026</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Ponto eletrônico</h1></div><div style="display:flex;gap:8px;flex-wrap:wrap"><span style="border:1px solid #D8E1EB;background:#FFFFFF;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700">Ana Paula Ferreira ▾</span><button style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Exportar espelho</button></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Horas trabalhadas</div><div style="font-size:22px;font-weight:800">62h 14min</div></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Banco de horas</div><div style="font-size:22px;font-weight:800;color:#0D6B5B">+ 4h 32min</div></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#4A5B70">Atrasos</div><div style="font-size:22px;font-weight:800">18min</div></div>
+<div style="background:#FFF8F6;border:1px solid #F3C8BE;border-radius:10px;padding:14px 16px"><div style="font-size:12px;color:#9E3422">Ajustes pendentes</div><div style="font-size:22px;font-weight:800;color:#9E3422">{{ adjPending }}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start">
+<div style="grid-column:span 2;min-width:0;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow-x:auto">
+<div style="min-width:640px">
+<div style="display:grid;grid-template-columns:1.2fr repeat(4,0.8fr) 0.9fr 1.3fr;padding:10px 16px;background:#F4F7FA;font-size:12px;font-weight:700;color:#4A5B70"><span>Dia</span><span>Entrada</span><span>Intervalo</span><span>Retorno</span><span>Saída</span><span>Total</span><span>Ocorrência</span></div>
+<sc-for list="{{ timesheet }}" as="d" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:1.2fr repeat(4,0.8fr) 0.9fr 1.3fr;align-items:center;padding:10px 16px;border-top:1px solid #EEF2F6;font-size:13px;font-family:'JetBrains Mono', monospace;background:{{ d.rowBg }}"><span style="font-family:Manrope, sans-serif;font-weight:700">{{ d.day }}</span><span>{{ d.a }}</span><span>{{ d.b }}</span><span>{{ d.c }}</span><span>{{ d.d }}</span><strong>{{ d.t }}</strong><span style="font-family:Manrope, sans-serif;justify-self:start;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ d.bg }};color:{{ d.fg }}">{{ d.occ }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<strong style="font-size:14px">Ajustes para aprovar</strong>
+<sc-for list="{{ adjustments }}" as="j" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:6px;border:1px solid #E6ECF2;border-radius:9px;padding:11px 12px;font-size:13px;line-height:1.4"><strong>{{ j.title }}</strong><span style="color:#4A5B70">{{ j.reason }}</span><sc-if value="{{ j.open }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px"><button onClick="{{ j.approve }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer">Aprovar</button><button onClick="{{ j.reject }}" style="border:1px solid #E3A99C;background:#FFFFFF;color:#9E3422;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer">Recusar</button></div></sc-if><sc-if value="{{ j.closed }}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;color:{{ j.doneColor }}">{{ j.doneLabel }}</span></sc-if></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.avaliacao }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><div style="font-size:13px;color:#4A5B70">Ciclo 2º semestre 2026 · encerra em 30/11</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Avaliação de desempenho</h1></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#4A5B70">Autoavaliação</span><strong style="font-size:20px">38 de 46</strong><span style="height:6px;border-radius:3px;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:83%;height:100%;background:#1E9C86"></span></span></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#4A5B70">Avaliação do gestor</span><strong style="font-size:20px">21 de 46</strong><span style="height:6px;border-radius:3px;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:46%;height:100%;background:#085087"></span></span></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#4A5B70">Calibração</span><strong style="font-size:20px">Não iniciada</strong><span style="height:6px;border-radius:3px;background:#E6ECF2;display:block"></span></div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:#4A5B70">Feedbacks registrados</span><strong style="font-size:20px">9</strong><span style="height:6px;border-radius:3px;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:20%;height:100%;background:#5BB1E9"></span></span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800">AF</span><div style="display:flex;flex-direction:column"><strong style="font-size:16px">Ana Paula Ferreira</strong><span style="font-size:12.5px;color:#4A5B70">Avaliação do gestor · Carlos Mendes</span></div></div>
+<sc-for list="{{ competencies }}" as="c" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:7px;padding-bottom:12px;border-bottom:1px solid #EEF2F6"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:13.5px">{{ c.name }}</strong><span style="font-size:12px;color:#6B7A8D">Autoavaliação: {{ c.self }}</span></div><div style="display:flex;gap:6px"><sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" style="width:38px;height:34px;border-radius:7px;font-size:13px;font-weight:800;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:1px solid {{ o.border }}">{{ o.n }}</button></sc-for></div></div>
+</sc-for>
+<div style="border:1px solid #D8E1EB;border-radius:9px;padding:10px 12px;font-size:13px;color:#6B7A8D;min-height:54px">Comentário para o feedback…</div>
+<div style="display:flex;gap:8px;justify-content:flex-end"><button style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:#0A2A4A;cursor:pointer">Salvar rascunho</button><button style="border:0;background:#085087;color:#FFFFFF;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Enviar avaliação</button></div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden">
+<div style="padding:14px 16px;font-weight:800;font-size:14px;border-bottom:1px solid #EEF2F6">Equipe de Carlos Mendes</div>
+<sc-for list="{{ reviewTeam }}" as="t" hint-placeholder-count="5">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><span style="display:flex;flex-direction:column"><strong>{{ t.name }}</strong><span style="font-size:12px;color:#4A5B70">{{ t.role }}</span></span><span style="padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ t.bg }};color:{{ t.fg }}">{{ t.status }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.whatsapp }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div><div style="font-size:13px;color:#4A5B70">Canal oficial da empresa · número verificado</div><h1 style="margin:2px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">WhatsApp</h1></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:stretch">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden">
+<div style="padding:12px 16px;font-size:12px;font-weight:700;color:#4A5B70;background:#F4F7FA">Conversas · 4 abertas</div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-left:3px solid #1E9C86;background:#E3F5F1"><span style="display:flex;justify-content:space-between"><strong style="font-size:14px">Rafael Moura Campos</strong><span style="font-size:11.5px;color:#4A5B70">09:41</span></span><span style="font-size:12.5px;color:#33495E">Enviou uma imagem</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-top:1px solid #EEF2F6"><span style="display:flex;justify-content:space-between"><strong style="font-size:14px">Lívia Santos Prado</strong><span style="font-size:11.5px;color:#4A5B70">ontem</span></span><span style="font-size:12.5px;color:#4A5B70">Lembrete de ASO entregue</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-top:1px solid #EEF2F6"><span style="display:flex;justify-content:space-between"><strong style="font-size:14px">Marcos Teles</strong><span style="font-size:11.5px;color:#4A5B70">ontem</span></span><span style="font-size:12.5px;color:#4A5B70">Qual o prazo da CNH?</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-top:1px solid #EEF2F6"><span style="display:flex;justify-content:space-between"><strong style="font-size:14px">Ana Paula Ferreira</strong><span style="font-size:11.5px;color:#4A5B70">08/10</span></span><span style="font-size:12.5px;color:#4A5B70">Férias aprovadas</span></div>
+</div>
+<div style="grid-column:span 2;min-width:0;display:flex;flex-direction:column;background:#EEF3F1;border:1px solid #D8E1EB;border-radius:12px;overflow:hidden;min-height:440px">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#FFFFFF;border-bottom:1px solid #D8E1EB"><span style="width:34px;height:34px;border-radius:50%;background:#CFE6F8;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">RC</span><span style="display:flex;flex-direction:column"><strong style="font-size:14px">Rafael Moura Campos</strong><span style="font-size:12px;color:#4A5B70">Admissão em andamento · vinculado ao cadastro</span></span></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:9px;padding:16px;font-size:13.5px;line-height:1.45">
+<sc-for list="{{ waMsgs }}" as="m" hint-placeholder-count="4">
+<div style="max-width:72%;display:flex;flex-direction:column;gap:3px;padding:9px 12px;border-radius:10px;align-self:{{ m.align }};background:{{ m.bg }};border:1px solid {{ m.border }}"><span style="font-size:11px;font-weight:800;color:{{ m.tagColor }}">{{ m.who }}</span><span>{{ m.text }}</span><span style="align-self:flex-end;font-size:10.5px;color:#6B7A8D">{{ m.t }}</span></div>
+</sc-for>
+</div>
+<div style="display:flex;gap:8px;padding:10px 12px;background:#FFFFFF;border-top:1px solid #D8E1EB"><input value="{{ waInput }}" onChange="{{ onWaInput }}" onKeyDown="{{ onWaKey }}" placeholder="Responder como RH" style="flex:1;min-width:0;border:1px solid #D8E1EB;border-radius:999px;padding:9px 14px;font-size:13.5px;outline:none"><button onClick="{{ waSend }}" style="border:0;background:#1E9C86;color:#FFFFFF;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">Enviar</button></div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<strong style="font-size:14px">Mensagens automáticas</strong>
+<sc-for list="{{ waTemplates }}" as="w" hint-placeholder-count="4">
+<div onClick="{{ w.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EEF2F6;cursor:pointer;font-size:13px"><span style="display:flex;flex-direction:column"><strong>{{ w.name }}</strong><span style="font-size:12px;color:#4A5B70">{{ w.desc }}</span></span><span style="width:34px;height:20px;border-radius:999px;position:relative;flex-shrink:0;background:{{ w.track }}"><span style="position:absolute;top:2px;width:16px;height:16px;border-radius:50%;background:#FFFFFF;left:{{ w.knob }}"></span></span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ s.integracoes }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div><h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Integrações contábeis</h1><p style="margin:4px 0 0;font-size:14px;color:#4A5B70">Envio de admissões, folha e eventos para a contabilidade e para os sistemas oficiais.</p></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+<sc-for list="{{ integrations }}" as="g" hint-placeholder-count="4">
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:10px"><span style="width:36px;height:36px;border-radius:9px;background:#062A4D;color:#5FD3BC;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">{{ g.ini }}</span><span style="display:flex;flex-direction:column"><strong style="font-size:14.5px">{{ g.name }}</strong><span style="font-size:12px;color:#4A5B70">{{ g.kind }}</span></span></div><span style="font-size:13px;line-height:1.45;color:#33495E">{{ g.desc }}</span><div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between"><span style="padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ g.bg }};color:{{ g.fg }}">{{ g.status }}</span><button onClick="{{ g.toggle }}" style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;color:#0A2A4A;cursor:pointer">{{ g.action }}</button></div></div>
+</sc-for>
+</div>
+<div style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;overflow-x:auto">
+<div style="min-width:640px">
+<div style="padding:14px 16px;font-weight:800;font-size:14px">Histórico de envios</div>
+<div style="display:grid;grid-template-columns:1fr 1.6fr 1.4fr 1fr 1fr;padding:10px 16px;background:#F4F7FA;font-size:12px;font-weight:700;color:#4A5B70"><span>Data</span><span>Evento</span><span>Destino</span><span>Registros</span><span>Status</span></div>
+<sc-for list="{{ sendLog }}" as="l" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:1fr 1.6fr 1.4fr 1fr 1fr;align-items:center;padding:11px 16px;border-top:1px solid #EEF2F6;font-size:13px"><span style="font-family:'JetBrains Mono', monospace;font-size:12px">{{ l.d }}</span><strong>{{ l.ev }}</strong><span>{{ l.to }}</span><span>{{ l.n }}</span><span style="justify-self:start;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ l.bg }};color:{{ l.fg }}">{{ l.st }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;sinalizarFuturos&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Escopo&quot;},&quot;telaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;painel&quot;,&quot;options&quot;:[&quot;painel&quot;,&quot;colaboradores&quot;,&quot;admissoes&quot;,&quot;documentos&quot;,&quot;solicitacoes&quot;,&quot;assistente&quot;,&quot;folha&quot;,&quot;ponto&quot;,&quot;avaliacao&quot;,&quot;whatsapp&quot;,&quot;integracoes&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Navegação&quot;}}">
+const T={ok:{bg:'#E3F5F1',fg:'#0D6B5B'},warn:{bg:'#FCF1DC',fg:'#7A4E0A'},bad:{bg:'#FDE9E5',fg:'#9E3422'},info:{bg:'#EAF4FC',fg:'#085087'},mute:{bg:'#EEF1F5',fg:'#3E4E61'}};
+const NAV=[
+{label:'Operação',items:[['painel','Painel'],['colaboradores','Colaboradores'],['admissoes','Admissões'],['documentos','Documentos'],['solicitacoes','Solicitações'],['assistente','Assistente IA']]},
+{label:'Departamento pessoal',items:[['folha','Folha de pagamento',1],['ponto','Ponto eletrônico',1],['avaliacao','Avaliação de desempenho',1]]},
+{label:'Canais e integrações',items:[['whatsapp','WhatsApp',1],['integracoes','Integrações contábeis',1]]}];
+const FUTURE=['folha','ponto','avaliacao','whatsapp','integracoes'];
+const REQS=[
+{id:'SOL-0142',type:'Férias',who:'Ana Paula Ferreira',ini:'AP',date:'01/10',status:'Aguardando aprovação',tone:'warn',owner:'Carlos Mendes (gestor)',detail:'03/11 a 22/11 · 20 dias',due:'06/10',msg:'Gostaria de tirar férias no período indicado.'},
+{id:'SOL-0141',type:'Declaração de vínculo',who:'Rafael Moura Campos',ini:'RC',date:'30/09',status:'Em execução',tone:'info',owner:'Juliana Ribeiro (RH)',detail:'Para fins bancários',due:'05/10',msg:'Preciso da declaração para abrir conta salário.'},
+{id:'SOL-0139',type:'Atualização cadastral',who:'Marcos Teles',ini:'MT',date:'29/09',status:'Aguardando informação',tone:'warn',owner:'Marcos Teles',detail:'Novo endereço',due:'07/10',msg:'Mudei de endereço, segue comprovante.'},
+{id:'SOL-0137',type:'Envio de comprovante',who:'Lívia Santos Prado',ini:'LP',date:'27/09',status:'Em análise',tone:'info',owner:'Juliana Ribeiro (RH)',detail:'Comprovante de escolaridade',due:'04/10',msg:'Envio o diploma solicitado.'},
+{id:'SOL-0131',type:'Solicitação geral',who:'Diego Alves Rocha',ini:'DR',date:'22/09',status:'Concluída',tone:'ok',owner:'—',detail:'Uniforme',due:'—',msg:'Preciso de um uniforme tamanho G.'}];
+const CHECK=[['Dados pessoais preenchidos','Colaborador','02/10',1],['RG e CPF','Colaborador','03/10',1],['Carteira de trabalho digital','Colaborador','03/10',1],['Comprovante de residência','Colaborador','08/10',0,'bad'],['Encaminhar à contabilidade','Juliana Ribeiro (RH)','10/10',0],['Integração: boas-vindas e EPI','Carlos Mendes (gestor)','15/10',0]];
+const ANSWERS={
+'Com quanto tempo de antecedência peço férias?':{text:'Pela política da empresa, o pedido deve ser feito pelo portal com pelo menos 45 dias de antecedência e aprovado pelo gestor.',src:'Política de Férias 2026 · item 2.1'},
+'Qual o horário do refeitório?':{text:'O refeitório da unidade Caxias do Sul funciona das 11h às 14h, em dois turnos definidos pela produção.',src:'Manual do Colaborador · seção 4'},
+'Posso trocar o dia da minha folga?':{text:'Não encontrei essa informação nos materiais cadastrados pela empresa.',fwd:true}};
+class Component extends DCLogic {
+  state={screen:(()=>{try{return localStorage.getItem('chr_screen')}catch(e){return null}})()||this.props.telaInicial||'painel',
+    checks:CHECK.map(c=>!!c[3]),doc:'pending',reqStatus:{},sel:0,ratings:{0:4,1:3},payroll:'conf',adj:{},
+    wa:[{me:0,who:'Assistente CatalystHR',text:'Olá, Rafael! Seu comprovante de residência precisa ser reenviado: o documento tem mais de 90 dias. Envie uma foto por aqui.',t:'09:12'},{me:1,who:'Rafael',text:'[imagem] comprovante_conta_luz.jpg',t:'09:40'},{me:0,who:'Assistente CatalystHR',text:'Recebido! O documento foi enviado para revisão do RH.',t:'09:41'}],
+    waInput:'',tpl:{0:1,1:1,2:0,3:1},integ:{0:1,1:1,2:0,3:0},chat:[{q:'Com quanto tempo de antecedência peço férias?'}]};
+  go(id){try{localStorage.setItem('chr_screen',id)}catch(e){} this.setState({screen:id});window.scrollTo(0,0);}
+  renderVals(){
+    const st=this.state, sc=st.screen, showB=this.props.sinalizarFuturos??false;
+    const nav=NAV.map(g=>({label:g.label,items:g.items.map(([id,label,f])=>({label,badge:!!f&&showB,go:()=>this.go(id),bg:sc===id?'#FFFFFF':'transparent',color:sc===id?'#062A4D':'#D6E5F2'}))}));
+    const s={};NAV.forEach(g=>g.items.forEach(([id])=>s[id]=sc===id));
+    const checklist=CHECK.map((c,i)=>{const d=st.checks[i];const tone=d?T.ok:(c[4]?T.bad:T.mute);return{label:c[0],resp:c[1],due:c[2],mark:d?'✓':'',boxBg:d?'#1E9C86':'#FFFFFF',boxBorder:d?'#1E9C86':'#9AA7B6',rowBg:!d&&c[4]?'#FFF8F6':'#FFFFFF',status:d?'Concluído':(c[4]?'Correção solicitada':'Aguardando'),bg:tone.bg,fg:tone.fg,toggle:()=>this.setState(p=>{const a=[...p.checks];a[i]=!a[i];return{checks:a}})}});
+    const admDone=st.checks.filter(Boolean).length;
+    const docMap={pending:['Aguardando revisão do RH','#7A4E0A'],ok:['Dados confirmados por Juliana Ribeiro (RH) · agora','#0D6B5B'],fix:['Correção solicitada ao colaborador · agora','#9E3422']};
+    const fields=[['Nome','Rafael Moura Campos','Rafael Moura Campos'],['Nº do RG','00.000.000-0','00.000.000-0'],['Nascimento','14/03/1996','14/03/1995','div'],['Órgão emissor','SSP/RS','—','new'],['Emissão','20/05/2019','—','new']].map(f=>({k:f[0],ex:f[1],cad:f[2],r:f[3]==='div'?'Divergência':f[3]==='new'?'Novo campo':'Confere',rc:f[3]==='div'?'#9E3422':f[3]==='new'?'#085087':'#0D6B5B',exColor:f[3]==='div'?'#9E3422':'#0C1E33',rowBg:f[3]==='div'?'#FFF8F6':'#FFFFFF'}));
+    const reqs=REQS.map((r,i)=>{const o=st.reqStatus[i];const status=o?o[0]:r.status;const tone=T[o?o[1]:r.tone];return{...r,status,bg:tone.bg,fg:tone.fg,decided:!!o,rowBg:st.sel===i?'#EAF4FC':'#FFFFFF',edge:st.sel===i?'#085087':'transparent',select:()=>this.setState({sel:i})}});
+    const setReq=(v,t)=>this.setState(p=>({reqStatus:{...p.reqStatus,[p.sel]:[v,t]}}));
+    const comps=['Qualidade do trabalho','Segurança e normas','Trabalho em equipe','Iniciativa'].map((name,ci)=>({name,self:[4,4,5,3][ci],opts:[1,2,3,4,5].map(n=>{const on=st.ratings[ci]===n;return{n,bg:on?'#085087':'#FFFFFF',fg:on?'#FFFFFF':'#0A2A4A',border:on?'#085087':'#D8E1EB',pick:()=>this.setState(p=>({ratings:{...p.ratings,[ci]:n}}))}})}));
+    const pSteps=['Lançamentos','Importação do ponto','Conferência','Fechamento','Envio à contabilidade'];
+    const pIdx=st.payroll==='closed'?4:2;
+    const payrollSteps=pSteps.map((l,i)=>({label:(i+1)+' '+l,bg:i<pIdx?'#085087':'#FFFFFF',fg:i<pIdx?'#FFFFFF':(i===pIdx?'#085087':'#4A5B70'),border:i<=pIdx?'#085087':'#D8E1EB'}));
+    const pay=[['Ana Paula Ferreira','R$ 3.850,00','R$ 4.312,00','R$ 812,40','R$ 3.499,60','ok'],['Carlos Mendes','R$ 7.200,00','R$ 7.200,00','R$ 1.794,20','R$ 5.405,80','ok'],['Rafael Moura Campos','R$ 2.400,00','R$ 1.280,00','R$ 102,40','R$ 1.177,60','warn'],['Marcos Teles','R$ 3.100,00','R$ 3.642,50','R$ 498,10','R$ 3.144,40','bad'],['Lívia Santos Prado','R$ 4.600,00','R$ 4.600,00','R$ 742,30','R$ 3.857,70','ok'],['Bianca Lopes','R$ 6.100,00','R$ 6.100,00','R$ 1.402,90','R$ 4.697,10','ok']].map(p=>{const tone=st.payroll==='closed'?T.ok:T[p[5]];return{name:p[0],base:p[1],prov:p[2],desc:p[3],liq:p[4],status:st.payroll==='closed'?'Fechado':{ok:'Conferido',warn:'Proporcional',bad:'Divergência'}[p[5]],bg:tone.bg,fg:tone.fg}});
+    const ts=[['Qui 01/10','07:58','12:00','13:02','17:04','8h 04',''],['Sex 02/10','08:12','12:01','13:00','17:00','7h 49','Atraso 12min','warn'],['Seg 05/10','07:55','12:00','13:00','18:30','9h 35','Hora extra','info'],['Ter 06/10','07:59','12:03','13:01','17:02','8h 05',''],['Qua 07/10','08:06','12:00','13:00','17:01','7h 55','Atraso 6min','warn'],['Qui 08/10','—','—','—','—','0h 00','Marcação ausente','bad'],['Sex 09/10','07:57','12:00','13:00','17:00','8h 03','']].map(d=>{const tone=d[7]?T[d[7]]:{bg:'transparent',fg:'#6B7A8D'};return{day:d[0],a:d[1],b:d[2],c:d[3],d:d[4],t:d[5],occ:d[6]||'—',bg:tone.bg,fg:tone.fg,rowBg:d[7]==='bad'?'#FFF8F6':'#FFFFFF'}});
+    const adjData=[['08/10 · Marcação ausente','Colaboradora informou consulta médica, atestado anexado.'],['02/10 · Ajuste de entrada','Solicita entrada às 08:00; ônibus atrasou.']];
+    const adjustments=adjData.map((a,i)=>{const v=st.adj[i];return{title:a[0],reason:a[1],open:!v,closed:!!v,doneLabel:v==='ok'?'Ajuste aprovado':'Ajuste recusado',doneColor:v==='ok'?'#0D6B5B':'#9E3422',approve:()=>this.setState(p=>({adj:{...p.adj,[i]:'ok'}})),reject:()=>this.setState(p=>({adj:{...p.adj,[i]:'no'}}))}});
+    const team=[['Ana Paula Ferreira','Operadora de produção','Em avaliação','info'],['Diego Alves Rocha','Operador de máquinas','Autoavaliação pendente','warn'],['Marcos Teles','Motorista','Concluída','ok'],['Rafael Moura Campos','Auxiliar de produção','Fora do ciclo','mute'],['Lívia Santos Prado','Analista de qualidade','Autoavaliação enviada','info']].map(t=>({name:t[0],role:t[1],status:t[2],bg:T[t[3]].bg,fg:T[t[3]].fg}));
+    const waMsgs=st.wa.map(m=>({...m,align:m.me?'flex-start':'flex-end',bg:m.me?'#FFFFFF':(m.rh?'#DCEBFA':'#D7F2E9'),border:m.me?'#E6ECF2':(m.rh?'#BFD9F2':'#BFE6DC'),tagColor:m.me?'#085087':(m.rh?'#085087':'#0D6B5B')}));
+    const tplData=[['Pendência de documento','Avisa quando o RH pede um documento'],['Status de solicitação','Mudanças de status e aprovações'],['Holerite disponível','Aviso mensal com link seguro'],['Lembrete de vencimento','ASO, CNH e documentos com validade']];
+    const waTemplates=tplData.map((w,i)=>{const on=!!st.tpl[i];return{name:w[0],desc:w[1],track:on?'#1E9C86':'#C9D4E0',knob:on?'16px':'2px',toggle:()=>this.setState(p=>({tpl:{...p.tpl,[i]:!p.tpl[i]}}))}});
+    const sendWa=()=>{const v=st.waInput.trim();if(!v)return;this.setState(p=>({wa:[...p.wa,{me:0,rh:1,who:'Juliana Ribeiro (RH)',text:v,t:'agora'}],waInput:''}))};
+    const intData=[['EC','Escritório Contábil Exato','Contabilidade · fictício','Admissões, folha fechada e rescisões enviadas em layout padrão.','Conectado','Desconectar','Conectar'],['eS','eSocial','Obrigação oficial','Eventos de admissão, afastamento e remuneração.','Conectado','Desconectar','Conectar'],['FG','FGTS Digital','Obrigação oficial','Guias geradas a partir da folha fechada.','Não configurado','Desconectar','Configurar'],['BK','Arquivo bancário','Pagamento','Arquivo de remessa para pagamento do líquido.','Não configurado','Desconectar','Configurar']];
+    const integrations=intData.map((g,i)=>{const on=!!st.integ[i];const tone=on?T.ok:T.mute;return{ini:g[0],name:g[1],kind:g[2],desc:g[3],status:on?'Conectado':'Não configurado',action:on?g[5]:g[6],bg:tone.bg,fg:tone.fg,toggle:()=>this.setState(p=>({integ:{...p.integ,[i]:!p.integ[i]}}))}});
+    const sendLog=[['10/10 08:30','S-2200 · Admissão','eSocial','1','Aguardando retorno','warn'],['09/10 17:10','Documentos de admissão','Escritório Contábil Exato','1','Recebido','ok'],['05/10 18:02','Folha Setembro/2026','Escritório Contábil Exato','46','Recebido','ok'],['05/10 18:05','S-1200 · Remuneração','eSocial','46','Processado','ok'],['30/09 11:20','S-2230 · Afastamento','eSocial','1','Rejeitado · ver motivo','bad']].map(l=>({d:l[0],ev:l[1],to:l[2],n:l[3],st:l[4],bg:T[l[5]].bg,fg:T[l[5]].fg}));
+    const chat=[];st.chat.forEach(c=>{chat.push({text:c.q,align:'flex-end',bg:'#085087',fg:'#FFFFFF',border:'#085087'});const a=ANSWERS[c.q];chat.push({text:a.text,src:a.src||'',fwd:!!a.fwd,align:'flex-start',bg:'#F4F7FA',fg:'#0C1E33',border:'#E6ECF2'})});
+    const suggestions=Object.keys(ANSWERS).filter(q=>!st.chat.some(c=>c.q===q)).map(q=>({text:q,ask:()=>this.setState(p=>({chat:[...p.chat,{q}]}))}));
+    const k=(label,value,sub,warn)=>({label,value,sub,color:warn?'#9E3422':'#0A2A4A',border:warn?'#F3C8BE':'#D8E1EB'});
+    return {nav,s,isFuture:FUTURE.includes(sc)&&showB,goAdm:()=>this.go('admissoes'),
+      kpis:[k('Admissões em andamento','3','1 com correção'),k('Documentos pendentes','7','2 vencidos'),k('Aprovações aguardando','4','gestores'),k('Tarefas atrasadas','2','Bento Gonçalves',1),k('Vencimentos em 30 dias','5','ASO e CNH'),k('Colaboradores ativos','46','2 unidades')],
+      activity:[{t:'09:41',text:'Rafael M. Campos reenviou o comprovante de residência.'},{t:'09:12',text:'Lembrete de pendência enviado a Rafael M. Campos.'},{t:'08:50',text:'Carlos Mendes aprovou as férias de Marcos Teles.'},{t:'08:30',text:'Admissão de Lívia S. Prado encaminhada à contabilidade.'},{t:'ontem',text:'Política de Férias 2026 publicada no assistente.'}],
+      people:[['Ana Paula Ferreira','Operadora de produção','Caxias do Sul','Carlos Mendes','Ativa','ok','0'],['Bianca Lopes','Gestora administrativa','Caxias do Sul','—','Ativa','ok','0'],['Carlos Mendes','Supervisor de produção','Caxias do Sul','—','Ativo','ok','1'],['Diego Alves Rocha','Operador de máquinas','Bento Gonçalves','Carlos Mendes','Em admissão','info','4'],['Lívia Santos Prado','Analista de qualidade','Bento Gonçalves','Bianca Lopes','Em admissão','info','2'],['Marcos Teles','Motorista','Bento Gonçalves','Bianca Lopes','Férias','warn','1'],['Rafael Moura Campos','Auxiliar de produção','Caxias do Sul','Carlos Mendes','Em admissão','info','3']].map(p=>({name:p[0],ini:p[0].split(' ').filter((x,i,a)=>i===0||i===a.length-1).map(x=>x[0]).join(''),role:p[1],unit:p[2],mgr:p[3],status:p[4],bg:T[p[5]].bg,fg:T[p[5]].fg,pend:p[6]})),
+      checklist,admDone,admTotal:CHECK.length,admPct:Math.round(admDone/CHECK.length*100)+'%',
+      fields,docStateLabel:docMap[st.doc][0],docStateColor:docMap[st.doc][1],docConfirm:()=>this.setState({doc:'ok'}),docCorrect:()=>this.setState({doc:'fix'}),
+      reqList:reqs,req:reqs[st.sel],reqApprove:()=>setReq('Aprovada','ok'),reqReject:()=>setReq('Reprovada','bad'),reqInfo:()=>setReq('Aguardando informação','warn'),
+      chat,suggestions,
+      payrollSteps,payroll:pay,payrollBtn:st.payroll==='closed'?'Folha fechada':'Fechar folha',closePayroll:()=>this.setState({payroll:'closed'}),
+      timesheet:ts,adjustments,adjPending:adjData.filter((a,i)=>!st.adj[i]).length,
+      competencies:comps,reviewTeam:team,
+      waMsgs,waInput:st.waInput,onWaInput:e=>this.setState({waInput:e.target.value}),onWaKey:e=>{if(e.key==='Enter')sendWa()},waSend:sendWa,waTemplates,
+      integrations,sendLog};
+  }
+}
+</script>
+</body>
+</html>

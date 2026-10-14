@@ -1,0 +1,55 @@
+# Production deploy to Railway (spec 20, RN-20-032, P-20-13).
+# Manual only: someone runs this workflow from the Actions tab, which is the approval.
+# Deploys are refused during time-clock peaks (07h-09h and 17h-19h, Brasília) unless forced.
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Deploy even during time-clock peak hours"
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Refuse deploys during time-clock peaks
+        if: ${{ !inputs.force }}
+        run: |
+          hour=$(TZ=America/Sao_Paulo date +%H)
+          if [ "$hour" -ge 7 ] && [ "$hour" -lt 9 ] || [ "$hour" -ge 17 ] && [ "$hour" -lt 19 ]; then
+            echo "Pico do ponto ($hour h em Brasília). Rode de novo fora do pico ou marque 'force'."
+            exit 1
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Require green CI on this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          conclusion=$(gh run list --workflow ci.yml --commit "$GITHUB_SHA" --json conclusion --jq '.[0].conclusion')
+          if [ "$conclusion" != "success" ]; then
+            echo "O CI deste commit não está verde (resultado: ${conclusion:-sem execução})."
+            exit 1
+          fi
+
+      - name: Install Railway CLI
+        run: npm install --global @railway/cli
+
+      - name: Deploy services
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --ci --service web
+          railway up --ci --service worker
+          railway up --ci --service worker-time

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>CatalystHR — Portal do colaborador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0;background:#E9EEF3;-webkit-font-smoothing:antialiased}
+a{color:#085087;text-decoration:none}a:hover{color:#0A6BB3;text-decoration:underline}
+input,button,select,textarea{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:40px;padding:36px 28px;box-sizing:border-box;font-family:Manrope, sans-serif;color:#0C1E33">
+
+<div style="flex:1 1 280px;max-width:340px;display:flex;flex-direction:column;gap:16px;padding-top:8px">
+<div style="display:flex;align-items:center;gap:8px"><img src="assets/catalyst-symbol.png" alt="" style="height:26px"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:17px;color:#085087">CATALYST<span style="color:#1E9C86">HR</span></span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#0D6B5B">Visão do colaborador</span><h1 style="margin:0;font-size:28px;line-height:1.12;font-weight:800;letter-spacing:-0.02em;color:#0A2A4A">Portal do colaborador</h1><p style="margin:0;font-size:14px;line-height:1.55;color:#4A5B70">Rafael Moura Campos, recém-admitido na Metalúrgica Serra Azul, acompanha pendências, registra o ponto e tira dúvidas — no celular ou no navegador.</p></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:10px;padding:4px">
+<sc-for list="{{ modes }}" as="md" hint-placeholder-count="2"><button onClick="{{ md.go }}" style="border:0;border-radius:7px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;background:{{ md.bg }};color:{{ md.fg }}">{{ md.label }}</button></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border:1px solid #D8E1EB;border-radius:12px;padding:8px">
+<sc-for list="{{ map }}" as="m" hint-placeholder-count="9">
+<button onClick="{{ m.go }}" style="display:flex;align-items:center;gap:10px;width:100%;border:0;cursor:pointer;text-align:left;padding:9px 10px;border-radius:7px;font-size:13.5px;font-weight:600;background:{{ m.bg }};color:{{ m.fg }}" style-hover="{background:'#EAF4FC'}"><span style="font-family:'JetBrains Mono', monospace;font-size:10.5px;color:#6B7A8D;width:18px">{{ m.n }}</span><span style="flex:1">{{ m.label }}</span></button>
+</sc-for>
+</div>
+<span style="align-self:flex-start;font-family:'JetBrains Mono', monospace;font-size:10px;letter-spacing:0.08em;color:#8A5A0E;background:#FCF1DC;padding:4px 8px;border-radius:5px">PROTÓTIPO · DADOS FICTÍCIOS</span>
+</div>
+
+<div style="position:relative;display:flex;flex-direction:column;overflow:hidden;background:#F4F7FA;flex:{{ sh.flex }};width:{{ sh.width }};max-width:{{ sh.maxW }};height:{{ sh.height }};min-height:{{ sh.minH }};border:{{ sh.border }};border-radius:{{ sh.radius }};box-shadow:0 30px 60px -24px rgba(8,53,95,0.4)">
+
+<sc-if value="{{ isPhone }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 26px 6px;background:#062A4D;color:#FFFFFF;font-size:12.5px;font-weight:700"><span>{{ clock }}</span><span style="width:96px;height:24px;border-radius:999px;background:#0C1E33"></span><span style="font-size:11px">4G ▮▮▮</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 18px 14px;background:#062A4D;color:#FFFFFF">
+<sc-if value="{{ canBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" style="border:0;background:#0F3E6E;color:#FFFFFF;width:32px;height:32px;border-radius:8px;font-size:15px;cursor:pointer">←</button></sc-if>
+<div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:11.5px;color:#9CC9EE">{{ sub }}</span><span style="font-size:19px;font-weight:800">{{ title }}</span></div>
+<span style="width:34px;height:34px;border-radius:50%;background:#5FD3BC;color:#062A4D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">RC</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ isWeb }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:12px;height:38px;padding:0 14px;background:#E9EDF2;border-bottom:1px solid #D3DAE3"><span style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#E3A99C"></span><span style="width:11px;height:11px;border-radius:50%;background:#F0D9A8"></span><span style="width:11px;height:11px;border-radius:50%;background:#BFE6DC"></span></span><span style="flex:1;max-width:420px;margin:0 auto;background:#FFFFFF;border-radius:7px;padding:5px 12px;font-family:'JetBrains Mono', monospace;font-size:11.5px;color:#4A5B70;text-align:center">portal.catalysthr.com.br/{{ path }}</span></div>
+</sc-if>
+
+<div style="flex:1;display:flex;min-height:0">
+<sc-if value="{{ isWeb }}" hint-placeholder-val="{{ false }}">
+<nav style="width:216px;flex-shrink:0;background:#062A4D;color:#D6E5F2;display:flex;flex-direction:column;gap:3px;padding:18px 12px">
+<div style="display:flex;align-items:center;gap:8px;padding:0 6px 16px"><img src="assets/catalyst-symbol-dark.png" alt="" style="height:24px"><span style="font-family:'Exo 2', sans-serif;font-style:italic;font-weight:800;font-size:16px;color:#FFFFFF">CATALYST<span style="color:#5FD3BC">HR</span></span></div>
+<sc-for list="{{ sideNav }}" as="sn" hint-placeholder-count="8">
+<button onClick="{{ sn.go }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;cursor:pointer;text-align:left;padding:9px 10px;border-radius:7px;font-size:13.5px;font-weight:600;background:{{ sn.bg }};color:{{ sn.fg }}" style-hover="{background:'#0F3E6E'}"><span>{{ sn.label }}</span><sc-if value="{{ sn.count }}" hint-placeholder-val="{{ false }}"><span style="min-width:18px;height:18px;border-radius:999px;background:#C2412D;color:#FFFFFF;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px">{{ sn.count }}</span></sc-if></button>
+</sc-for>
+<div onClick="{{ toggleWa }}" style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-top:1px solid #1C4870;cursor:pointer;font-size:12px"><span>Avisos pelo WhatsApp</span><span style="width:34px;height:20px;border-radius:999px;position:relative;flex-shrink:0;background:{{ waTrack }}"><span style="position:absolute;top:2px;width:16px;height:16px;border-radius:50%;background:#FFFFFF;left:{{ waKnobS }}"></span></span></div>
+</nav>
+</sc-if>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+<sc-if value="{{ isWeb }}" hint-placeholder-val="{{ false }}">
+<header style="display:flex;align-items:center;gap:12px;padding:16px 26px;background:#FFFFFF;border-bottom:1px solid #D8E1EB">
+<sc-if value="{{ canBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" style="border:1px solid #D8E1EB;background:#FFFFFF;width:32px;height:32px;border-radius:8px;font-size:14px;cursor:pointer;color:#0A2A4A">←</button></sc-if>
+<div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:12px;color:#4A5B70">{{ sub }}</span><span style="font-size:21px;font-weight:800;letter-spacing:-0.01em;color:#0A2A4A">{{ title }}</span></div>
+<span style="display:flex;align-items:center;gap:9px"><span style="display:flex;flex-direction:column;align-items:flex-end;font-size:12px;line-height:1.3"><strong>Rafael Moura Campos</strong><span style="color:#4A5B70">Metalúrgica Serra Azul</span></span><span style="width:34px;height:34px;border-radius:50%;background:#5FD3BC;color:#062A4D;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">RC</span></span>
+</header>
+</sc-if>
+
+<div style="flex:1;overflow-y:auto;padding:{{ contentPad }}">
+
+<sc-if value="{{ t.inicio }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;gap:12px;align-items:start;grid-template-columns:{{ cols }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:14px"><span style="display:flex;flex-direction:column"><span style="font-size:12px;color:#4A5B70">Próxima marcação</span><strong style="font-size:16px">{{ nextMark }}</strong></span><button onClick="{{ goPonto }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:10px;padding:11px 14px;font-size:13.5px;font-weight:700;cursor:pointer">Registrar ponto</button></div>
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em">PENDÊNCIAS · {{ pendCount }}</span>
+<sc-if value="{{ docFix }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border:1px solid #F3C8BE;border-radius:14px;padding:14px"><strong style="font-size:14.5px">Reenviar comprovante de residência</strong><span style="font-size:12.5px;line-height:1.45;color:#9E3422">Correção solicitada pelo RH: o documento tem mais de 90 dias.</span><button onClick="{{ goDocs }}" style="align-self:flex-start;margin-top:4px;border:0;background:#085087;color:#FFFFFF;border-radius:9px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer">Enviar foto ou PDF</button></div>
+</sc-if>
+<sc-if value="{{ evalOpen }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ goEval }}" style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:14px;cursor:pointer"><strong style="font-size:14.5px">Autoavaliação de experiência</strong><span style="font-size:12.5px;color:#4A5B70">Período de 45 dias · prazo 25/11</span></div>
+</sc-if>
+<sc-if value="{{ noPend }}" hint-placeholder-val="{{ false }}"><div style="background:#E3F5F1;border:1px solid #BFE6DC;border-radius:14px;padding:14px;font-size:13.5px;font-weight:700;color:#0D6B5B">Nenhuma pendência no momento.</div></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em">INTEGRAÇÃO · {{ onbDone }} DE {{ onbTotal }}</span>
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:12px 14px">
+<span style="height:6px;border-radius:3px;background:#E6ECF2;overflow:hidden;display:block;margin-bottom:6px"><span style="display:block;height:100%;background:#1E9C86;width:{{ onbPct }}"></span></span>
+<sc-for list="{{ onboarding }}" as="o" hint-placeholder-count="5">
+<div onClick="{{ o.toggle }}" style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;font-size:13.5px"><span style="width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFFFFF;flex-shrink:0;background:{{ o.boxBg }};border:1.5px solid {{ o.boxBorder }}">{{ o.mark }}</span><span style="display:flex;flex-direction:column"><span style="font-weight:700;color:{{ o.color }}">{{ o.label }}</span><span style="font-size:11.5px;color:#6B7A8D">{{ o.who }}</span></span></div>
+</sc-for>
+</div>
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em;margin-top:4px">MINHAS SOLICITAÇÕES</span>
+<sc-for list="{{ reqsTop }}" as="r" hint-placeholder-count="2">
+<div onClick="{{ goReqs }}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:12px 14px;font-size:13.5px;cursor:pointer"><strong>{{ r.type }}</strong><span style="padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:{{ r.bg }};color:{{ r.fg }}">{{ r.status }}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.documentos }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:6px;overflow-x:auto;font-size:12.5px;font-weight:700"><span style="background:#062A4D;color:#FFFFFF;border-radius:999px;padding:6px 12px;white-space:nowrap">Todos</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px;white-space:nowrap">Pessoais</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px;white-space:nowrap">Admissão</span><span style="background:#FFFFFF;border:1px solid #D8E1EB;border-radius:999px;padding:6px 12px;white-space:nowrap">Saúde</span></div>
+<div style="display:grid;gap:10px;align-items:start;grid-template-columns:{{ cols }}">
+<sc-if value="{{ docFix }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border:1px solid #F3C8BE;border-radius:14px;padding:14px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><strong style="font-size:14.5px">Comprovante de residência</strong><span style="padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#FDE9E5;color:#9E3422">Correção</span></div>
+<span style="font-size:12.5px;line-height:1.45;color:#33495E">Envie uma conta de luz, água ou telefone dos últimos 90 dias.</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ upload }}" style="border:1.5px dashed #5BB1E9;background:#EAF4FC;color:#085087;border-radius:10px;padding:14px 8px;font-size:13px;font-weight:700;cursor:pointer">{{ uploadA }}</button><button onClick="{{ upload }}" style="border:1.5px dashed #5BB1E9;background:#EAF4FC;color:#085087;border-radius:10px;padding:14px 8px;font-size:13px;font-weight:700;cursor:pointer">Escolher PDF</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ docUploading }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border:1px solid #CFE6F8;border-radius:14px;padding:14px"><strong style="font-size:14.5px">Comprovante de residência</strong><span style="font-size:12.5px;color:#085087;font-weight:700">Enviando e processando…</span><span style="height:5px;border-radius:3px;background:#E6ECF2;overflow:hidden;display:block"><span style="display:block;width:60%;height:100%;background:#5BB1E9"></span></span></div>
+</sc-if>
+<sc-for list="{{ docs }}" as="d" hint-placeholder-count="5">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:12px 14px"><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><strong style="font-size:13.5px">{{ d.name }}</strong><span style="font-size:11.5px;color:#6B7A8D">{{ d.meta }}</span></span><span style="flex-shrink:0;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:{{ d.bg }};color:{{ d.fg }}">{{ d.status }}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.ponto }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:12px;align-items:start;grid-template-columns:{{ cols }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:16px;padding:20px 14px">
+<span style="font-size:12.5px;color:#4A5B70">Sábado, 10 de outubro</span>
+<span style="font-size:46px;font-weight:800;letter-spacing:-0.02em;font-family:'JetBrains Mono', monospace;color:#0A2A4A">{{ clock }}</span>
+<span style="font-size:12px;color:#4A5B70">Unidade Caxias do Sul · {{ placeNote }}</span>
+<button onClick="{{ mark }}" style="margin-top:8px;width:100%;border:0;border-radius:12px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;color:#FFFFFF;background:{{ markBg }}">{{ markLabel }}</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+<sc-for list="{{ marks }}" as="m" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:10px;padding:9px 4px"><span style="font-size:10.5px;color:#6B7A8D">{{ m.label }}</span><strong style="font-family:'JetBrains Mono', monospace;font-size:13.5px;color:{{ m.color }}">{{ m.time }}</strong></div>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:12px"><div style="font-size:11.5px;color:#4A5B70">Banco de horas</div><div style="font-size:18px;font-weight:800;color:#0D6B5B">+ 1h 20min</div></div>
+<div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:12px"><div style="font-size:11.5px;color:#4A5B70">Semana</div><div style="font-size:18px;font-weight:800">40h 12min</div></div>
+</div>
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em">ÚLTIMOS DIAS</span>
+<div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;overflow:hidden">
+<sc-for list="{{ week }}" as="w" hint-placeholder-count="4">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #EEF2F6;font-size:13px"><span style="display:flex;flex-direction:column"><strong>{{ w.day }}</strong><span style="font-family:'JetBrains Mono', monospace;font-size:11px;color:#6B7A8D">{{ w.marks }}</span></span><span style="font-weight:800;color:{{ w.color }}">{{ w.total }}</span></div>
+</sc-for>
+</div>
+<button style="border:1px solid #C9D4E0;background:#FFFFFF;border-radius:10px;padding:11px;font-size:13.5px;font-weight:700;color:#0A2A4A;cursor:pointer">Solicitar ajuste de marcação</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.pedidos }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<button onClick="{{ newReq }}" style="align-self:{{ btnAlign }};border:0;background:#085087;color:#FFFFFF;border-radius:12px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer">+ Nova solicitação</button>
+<div style="display:grid;gap:10px;align-items:start;grid-template-columns:{{ cols }}">
+<sc-for list="{{ reqs }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:13px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><strong style="font-size:14px">{{ r.type }}</strong><span style="padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:{{ r.bg }};color:{{ r.fg }}">{{ r.status }}</span></div><span style="font-size:12.5px;color:#33495E;line-height:1.45">{{ r.detail }}</span><span style="font-size:11.5px;color:#6B7A8D">{{ r.meta }}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.nova }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:{{ narrow }}">
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em">TIPO</span>
+<div style="display:grid;gap:8px;grid-template-columns:{{ typeCols }}">
+<sc-for list="{{ reqTypes }}" as="k" hint-placeholder-count="5">
+<button onClick="{{ k.pick }}" style="border-radius:11px;padding:13px 10px;font-size:13px;font-weight:700;cursor:pointer;text-align:left;background:{{ k.bg }};color:{{ k.fg }};border:1.5px solid {{ k.border }}">{{ k.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ isFerias }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#4A5B70;font-weight:700">Início<input type="date" value="2027-01-11" style="border:1px solid #D8E1EB;border-radius:9px;padding:10px;font-size:13.5px;color:#0C1E33"></label>
+<label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#4A5B70;font-weight:700">Fim<input type="date" value="2027-01-30" style="border:1px solid #D8E1EB;border-radius:9px;padding:10px;font-size:13.5px;color:#0C1E33"></label>
+</div>
+</sc-if>
+<label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#4A5B70;font-weight:700">Descrição<textarea value="{{ reqText }}" onChange="{{ onReqText }}" placeholder="Explique o que você precisa" style="border:1px solid #D8E1EB;border-radius:9px;padding:10px;font-size:13.5px;min-height:84px;resize:none;color:#0C1E33"></textarea></label>
+<button style="border:1.5px dashed #9AA7B6;background:#FFFFFF;color:#4A5B70;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer">Anexar arquivo (opcional)</button>
+<button onClick="{{ submitReq }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">Enviar solicitação</button>
+<span style="font-size:11.5px;line-height:1.45;color:#6B7A8D">Você acompanha o status e as respostas do RH na tela de solicitações.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.mais }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:{{ narrow }}">
+<sc-for list="{{ moreItems }}" as="m" hint-placeholder-count="4">
+<button onClick="{{ m.go }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #E6ECF2;background:#FFFFFF;border-radius:12px;padding:14px;cursor:pointer;text-align:left"><span style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:14px;color:#0C1E33">{{ m.label }}</strong><span style="font-size:12px;color:#6B7A8D">{{ m.desc }}</span></span><span style="color:#5BB1E9;font-weight:800">›</span></button>
+</sc-for>
+<div onClick="{{ toggleWa }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #E6ECF2;background:#FFFFFF;border-radius:12px;padding:14px;cursor:pointer;margin-top:6px"><span style="display:flex;flex-direction:column;gap:2px"><strong style="font-size:14px">Avisos pelo WhatsApp</strong><span style="font-size:12px;color:#6B7A8D">Pendências, status e holerite</span></span><span style="width:40px;height:24px;border-radius:999px;position:relative;flex-shrink:0;background:{{ waTrack }}"><span style="position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:#FFFFFF;left:{{ waKnob }}"></span></span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.holerites }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:12px;align-items:start;grid-template-columns:{{ cols }}">
+<div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:22px 16px"><span style="width:44px;height:44px;border-radius:12px;background:#EAF4FC;color:#085087;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">R$</span><strong style="font-size:15px">Seu primeiro holerite estará disponível em 05/11</strong><span style="font-size:12.5px;line-height:1.5;color:#4A5B70">Referente aos dias trabalhados em outubro. Você recebe um aviso quando ele for publicado.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-size:11.5px;font-weight:800;color:#4A5B70;letter-spacing:0.05em">PRÉVIA · OUTUBRO/2026</span>
+<div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;overflow:hidden;font-size:13px">
+<div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EEF2F6"><span>Salário proporcional (16 dias)</span><strong>R$ 1.280,00</strong></div>
+<div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EEF2F6"><span>INSS</span><strong style="color:#9E3422">− R$ 96,00</strong></div>
+<div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EEF2F6"><span>Vale-transporte</span><strong style="color:#9E3422">− R$ 6,40</strong></div>
+<div style="display:flex;justify-content:space-between;padding:12px 14px;background:#EAF4FC"><strong>Líquido estimado</strong><strong style="color:#085087">R$ 1.177,60</strong></div>
+</div>
+<span style="font-size:11.5px;color:#6B7A8D;line-height:1.45">Valores fictícios e sujeitos ao fechamento da folha.</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.avaliacao }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:{{ narrow }}">
+<div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px"><strong style="font-size:14.5px">Avaliação de experiência · 45 dias</strong><span style="font-size:12.5px;color:#4A5B70;line-height:1.45">Avalie de 1 a 5 como você se vê em cada ponto. Seu gestor, Carlos Mendes, faz a avaliação dele em seguida.</span></div>
+<sc-for list="{{ comps }}" as="c" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;padding:13px 14px"><strong style="font-size:13.5px">{{ c.name }}</strong><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" style="height:40px;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:1px solid {{ o.border }}">{{ o.n }}</button></sc-for></div></div>
+</sc-for>
+<sc-if value="{{ evalOpen }}" hint-placeholder-val="{{ true }}"><button onClick="{{ submitEval }}" style="border:0;background:#085087;color:#FFFFFF;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">Enviar autoavaliação</button></sc-if>
+<sc-if value="{{ evalSent }}" hint-placeholder-val="{{ false }}"><div style="background:#E3F5F1;border:1px solid #BFE6DC;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:#0D6B5B">Autoavaliação enviada. Aguardando avaliação do gestor.</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.assistente }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.5;max-width:{{ narrow }}">
+<sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}"><div style="background:#FFFFFF;border:1px solid #E6ECF2;border-radius:14px;padding:14px;color:#33495E">Pergunte sobre férias, benefícios, horários e regras internas. As respostas vêm dos materiais publicados pela empresa.</div></sc-if>
+<sc-for list="{{ chat }}" as="m" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:6px;max-width:86%;padding:10px 12px;align-self:{{ m.align }};background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.border }};border-radius:{{ m.radius }}"><span>{{ m.text }}</span><sc-if value="{{ m.src }}" hint-placeholder-val="{{ false }}"><span style="align-self:flex-start;background:#E3F5F1;color:#0B4F43;border-radius:6px;padding:3px 8px;font-size:11.5px;font-weight:700">Fonte: {{ m.src }}</span></sc-if><sc-if value="{{ m.fwd }}" hint-placeholder-val="{{ false }}"><button onClick="{{ m.forward }}" style="align-self:flex-start;border:1px solid #085087;background:#FFFFFF;color:#085087;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer">{{ m.fwdLabel }}</button></sc-if></div>
+</sc-for>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:4px"><sc-for list="{{ suggestions }}" as="q" hint-placeholder-count="3"><button onClick="{{ q.ask }}" style="align-self:flex-start;border:1px solid #D8E1EB;background:#FFFFFF;border-radius:999px;padding:8px 12px;font-size:12.5px;cursor:pointer;color:#0A2A4A;text-align:left">{{ q.text }}</button></sc-for></div>
+<span style="font-size:11px;color:#6B7A8D;margin-top:4px">Baseado nos materiais da empresa. Não substitui orientação jurídica.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ t.dados }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:{{ narrow }}">
+<div style="display:grid;grid-template-columns:{{ cols }};background:#FFFFFF;border:1px solid #E6ECF2;border-radius:12px;overflow:hidden;font-size:13px">
+<sc-for list="{{ profile }}" as="p" hint-placeholder-count="6">
+<div style="display:flex;flex-direction:column;gap:1px;padding:11px 14px;border-bottom:1px solid #EEF2F6"><span style="font-size:11.5px;color:#6B7A8D">{{ p.k }}</span><strong>{{ p.v }}</strong></div>
+</sc-for>
+</div>
+<button onClick="{{ newReq }}" style="align-self:{{ btnAlign }};border:1px solid #C9D4E0;background:#FFFFFF;border-radius:12px;padding:12px 16px;font-size:13.5px;font-weight:700;color:#0A2A4A;cursor:pointer">Solicitar alteração de dados</button>
+<span style="font-size:11.5px;color:#6B7A8D;line-height:1.45">Alterações passam pela validação do RH antes de atualizar o cadastro.</span>
+</div>
+</sc-if>
+
+</div>
+</div>
+</div>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:16px;right:16px;max-width:420px;margin:0 auto;bottom:{{ toastBottom }};background:#062A4D;color:#FFFFFF;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:600;box-shadow:0 10px 24px -8px rgba(0,0,0,0.4)">{{ toast }}</div></sc-if>
+
+<sc-if value="{{ isPhone }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(5,1fr);background:#FFFFFF;border-top:1px solid #E6ECF2;padding:8px 6px 18px">
+<sc-for list="{{ tabs }}" as="b" hint-placeholder-count="5">
+<button onClick="{{ b.go }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:4px 0;font-size:11px;font-weight:700;color:{{ b.color }}"><span style="width:22px;height:4px;border-radius:2px;background:{{ b.bar }}"></span>{{ b.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;modo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;celular&quot;,&quot;options&quot;:[&quot;celular&quot;,&quot;navegador&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Visualização&quot;}}">
+const T={ok:{bg:'#E3F5F1',fg:'#0D6B5B'},warn:{bg:'#FCF1DC',fg:'#7A4E0A'},bad:{bg:'#FDE9E5',fg:'#9E3422'},info:{bg:'#EAF4FC',fg:'#085087'},mute:{bg:'#EEF1F5',fg:'#3E4E61'}};
+const SCREENS={inicio:['Início','Olá, Rafael','Metalúrgica Serra Azul','inicio'],documentos:['Documentos','Meus documentos','Pasta pessoal','documentos'],ponto:['Ponto','Registro de ponto','Jornada 08:00–17:00','ponto'],pedidos:['Solicitações','Minhas solicitações','Acompanhe cada pedido','solicitacoes'],nova:['Nova solicitação','Nova solicitação','Solicitações','solicitacoes/nova'],mais:['Mais','Mais opções','Rafael Moura Campos','mais'],holerites:['Holerites','Holerites','Pagamentos','holerites'],avaliacao:['Avaliação','Avaliação de experiência','Desenvolvimento','avaliacao'],assistente:['Assistente','Assistente','Políticas da empresa','assistente'],dados:['Meus dados','Meus dados','Cadastro','meus-dados']};
+const PARENT_PHONE={nova:'pedidos',holerites:'mais',avaliacao:'mais',assistente:'mais',dados:'mais'};
+const ONB=[['Boas-vindas da equipe','Carlos Mendes (gestor)',1],['Leitura do código de conduta','Você',1],['Entrega de EPI e uniforme','Almoxarifado',0],['Treinamento de segurança','RH · 14/10',0],['Conhecer o assistente de políticas','Você',0]];
+const ANSWERS={'Com quanto tempo de antecedência peço férias?':{text:'Pela política da empresa, o pedido deve ser feito pelo portal com pelo menos 45 dias de antecedência e aprovado pelo gestor.',src:'Política de Férias 2026 · item 2.1'},'Qual o horário do refeitório?':{text:'O refeitório da unidade Caxias do Sul funciona das 11h às 14h, em dois turnos definidos pela produção.',src:'Manual do Colaborador · seção 4'},'Posso trocar o dia da minha folga?':{text:'Não encontrei essa informação nos materiais cadastrados pela empresa.',fwd:true}};
+const TYPES=['Férias','Atualização cadastral','Declaração ou documento','Envio de comprovante','Solicitação geral'];
+const pad=n=>String(n).padStart(2,'0');
+const ls=(k,d)=>{try{return localStorage.getItem(k)||d}catch(e){return d}};
+class Component extends DCLogic {
+  state={tab:ls('chr_emp_tab','inicio'),mode:ls('chr_emp_mode',this.props.modo||'celular'),now:new Date(),
+    onb:ONB.map(o=>!!o[2]),doc:'fix',marks:[],reqs:[{type:'Declaração de vínculo',detail:'Para abertura de conta salário.',meta:'Aberta em 30/09 · responsável Juliana Ribeiro (RH)',status:'Em execução',tone:'info'},{type:'Envio de comprovante',detail:'Comprovante de escolaridade.',meta:'Aberta em 25/09 · concluída em 26/09',status:'Concluída',tone:'ok'}],
+    rtype:0,reqText:'',evalSent:false,ratings:{},wa:true,chat:[],fwd:{},toast:''};
+  componentDidMount(){if(this.props.modo&&this.props.modo!==this.state.mode)this.setMode(this.props.modo);this._t=setInterval(()=>this.setState({now:new Date()}),15000);}
+  componentDidUpdate(prev){if(this.props.modo&&prev.modo!==this.props.modo)this.setMode(this.props.modo);}
+  componentWillUnmount(){clearInterval(this._t);clearTimeout(this._tt);}
+  go(tab){try{localStorage.setItem('chr_emp_tab',tab)}catch(e){} this.setState({tab});}
+  setMode(mode){try{localStorage.setItem('chr_emp_mode',mode)}catch(e){} this.setState({mode});}
+  flash(msg){clearTimeout(this._tt);this.setState({toast:msg});this._tt=setTimeout(()=>this.setState({toast:''}),2600);}
+  renderVals(){
+    const st=this.state,tab=SCREENS[st.tab]?st.tab:'inicio',web=st.mode==='navegador';
+    const t={};Object.keys(SCREENS).forEach(k=>t[k]=k===tab);
+    const clock=pad(st.now.getHours())+':'+pad(st.now.getMinutes());
+    const parent=web?(tab==='nova'?'pedidos':null):PARENT_PHONE[tab];
+    const active=web?(tab==='nova'?'pedidos':tab):(PARENT_PHONE[tab]||tab);
+    const tabs=[['inicio','Início'],['documentos','Docs'],['ponto','Ponto'],['pedidos','Pedidos'],['mais','Mais']].map(([id,label])=>({label,go:()=>this.go(id),color:active===id?'#085087':'#6B7A8D',bar:active===id?'#085087':'transparent'}));
+    const pendCount=(st.doc==='fix'?1:0)+(st.evalSent?0:1);
+    const sideNav=[['inicio','Início',pendCount],['documentos','Documentos',st.doc==='fix'?1:0],['ponto','Ponto'],['pedidos','Solicitações'],['holerites','Holerites'],['avaliacao','Avaliação',st.evalSent?0:1],['assistente','Assistente'],['dados','Meus dados']].map(([id,label,c])=>({label,count:c||0,go:()=>this.go(id),bg:active===id?'#FFFFFF':'transparent',fg:active===id?'#062A4D':'#D6E5F2'}));
+    const mapDef=[['inicio','Início e pendências'],['documentos','Documentos'],['ponto','Registro de ponto'],['pedidos','Solicitações'],['nova','Nova solicitação'],['holerites','Holerites'],['avaliacao','Avaliação de experiência'],['assistente','Assistente de políticas'],['dados','Meus dados']];
+    const map=mapDef.map(([id,label],i)=>({n:pad(i+1),label,go:()=>this.go(id),bg:tab===id?'#062A4D':'transparent',fg:tab===id?'#FFFFFF':'#0A2A4A'}));
+    const modes=[['celular','Celular'],['navegador','Navegador']].map(([id,label])=>({label,go:()=>this.setMode(id),bg:st.mode===id?'#062A4D':'transparent',fg:st.mode===id?'#FFFFFF':'#0A2A4A'}));
+    const onboarding=ONB.map((o,i)=>{const d=st.onb[i];return{label:o[0],who:o[1],mark:d?'✓':'',boxBg:d?'#1E9C86':'#FFFFFF',boxBorder:d?'#1E9C86':'#9AA7B6',color:d?'#6B7A8D':'#0C1E33',toggle:()=>this.setState(p=>{const a=[...p.onb];a[i]=!a[i];return{onb:a}})}});
+    const onbDone=st.onb.filter(Boolean).length;
+    const reqs=st.reqs.map(r=>({...r,bg:T[r.tone].bg,fg:T[r.tone].fg}));
+    const labels=['Entrada','Intervalo','Retorno','Saída'];
+    const marks=labels.map((l,i)=>({label:l,time:st.marks[i]||'--:--',color:st.marks[i]?'#0A2A4A':'#9AA7B6'}));
+    const nIdx=st.marks.length;
+    const docBase=[['RG e CPF','Validado em 03/10','Validado','ok'],['Carteira de trabalho digital','Validado em 03/10','Validado','ok'],['ASO admissional','Enviado pela clínica em 02/10','Validado','ok'],['Certificado de escolaridade','Enviado em 25/09','Validado','ok']];
+    const docs=(st.doc==='review'?[['Comprovante de residência','Enviado agora · conferência do RH','Em revisão','warn']]:[]).concat(docBase).map(d=>({name:d[0],meta:d[1],status:d[2],bg:T[d[3]].bg,fg:T[d[3]].fg}));
+    const comps=['Qualidade do trabalho','Segurança e normas','Trabalho em equipe','Aprendizado das rotinas'].map((name,ci)=>({name,opts:[1,2,3,4,5].map(n=>{const on=st.ratings[ci]===n;return{n,bg:on?'#085087':'#FFFFFF',fg:on?'#FFFFFF':'#0A2A4A',border:on?'#085087':'#D8E1EB',pick:()=>!st.evalSent&&this.setState(p=>({ratings:{...p.ratings,[ci]:n}}))}})}));
+    const chat=[];st.chat.forEach((q,i)=>{chat.push({text:q,align:'flex-end',bg:'#085087',fg:'#FFFFFF',border:'#085087',radius:'14px 14px 4px 14px'});const a=ANSWERS[q];chat.push({text:a.text,src:a.src||'',fwd:!!a.fwd,fwdLabel:st.fwd[i]?'Encaminhado ao RH ✓':'Encaminhar ao RH',forward:()=>{if(st.fwd[i])return;this.setState(p=>({fwd:{...p.fwd,[i]:1},reqs:[{type:'Solicitação geral',detail:'Pergunta do assistente: '+q,meta:'Aberta agora · encaminhada pelo assistente',status:'Aberta',tone:'mute'},...p.reqs]}));this.flash('Pergunta encaminhada ao RH como solicitação.')},align:'flex-start',bg:'#FFFFFF',fg:'#0C1E33',border:'#E6ECF2',radius:'14px 14px 14px 4px'})});
+    return {t,clock,tabs,map,modes,sideNav,isPhone:!web,isWeb:web,path:SCREENS[tab][3],
+      sh:web?{flex:'1 1 760px',width:'auto',maxW:'1180px',height:'auto',minH:'760px',border:'1px solid #C9D4E0',radius:'12px'}:{flex:'0 0 auto',width:'390px',maxW:'none',height:'812px',minH:'0',border:'10px solid #0C1E33',radius:'46px'},
+      contentPad:web?'24px 26px 32px':'14px 14px 20px',
+      cols:web?'repeat(auto-fit,minmax(300px,1fr))':'1fr',typeCols:web?'repeat(auto-fit,minmax(170px,1fr))':'1fr 1fr',narrow:web?'680px':'none',btnAlign:web?'flex-start':'stretch',toastBottom:web?'24px':'84px',
+      uploadA:web?'Arrastar arquivo':'Tirar foto',placeNote:web?'registro pelo navegador':'localização confirmada',
+      title:SCREENS[tab][1],sub:SCREENS[tab][2],canBack:!!parent,back:()=>this.go(parent),
+      nextMark:nIdx>=4?'Jornada encerrada':labels[nIdx]+' · '+['08:00','12:00','13:00','17:00'][nIdx],goPonto:()=>this.go('ponto'),goDocs:()=>this.go('documentos'),goEval:()=>this.go('avaliacao'),goReqs:()=>this.go('pedidos'),
+      pendCount,noPend:pendCount===0,docFix:st.doc==='fix',docUploading:st.doc==='up',evalOpen:!st.evalSent,evalSent:st.evalSent,
+      onboarding,onbDone,onbTotal:ONB.length,onbPct:Math.round(onbDone/ONB.length*100)+'%',reqsTop:reqs.slice(0,2),
+      upload:()=>{this.setState({doc:'up'});setTimeout(()=>{this.setState({doc:'review'});this.flash('Documento recebido. O RH vai conferir.')},1600)},docs,
+      marks,markLabel:nIdx>=4?'Jornada registrada':'Registrar '+labels[nIdx].toLowerCase(),markBg:nIdx>=4?'#9AA7B6':'#1E9C86',
+      mark:()=>{if(nIdx>=4)return;this.setState(p=>({marks:[...p.marks,clock]}));this.flash(labels[nIdx]+' registrada às '+clock+'.')},
+      week:[['Sex 09/10','07:57 · 12:00 · 13:00 · 17:00','8h 03','#0A2A4A'],['Qui 08/10','07:58 · 12:01 · 13:00 · 17:40','8h 41','#0D6B5B'],['Qua 07/10','08:06 · 12:00 · 13:00 · 17:01','7h 55','#7A4E0A'],['Ter 06/10','07:59 · 12:03 · 13:01 · 17:02','8h 05','#0A2A4A']].map(w=>({day:w[0],marks:w[1],total:w[2],color:w[3]})),
+      reqs,newReq:()=>this.go('nova'),
+      reqTypes:TYPES.map((l,i)=>({label:l,pick:()=>this.setState({rtype:i}),bg:st.rtype===i?'#EAF4FC':'#FFFFFF',fg:st.rtype===i?'#085087':'#0A2A4A',border:st.rtype===i?'#085087':'#E6ECF2'})),
+      isFerias:st.rtype===0,reqText:st.reqText,onReqText:e=>this.setState({reqText:e.target.value}),
+      submitReq:()=>{const type=TYPES[st.rtype];const detail=st.rtype===0?'11/01 a 30/01/2027 · 20 dias'+(st.reqText?' · '+st.reqText:''):(st.reqText||'Sem descrição');this.setState(p=>({reqs:[{type,detail,meta:'Aberta agora · aguardando análise do RH',status:'Aberta',tone:'mute'},...p.reqs],reqText:''}));this.go('pedidos');this.flash('Solicitação enviada.')},
+      moreItems:[['holerites','Holerites','Primeiro holerite em 05/11'],['avaliacao','Avaliação de experiência','Autoavaliação até 25/11'],['assistente','Assistente de políticas','Tire dúvidas sobre regras internas'],['dados','Meus dados','Cadastro e alterações']].map(m=>({label:m[1],desc:m[2],go:()=>this.go(m[0])})),
+      waTrack:st.wa?'#1E9C86':'#C9D4E0',waKnob:st.wa?'19px':'3px',waKnobS:st.wa?'16px':'2px',toggleWa:()=>this.setState(p=>({wa:!p.wa})),
+      comps,submitEval:()=>{this.setState({evalSent:true});this.flash('Autoavaliação enviada.')},
+      chat,chatEmpty:st.chat.length===0,suggestions:Object.keys(ANSWERS).filter(q=>!st.chat.includes(q)).map(q=>({text:q,ask:()=>this.setState(p=>({chat:[...p.chat,q]}))})),
+      profile:[['Nome','Rafael Moura Campos'],['Cargo','Auxiliar de produção'],['Unidade','Caxias do Sul · Produção'],['Gestor','Carlos Mendes'],['Admissão','15/10/2026'],['E-mail','rafael.campos@exemplo.com.br'],['Endereço','Rua das Araucárias, 120 · Caxias do Sul/RS']].map(p=>({k:p[0],v:p[1]})),
+      toast:st.toast};
+  }
+}
+</script>
+</body>
+</html>
