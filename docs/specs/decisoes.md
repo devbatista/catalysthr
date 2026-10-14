@@ -534,6 +534,8 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-513 | Sem página pública de status no MVP | 2026-10-13 |
 | D-514 | ZIP com senha AES-256 gerado pelo 7-Zip instalado no container da aplicação, porque o rubyzip não grava AES | 2026-10-13 |
 | D-515 | Propostas P-20-01 a P-20-36 da spec 20 aprovadas sem ajuste. Inclui o worker separado para o ponto (P-20-04), a empresa de demonstração em produção e as feature flags (P-20-11) | 2026-10-13 |
+| D-516 | Enquanto houver um desenvolvedor só, o merge na `main` exige só o CI verde. A revisão aprovada (P-20-12) passa a ser obrigatória quando entrar a segunda pessoa | 2026-10-14 |
+| D-517 | A configuração dos serviços do Railway (início, pre-deploy, health check, réplicas, região) é feita pelo painel e pela API e documentada no README, sem arquivo no repositório. Motivo: o `railway.json` (Config as Code) foi descontinuado pelo Railway, serviços novos não podem usá-lo, e o substituto (`.railway/railway.ts`) não foi adotado | 2026-10-14 |
 
 ## Recrutamento (spec 21)
 
