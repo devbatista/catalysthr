@@ -23,7 +23,17 @@ bin/setup                # instala as gems, prepara o banco e sobe o servidor
 bin/dev                  # web, Tailwind e Sidekiq
 ```
 
-A aplicação abre em http://localhost:3000.
+A aplicação abre em http://localhost (porta 80).
+
+Portas locais:
+
+| Serviço | Porta | Observação |
+|---|---|---|
+| `web` (Rails) | 80 | Escuta em `0.0.0.0`, porque o macOS só libera portas abaixo de 1024 sem `sudo` nesse modo. Aparelhos da mesma rede conseguem acessar; só use dados fictícios |
+| Postgres (Docker) | 5433 | Não conflita com um Postgres local na 5432 |
+| Redis (Docker) | 6380 | Não conflita com um Redis local na 6379 |
+
+Tailwind (`css`) e Sidekiq (`worker`) não usam porta.
 
 ## Testes e qualidade
 
@@ -47,7 +57,7 @@ Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em
 
 | Serviço | Origem | Início | Pre-deploy | Health check | Réplicas | Variáveis próprias |
 |---|---|---|---|---|---|---|
-| `web` | `Dockerfile` | padrão do Dockerfile (Thruster e Puma) | `bin/rails db:migrate` | `/up`, 120 s | 2 | — |
+| `web` | `Dockerfile` | padrão do Dockerfile (Thruster na porta 80, Puma na 3000) | `bin/rails db:migrate` | `/up`, 120 s | 2 | `PORT=80`, para o Railway rotear e fazer o health check na porta do Thruster |
 | `worker` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | — |
 | `worker-time` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | `SIDEKIQ_ROLE=time` (só a fila do ponto) |
 | `Postgres` | template do Railway (Postgres 18 com pgvector) | — | — | — | 1 | Sem endereço público |
