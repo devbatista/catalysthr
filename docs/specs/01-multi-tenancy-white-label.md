@@ -87,7 +87,7 @@ CatalystHR (admin.catalysthr.com.br)
   - de 3 a 40 caracteres, com letras minúsculas sem acento, números e hífen;
   - não pode começar nem terminar com hífen;
   - é único entre os slugs ativos e os slugs em período de redirecionamento.
-- **RN-01-021** — Lista de slugs reservados, que não podem ser usados: `admin`, `www`, `api`, `app`, `painel`, `portal`, `suporte`, `status`, `mail`, `email`, `static`, `assets`, `cdn`, `totem`. O superadmin pode ampliar a lista **[P-01-11]**.
+- **RN-01-021** — Lista de slugs reservados, que não podem ser usados: `admin`, `www`, `api`, `app`, `painel`, `portal`, `suporte`, `status`, `mail`, `email`, `static`, `assets`, `cdn`, `totem`, `health` (D-573). O superadmin pode ampliar a lista **[P-01-11]**.
 - **RN-01-022** — Na troca de slug, o antigo fica 90 dias redirecionando (D-157). Depois disso é liberado.
 - **RN-01-023** — O certificado é um wildcard para `*.painel.catalysthr.com.br`, então criar um subdomínio não exige nenhum passo de infraestrutura (D-153).
 

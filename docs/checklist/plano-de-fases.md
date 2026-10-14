@@ -1,6 +1,6 @@
 # Plano de fases — CatalystHR (checklist)
 
-> Última atualização: 2026-10-13
+> Última atualização: 2026-10-14
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
@@ -50,7 +50,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
 - [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` (DKIM, SPF e DMARC entram com o SES)
 - [x] Sentry: organização e projeto `catalysthr` (EUA), `SENTRY_DSN` em produção, erro de teste recebido
-- [ ] Sentry: primeiro monitor externo para `/up`
+- [x] Sentry: primeiro monitor externo para `/up`, em `health.painel.catalysthr.com.br`, a cada minuto, com alerta por e-mail (D-573, 2026-10-14)
 - [x] Docker Compose para o desenvolvimento local
 - [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
 - [x] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
@@ -71,7 +71,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Railway: criptografia em repouso confirmada no Trust Center
 
 ### Entregas
-- [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa
+- [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
 - [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
@@ -100,7 +100,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Especialista em DP: spec 09 conferida, menos as férias
 - [ ] Parceiro ou empresa piloto definido
 - [ ] Railway: nunca usar limite rígido de gasto em produção, só o alerta por e-mail. O limite rígido derruba todos os serviços, inclusive o ponto, o que contraria a D-116 e a RN-10-006
-- [ ] Railway: rever o plano Hobby antes do primeiro cliente (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508) e decidir sobre um workspace separado para o CatalystHR
+- [ ] Railway: rever o plano Hobby antes do primeiro cliente (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508, que a documentação do Railway não cita em nenhum plano; limite de 2 domínios próprios por serviço, já usados por `*.painel` e `admin`) e decidir sobre um workspace separado para o CatalystHR antes do upgrade, porque o Pro vale para o workspace inteiro
 
 ### Entregas
 - [ ] **Spec 06:** motor de modelos de processo
