@@ -16,7 +16,11 @@ if ENV["SENTRY_DSN"].present?
       path.include?("/time_entries") || path.include?("/totem") ? 1.0 : 0.1
     end
 
-    config.enable_logs = true
+    # Send logs to Sentry Logs (D-510, RN-20-072). In sentry-ruby 7.x logs are
+    # on whenever Sentry is initialized; the :logger patch forwards every Ruby
+    # Logger call at or above the logger level (info in production): the
+    # lograge JSON line of each request and the Sidekiq job logs.
+    config.enabled_patches << :logger
 
     config.before_send = lambda do |event, _hint|
       SentryScrubber.scrub(event)
