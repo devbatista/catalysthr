@@ -33,7 +33,8 @@
 - [x] **[Claude]** Pôr o `SENTRY_DSN` nas variáveis do `web`, do `worker` e do `worker-time` e publicar (2026-10-14)
 - [x] **[Claude]** Enviar um erro de teste da produção: chegou ao Sentry (2026-10-14)
 - [ ] **[você]** Conferir no Sentry que o CPF do erro de teste aparece como `[cpf]` e que o log de teste aparece em Explore → Logs com `[email]`
-- [ ] **[Claude]** Criar o primeiro monitor externo para `/up`
+- [x] **[você]** Criar o primeiro monitor externo para `/up` pelo painel, porque a API pública do Sentry não cria monitores externos: `https://health.painel.catalysthr.com.br/up`, a cada minuto, timeout de 10 s, issue depois de 3 falhas, alerta por e-mail. O endereço do Railway foi recusado pelo Sentry (limite de 1.000 monitores por domínio no `railway.app`), e o Hobby não aceita um terceiro domínio no `web` (D-573, 2026-10-14)
+- [x] **[Claude]** Conferir nos logs do Railway que o `SentryUptimeBot` chega e recebe 200 (2026-10-14)
 
 ## 4. AWS em São Paulo (sa-east-1 — D-501)
 

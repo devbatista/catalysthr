@@ -161,7 +161,7 @@ Definir **onde e como o CatalystHR roda**:
 - **RN-20-071** — **Sem dados pessoais no Sentry:** `send_default_pii` desligado, filtro de parâmetros (P-05-33) e um `before_send` que mascara CPF, e-mail e telefone em mensagens e contextos. O contexto do erro leva só IDs (usuário, empresa) **[P-20-25]**.
 - **RN-20-072** — **Logs** (D-510): JSON pelo `lograge`, enviados pela aplicação e pelo Sidekiq ao **Sentry Logs**, com 30 dias de retenção. Cada linha leva o ID da requisição, da empresa e do usuário, nunca dados pessoais.
 - **RN-20-073** — **Monitores do Sentry** (D-512) **[P-20-26]**:
-  - **externos**, a cada minuto: tela de login, portal, `/up` da API do ponto e do totem, e admin;
+  - **externos**, a cada minuto: tela de login, portal, `/up` da API do ponto e do totem, e admin. O `/up` geral é conferido em `health.painel.catalysthr.com.br`, e não no endereço do Railway (D-573);
   - **de jobs agendados:** pg_dump, foto diária, geração e cobrança de faturas, régua de inadimplência, prazos do eSocial, fim do período de leitura, liberação dos avisos retidos.
 - **RN-20-074** — **Saúde detalhada:** `/up/deep`, protegido por token, confere o banco, o Redis, o ClamAV e o atraso das filas do Sidekiq. É usado pelos monitores externos **[P-20-27]**.
 - **RN-20-075** — **Níveis de alerta** **[P-20-28]**:
