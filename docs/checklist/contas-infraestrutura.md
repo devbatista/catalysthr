@@ -61,7 +61,8 @@
 - [x] **[Claude]** Colocar todos na região **US East (Virgínia)** (o Postgres e o Redis nasceram em US West e foram movidos)
 - [x] **[Claude]** Definir as variáveis: `RAILS_MASTER_KEY` (de `config/master.key`, sem passar pelo chat), `DATABASE_URL` e `REDIS_URL` (referências do Railway), `SIDEKIQ_ROLE=time` só no `worker-time`, `APP_HOST`
 - [x] **[Claude]** Definir pela API o início dos workers (`bundle exec sidekiq`), o pre-deploy e o health check do `web` e as réplicas. O `railway.json` foi descontinuado pelo Railway, então a configuração ficou documentada no README (D-517)
-- [ ] **[Claude]** Criar o token de projeto e gravar como secret `RAILWAY_TOKEN` no GitHub (`gh secret set`)
+- [ ] **[você]** Criar o token de projeto no painel do Railway (projeto `catalyst_hr` → Settings → Tokens, ambiente `production`). O login da CLI não tem permissão para criar tokens pela API
+- [ ] **[você]** Gravar o token como secret no GitHub: `gh secret set RAILWAY_TOKEN --repo devbatista/catalysthr` (o comando pede o valor sem mostrar na tela)
 - [ ] **[Claude]** Rodar o workflow **Deploy** e conferir a página e o `/up` no endereço provisório do Railway
 - [ ] **[Claude]** Depois do domínio e da Cloudflare: adicionar `*.painel.catalysthr.com.br` e `admin.catalysthr.com.br` no serviço `web` e acompanhar o certificado (até 72 horas)
 
