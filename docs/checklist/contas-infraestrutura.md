@@ -53,7 +53,7 @@
 
 > **Atenção ao plano Hobby.** Pela documentação, o volume padrão no Hobby é de 5 GB (a spec 20 prevê 50 GB para o banco). Há indicação, **não confirmada** na documentação oficial, de que o PITR (perda máxima de 5 minutos, D-508) é recurso do **Pro**. Para a fase 0 o Hobby basta, mas isso precisa ser revisto **antes do primeiro cliente**.
 
-- [ ] **[você]** Conferir o plano da conta (Hobby) e definir o limite de gasto em Account → Usage
+- [ ] **[você]** Definir o limite de gasto em railway.com/workspace/usage → **Set Usage Limits** → Compute: alerta por e-mail (ex.: US$ 15) e, só durante a fase 0, limite rígido (ex.: US$ 30). O limite rígido tira **todos** os serviços do ar ao ser atingido
 - [x] **[Claude]** `railway init --name catalyst_hr`: criar o projeto
 - [x] **[Claude]** Adicionar o Postgres e conferir se ele aceita `CREATE EXTENSION vector` (Postgres 18.6 com pgvector 0.8.7 disponível)
 - [x] **[Claude]** Adicionar o Redis (só para o Sidekiq), com AOF e `noeviction`
