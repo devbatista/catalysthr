@@ -6,8 +6,8 @@
 
 ## 1. Domínio `catalysthr.com.br`
 
-- [ ] **[você]** Ver se o domínio está disponível em registro.br
-- [ ] **[você]** Registrar no nome da DevBatista (CNPJ) ou no seu CPF
+- [x] **[você]** Ver se o domínio está disponível em registro.br
+- [x] **[você]** Registrar no nome da DevBatista (CNPJ) ou no seu CPF (registrado em 2026-10-14)
 - [ ] **[você]** Depois do passo 2, trocar os servidores DNS no Registro.br pelos dois que a Cloudflare indicar
 
 > Até o domínio existir, o teste de deploy usa o endereço provisório do Railway (`*.up.railway.app`).
@@ -15,7 +15,7 @@
 ## 2. Cloudflare (DNS, plano Free, sem proxy — D-503)
 
 - [ ] **[você]** Criar a conta em cloudflare.com, com 2FA
-- [ ] **[você]** Adicionar o site `catalysthr.com.br` no plano **Free** e anotar os dois servidores DNS (passo 1)
+- [ ] **[você]** Adicionar o site `catalysthr.com.br` no plano **Free** e anotar os dois servidores DNS (passo 1). Na tela de configuração: Search e Agent em Allow, Training em Block (opcional), Bot Preference Sync **desligado** (sem proxy ele não tem efeito), importação de DNS automática
 - [ ] **[você]** Criar um token de API com permissão **Zone → DNS → Edit**, só para a zona `catalysthr.com.br`, e me passar quando formos criar os registros
 - [ ] **[Claude]** Criar os registros pela API: wildcard `*.painel`, `_acme-challenge.painel` e o TXT que o Railway pedir, `admin`, e os registros do SES (DKIM, SPF, DMARC), todos **sem proxy** (nuvem cinza)
 
