@@ -9,7 +9,7 @@
 - [x] **[você]** Ver se o domínio está disponível em registro.br
 - [x] **[você]** Registrar no nome da DevBatista (CNPJ) ou no seu CPF (registrado em 2026-10-14)
 - [x] **[você]** Depois do passo 2, trocar os servidores DNS no Registro.br pelos dois que a Cloudflare indicar (`casey.ns.cloudflare.com` e `laylah.ns.cloudflare.com`, alterado em 2026-10-14)
-- [ ] Propagação: o `.br` passar a responder com os servidores da Cloudflare e a Cloudflare mostrar o domínio como **Active**
+- [x] Propagação: o `.br` passar a responder com os servidores da Cloudflare e a Cloudflare mostrar o domínio como **Active** (2026-10-14)
 
 > Até o domínio existir, o teste de deploy usa o endereço provisório do Railway (`*.up.railway.app`).
 
