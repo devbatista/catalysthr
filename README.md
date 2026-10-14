@@ -74,4 +74,4 @@ Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em
 
 Os serviços `clamav` e `backup` entram na fase 1. Os três serviços da aplicação usam a política de reinício `ON_FAILURE`.
 
-Variáveis comuns aos três serviços da aplicação: `DATABASE_URL` (referência `${{Postgres.DATABASE_URL}}`), `REDIS_URL` (referência `${{Redis.REDIS_URL}}`), `RAILS_MASTER_KEY` e `APP_HOST`. O `SENTRY_DSN` entra quando o projeto do Sentry existir. Segredos nunca entram no repositório.
+Variáveis comuns aos três serviços da aplicação: `DATABASE_URL` (referência `${{Postgres.DATABASE_URL}}`), `REDIS_URL` (referência `${{Redis.REDIS_URL}}`), `RAILS_MASTER_KEY` e `APP_HOST`. O `SENTRY_DSN` (organização e projeto `catalysthr` no Sentry, região EUA) também está nos três serviços. Segredos nunca entram no repositório.

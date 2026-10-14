@@ -49,7 +49,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
 - [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
 - [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` (DKIM, SPF e DMARC entram com o SES)
-- [ ] Sentry: criar o projeto e definir `SENTRY_DSN` (a integração e a máscara de dados pessoais já estão no código); primeiro monitor externo
+- [x] Sentry: organização e projeto `catalysthr` (EUA), `SENTRY_DSN` em produção, erro de teste recebido
+- [ ] Sentry: primeiro monitor externo para `/up`
 - [x] Docker Compose para o desenvolvimento local
 - [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
 - [x] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway

@@ -24,12 +24,16 @@
 
 ## 3. Sentry (erros, desempenho, logs e monitores — D-506)
 
-- [ ] **[você]** Criar a conta em sentry.io, com 2FA
-- [ ] **[você]** Na criação da organização, escolher a região de dados **EUA** (P-20-03). Ela não pode ser trocada depois
-- [ ] **[você]** Começar no plano gratuito (Developer). A troca para o Team fica para quando precisar de mais monitores
-- [ ] **[você]** Criar o projeto **Rails** `catalysthr` e copiar o **DSN**
-- [ ] **[Claude]** Pôr o `SENTRY_DSN` nas variáveis do Railway (o código já está pronto e mascara os dados pessoais)
-- [ ] **[Claude]** Criar o primeiro monitor externo para `/up`, depois do primeiro deploy
+- [x] **[você]** Conta no sentry.io (a conta já existia, de outro app)
+- [ ] **[você]** Confirmar que o 2FA está ligado na conta do Sentry
+- [x] **[você]** Organização própria `catalysthr`, separada do outro app, na região de dados **EUA** (P-20-03)
+- [x] **[você]** Plano gratuito (Developer). A troca para o Team fica para quando precisar de mais monitores
+- [x] **[você]** Projeto **Rails** `catalysthr` com Error monitoring, Logging e Tracing (sem Profiling); DSN copiado para `~/.config/catalysthr/sentry_dsn`
+- [x] **[você]** Security & Privacy: Data Scrubber, scrubbers padrão e sem guardar IPs
+- [x] **[Claude]** Pôr o `SENTRY_DSN` nas variáveis do `web`, do `worker` e do `worker-time` e publicar (2026-10-14)
+- [x] **[Claude]** Enviar um erro de teste da produção: chegou ao Sentry (2026-10-14)
+- [ ] **[você]** Conferir no Sentry que o CPF do erro de teste aparece como `[cpf]` e que o log de teste aparece em Explore → Logs com `[email]`
+- [ ] **[Claude]** Criar o primeiro monitor externo para `/up`
 
 ## 4. AWS em São Paulo (sa-east-1 — D-501)
 
