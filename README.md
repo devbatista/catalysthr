@@ -41,13 +41,18 @@ O CI do GitHub Actions roda tudo isso em cada pull request (`.github/workflows/c
 
 Só existe o ambiente de produção, no Railway (D-504). O deploy é manual, pelo workflow **Deploy** na aba Actions, e só segue com o CI verde no commit. Ele recusa os horários de pico do ponto (7h às 9h e 17h às 19h), a não ser que seja forçado.
 
-Serviços no Railway (spec 20, RN-20-010):
+### Configuração dos serviços no Railway
 
-| Serviço | Comando de início | Observação |
-|---|---|---|
-| `web` | padrão do Dockerfile | Usa o `railway.json`: migrações no pre-deploy e health check em `/up` |
-| `worker` | `bundle exec sidekiq` | Desligar o pre-deploy neste serviço |
-| `worker-time` | `bundle exec sidekiq` com `SIDEKIQ_ROLE=time` | Só a fila do ponto. Desligar o pre-deploy |
-| `postgres`, `redis`, `clamav`, `backup` | — | Só na rede privada |
+Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em todos os serviços (D-500). A configuração fica no Railway (painel e API), e não em arquivo no repositório (D-517). **Qualquer mudança no Railway deve ser registrada nesta tabela.**
 
-Variáveis de ambiente principais: `DATABASE_URL`, `REDIS_URL`, `RAILS_MASTER_KEY`, `SENTRY_DSN`, `APP_HOST`. Segredos nunca entram no repositório.
+| Serviço | Origem | Início | Pre-deploy | Health check | Réplicas | Variáveis próprias |
+|---|---|---|---|---|---|---|
+| `web` | `Dockerfile` | padrão do Dockerfile (Thruster e Puma) | `bin/rails db:migrate` | `/up`, 120 s | 2 | — |
+| `worker` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | — |
+| `worker-time` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | `SIDEKIQ_ROLE=time` (só a fila do ponto) |
+| `Postgres` | template do Railway (Postgres 18 com pgvector) | — | — | — | 1 | Sem endereço público |
+| `Redis` | template do Railway (Redis 8) | `redis-server` com `--appendonly yes --maxmemory-policy noeviction` | — | — | 1 | Sem endereço público |
+
+Os serviços `clamav` e `backup` entram na fase 1. Os três serviços da aplicação usam a política de reinício `ON_FAILURE`.
+
+Variáveis comuns aos três serviços da aplicação: `DATABASE_URL` (referência `${{Postgres.DATABASE_URL}}`), `REDIS_URL` (referência `${{Redis.REDIS_URL}}`), `RAILS_MASTER_KEY` e `APP_HOST`. O `SENTRY_DSN` entra quando o projeto do Sentry existir. Segredos nunca entram no repositório.

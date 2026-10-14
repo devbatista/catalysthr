@@ -53,14 +53,14 @@
 
 > **Atenção ao plano Hobby.** Pela documentação, o volume padrão no Hobby é de 5 GB (a spec 20 prevê 50 GB para o banco). Há indicação, **não confirmada** na documentação oficial, de que o PITR (perda máxima de 5 minutos, D-508) é recurso do **Pro**. Para a fase 0 o Hobby basta, mas isso precisa ser revisto **antes do primeiro cliente**.
 
-- [ ] **[você]** Conferir o plano da conta (Hobby) e o limite de gasto em Account → Usage
-- [ ] **[Claude]** `railway init --name catalysthr`: criar o projeto
-- [ ] **[Claude]** Adicionar o Postgres e conferir se ele aceita `CREATE EXTENSION vector`. Se não aceitar, usar o template "Postgres com pgvector" do Railway
-- [ ] **[Claude]** Adicionar o Redis (só para o Sidekiq)
-- [ ] **[Claude]** Criar os serviços vazios `web`, `worker` e `worker-time`, **sem** ligar ao GitHub, porque o deploy é feito pelo nosso workflow (`railway up`), e não a cada push
-- [ ] **[Claude]** Colocar todos na região **US East (Virgínia)**
-- [ ] **[Claude]** Definir as variáveis: `RAILS_MASTER_KEY` (de `config/master.key`, sem passar pelo chat), `DATABASE_URL` e `REDIS_URL` (referências do Railway), `SIDEKIQ_ROLE=time` só no `worker-time`, `APP_HOST`
-- [ ] **[Claude]** Definir o comando de início dos workers: `bundle exec sidekiq`
+- [ ] **[você]** Conferir o plano da conta (Hobby) e definir o limite de gasto em Account → Usage
+- [x] **[Claude]** `railway init --name catalyst_hr`: criar o projeto
+- [x] **[Claude]** Adicionar o Postgres e conferir se ele aceita `CREATE EXTENSION vector` (Postgres 18.6 com pgvector 0.8.7 disponível)
+- [x] **[Claude]** Adicionar o Redis (só para o Sidekiq), com AOF e `noeviction`
+- [x] **[Claude]** Criar os serviços vazios `web`, `worker` e `worker-time`, **sem** ligar ao GitHub, porque o deploy é feito pelo nosso workflow (`railway up`), e não a cada push
+- [x] **[Claude]** Colocar todos na região **US East (Virgínia)** (o Postgres e o Redis nasceram em US West e foram movidos)
+- [x] **[Claude]** Definir as variáveis: `RAILS_MASTER_KEY` (de `config/master.key`, sem passar pelo chat), `DATABASE_URL` e `REDIS_URL` (referências do Railway), `SIDEKIQ_ROLE=time` só no `worker-time`, `APP_HOST`
+- [x] **[Claude]** Definir pela API o início dos workers (`bundle exec sidekiq`), o pre-deploy e o health check do `web` e as réplicas. O `railway.json` foi descontinuado pelo Railway, então a configuração ficou documentada no README (D-517)
 - [ ] **[Claude]** Criar o token de projeto e gravar como secret `RAILWAY_TOKEN` no GitHub (`gh secret set`)
 - [ ] **[Claude]** Rodar o workflow **Deploy** e conferir a página e o `/up` no endereço provisório do Railway
 - [ ] **[Claude]** Depois do domínio e da Cloudflare: adicionar `*.painel.catalysthr.com.br` e `admin.catalysthr.com.br` no serviço `web` e acompanhar o certificado (até 72 horas)

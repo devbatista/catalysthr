@@ -95,7 +95,7 @@ Definir **onde e como o CatalystHR roda**:
 
 - **RN-20-012** — Os serviços conversam pela **rede privada** do Railway (`*.railway.internal`). O banco, o Redis e o ClamAV **não têm endereço público** **[P-20-06]**.
 - **RN-20-013** — **Build** pelo `Dockerfile` do Rails, com jemalloc, YJIT e o **7-Zip** (pacote `7zip` do Debian 13, comando `7z`, versão 25) para os ZIPs com AES-256 (D-514). A senha do ZIP não pode aparecer na linha de comando nem nos logs **[P-20-07]**. **Nota de implementação (2026-10-14):** o 7-Zip não lê a senha de variável de ambiente; ele aceita o argumento `-p` ou a digitação no terminal. A forma de passar a senha sem expô-la (por exemplo, pela entrada do processo num pseudo-terminal) será resolvida e testada na implementação da exportação (fase 2).
-- **RN-20-014** — **Migrações** rodam no *pre-deploy command* do Railway (`bin/rails db:migrate`). Se falharem, o deploy não acontece **[P-20-08]**.
+- **RN-20-014** — **Migrações** rodam no *pre-deploy command* do Railway (`bin/rails db:migrate`), só no serviço `web`. Se falharem, o deploy não acontece **[P-20-08]**. A configuração dos serviços fica no Railway e é documentada no README, porque o `railway.json` foi descontinuado pelo Railway (D-517).
 - **RN-20-015** — O **ClamAV** é chamado pela aplicação via TCP (gem `clamav-client`). Se o ClamAV estiver fora do ar, o arquivo fica em `scanning` e o job tenta de novo. Nada é liberado sem varredura (P-05-30) **[P-20-09]**.
 
 ### 4.3 Domínios e certificados (D-153, D-503)

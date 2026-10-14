@@ -46,12 +46,12 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Exigir uma revisão aprovada na proteção da `main` quando entrar a segunda pessoa
 - [x] GitHub Actions: RuboCop, brakeman, bundler-audit, `importmap audit`, RSpec com Postgres e Redis, SimpleCov
 - [x] Dependabot (gems, Docker, Actions)
-- [ ] Railway US East: serviços `web`, `worker-time`, `worker`, `postgres`, `redis`, `clamav`, `backup`, só na rede privada
+- [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
 - [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
 - [ ] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin`, DKIM, SPF e DMARC
 - [ ] Sentry: criar o projeto e definir `SENTRY_DSN` (a integração e a máscara de dados pessoais já estão no código); primeiro monitor externo
 - [x] Docker Compose para o desenvolvimento local
-- [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy (`railway.json`)
+- [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
 - [ ] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
 
 ### Pronto quando
