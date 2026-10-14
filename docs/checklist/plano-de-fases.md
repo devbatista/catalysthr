@@ -48,7 +48,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Dependabot (gems, Docker, Actions)
 - [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
 - [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
-- [ ] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin`, DKIM, SPF e DMARC
+- [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` (DKIM, SPF e DMARC entram com o SES)
 - [ ] Sentry: criar o projeto e definir `SENTRY_DSN` (a integração e a máscara de dados pessoais já estão no código); primeiro monitor externo
 - [x] Docker Compose para o desenvolvimento local
 - [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
@@ -56,7 +56,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Primeiro deploy pelo workflow, no endereço provisório do Railway (https://web-production-4e2f3.up.railway.app)
 
 ### Pronto quando
-- [ ] Uma página "olá" passa pelo CI, é publicada com aprovação manual e responde com HTTPS num subdomínio wildcard
+- [x] Uma página "olá" passa pelo CI, é publicada com aprovação manual e responde com HTTPS num subdomínio wildcard (2026-10-14)
 
 ---
 

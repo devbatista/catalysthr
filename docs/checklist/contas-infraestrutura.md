@@ -18,8 +18,9 @@
 - [x] **[você]** Criar a conta em cloudflare.com
 - [x] **[você]** Ligar o 2FA na conta da Cloudflare
 - [x] **[você]** Adicionar o site `catalysthr.com.br` no plano **Free** e anotar os dois servidores DNS (passo 1). Na tela de configuração: Search e Agent em Allow, Training em Block (opcional), Bot Preference Sync **desligado** (sem proxy ele não tem efeito), importação de DNS automática
-- [ ] **[você]** Criar um token de API com permissão **Zone → DNS → Edit**, só para a zona `catalysthr.com.br`, e me passar quando formos criar os registros
-- [ ] **[Claude]** Criar os registros pela API: wildcard `*.painel`, `_acme-challenge.painel` e o TXT que o Railway pedir, `admin`, e os registros do SES (DKIM, SPF, DMARC), todos **sem proxy** (nuvem cinza)
+- [x] **[você]** Criar um token de API com permissão **Zone → DNS → Edit**, só para a zona `catalysthr.com.br` (guardado em `~/.config/catalysthr/cloudflare_token`, fora do repositório)
+- [x] **[Claude]** Criar pela API, sem proxy: CNAME `*.painel`, CNAME `_acme-challenge.painel`, TXT `_railway-verify.painel`, CNAME `admin` e TXT `_railway-verify.admin` (2026-10-14)
+- [ ] **[Claude]** Criar os registros do SES (DKIM, SPF, DMARC), depois do passo 4
 
 ## 3. Sentry (erros, desempenho, logs e monitores — D-506)
 
@@ -65,7 +66,7 @@
 - [x] **[você]** Criar o token de projeto no painel do Railway (projeto `catalyst_hr` → Settings → Tokens, ambiente `production`). O login da CLI não tem permissão para criar tokens pela API
 - [x] **[você]** Gravar o token como secret no GitHub: `gh secret set RAILWAY_TOKEN --repo devbatista/catalysthr` (o comando pede o valor sem mostrar na tela)
 - [x] **[Claude]** Rodar o workflow **Deploy** e conferir a página e o `/up` no endereço provisório do Railway (https://web-production-4e2f3.up.railway.app, 2026-10-14)
-- [ ] **[Claude]** Depois do domínio e da Cloudflare: adicionar `*.painel.catalysthr.com.br` e `admin.catalysthr.com.br` no serviço `web` e acompanhar o certificado (até 72 horas)
+- [x] **[Claude]** Depois do domínio e da Cloudflare: adicionar `*.painel.catalysthr.com.br` e `admin.catalysthr.com.br` no serviço `web` e acompanhar o certificado (emitido em minutos; Let's Encrypt válido até 12/01/2027, renovação automática)
 
 > Os serviços `clamav` e `backup` (pg_dump diário) entram na fase 1, junto das funções que dependem deles.
 
@@ -77,4 +78,4 @@
 
 ## Pronto quando
 
-- [ ] A página "CatalystHR" responde com HTTPS em `https://<slug>.painel.catalysthr.com.br` e em `/up`, publicada pelo workflow Deploy
+- [x] A página "CatalystHR" responde com HTTPS em `https://<slug>.painel.catalysthr.com.br` e em `/up`, publicada pelo workflow Deploy (2026-10-14)

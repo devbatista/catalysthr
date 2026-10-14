@@ -51,6 +51,15 @@ O CI do GitHub Actions roda tudo isso em cada pull request (`.github/workflows/c
 
 Só existe o ambiente de produção, no Railway (D-504). O deploy é manual, pelo workflow **Deploy** na aba Actions, e só segue com o CI verde no commit. Ele recusa os horários de pico do ponto (7h às 9h e 17h às 19h), a não ser que seja forçado.
 
+### Domínios
+
+| Endereço | Para quê | Certificado |
+|---|---|---|
+| `https://<slug>.painel.catalysthr.com.br` | Painel e portal de cada marca (spec 01, D-153) | Wildcard Let's Encrypt, emitido e renovado pelo Railway |
+| `https://admin.catalysthr.com.br` | Área da equipe CatalystHR | Let's Encrypt, emitido e renovado pelo Railway |
+
+O DNS fica na Cloudflare, **sem proxy** (D-503). Os registros do Railway são: CNAME `*.painel`, CNAME `_acme-challenge.painel`, TXT `_railway-verify.painel`, CNAME `admin` e TXT `_railway-verify.admin`.
+
 ### Configuração dos serviços no Railway
 
 Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em todos os serviços (D-500). A configuração fica no Railway (painel e API), e não em arquivo no repositório (D-517). **Qualquer mudança no Railway deve ser registrada nesta tabela.**
