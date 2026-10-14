@@ -40,16 +40,19 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Começar a procurar um parceiro piloto
 
 ### Desenvolvimento
-- [ ] `rails new` com a stack da spec 20: Postgres com pgvector, Redis, Sidekiq, Tailwind, importmap, Dockerfile com jemalloc, YJIT e 7-Zip
-- [ ] Repositório no GitHub, com proteção da `main` (CI verde e uma revisão)
-- [ ] GitHub Actions: RuboCop, brakeman, bundler-audit, `importmap audit`, RSpec com Postgres e Redis, SimpleCov
-- [ ] Dependabot (gems, Docker, Actions)
+- [x] `rails new` com a stack da spec 20: Postgres com pgvector, Redis, Sidekiq, Tailwind, importmap, Dockerfile com jemalloc, YJIT e 7-Zip (Ruby 4.0.7, Rails 8.1.4)
+- [x] Repositório privado `devbatista/catalysthr`, com proteção da `main` (CI verde obrigatório)
+- [x] Revisão obrigatória no merge: só quando entrar a segunda pessoa; até lá, só o CI verde (D-516)
+- [ ] Exigir uma revisão aprovada na proteção da `main` quando entrar a segunda pessoa
+- [x] GitHub Actions: RuboCop, brakeman, bundler-audit, `importmap audit`, RSpec com Postgres e Redis, SimpleCov
+- [x] Dependabot (gems, Docker, Actions)
 - [ ] Railway US East: serviços `web`, `worker-time`, `worker`, `postgres`, `redis`, `clamav`, `backup`, só na rede privada
 - [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
 - [ ] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin`, DKIM, SPF e DMARC
-- [ ] Sentry: erros, desempenho, logs (lograge) e o primeiro monitor externo
-- [ ] Docker Compose para o desenvolvimento local
-- [ ] Workflow de deploy com aprovação manual e migrações no pre-deploy
+- [ ] Sentry: criar o projeto e definir `SENTRY_DSN` (a integração e a máscara de dados pessoais já estão no código); primeiro monitor externo
+- [x] Docker Compose para o desenvolvimento local
+- [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy (`railway.json`)
+- [ ] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
 
 ### Pronto quando
 - [ ] Uma página "olá" passa pelo CI, é publicada com aprovação manual e responde com HTTPS num subdomínio wildcard

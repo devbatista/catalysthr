@@ -116,8 +116,8 @@ Definir **onde e como o CatalystHR roda**:
 - **RN-20-031** — **CI no GitHub Actions**, em todo pull request **[P-20-12]**:
   - RuboCop, brakeman, bundler-audit e `importmap audit`;
   - RSpec com Postgres (pgvector) e Redis como serviços, e cobertura pelo SimpleCov;
-  - o merge na `main` exige o CI verde e uma revisão aprovada (proteção da branch).
-- **RN-20-032** — **Deploy** por um workflow do GitHub Actions, com **aprovação manual** (ambiente protegido do GitHub), que publica pela CLI do Railway. Evitar deploys entre 7h e 9h e entre 17h e 19h, que são os picos de marcação de ponto **[P-20-13]**.
+  - o merge na `main` exige o CI verde (proteção da branch). A revisão aprovada passa a ser exigida quando entrar a segunda pessoa no desenvolvimento (D-516).
+- **RN-20-032** — **Deploy** por um workflow do GitHub Actions, com **aprovação manual** (o workflow só roda quando alguém o dispara, e exige o CI verde no commit), que publica pela CLI do Railway. Evitar deploys entre 7h e 9h e entre 17h e 19h, que são os picos de marcação de ponto **[P-20-13]**.
 - **RN-20-033** — **Volta de versão:** o Railway republica a versão anterior com um clique. Por isso as migrações precisam ser compatíveis com a versão anterior (RN-20-030).
 - **RN-20-034** — **Desenvolvimento local:** `bin/dev` com Postgres (pgvector) e Redis via Docker Compose, letter_opener (D-026), varredura de vírus simulada e chamadas externas (IA, Twilio, Mercado Pago, eSocial) em modo de teste ou simulado **[P-20-14]**.
 - **RN-20-035** — **Dependências:** Dependabot ligado para gems, imagens Docker e GitHub Actions, com revisão semanal **[P-20-15]**.
