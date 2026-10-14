@@ -1,8 +1,8 @@
 # 06 — Modelos de processo
 
-> Status: aprovado · Última atualização: 2026-10-12
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242 ([decisoes.md](decisoes.md))
-> Os itens **[P-06-nn]** foram todos aprovados sem ajuste (D-241, seção 10).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -95,10 +95,11 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
   | `manager` | Os gestores do departamento da pessoa. Qualquer um conclui (D-203) |
   | `upper_manager` | O gestor acima (RN-04-024) |
   | `accountant` | O escritório contábil ligado à empresa (D-171) |
+  | `client_manager` | Os gestores do cliente de alocação da pessoa (RN-04-095). Qualquer um conclui. Só aparece em empresa que usa clientes de alocação (D-570) **[P-06-21]** |
   | `initiator` | Quem iniciou o processo |
 
 - **RN-06-021** — Depois de iniciado o processo, o RH pode trocar o responsável de qualquer item (D-091).
-- **RN-06-022** — Se um papel não tem ninguém (por exemplo, o departamento não tem gestor, ou a empresa não tem escritório contábil), o item vai para o RH e o processo mostra um alerta **[P-06-06]**.
+- **RN-06-022** — Se um papel não tem ninguém (por exemplo, o departamento não tem gestor, a empresa não tem escritório contábil, ou a pessoa está "sem cliente" ou num cliente sem gestor), o item vai para o RH e o processo mostra um alerta **[P-06-06]**.
 
 ### Prazos (D-235, D-236)
 
@@ -127,8 +128,8 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
 
 ### Condições (D-233)
 
-- **RN-06-035** — O item pode ter condições por tipo de vínculo, cargo e unidade. Dentro de uma condição vale qualquer valor da lista; condições diferentes precisam ser verdadeiras ao mesmo tempo. Exemplo: "vínculo CLT **e** unidade Caxias ou Bento" **[P-06-11]**.
-- **RN-06-036** — As condições são avaliadas **quando o processo começa**. Se o cargo ou a unidade mudar depois, os itens não são reavaliados sozinhos. O sistema avisa o RH, que ajusta à mão **[P-06-12]**.
+- **RN-06-035** — O item pode ter condições por tipo de vínculo, cargo, unidade e, na empresa que usa clientes de alocação, cliente **[P-06-22]**. Dentro de uma condição vale qualquer valor da lista; condições diferentes precisam ser verdadeiras ao mesmo tempo. Exemplo: "vínculo CLT **e** unidade Caxias ou Bento" **[P-06-11]**.
+- **RN-06-036** — As condições são avaliadas **quando o processo começa**. Se o cargo, a unidade ou o cliente mudar depois, os itens não são reavaliados sozinhos. O sistema avisa o RH, que ajusta à mão **[P-06-12]**. Exceção: se o cliente mudar, os itens ainda não concluídos do papel `client_manager` passam para os gestores do cliente novo, porque os do anterior perdem o acesso (RN-04-095) **[P-06-21]**.
 - **RN-06-037** — Os documentos exigidos pelo cargo (D-204) entram no processo de admissão como itens de envio de documento, mesmo sem estar no modelo **[P-06-13]**.
 
 ### Dependências (D-237)
@@ -199,7 +200,8 @@ process_templates
 process_template_items
   id, process_template_id, position, kind, title, instructions, required,
   responsible_role, due_anchor, due_offset_days, due_business_days (bool),
-  conditions (jsonb: {employment_kinds: [], position_ids: [], unit_ids: []}),
+  conditions (jsonb: {employment_kinds: [], position_ids: [], unit_ids: [],
+              allocation_client_ids: []}),                        [P-06-22]
   config (jsonb por tipo)
 
 process_template_item_dependencies
@@ -245,6 +247,8 @@ Modelos da biblioteca e do parceiro não têm `company_id` e ficam fora do acts_
 - **CA-06-006** — Dado um departamento sem gestor, quando um processo com item do papel `manager` começa, então o item vai para o RH e o processo mostra um alerta.
 - **CA-06-007** — Dada uma data de início adiada em 7 dias, quando o RH salva, então os prazos não concluídos e não editados à mão se deslocam junto.
 - **CA-06-008** — Dado um modelo com A dependendo de B e B dependendo de A, quando o RH salva, então o editor recusa por ciclo.
+- **CA-06-009** — Dado um item de aprovação do papel `client_manager` e uma admissão alocada no cliente X, que tem dois gestores, quando o processo começa, então os dois recebem o item, e qualquer um deles conclui.
+- **CA-06-010** — Dada uma admissão que muda do cliente X para o Y, quando o RH salva, então o item pendente do papel `client_manager` passa aos gestores de Y, e os de X deixam de vê-lo.
 
 ## 10. Propostas aprovadas (D-241)
 
@@ -270,6 +274,13 @@ Modelos da biblioteca e do parceiro não têm `company_id` e ficam fora do acts_
 | P-06-18 | Sem escritório ligado, o RH registra o envio à mão |
 | P-06-19 | Modelos de biblioteca e parceiro fora do acts_as_tenant, pelo ponto único |
 | P-06-20 | Carga anual dos feriados nacionais |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-06-21 | Papel `client_manager`; os itens pendentes acompanham a troca de cliente |
+| P-06-22 | Condição de item por cliente de alocação |
 
 ## 11. Em aberto
 

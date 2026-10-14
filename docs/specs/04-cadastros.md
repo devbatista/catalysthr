@@ -1,8 +1,8 @@
 # 04 — Cadastros
 
-> Status: aprovado · Última atualização: 2026-10-12
-> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216 ([decisoes.md](decisoes.md))
-> Os itens **[P-04-nn]** foram todos aprovados sem ajuste (D-214, seção 10).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-04-01]** a **[P-04-29]** foram todos aprovados sem ajuste (D-214, seção 10). Os itens **[P-04-30]** a **[P-04-36]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -28,6 +28,7 @@ Admissão, documentos, ponto, folha e eSocial dependem destes dados.
 | Dependente | `Dependent` | Dependente da pessoa naquela empresa |
 | Conta bancária | `BankAccount` | Conta ou chave PIX para pagamento |
 | Campo personalizado | `CustomFieldDefinition` | Campo extra criado pela empresa (D-213) |
+| Cliente de alocação | `AllocationClient` | Cliente da empresa onde o colaborador trabalha alocado. Só existe se a empresa usar clientes de alocação (D-570) |
 
 ### Onde fica cada dado da pessoa [P-04-03]
 
@@ -52,6 +53,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
 5. Como **RH**, quero efetivar um estagiário como CLT sem perder o histórico do estágio.
 6. Como **colaborador**, quero pedir a troca da minha conta bancária pelo portal, enviando o comprovante.
 7. Como **RH administrador**, quero criar um campo "Tamanho do uniforme" que o colaborador preenche.
+8. Como **RH de uma consultoria**, quero indicar em qual cliente cada colaborador está alocado, para filtrar por cliente e envolver os gestores desse cliente (D-570).
 
 ## 4. Regras de negócio
 
@@ -64,7 +66,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - endereço da matriz;
   - parceiro (opcional, D-120);
   - status;
-  - configurações gerais: período de leitura do desligado (D-090), próxima matrícula, campos personalizados.
+  - configurações gerais: período de leitura do desligado (D-090), próxima matrícula, campos personalizados, uso de clientes de alocação (D-570).
 
   Os dados fiscais e previdenciários ficam na [spec 12](12-folha-de-pagamento.md) (D-212).
 
@@ -164,6 +166,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - cargo (e CBO);
   - salário (valor e unidade: hora, dia, mês etc., ou descrição do salário variável);
   - unidade e departamento;
+  - cliente de alocação, se a empresa usa (RN-04-092);
   - jornada (horas semanais, tipo de jornada, escala, definida na spec 11);
   - motivo da mudança;
   - justificativa (RN-04-032) **[P-04-02]**.
@@ -205,11 +208,21 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - editável pelo colaborador. Se for, a edição passa pela validação do RH (RN-04-071) **[P-04-25]**.
 - **RN-04-081** — Os valores ficam em uma coluna JSONB na ficha. Remover um campo esconde o valor, mas não apaga os dados já gravados **[P-04-26]**.
 
+### Clientes de alocação (D-570)
+
+- **RN-04-090** — O RH administrador liga ou desliga o uso de clientes de alocação nas configurações da empresa. Vem desligado. Desligado, nada desta seção aparece. Só é possível desligar quando nenhum vínculo `pending`, `active` ou `on_leave` tem cliente na revisão vigente **[P-04-30]**.
+- **RN-04-091** — O cliente tem nome, documento (CNPJ ou CPF, opcional, único na empresa quando informado) e status. Ele pertence à empresa e fica no tenant dela **[P-04-31]**.
+- **RN-04-092** — A revisão do vínculo indica o cliente de alocação. O campo é **opcional**: "sem cliente" representa quem trabalha na própria empresa, como a equipe interna **[P-04-32]**.
+- **RN-04-093** — Trocar de cliente é uma revisão nova, com vigência, como trocar de unidade. A troca sozinha não gera pendência de eSocial (RN-04-063). A conferência de efeitos no eSocial está em aberto (seção 11) **[P-04-33]**.
+- **RN-04-094** — O cliente tem zero ou mais **gestores do cliente**: pessoas com membership na empresa e o perfil `client_manager` (spec 02). Uma mesma pessoa pode gerir vários clientes **[P-04-34]**.
+- **RN-04-095** — A **equipe** de um gestor do cliente são os vínculos `pending`, `active` ou `on_leave` cuja revisão vigente aponta para um dos clientes dele. No vínculo `pending`, vale a primeira revisão, para que o gestor participe da admissão. Quando o colaborador muda de cliente, ele sai da equipe na data da vigência **[P-04-35]**.
+- **RN-04-096** — Um cliente com vínculos `pending`, `active` ou `on_leave` não pode ser inativado. Inativar tira o acesso dos gestores daquele cliente (RN-02-064) **[P-04-36]**.
+
 ## 5. Estados
 
 **Vínculo:** `pending` → `active` ⇄ `on_leave` → `terminated` (`pending` → `cancelled` se a admissão for desistida)
 
-**Unidade e departamento:** `active` ⇄ `inactive`
+**Unidade, departamento e cliente de alocação:** `active` ⇄ `inactive`
 
 ## 6. Permissões
 
@@ -221,12 +234,22 @@ Seguem a [spec 03](03-permissoes.md), seções 4.2 e 4.3. Resumo:
 | Ficha, vínculos e revisões | RH administrador (T), RH analista (U) |
 | Ver salário e dados bancários | RH administrador, RH analista com módulo `folha` (P-03-16) |
 | Pedir atualização dos próprios dados | Colaborador |
+| Ligar clientes de alocação, cadastrar clientes e atribuir os gestores deles | RH administrador **[P-04-30]** |
+| Indicar o cliente na revisão do vínculo | RH administrador (T), RH analista (U) |
 
 ## 7. Modelo de dados
 
 ```
 companies (spec 01) + employer_type ('company'|'person'), document (CNPJ raiz ou CPF),
-  legal_name, trade_name, address..., next_registration_number, read_only_period_days (padrão 365, D-423)
+  legal_name, trade_name, address..., next_registration_number, read_only_period_days (padrão 365, D-423),
+  uses_allocation_clients (bool, padrão false, D-570)
+
+allocation_clients                                     -- D-570  [P-04-31]
+  id, company_id, name, document_type ('cnpj'|'cpf'|null), document (nullable,
+  único na empresa), status
+
+allocation_client_managers                             -- D-570  [P-04-34]
+  id, company_id, allocation_client_id, membership_id
 
 units
   id, company_id, name, registration_type ('cnpj'|'cno'|'caepf'|null),
@@ -276,8 +299,8 @@ employments
 employment_revisions                                   -- [P-04-02]
   id, company_id, employment_id, effective_on, position_id, cbo_code,
   salary_amount (cript.), salary_unit, variable_salary_description,
-  unit_id, department_id, work_schedule_id (spec 11), weekly_hours,
-  reason, justification, created_by_id
+  unit_id, department_id, allocation_client_id (nullable, D-570), work_schedule_id (spec 11),
+  weekly_hours, reason, justification, created_by_id
 
 custom_field_definitions
   id, company_id, key, label, field_type, options (jsonb), required,
@@ -307,6 +330,9 @@ Todas as tabelas com `company_id` usam acts_as_tenant (D-150) e PaperTrail (D-08
 - **CA-04-008** — Dado um colaborador que pede a troca de conta bancária com comprovante, quando o RH aprova, então a conta nova vira a principal, e a anterior fica no histórico.
 - **CA-04-009** — Dado um campo personalizado "Tamanho do uniforme", editável pelo colaborador, quando o colaborador preenche, então o valor só entra na ficha depois da aprovação do RH.
 - **CA-04-010** — Dada uma matrícula 1050 já usada por um vínculo encerrado, quando o RH tenta usá-la num vínculo novo, então o sistema recusa.
+- **CA-04-011** — Dada uma empresa com clientes de alocação desligados, quando o RH abre a revisão de um vínculo, então não vê o campo de cliente.
+- **CA-04-012** — Dada Ana alocada no cliente X e trocada para o cliente Y a partir de 01/12, quando chega 01/12, então os gestores de X deixam de ver Ana, e os de Y passam a ver.
+- **CA-04-013** — Dado um cliente com um vínculo `pending`, quando o RH tenta inativá-lo, então o sistema recusa.
 
 ## 10. Propostas aprovadas (D-214)
 
@@ -342,7 +368,21 @@ Todas as tabelas com `company_id` usam acts_as_tenant (D-150) e PaperTrail (D-08
 | P-04-28 | Consulta de CEP para preencher o endereço |
 | P-04-29 | Job diário que avisa sobre revisões entrando em vigor |
 
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-04-30 | Clientes de alocação ligados pelo RH administrador, desligados por padrão; só desliga sem vínculos alocados |
+| P-04-31 | Cliente com nome, documento opcional e status, dentro do tenant da empresa |
+| P-04-32 | Cliente na revisão do vínculo, opcional ("sem cliente" para a equipe interna) |
+| P-04-33 | Troca de cliente como revisão com vigência, sem pendência de eSocial por si |
+| P-04-34 | Gestores do cliente com o perfil `client_manager`, podendo gerir vários clientes |
+| P-04-35 | A equipe do gestor do cliente inclui os vínculos em admissão |
+| P-04-36 | Cliente com vínculos não é inativado; inativar tira o acesso dos gestores dele |
+
 ## 11. Em aberto
+
+- **Clientes de alocação e eSocial (D-570):** verificar se a alocação exige informar o tomador em algum evento (spec 13).
 
 - **Obrigatoriedade do S-2300 para autônomos:** confirmar na spec 13.
 - **Leiaute do eSocial:** a lista de campos será conferida contra a versão vigente na spec 13.

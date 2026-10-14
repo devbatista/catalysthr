@@ -586,6 +586,14 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-565 | O estorno de uma fatura paga cancela a nota no Asaas automaticamente | 2026-10-13 |
 | D-566 | Propostas P-19-30 a P-19-38 (NFS-e pelo Asaas) aprovadas sem ajuste | 2026-10-13 |
 
+## Clientes de alocação (specs 00, 02, 03, 04, 06, 07, 15 e 17)
+
+| # | Decisão | Data |
+|---|---|---|
+| D-570 | Uma empresa pode usar **clientes de alocação**: ela é a empregadora e aloca colaboradores em clientes dela. É uma configuração da empresa, desligada por padrão. Ligada, o vínculo indica o cliente, e os gestores do cliente participam do processo com um perfil próprio, sem ser colaboradores da empresa | 2026-10-14 |
+| D-571 | Quando a consultoria opera o RH de empresas clientes, que são as empregadoras, vale o modelo de parceiro já existente: a consultoria é o parceiro, a equipe dela são consultores, e cada cliente é uma empresa com os próprios gestores. Não há mudança nas specs | 2026-10-14 |
+| D-572 | Propostas de clientes de alocação aprovadas sem ajuste: P-02-38 a P-02-41, P-03-38 a P-03-41, P-04-30 a P-04-36, P-06-21 e P-06-22, P-07-19 e P-07-20, P-15-35, P-17-25 e P-17-26. Inclui o MFA obrigatório do gestor do cliente (P-02-39), a proibição de acumular perfis (P-02-38), a ausência dele nas solicitações e no ponto na primeira versão (P-03-41) e a tela inicial com os itens atribuídos, sem painel (P-17-26) | 2026-10-14 |
+
 ## Em aberto
 
 Itens que ainda precisam de decisão. Nenhuma spec deve assumir uma resposta para eles.
@@ -605,3 +613,6 @@ Itens que ainda precisam de decisão. Nenhuma spec deve assumir uma resposta par
 - Roadmap: API pública e webhooks (D-467); layouts de importação além de Domínio, Questor e Alterdata, e AFD de outro REP, conforme os clientes do piloto (D-461)
 - NFS-e: definir com o contador da CatalystHR o código do serviço municipal, a alíquota de ISS, as retenções e o momento do fato gerador; configurar a conta do Asaas na prefeitura (ou no Portal Nacional) e confirmar o preço por nota (D-560 a D-562)
 - IA: contratar a retenção zero com a Anthropic e confirmar se a Voyage AI oferece o mesmo (D-380), antes de entrar em produção
+- Jurídico: base legal e cláusulas para mostrar dados dos colaboradores aos gestores dos clientes de alocação (D-570), que são terceiros em relação à empresa empregadora
+- DP e eSocial: verificar se a alocação em cliente exige informar o tomador em algum evento ou obrigação (por exemplo, trabalho temporário ou cessão de mão de obra), na spec 13 (D-570)
+- Clientes de alocação: decidir se o gestor do cliente participa das solicitações (spec 09) e do ponto (specs 10 e 11), como aprovar ajustes de marcação e dar visto no espelho. Fica fora da primeira versão (D-570)
