@@ -20,7 +20,7 @@
 - [x] **[você]** Adicionar o site `catalysthr.com.br` no plano **Free** e anotar os dois servidores DNS (passo 1). Na tela de configuração: Search e Agent em Allow, Training em Block (opcional), Bot Preference Sync **desligado** (sem proxy ele não tem efeito), importação de DNS automática
 - [x] **[você]** Criar um token de API com permissão **Zone → DNS → Edit**, só para a zona `catalysthr.com.br` (guardado em `~/.config/catalysthr/cloudflare_token`, fora do repositório)
 - [x] **[Claude]** Criar pela API, sem proxy: CNAME `*.painel`, CNAME `_acme-challenge.painel`, TXT `_railway-verify.painel`, CNAME `admin` e TXT `_railway-verify.admin` (2026-10-14)
-- [ ] **[Claude]** Criar os registros do SES (DKIM, SPF, DMARC), depois do passo 4
+- [x] **[Claude]** Registros do SES, sem proxy: 3 CNAME do DKIM, MX e SPF (`v=spf1 include:amazonses.com ~all`) em `bounce`, e o DMARC da raiz trocado de `p=reject` para `p=quarantine` (P-20-10). O MX nulo e o SPF `-all` da raiz continuam (2026-10-14)
 
 ## 3. Sentry (erros, desempenho, logs e monitores — D-506)
 
@@ -51,9 +51,11 @@
 
 *Agora (fase 0), sem custo até enviar e-mails:*
 
-- [ ] **[Claude]** SNS: tópico para os eventos de entrega, devolução e reclamação do SES (P-15-24)
-- [ ] **[Claude]** SES: verificar o domínio `catalysthr.com.br` (depende do passo 1) e criar o *configuration set* ligado ao SNS. Sem o Virtual Deliverability Manager e sem IP dedicado, que são pagos
-- [ ] **[você]** Pedir ao SES a **saída do sandbox** pelo console (formulário de caso de uso). Eu escrevo o texto do pedido
+- [x] **[Claude]** SNS: tópico `catalysthr-ses-eventos` para os eventos de entrega, devolução e reclamação do SES (P-15-24). A assinatura do app entra na fase 1 (2026-10-14)
+- [x] **[Claude]** SES: domínio `catalysthr.com.br` verificado (DKIM e MAIL FROM `bounce.catalysthr.com.br`), *configuration set* `catalysthr-padrao` como padrão da identidade, com os eventos no SNS. Lista de supressão da conta ligada para devoluções e reclamações. Sem o Virtual Deliverability Manager e sem IP dedicado (2026-10-14)
+- [x] **[Claude]** Pedido de **saída do sandbox** enviado pela CLI: e-mails transacionais, site `https://admin.catalysthr.com.br`, contato `rafael@devbatista.com`. Status `PENDING` (2026-10-14)
+- [ ] **[você]** Acompanhar a resposta da AWS no e-mail e me avisar. Se pedirem mais informações, eu escrevo a resposta
+- [ ] **[você]** Decidir o plano do SES antes do primeiro cliente: Essentials (padrão, US$ 0,16 a cada 1.000) ou avulso (US$ 0,10)
 
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 

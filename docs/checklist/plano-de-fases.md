@@ -48,8 +48,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Dependabot (gems, Docker, Actions)
 - [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
 - [x] AWS: conta própria `catalysthr` (464986173446) no AWS Organizations, separada dos outros sistemas; IAM Identity Center em São Paulo com MFA em todo login; CLI por SSO, sem chaves gravadas; alerta de orçamento de US$ 10 por mês (D-574, 2026-10-14)
-- [ ] AWS em São Paulo: SES (domínio verificado, DKIM, SPF e DMARC na Cloudflare, *configuration set*) e SNS (eventos de entrega), e o pedido de saída do sandbox. Sem custo até enviar e-mails. KMS, S3 e usuários IAM ficam para a fase 1, e a chave do A1 para a fase 3, para não pagar antes de usar
-- [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` (DKIM, SPF e DMARC entram com o SES)
+- [x] AWS em São Paulo: SES (domínio `catalysthr.com.br` verificado, DKIM, MAIL FROM `bounce.catalysthr.com.br` com SPF, DMARC `p=quarantine` na Cloudflare, *configuration set* `catalysthr-padrao`) e SNS (tópico `catalysthr-ses-eventos` com entrega, devolução e reclamação). Pedido de saída do sandbox enviado, em análise (2026-10-14). KMS, S3 e usuários IAM ficam para a fase 1, e a chave do A1 para a fase 3, para não pagar antes de usar
+- [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` e os registros do SES (DKIM, MAIL FROM e DMARC)
 - [x] Sentry: organização e projeto `catalysthr` (EUA), `SENTRY_DSN` em produção, erro de teste recebido
 - [x] Sentry: primeiro monitor externo para `/up`, em `health.painel.catalysthr.com.br`, a cada minuto, com alerta por e-mail (D-573, 2026-10-14)
 - [x] Docker Compose para o desenvolvimento local
@@ -68,7 +68,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
 - [ ] Contador da CatalystHR: código do serviço, ISS, retenções e fato gerador da NFS-e
 - [ ] Asaas: conta configurada na prefeitura ou no Portal Nacional
-- [ ] AWS SES: fora do sandbox em São Paulo
+- [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
+- [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Railway: criptografia em repouso confirmada no Trust Center
 
 ### Entregas
