@@ -20,8 +20,8 @@
 
 ## AWS — trava a fase 1
 
-- [ ] Pedir a saída do **sandbox do SES** em São Paulo (sa-east-1). Sem isso, só é possível mandar e-mail para endereços verificados
-- [ ] Verificar o domínio `catalysthr.com.br` no SES (DKIM, SPF, DMARC)
+- [x] Pedir a saída do **sandbox do SES** em São Paulo (sa-east-1). Sem isso, só é possível mandar e-mail para endereços verificados. Enviado em 2026-10-14, em análise
+- [x] Verificar o domínio `catalysthr.com.br` no SES (DKIM, SPF, DMARC) (2026-10-14)
 - [ ] Criar as chaves do KMS (A1, arquivos, backups), com rotação anual (P-20-22)
 - [ ] Criar os usuários IAM por finalidade: aplicação, backup e restauração (P-20-21)
 

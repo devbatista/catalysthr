@@ -47,8 +47,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] GitHub Actions: RuboCop, brakeman, bundler-audit, `importmap audit`, RSpec com Postgres e Redis, SimpleCov
 - [x] Dependabot (gems, Docker, Actions)
 - [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
-- [ ] AWS em São Paulo: S3 (arquivos e backups), KMS (três chaves), SES, SNS e usuários IAM por finalidade
-- [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` (DKIM, SPF e DMARC entram com o SES)
+- [x] AWS: conta própria `catalysthr` (464986173446) no AWS Organizations, separada dos outros sistemas; IAM Identity Center em São Paulo com MFA em todo login; CLI por SSO, sem chaves gravadas; alerta de orçamento de US$ 10 por mês (D-574, 2026-10-14)
+- [x] AWS em São Paulo: SES (domínio `catalysthr.com.br` verificado, DKIM, MAIL FROM `bounce.catalysthr.com.br` com SPF, DMARC `p=quarantine` na Cloudflare, *configuration set* `catalysthr-padrao`) e SNS (tópico `catalysthr-ses-eventos` com entrega, devolução e reclamação). Pedido de saída do sandbox enviado, em análise (2026-10-14). KMS, S3 e usuários IAM ficam para a fase 1, e a chave do A1 para a fase 3, para não pagar antes de usar
+- [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` e os registros do SES (DKIM, MAIL FROM e DMARC)
 - [x] Sentry: organização e projeto `catalysthr` (EUA), `SENTRY_DSN` em produção, erro de teste recebido
 - [x] Sentry: primeiro monitor externo para `/up`, em `health.painel.catalysthr.com.br`, a cada minuto, com alerta por e-mail (D-573, 2026-10-14)
 - [x] Docker Compose para o desenvolvimento local
@@ -67,10 +68,12 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
 - [ ] Contador da CatalystHR: código do serviço, ISS, retenções e fato gerador da NFS-e
 - [ ] Asaas: conta configurada na prefeitura ou no Portal Nacional
-- [ ] AWS SES: fora do sandbox em São Paulo
+- [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
+- [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Railway: criptografia em repouso confirmada no Trust Center
 
 ### Entregas
+- [ ] **AWS (spec 20):** KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-arquivos` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso
 - [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
 - [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
@@ -132,7 +135,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Entregas
 - [ ] **Spec 10:** marcação no PWA, cerca, selfie com consentimento, IPs, externos, totem, NSR, marcação imutável (trigger), comprovante assinado, tratamento, AFD e AEJ
-- [ ] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige
+- [ ] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige. Criar antes a chave `alias/catalysthr-a1` no KMS, com rotação anual (RN-20-052), e dar ao usuário da aplicação a permissão de criptografar e descriptografar com ela
 - [ ] **Spec 11:** regras de ponto, jornadas, feriados, apuração, banco de horas, fechamento, espelho, contestação
 - [ ] **Spec 15:** lembrete de marcação
 - [ ] **Spec 17:** blocos de ponto e relatório de absenteísmo e jornada

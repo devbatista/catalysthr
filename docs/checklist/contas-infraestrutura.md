@@ -20,7 +20,7 @@
 - [x] **[você]** Adicionar o site `catalysthr.com.br` no plano **Free** e anotar os dois servidores DNS (passo 1). Na tela de configuração: Search e Agent em Allow, Training em Block (opcional), Bot Preference Sync **desligado** (sem proxy ele não tem efeito), importação de DNS automática
 - [x] **[você]** Criar um token de API com permissão **Zone → DNS → Edit**, só para a zona `catalysthr.com.br` (guardado em `~/.config/catalysthr/cloudflare_token`, fora do repositório)
 - [x] **[Claude]** Criar pela API, sem proxy: CNAME `*.painel`, CNAME `_acme-challenge.painel`, TXT `_railway-verify.painel`, CNAME `admin` e TXT `_railway-verify.admin` (2026-10-14)
-- [ ] **[Claude]** Criar os registros do SES (DKIM, SPF, DMARC), depois do passo 4
+- [x] **[Claude]** Registros do SES, sem proxy: 3 CNAME do DKIM, MX e SPF (`v=spf1 include:amazonses.com ~all`) em `bounce`, e o DMARC da raiz trocado de `p=reject` para `p=quarantine` (P-20-10). O MX nulo e o SPF `-all` da raiz continuam (2026-10-14)
 
 ## 3. Sentry (erros, desempenho, logs e monitores — D-506)
 
@@ -40,20 +40,33 @@
 
 **Segurança da conta**
 
-- [ ] **[você]** Ligar o MFA no usuário raiz (root) e parar de usá-lo no dia a dia
-- [ ] **[você]** Criar um usuário administrativo para você (IAM Identity Center ou IAM), com MFA
-- [ ] **[Claude]** Instalar a AWS CLI (`brew install awscli`) e configurar o acesso com o seu usuário administrativo (`aws configure sso` ou chave temporária)
+- [x] **[você]** Ligar o MFA no usuário raiz (root) da `devbatista` e parar de usá-lo no dia a dia: só em emergência
+- [x] **[você]** AWS Organizations na `devbatista` (753974168544), que passa a ser a conta gestora, e conta-membro **`catalysthr` (464986173446)** só para o CatalystHR. Motivo: a `devbatista` tem usuários IAM de outros sistemas, e o SES é compartilhado por conta. **Atenção:** criar a organização passa a conta do plano gratuito para o pago, sem volta (a conta não tinha créditos, então nada se perdeu) (2026-10-14)
+- [x] **[você]** Gestão centralizada do acesso raiz das contas-membro. A `catalysthr` não tem credenciais raiz: sem senha, chaves, MFA nem certificados, conferido por `sts assume-root` (2026-10-14)
+- [x] **[você]** IAM Identity Center em São Paulo, instância de região única com chave da AWS (sem custo), MFA em todo login, usuário `devbatista` com `AdministratorAccess` nas duas contas. Portal: `https://d-9467531773.awsapps.com/start` (2026-10-14)
+- [x] **[Claude]** AWS CLI 2.38 e perfis `catalysthr` e `devbatista` em `~/.aws/config`, pelo SSO (`aws sso login --sso-session devbatista`), sem chaves gravadas (2026-10-14)
+- [x] **[você]** Alerta de orçamento (AWS Budgets) na `devbatista`: US$ 10 por mês, modelo de custo mensal (2026-10-14)
 
-**Recursos** (eu rodo pela CLI, com confirmação a cada bloco)
+**Recursos** na conta `catalysthr` (eu rodo pela CLI, com confirmação a cada bloco e aviso do custo antes)
 
-- [ ] **[Claude]** KMS: três chaves (certificado A1, arquivos, backups) com rotação anual (P-20-22)
-- [ ] **[Claude]** S3 `catalysthr-arquivos` (nome a confirmar): privado, bloqueio de acesso público, SSE-KMS, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
-- [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS, regra de ciclo de vida que apaga aos 35 dias (D-502)
-- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21)
-- [ ] **[Claude]** SNS: tópico para os eventos de entrega, devolução e reclamação do SES (P-15-24)
-- [ ] **[Claude]** SES: verificar o domínio `catalysthr.com.br` (depende do passo 1) e criar o *configuration set* ligado ao SNS
-- [ ] **[você]** Pedir ao SES a **saída do sandbox** pelo console (formulário de caso de uso). Eu escrevo o texto do pedido
-- [ ] **[você]** Criar um alerta de orçamento (AWS Budgets), por exemplo US$ 20 por mês, para não ter surpresa
+*Agora (fase 0), sem custo até enviar e-mails:*
+
+- [x] **[Claude]** SNS: tópico `catalysthr-ses-eventos` para os eventos de entrega, devolução e reclamação do SES (P-15-24). A assinatura do app entra na fase 1 (2026-10-14)
+- [x] **[Claude]** SES: domínio `catalysthr.com.br` verificado (DKIM e MAIL FROM `bounce.catalysthr.com.br`), *configuration set* `catalysthr-padrao` como padrão da identidade, com os eventos no SNS. Lista de supressão da conta ligada para devoluções e reclamações. Sem o Virtual Deliverability Manager e sem IP dedicado (2026-10-14)
+- [x] **[Claude]** Pedido de **saída do sandbox** enviado pela CLI: e-mails transacionais, site `https://admin.catalysthr.com.br`, contato `rafael@devbatista.com`. Status `PENDING` (2026-10-14)
+- [ ] **[você]** Acompanhar a resposta da AWS no e-mail e me avisar. Se pedirem mais informações, eu escrevo a resposta
+- [ ] **[você]** Decidir o plano do SES antes do primeiro cliente: Essentials (padrão, US$ 0,16 a cada 1.000) ou avulso (US$ 0,10)
+
+*Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
+
+- [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)
+- [ ] **[Claude]** S3 `catalysthr-arquivos` (nome a confirmar): privado, bloqueio de acesso público, SSE-KMS com S3 Bucket Key, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
+- [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS com S3 Bucket Key, regra de ciclo de vida que apaga aos 35 dias (D-502)
+- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES
+
+*Fase 3, junto com o certificado A1 (cerca de US$ 1 por mês):*
+
+- [ ] **[Claude]** KMS: chave do certificado A1, com rotação anual (D-075, P-20-22)
 
 ## 5. Railway (US East — D-500)
 
