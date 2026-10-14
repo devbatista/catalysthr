@@ -97,8 +97,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] WhatsApp pela Twilio: empresa verificada na Meta, remetente registrado e modelos aprovados
 - [ ] Especialista em DP: spec 09 conferida, menos as férias
 - [ ] Parceiro ou empresa piloto definido
-- [ ] Railway: **tirar o limite rígido de gasto** e manter só o alerta por e-mail. O limite rígido derruba todos os serviços, inclusive o ponto, o que contraria a D-116 e a RN-10-006
-- [ ] Railway: rever o plano Hobby (volume de 5 GB e PITR, D-508) antes do primeiro cliente
+- [ ] Railway: nunca usar limite rígido de gasto em produção, só o alerta por e-mail. O limite rígido derruba todos os serviços, inclusive o ponto, o que contraria a D-116 e a RN-10-006
+- [ ] Railway: rever o plano Hobby antes do primeiro cliente (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508) e decidir sobre um workspace separado para o CatalystHR
 
 ### Entregas
 - [ ] **Spec 06:** motor de modelos de processo
