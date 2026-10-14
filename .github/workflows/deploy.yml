@@ -15,6 +15,11 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+# Read access to Actions is needed to check the CI result of the commit.
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
