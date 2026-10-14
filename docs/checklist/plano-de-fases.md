@@ -52,7 +52,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Sentry: criar o projeto e definir `SENTRY_DSN` (a integração e a máscara de dados pessoais já estão no código); primeiro monitor externo
 - [x] Docker Compose para o desenvolvimento local
 - [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
-- [ ] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
+- [x] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
+- [x] Primeiro deploy pelo workflow, no endereço provisório do Railway (https://web-production-4e2f3.up.railway.app)
 
 ### Pronto quando
 - [ ] Uma página "olá" passa pelo CI, é publicada com aprovação manual e responde com HTTPS num subdomínio wildcard
