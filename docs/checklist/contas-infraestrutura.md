@@ -53,7 +53,7 @@
 
 > **Atenção ao plano Hobby.** O painel informa que o plano inclui até 8 GB de RAM, 8 vCPU e 100 GB de disco compartilhado. Não está claro se os 8 GB valem por serviço ou para o plano todo. Os tamanhos da spec 20 somam mais que isso. Há indicação, **não confirmada** na documentação oficial, de que o PITR (perda máxima de 5 minutos, D-508) é recurso do **Pro**. Para a fase 0 o Hobby basta, mas isso precisa ser revisto **antes do primeiro cliente**.
 
-- [ ] **[você]** Definir o limite de gasto em railway.com/workspace/usage → **Set limits** → Compute: **só o alerta por e-mail, em US$ 25** (decidido em 2026-10-14). **Sem limite rígido:** ele vale para o workspace inteiro e derrubaria também os outros projetos (`prescsign`, `launch_os`, `devbatista-app`)
+- [x] **[você]** Definir o limite de gasto em railway.com/workspace/usage → **Set limits** → Compute: **só o alerta por e-mail, em US$ 25** (decidido em 2026-10-14). **Sem limite rígido:** ele vale para o workspace inteiro e derrubaria também os outros projetos (`prescsign`, `launch_os`, `devbatista-app`)
 - [ ] **[você]** Avaliar um workspace separado para o CatalystHR (cobrança e limites isolados dos outros projetos)
 - [x] **[Claude]** `railway init --name catalyst_hr`: criar o projeto
 - [x] **[Claude]** Adicionar o Postgres e conferir se ele aceita `CREATE EXTENSION vector` (Postgres 18.6 com pgvector 0.8.7 disponível)
