@@ -1,8 +1,8 @@
 # 17 — Painéis e relatórios gerenciais
 
-> Status: aprovado (fórmulas na conferência do especialista em DP) · Última atualização: 2026-10-13
-> Decisões: D-085, D-086, D-107, D-190, D-221, D-386, D-440 a D-451 ([decisoes.md](decisoes.md))
-> Os itens **[P-17-nn]** foram todos aprovados sem ajuste (D-451, seção 10).
+> Status: aprovado (fórmulas na conferência do especialista em DP) · Última atualização: 2026-10-14
+> Decisões: D-085, D-086, D-107, D-190, D-221, D-386, D-440 a D-451, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-17-01]** a **[P-17-24]** foram todos aprovados sem ajuste (D-451, seção 10). Os itens **[P-17-25]** e **[P-17-26]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -47,6 +47,8 @@ O painel da equipe CatalystHR fica na spec 19 (D-447). O resumo da IA vem da spe
 - **RN-17-002** — Todo indicador do painel **abre a lista de origem** com o mesmo filtro, e o número da lista é igual ao do indicador, porque os dois usam a mesma consulta **[P-17-01]**.
 - **RN-17-003** — Indicadores com dado sensível (salário, raça, deficiência, saúde) só aparecem para quem tem acesso a eles. Nenhum painel mostra CID.
 - **RN-17-004** — O topo de cada painel tem o filtro de **unidade** (dentro do escopo). Os relatórios também filtram por departamento, cargo, tipo de vínculo e período.
+- **RN-17-005** — Na empresa que usa clientes de alocação (D-570), o painel do RH, as listas de origem dos indicadores e os relatórios também filtram por **cliente**, com a opção "sem cliente" **[P-17-25]**.
+- **RN-17-006** — O gestor do cliente não tem painel. A tela inicial dele é a lista dos itens atribuídos a ele, com colaborador, cliente, prazo e status, e os atrasados no topo **[P-17-26]**.
 
 ### 4.2 Painel do RH (D-440)
 
@@ -290,3 +292,10 @@ As tabelas de métricas não guardam o identificador de pessoas. As listas que u
 | P-17-22 | Painel em até 2 segundos, com blocos carregados em paralelo |
 | P-17-23 | Cache de 60 segundos com botão de atualizar |
 | P-17-24 | Chart.js com as cores da marca |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-17-25 | Filtro por cliente no painel do RH, nas listas e nos relatórios |
+| P-17-26 | O gestor do cliente não tem painel; a tela inicial dele é a lista dos itens atribuídos |

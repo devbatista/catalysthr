@@ -1,8 +1,8 @@
 # 02 — Identidade e acesso
 
-> Status: aprovado · Última atualização: 2026-10-13
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426 ([decisoes.md](decisoes.md))
-> Os itens marcados **[P-02-nn]** foram aprovados, alguns com ajuste (D-188, seção 10).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -32,10 +32,12 @@ O que cada perfil **pode fazer** em cada módulo fica na [spec 03](03-permissoes
 |---|---|---|
 | Plataforma | Superadmin, suporte, financeiro | `superadmin`, `support`, `finance` |
 | Parceiro | Administrador, consultor | `partner_admin`, `consultant` |
-| Empresa | RH administrador, RH analista, gestor, colaborador | `hr_admin`, `hr_analyst`, `manager`, `employee` |
+| Empresa | RH administrador, RH analista, gestor, colaborador, gestor do cliente (D-570) | `hr_admin`, `hr_analyst`, `manager`, `employee`, `client_manager` |
 | Escritório contábil | Administrador, contador | `firm_admin`, `accountant` |
 
 Uma membership de empresa pode acumular perfis, por exemplo `manager` + `employee` ou `hr_analyst` + `employee` (D-051). O perfil `employee` exige um vínculo (`Employment`) ativo ou em período de leitura (D-090) **[P-02-03]**.
+
+O perfil `client_manager` (D-570) só existe em empresa que usa clientes de alocação (spec 04, RN-04-090). Ele é dado a uma pessoa do cliente, que não tem vínculo com a empresa. Por isso, **não acumula** com outros perfis da empresa **[P-02-38]**.
 
 ## 3. Histórias de usuário
 
@@ -49,6 +51,7 @@ Uma membership de empresa pode acumular perfis, por exemplo `manager` + `employe
 8. Como **administrador do escritório contábil**, quero convidar e remover os contadores da minha equipe.
 9. Como **suporte CatalystHR**, quero ver o sistema como o usuário vê, para reproduzir um problema sem alterar dados.
 10. Como **ex-colaborador**, quero continuar consultando meus holerites por um período depois do desligamento.
+11. Como **gestor de um cliente da consultoria**, quero entrar com meu CPF e aprovar o que me cabe nas admissões dos colaboradores alocados comigo, sem ser colaborador da consultoria (D-570).
 
 ## 4. Regras de negócio
 
@@ -95,16 +98,16 @@ Uma membership de empresa pode acumular perfis, por exemplo `manager` + `employe
 
 ### MFA
 
-- **RN-02-040** — O MFA é obrigatório para quem tem algum dos perfis: equipe CatalystHR, `partner_admin`, `consultant`, `hr_admin` e `hr_analyst` (D-082). Para os demais (`manager`, `employee`, `firm_admin`, `accountant`), o MFA é opcional **[P-02-18]**.
+- **RN-02-040** — O MFA é obrigatório para quem tem algum dos perfis: equipe CatalystHR, `partner_admin`, `consultant`, `hr_admin` e `hr_analyst` (D-082). Para os demais (`manager`, `employee`, `firm_admin`, `accountant`), o MFA é opcional **[P-02-18]**. O `client_manager` também tem MFA obrigatório, porque é uma pessoa de fora da empresa que vê dados dos colaboradores **[P-02-39]**.
 - **RN-02-041** — A obrigatoriedade vale para o usuário, não para a área: quem tem um perfil obrigatório em qualquer organização usa MFA em todo login **[P-02-19]**.
 - **RN-02-042** — Métodos: app autenticador (TOTP) e 10 códigos de recuperação de uso único (D-083). Os códigos aparecem uma vez e podem ser gerados de novo, o que invalida os anteriores **[P-02-20]**.
 - **RN-02-043** — Depois de passar pelo MFA, o usuário pode marcar "lembrar este dispositivo" por **30 dias** (D-184). Ele vê a lista de dispositivos lembrados e pode revogar cada um. Trocar a senha revoga todos **[P-02-21]**.
-- **RN-02-044** — Se o usuário perde o app e os códigos de recuperação, o MFA é redefinido por quem administra o perfil: RH administrador para o RH, administrador do parceiro para a equipe dele, administrador do escritório para os contadores, e suporte CatalystHR para os demais. A redefinição fica na auditoria e avisa o usuário **[P-02-22]**.
+- **RN-02-044** — Se o usuário perde o app e os códigos de recuperação, o MFA é redefinido por quem administra o perfil: RH administrador para o RH e para os gestores do cliente (P-02-40), administrador do parceiro para a equipe dele, administrador do escritório para os contadores, e suporte CatalystHR para os demais. A redefinição fica na auditoria e avisa o usuário **[P-02-22]**.
 - **RN-02-045** — **Passkey** (D-425, D-426): o usuário pode cadastrar passkeys (WebAuthn) e entrar com a digital ou o rosto do aparelho. Entrar com passkey **cumpre o MFA**, inclusive nos perfis obrigatórios. A passkey também substitui a senha na confirmação de dados sensíveis (RN-02-052). Detalhes na [spec 16](16-portal-colaborador-pwa.md), seção 4.8.
 
 ### Sessão
 
-- **RN-02-050** — Tempo de inatividade (D-089): **30 minutos** para equipe CatalystHR, parceiro, RH, gestor e contabilidade; **14 dias** para o colaborador. A contabilidade não foi citada em D-089 e entra aqui como proposta **[P-02-23]**.
+- **RN-02-050** — Tempo de inatividade (D-089): **30 minutos** para equipe CatalystHR, parceiro, RH, gestor, gestor do cliente e contabilidade; **14 dias** para o colaborador. A contabilidade não foi citada em D-089 e entra aqui como proposta **[P-02-23]**.
 - **RN-02-051** — Quem tem perfis com tempos diferentes na mesma marca (por exemplo, gestor e colaborador) fica com o **mais restrito**, 30 minutos **[P-02-24]**.
 - **RN-02-052** — Ver ou baixar dado sensível exige confirmar a senha (ou a passkey, RN-02-045). A confirmação vale **5 minutos** (D-183). Dado sensível segue a lista de D-086 (documentos pessoais, salário e dados bancários, saúde, biometria).
 - **RN-02-053** — O usuário vê as sessões abertas e pode encerrar as outras. Trocar a senha encerra todas, menos a atual **[P-02-25]**.
@@ -115,6 +118,7 @@ Uma membership de empresa pode acumular perfis, por exemplo `manager` + `employe
 - **RN-02-061** — No desligamento, as memberships com perfil `employee` passam a `read_only` pelo período que a empresa configurar (D-090). Nesse estado, o portal só mostra holerites, informe de rendimentos, espelhos de ponto, documentos e TRCT, sem novas ações. Se a pessoa também tinha outros perfis na empresa (gestor, RH), eles são removidos no desligamento **[P-02-26]**.
 - **RN-02-062** — Ao fim do período de leitura, a membership vai para `revoked`. O usuário continua existindo se tiver outras memberships. Se não tiver nenhuma, a conta é desativada, e os dados seguem as regras de retenção da [spec 05](05-lgpd-seguranca-auditoria.md) **[P-02-27]**.
 - **RN-02-063** — Remover um perfil ou suspender uma membership encerra na hora as sessões que dependiam dela **[P-02-28]**.
+- **RN-02-064** — **Gestor do cliente** (D-570): o RH administrador convida a pessoa pelos canais da RN-02-011 e atribui os clientes dela. Se ela fica sem nenhum cliente ativo (atribuição removida ou cliente inativado), ou se a empresa desliga os clientes de alocação, o perfil `client_manager` é removido e as sessões são encerradas (RN-02-063) **[P-02-40, P-02-41]**.
 
 ### Escritório contábil
 
@@ -154,6 +158,7 @@ Uma membership de empresa pode acumular perfis, por exemplo `manager` + `employe
 | Convidar usuários de empresa | Ver a [spec 03](03-permissoes.md) |
 | Cadastrar ou ligar o escritório contábil à empresa | RH administrador (D-171) |
 | Convidar e remover contadores | Administrador do escritório (D-172) |
+| Convidar e remover gestores do cliente, atribuir clientes | RH administrador (D-570) **[P-02-40]** |
 | Redefinir o MFA de outro usuário | Quem administra o perfil (RN-02-044) **[P-02-22]** |
 | Corrigir e-mail ou celular de outro usuário | Quem administra o perfil (RN-02-033) **[P-02-17]** |
 | Fazer impersonate | Superadmin e suporte (D-185) |
@@ -231,6 +236,8 @@ O vínculo empregatício (`employments`) fica na [spec 04](04-cadastros.md).
 - **CA-02-014** — Dado um impersonate iniciado há 30 minutos, quando o suporte faz a próxima requisição, então a sessão é encerrada e ele volta ao admin.
 - **CA-02-015** — Dado um suporte, quando ele tenta iniciar o impersonate sem motivo, então o sistema não permite.
 - **CA-02-016** — Dada a recuperação de senha com um CPF inexistente, quando a pessoa envia o formulário, então vê a mesma mensagem de quando o CPF existe.
+- **CA-02-017** — Dado um gestor do cliente no primeiro acesso, quando ele termina de criar a senha e aceitar os termos, então não consegue seguir sem configurar o MFA.
+- **CA-02-018** — Dado um gestor do cliente com um único cliente, quando o RH inativa esse cliente, então o perfil dele é removido, e a próxima requisição da sessão aberta é recusada.
 
 ## 10. Propostas aprovadas (D-188)
 
@@ -279,6 +286,15 @@ Todas aprovadas. Três tiveram ajuste:
 | P-02-35 | MFA com a gem devise-two-factor |
 | P-02-36 | Uma tabela `memberships` polimórfica (empresa, parceiro, escritório), com os perfis em array |
 | P-02-37 | Gems: pretender e rack-attack; convite próprio, sem devise_invitable |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-02-38 | Perfil `client_manager`, sem vínculo com a empresa e sem acumular outros perfis dela |
+| P-02-39 | MFA obrigatório para o gestor do cliente |
+| P-02-40 | O RH administrador convida e remove gestores do cliente, atribui os clientes e redefine o MFA deles |
+| P-02-41 | Sem cliente ativo, ou com os clientes de alocação desligados, o perfil é removido e as sessões são encerradas |
 
 ## 11. Em aberto
 

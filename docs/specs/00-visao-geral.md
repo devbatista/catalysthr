@@ -116,6 +116,7 @@ O código usa nomes em inglês (D-141), e estes nomes foram aprovados (D-144). C
 | Plano | Pacote comercial com preço, limites e cota de IA (D-115) | `Plan` |
 | Marca | Configuração de white label (D-167) | `Brand` |
 | Escritório contábil | Contabilidade externa com equipe própria (D-170) | `AccountingFirm` |
+| Cliente de alocação | Cliente da empresa onde o colaborador trabalha alocado, quando a empresa usa essa opção (D-570) | `AllocationClient` |
 
 ## 6. Arquitetura
 

@@ -1,8 +1,8 @@
 # 03 — Permissões
 
-> Status: aprovado · Última atualização: 2026-10-12
-> Decisões: D-030, D-051, D-052, D-086, D-090, D-111, D-116, D-122, D-127, D-142, D-143, D-162, D-166, D-171, D-172, D-185 a D-187, D-190 a D-194 ([decisoes.md](decisoes.md))
-> Base: a matriz de acesso da apresentação (página 6). Os itens **[P-03-nn]** foram aprovados, alguns com ajuste (D-194, seção 9).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-030, D-051, D-052, D-086, D-090, D-111, D-116, D-122, D-127, D-142, D-143, D-162, D-166, D-171, D-172, D-185 a D-187, D-190 a D-194, D-570 ([decisoes.md](decisoes.md))
+> Base: a matriz de acesso da apresentação (página 6). Os itens **[P-03-01]** a **[P-03-37]** foram aprovados, alguns com ajuste (D-194, seção 9). Os itens **[P-03-38]** a **[P-03-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -29,6 +29,7 @@ perfil(is) da membership  →  escopo  →  módulos liberados  →  módulos co
 | RHN | RH analista | Empresa |
 | GES | Gestor | Empresa |
 | COL | Colaborador | Empresa |
+| GCL | Gestor do cliente (D-570) | Empresa |
 | ECA | Administrador do escritório contábil | Escritório |
 | ECC | Contador | Escritório |
 
@@ -44,6 +45,7 @@ Quando uma membership tem vários perfis (D-051), as permissões se **somam**. E
 | **P** | Só os próprios dados | COL |
 | **C** | As empresas da carteira autorizadas | PA (todas do parceiro), CON (atribuídas, D-052) |
 | **F** | As empresas ligadas ao escritório | ECA, ECC (D-171) |
+| **K** | Os colaboradores alocados nos clientes atribuídos a ele (RN-04-095) | GCL (D-570) **[P-03-38]** |
 
 - **Consultor (D-192):** dentro de cada empresa atribuída, age como **RHN com escopo T**, ou seja, analista de todas as unidades.
 - **Administrador do parceiro:** **não opera dentro das empresas**. Ele tem só a visão consolidada da carteira e as ações de carteira da seção 4.1: cadastrar a empresa, convidar o primeiro RHA e alterar ou remover RHAs. Para operar dentro de uma empresa, a membership dele precisa ter também o perfil de consultor, com a empresa atribuída (D-051) **[P-03-01]**.
@@ -86,7 +88,7 @@ Os modos se sobrepõem às permissões acima:
   - `AccountingFirmAbility`: contabilidade.
 
   Cada uma é uma classe pequena, e a soma usa `merge`.
-- **RN-03-002** — Listagens usam `accessible_by(current_ability)` sobre o tenant atual (acts_as_tenant). Os escopos U e E viram condições de banco (hash conditions), nunca blocos Ruby, para que o `accessible_by` funcione **[P-03-09]**.
+- **RN-03-002** — Listagens usam `accessible_by(current_ability)` sobre o tenant atual (acts_as_tenant). Os escopos U, E e K viram condições de banco (hash conditions), nunca blocos Ruby, para que o `accessible_by` funcione **[P-03-09]**.
 - **RN-03-003** — Todo controller usa `load_and_authorize_resource` ou `authorize!` explícito. Um teste de rotas falha se alguma ação de controller não tiver autorização **[P-03-10]**.
 - **RN-03-004** — O modo somente leitura (por desligamento ou inadimplência) é aplicado na `Ability`, com `cannot` para as ações de escrita, e não só escondendo botões **[P-03-11]**.
 - **RN-03-005** — Os módulos liberados e contratados também entram na `Ability`. Um módulo não liberado gera `cannot :manage` nos models dele **[P-03-12]**.
@@ -243,6 +245,19 @@ O consultor (CON) segue a coluna RHN com escopo T. O administrador do parceiro (
 | Ver acessos de impersonate na empresa | ✓ | ✓ | T **[P-03-32]** | — | — |
 | Exportar os próprios dados (portabilidade) | — | — | — | — | P (COL, via solicitação, D-087) |
 
+### 4.12 Gestor do cliente (D-570)
+
+O GCL não aparece nas tabelas anteriores: em tudo o que não está nesta tabela, ele não tem acesso (—) **[P-03-39]**.
+
+| Ação | GCL |
+|---|---|
+| Listar os colaboradores alocados e ver os dados básicos (nome, cargo, unidade, cliente, data de início, contato de trabalho) | K (L) |
+| Ver a admissão: etapa atual, status, data prevista de início e os itens atribuídos a ele | K (L) |
+| Concluir os itens atribuídos ao papel `client_manager` (tarefa, aprovação, leitura e aceite, spec 06) | K |
+
+- **RN-03-014** — O GCL **não** vê: a pasta de documentos, os dados pessoais completos, salário, dados bancários, dados de saúde, notas internas, painéis, relatórios e o assistente da empresa. Também não envia documentos nem edita o cadastro **[P-03-40]**.
+- **RN-03-015** — Nesta versão, o GCL não participa das solicitações (spec 09) nem do ponto (specs 10 e 11). Esse ponto está em aberto em `decisoes.md` **[P-03-41]**.
+
 ## 5. Regras gerais
 
 - **RN-03-010** — Ninguém aprova a própria solicitação, nem a do próprio ajuste de ponto ou da própria nota fiscal. Um gestor que também é colaborador tem as solicitações dele aprovadas pelo gestor do departamento acima dele ou pelo RH **[P-03-33]**.
@@ -260,6 +275,9 @@ memberships (spec 02)
 
 department_managers (spec 04)
   department_id, membership_id   -- vários gestores por departamento (D-190, D-203)
+
+allocation_client_managers (spec 04)
+  allocation_client_id, membership_id   -- clientes do gestor do cliente (D-570)
 ```
 
 ## 7. Critérios de aceite
@@ -273,6 +291,8 @@ department_managers (spec 04)
 - **CA-03-007** — Dada uma empresa sem o módulo de folha contratado, quando o RHA abre o menu, então não vê folha nem eSocial.
 - **CA-03-008** — Dada uma ação de controller nova sem `authorize!`, quando a suíte de testes roda, então o teste de cobertura de autorização falha.
 - **CA-03-009** — Dado um gestor que também é colaborador, quando ele abre a solicitação de férias dele, então não vê o botão de aprovar.
+- **CA-03-010** — Dado um gestor do cliente X, quando ele abre a admissão de um colaborador alocado no cliente Y, então recebe 404.
+- **CA-03-011** — Dado um gestor do cliente X, quando ele abre a admissão de um colaborador de X, então vê a etapa e os itens dele, mas não vê documentos, salário nem notas internas.
 
 ## 8. Fora do escopo
 
@@ -327,6 +347,15 @@ Todas aprovadas. Quatro tiveram ajuste:
 | P-03-35 | Quem pode alterar os perfis de quem. Em empresa de parceiro, o PA altera ou remove RHAs |
 | P-03-36 | Empresa direta precisa ter pelo menos um RHA ativo |
 | P-03-37 | Unidades e módulos liberados guardados em arrays na membership |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-03-38 | Perfil GCL com o escopo K (clientes atribuídos), como condição de banco |
+| P-03-39 | Ações do GCL: dados básicos e admissão em leitura, e conclusão dos itens atribuídos a ele |
+| P-03-40 | O GCL não vê pasta, dados pessoais completos, salário, saúde, notas internas, painéis nem o assistente |
+| P-03-41 | O GCL fica fora das solicitações e do ponto na primeira versão |
 
 ## 10. Em aberto
 

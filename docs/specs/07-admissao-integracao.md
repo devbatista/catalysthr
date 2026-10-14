@@ -1,8 +1,8 @@
 # 07 — Admissão e integração
 
-> Status: aprovado · Última atualização: 2026-10-12
-> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264 ([decisoes.md](decisoes.md))
-> Os itens **[P-07-nn]** foram todos aprovados sem ajuste (D-264, seção 10).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-07-01]** a **[P-07-18]** foram todos aprovados sem ajuste (D-264, seção 10). Os itens **[P-07-19]** e **[P-07-20]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -48,6 +48,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 7. Como **contador**, quero receber os documentos da admissão e confirmar o recebimento.
 8. Como **gestor**, quero ver as tarefas de integração que são minhas, como entregar EPI e apresentar a equipe.
 9. Como **RH**, quero ser avisado antes do fim da experiência para decidir se prorrogo, efetivo ou desligo.
+10. Como **gestor de um cliente da consultoria**, quero aprovar a admissão de quem vai trabalhar comigo e acompanhar em que etapa ela está (D-570).
 
 ## 4. Regras de negócio
 
@@ -63,11 +64,13 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
   - data prevista de início.
 
   Salário, jornada e os demais dados podem vir depois, até a revisão do RH.
+
+  Na empresa que usa clientes de alocação (D-570), o cadastro inicial também tem o campo **cliente**, opcional ("sem cliente" para a equipe interna). Ele vai para a primeira revisão do vínculo **[P-07-19]**.
 - **RN-07-012** — Ao criar a admissão, o sistema:
   1. reaproveita o usuário se o CPF já existe (P-02-08), ou cria um novo, ainda sem acesso;
   2. cria a membership `invited` (o convite ainda não sai);
   3. cria a ficha (`WorkerProfile`) se não existir;
-  4. cria o vínculo `pending`, com a primeira revisão (cargo, unidade, departamento);
+  4. cria o vínculo `pending`, com a primeira revisão (cargo, unidade, departamento e, se houver, cliente);
   5. inicia o processo a partir do modelo (spec 06).
 - **RN-07-013** — Escolha do modelo **[P-07-04]**, na ordem:
   1. o modelo de admissão do cargo (D-204);
@@ -179,7 +182,8 @@ Spec 03, seção 4.4:
 |---|---|
 | Criar, liberar convite, revisar, gerar contrato, enviar eSocial, concluir, cancelar | RH administrador (T); RH analista (U, com o módulo `admissao`); consultor |
 | Modelos de contrato e termos | RH administrador **[P-07-17]** |
-| Itens próprios | Colaborador (portal), gestor (itens do papel `manager`) |
+| Itens próprios | Colaborador (portal), gestor (itens do papel `manager`), gestor do cliente (itens do papel `client_manager`) |
+| Ver a etapa, o status e os itens próprios da admissão, sem documentos | Gestor do cliente, nos clientes dele (spec 03, seção 4.12) **[P-07-20]** |
 | Confirmar recebimento | Contabilidade |
 
 ## 7. Modelo de dados
@@ -233,6 +237,8 @@ companies (configurações)
 - **CA-07-010** — Dado um contrato de experiência de 60 + 45 dias, quando o RH tenta salvar, então o sistema recusa por passar de 90 dias.
 - **CA-07-011** — Dada uma empresa que não usa a etapa de contabilidade, quando uma admissão é criada, então a barra de progresso mostra 5 etapas.
 - **CA-07-012** — Dada uma admissão concluída, quando o RH confirma, então o processo de integração começa e aparece no portal do colaborador.
+- **CA-07-013** — Dada uma empresa que usa clientes de alocação, quando o RH cria uma admissão para o cliente X, então a primeira revisão do vínculo fica com o cliente X, e os gestores de X veem a admissão.
+- **CA-07-014** — Dado um modelo com "Aprovação do gestor do cliente" e uma admissão "sem cliente", quando o processo começa, então o item vai para o RH, com alerta (RN-06-022).
 
 ## 10. Propostas aprovadas (D-264)
 
@@ -256,6 +262,13 @@ companies (configurações)
 | P-07-16 | A integração conclui sozinha |
 | P-07-17 | Só o RH administrador cadastra modelos de contrato e termos |
 | P-07-18 | Entidade `Admission` ligando vínculo, processo, eSocial e ASO |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-07-19 | Cliente opcional no cadastro inicial, gravado na primeira revisão do vínculo |
+| P-07-20 | O gestor do cliente vê a etapa, o status e os itens dele na admissão, sem documentos |
 
 ## 11. Em aberto
 

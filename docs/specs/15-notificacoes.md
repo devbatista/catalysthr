@@ -1,8 +1,8 @@
 # 15 — Notificações
 
-> Status: aprovado · Última atualização: 2026-10-13
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410 ([decisoes.md](decisoes.md))
-> Os itens **[P-15-nn]** foram todos aprovados sem ajuste (D-410, seção 10).
+> Status: aprovado · Última atualização: 2026-10-14
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570 ([decisoes.md](decisoes.md))
+> Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
 
@@ -102,6 +102,13 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | `documents.team_expiring` | Documento da equipe vencendo, só o texto (P-08-11) | Não | Não | S E |
   | `employments.probation_ending` | Fim de experiência (RN-07-101) | Sim | Não | S E P |
   | `schedule.publish_deadline` | Escala ainda não publicada perto do prazo | Não | Não | S E P |
+
+  **Gestor do cliente** (D-570) **[P-15-35]**
+
+  | Código | Quando | Obr. | Urg. | Canais padrão |
+  |---|---|---|---|---|
+  | `processes.task_assigned` | Item de processo atribuído a ele | Não | Não | S E |
+  | `processes.task_overdue` | Item atribuído a ele está atrasado (RN-06-028) | Não | Não | S E |
 
   **RH (RH administrador, RH analista e consultor, conforme o escopo)**
 
@@ -385,3 +392,9 @@ users (acréscimo)
 | P-15-32 | `twilio-ruby` com Content API e assinatura conferida |
 | P-15-33 | Gem `web-push` com VAPID |
 | P-15-34 | WhatsApp e push só em log no desenvolvimento |
+
+### Propostas aprovadas (D-572), clientes de alocação
+
+| # | Proposta |
+|---|---|
+| P-15-35 | Avisos do gestor do cliente: item atribuído e item atrasado, pelo sino e por e-mail |
