@@ -40,20 +40,31 @@
 
 **Segurança da conta**
 
-- [ ] **[você]** Ligar o MFA no usuário raiz (root) e parar de usá-lo no dia a dia
-- [ ] **[você]** Criar um usuário administrativo para você (IAM Identity Center ou IAM), com MFA
-- [ ] **[Claude]** Instalar a AWS CLI (`brew install awscli`) e configurar o acesso com o seu usuário administrativo (`aws configure sso` ou chave temporária)
+- [x] **[você]** Ligar o MFA no usuário raiz (root) da `devbatista` e parar de usá-lo no dia a dia: só em emergência
+- [x] **[você]** AWS Organizations na `devbatista` (753974168544), que passa a ser a conta gestora, e conta-membro **`catalysthr` (464986173446)** só para o CatalystHR. Motivo: a `devbatista` tem usuários IAM de outros sistemas, e o SES é compartilhado por conta. **Atenção:** criar a organização passa a conta do plano gratuito para o pago, sem volta (a conta não tinha créditos, então nada se perdeu) (2026-10-14)
+- [x] **[você]** Gestão centralizada do acesso raiz das contas-membro. A `catalysthr` não tem credenciais raiz: sem senha, chaves, MFA nem certificados, conferido por `sts assume-root` (2026-10-14)
+- [x] **[você]** IAM Identity Center em São Paulo, instância de região única com chave da AWS (sem custo), MFA em todo login, usuário `devbatista` com `AdministratorAccess` nas duas contas. Portal: `https://d-9467531773.awsapps.com/start` (2026-10-14)
+- [x] **[Claude]** AWS CLI 2.38 e perfis `catalysthr` e `devbatista` em `~/.aws/config`, pelo SSO (`aws sso login --sso-session devbatista`), sem chaves gravadas (2026-10-14)
+- [x] **[você]** Alerta de orçamento (AWS Budgets) na `devbatista`: US$ 10 por mês, modelo de custo mensal (2026-10-14)
 
-**Recursos** (eu rodo pela CLI, com confirmação a cada bloco)
+**Recursos** na conta `catalysthr` (eu rodo pela CLI, com confirmação a cada bloco e aviso do custo antes)
 
-- [ ] **[Claude]** KMS: três chaves (certificado A1, arquivos, backups) com rotação anual (P-20-22)
-- [ ] **[Claude]** S3 `catalysthr-arquivos` (nome a confirmar): privado, bloqueio de acesso público, SSE-KMS, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
-- [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS, regra de ciclo de vida que apaga aos 35 dias (D-502)
-- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21)
+*Agora (fase 0), sem custo até enviar e-mails:*
+
 - [ ] **[Claude]** SNS: tópico para os eventos de entrega, devolução e reclamação do SES (P-15-24)
-- [ ] **[Claude]** SES: verificar o domínio `catalysthr.com.br` (depende do passo 1) e criar o *configuration set* ligado ao SNS
+- [ ] **[Claude]** SES: verificar o domínio `catalysthr.com.br` (depende do passo 1) e criar o *configuration set* ligado ao SNS. Sem o Virtual Deliverability Manager e sem IP dedicado, que são pagos
 - [ ] **[você]** Pedir ao SES a **saída do sandbox** pelo console (formulário de caso de uso). Eu escrevo o texto do pedido
-- [ ] **[você]** Criar um alerta de orçamento (AWS Budgets), por exemplo US$ 20 por mês, para não ter surpresa
+
+*Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
+
+- [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)
+- [ ] **[Claude]** S3 `catalysthr-arquivos` (nome a confirmar): privado, bloqueio de acesso público, SSE-KMS com S3 Bucket Key, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
+- [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS com S3 Bucket Key, regra de ciclo de vida que apaga aos 35 dias (D-502)
+- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES
+
+*Fase 3, junto com o certificado A1 (cerca de US$ 1 por mês):*
+
+- [ ] **[Claude]** KMS: chave do certificado A1, com rotação anual (D-075, P-20-22)
 
 ## 5. Railway (US East — D-500)
 

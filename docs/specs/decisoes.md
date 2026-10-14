@@ -537,6 +537,7 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-516 | Enquanto houver um desenvolvedor só, o merge na `main` exige só o CI verde. A revisão aprovada (P-20-12) passa a ser obrigatória quando entrar a segunda pessoa | 2026-10-14 |
 | D-517 | A configuração dos serviços do Railway (início, pre-deploy, health check, réplicas, região) é feita pelo painel e pela API e documentada no README, sem arquivo no repositório. Motivo: o `railway.json` (Config as Code) foi descontinuado pelo Railway, serviços novos não podem usá-lo, e o substituto (`.railway/railway.ts`) não foi adotado | 2026-10-14 |
 | D-573 | O monitor externo do Sentry confere o `/up` em `health.painel.catalysthr.com.br`, e o slug `health` passa a ser reservado (RN-01-021). Motivo: o endereço do Railway (`*.up.railway.app`) não serve, porque o Sentry limita a 1.000 monitores por domínio e o `railway.app` já atingiu o limite; e um domínio próprio como `health.catalysthr.com.br` não cabe no plano Hobby, que permite 2 domínios por serviço, já usados por `*.painel` e `admin` | 2026-10-14 |
+| D-574 | O CatalystHR usa uma conta própria da AWS (`catalysthr`), membro da organização da conta `devbatista`, que fica só como gestora. A equipe acessa pelo IAM Identity Center em São Paulo, com MFA em todo login, e a conta-membro não tem credenciais raiz. Motivo: a `devbatista` tem usuários IAM de outros sistemas, que alcançariam os dados do CatalystHR, e a reputação do SES é por conta. Complementa a D-501 e a RN-20-053 | 2026-10-14 |
 
 ## Recrutamento (spec 21)
 
