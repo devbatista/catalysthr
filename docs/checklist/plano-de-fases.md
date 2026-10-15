@@ -133,6 +133,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Jurídico: CatalystHR como fabricante, assinatura com o A1 do empregador, bloqueio pela cerca, layouts do AFD, do AEJ e do comprovante
 - [ ] Registro do programa no INPI e o atestado técnico
 - [ ] Especialista em DP: spec 11 conferida
+- [ ] Rever o deploy automático (D-575) antes de o primeiro cliente usar o ponto: manter ou voltar à aprovação manual
 
 ### Entregas
 - [ ] **Spec 10:** marcação no PWA, cerca, selfie com consentimento, IPs, externos, totem, NSR, marcação imutável (trigger), comprovante assinado, tratamento, AFD e AEJ

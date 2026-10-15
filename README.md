@@ -57,7 +57,12 @@ O CI do GitHub Actions roda tudo isso em cada pull request (`.github/workflows/c
 
 ## Deploy
 
-Só existe o ambiente de produção, no Railway (D-504). O deploy é manual, pelo workflow **Deploy** na aba Actions, e só segue com o CI verde no commit. Ele recusa os horários de pico do ponto (7h às 9h e 17h às 19h), a não ser que seja forçado.
+Só existe o ambiente de produção, no Railway (D-504). O deploy é **automático** (D-575), pelo workflow **Deploy**:
+
+- quando o CI de um push na `main` termina verde, a `main` é publicada;
+- nenhum deploy começa nos picos do ponto (7h às 9h e 17h às 19h, Brasília); o que ficar pendente sai às 9h05 e às 19h05;
+- o commit que já está em produção não é publicado de novo;
+- o disparo manual, na aba Actions, continua disponível, e só ele pode forçar um deploy no pico.
 
 ### Domínios
 
