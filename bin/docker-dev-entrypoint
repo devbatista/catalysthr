@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Entrypoint of the development containers (Dockerfile.dev, D-587).
+set -e
+
+# Gems added to the Gemfile since the image was built.
+bundle check > /dev/null || bundle install
+
+# A container stopped abruptly leaves the server's pid behind, and Puma refuses to start.
+rm -f tmp/pids/server.pid
+
+exec "$@"
