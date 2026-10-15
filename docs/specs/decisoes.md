@@ -210,6 +210,9 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-187 | No impersonate, dados sensíveis aparecem mascarados, e arquivos de saúde e biometria não abrem | 2026-10-12 |
 | D-188 | Propostas P-02-01 a P-02-37 da spec 02 aprovadas. Ajustes em P-02-09, P-02-22 e P-02-37 (ver spec 02, seção 10) | 2026-10-12 |
 | D-189 | O fluxo de notas fiscais do prestador PJ fica na spec 12 (folha de pagamento) | 2026-10-12 |
+| D-576 | As sessões ficam numa tabela própria (`user_sessions`), e o cookie guarda só o identificador. Cada requisição confere se a sessão continua válida. Motivo: listar e encerrar sessões (RN-02-053) e derrubá-las na hora ao remover um perfil (RN-02-063) exigem o estado no servidor. Sem gem nova | 2026-10-15 |
+| D-577 | Os termos de uso e a política de privacidade ficam numa tabela de versões (`legal_documents`), e cada publicação cria uma versão nova. O aceite em `consents` aponta para a versão aceita, e o texto das versões antigas é mantido. Substitui os campos de texto legal da marca (spec 01) | 2026-10-15 |
+| D-578 | A marca sem termos ou política próprios usa os da CatalystHR. Até o jurídico revisar as minutas, o primeiro acesso fica atrás de feature flag, sem clientes reais | 2026-10-15 |
 
 ## Permissões (spec 03)
 

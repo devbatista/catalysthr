@@ -1,0 +1,4 @@
+<p><%= t(".greeting", name: @resource.first_name) %></p>
+<p><%= t(".body", brand: @sender_name) %></p>
+<p><%= link_to t(".action"), user_unlock_url(unlock_token: @token, **@url_options) %></p>
+<p><%= t(".ignore") %></p>

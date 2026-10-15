@@ -1,0 +1,9 @@
+<% if Current.area == :panel %>
+  <%= render "panel/home/brand_logo", brand: Current.brand %>
+  <p class="mt-6 text-center text-lg">
+    <%= Current.brand.login_welcome_text.presence || t(".default_welcome") %>
+  </p>
+<% else %>
+  <p class="text-center text-2xl font-bold text-brand-primary">CatalystHR</p>
+  <p class="mt-2 text-center text-lg"><%= t(".admin_subtitle") %></p>
+<% end %>

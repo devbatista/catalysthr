@@ -1,6 +1,10 @@
 module Panel
   # PWA manifest of the subdomain's brand (RN-01-033, RN-01-036).
   class ManifestsController < BaseController
+    # The browser fetches the manifest before anyone signs in.
+    skip_before_action :authenticate_user!, :require_sign_in_feature
+    public_actions :show
+
     def show
       brand = Current.brand
       manifest = {

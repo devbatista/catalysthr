@@ -54,6 +54,15 @@ gem "lograge"
 # Portuguese translations for Rails
 gem "rails-i18n"
 
+# Sign-in by CPF or e-mail, password recovery and lockout (spec 02, P-02-35)
+gem "devise", "~> 5.0"
+
+# Permissions as the sum of partial abilities (spec 03, P-03-08)
+gem "cancancan", "~> 3.7"
+
+# Request limits per IP against attempts on many CPFs (RN-02-032, P-02-15)
+gem "rack-attack", "~> 6.8"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

@@ -1,0 +1,9 @@
+<% if resource.errors.any? %>
+  <div class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+    <ul class="list-disc space-y-1 pl-5">
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

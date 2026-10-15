@@ -7,6 +7,11 @@ Rails.application.configure do
   # Jobs run in memory in tests, without Redis.
   config.active_job.queue_adapter = :test
 
+  # Test field encryption keys, public on purpose: never used outside tests.
+  config.active_record.encryption.primary_key = "test-primary-key-not-secret"
+  config.active_record.encryption.deterministic_key = "test-deterministic-key-not-secret"
+  config.active_record.encryption.key_derivation_salt = "test-key-derivation-salt-not-secret"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # While tests run files are not watched, reloading is not necessary.

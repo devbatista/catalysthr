@@ -6,6 +6,11 @@ Rails.application.configure do
   config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.localhost")
   config.hosts << ".localhost" << ".#{config.x.panel_domain}"
 
+  # Local field encryption keys, public on purpose: never used outside development.
+  config.active_record.encryption.primary_key = "development-primary-key-not-secret"
+  config.active_record.encryption.deterministic_key = "development-deterministic-key-not-secret"
+  config.active_record.encryption.key_derivation_salt = "development-key-derivation-salt-not-secret"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Make code changes take effect immediately without server restart.

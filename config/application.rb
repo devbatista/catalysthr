@@ -54,6 +54,18 @@ module CatalystHr
     config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.catalysthr.com.br")
     config.middleware.use HostResolver
 
+    # Request limits per IP (RN-02-032, config/initializers/rack_attack.rb).
+    config.middleware.use Rack::Attack
+
+    # Field encryption (D-086, P-05-02, P-05-03). Keys come from Railway variables,
+    # never from the repository; development and tests set local keys. A missing key
+    # makes every read and write of an encrypted field raise, so nothing is stored in
+    # plain text. Losing the keys makes the encrypted fields unreadable: keep a copy
+    # outside Railway.
+    config.active_record.encryption.primary_key = ENV["ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY"]
+    config.active_record.encryption.deterministic_key = ENV["ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY"]
+    config.active_record.encryption.key_derivation_salt = ENV["ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"]
+
     config.generators do |g|
       g.test_framework :rspec, fixtures: true, view_specs: false, helper_specs: false, routing_specs: false
       g.fixture_replacement :factory_bot, dir: "spec/factories"

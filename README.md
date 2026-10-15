@@ -31,6 +31,15 @@ Cada requisição é resolvida pelo host (spec 01, RN-01-001), então `http://lo
 | http://serraazul.painel.localhost | Empresa direta sem marca configurada (nome em texto) |
 | http://admin.localhost | Área administrativa CatalystHR |
 
+O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas com a senha `Catalyst#2026`. O login aceita o CPF, com ou sem máscara, ou o e-mail:
+
+| Pessoa | CPF | Onde entra |
+|---|---|---|
+| Paulo Lima (superadmin) | 529.982.247-25 | http://admin.localhost |
+| Ana Ribeiro (consultora da Aurora) | 111.444.777-35 | http://aurora.painel.localhost |
+| Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost |
+| Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost |
+
 Os domínios vêm de `ADMIN_HOST` e `PANEL_DOMAIN` (padrão em produção: `admin.catalysthr.com.br` e `painel.catalysthr.com.br`).
 
 Portas locais:
@@ -88,3 +97,5 @@ Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em
 Os serviços `clamav` e `backup` entram na fase 1. Os três serviços da aplicação usam a política de reinício `ON_FAILURE`.
 
 Variáveis comuns aos três serviços da aplicação: `DATABASE_URL` (referência `${{Postgres.DATABASE_URL}}`), `REDIS_URL` (referência `${{Redis.REDIS_URL}}`), `RAILS_MASTER_KEY` e `APP_HOST`. O `SENTRY_DSN` (organização e projeto `catalysthr` no Sentry, região EUA) também está nos três serviços. Segredos nunca entram no repositório.
+
+Chaves da criptografia de campos (D-086, P-05-03), nos três serviços: `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` e `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`, geradas por `bin/rails db:encryption:init` e configuradas em 2026-10-15, com valores iguais nos três serviços. Sem elas, ler ou gravar um campo criptografado (como o CPF) dá erro, e nada é gravado em texto aberto. **Guarde uma cópia das três fora do Railway:** sem as chaves, os campos criptografados não podem mais ser lidos. Trocar a chave determinística depois que houver dados exige um plano de migração, porque o CPF é buscado por ela.
