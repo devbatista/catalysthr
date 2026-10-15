@@ -117,7 +117,7 @@ Definir **onde e como o CatalystHR roda**:
   - RuboCop, brakeman, bundler-audit e `importmap audit`;
   - RSpec com Postgres (pgvector) e Redis como serviços, e cobertura pelo SimpleCov;
   - o merge na `main` exige o CI verde (proteção da branch). A revisão aprovada passa a ser exigida quando entrar a segunda pessoa no desenvolvimento (D-516).
-- **RN-20-032** — **Deploy** por um workflow do GitHub Actions, com **aprovação manual** (o workflow só roda quando alguém o dispara, e exige o CI verde no commit), que publica pela CLI do Railway. Evitar deploys entre 7h e 9h e entre 17h e 19h, que são os picos de marcação de ponto **[P-20-13]**.
+- **RN-20-032** — **Deploy** por um workflow do GitHub Actions, que publica pela CLI do Railway. É **automático** (D-575): quando o CI de um push na `main` termina verde, a `main` é publicada. Nenhum deploy começa entre 7h e 9h nem entre 17h e 19h, que são os picos de marcação de ponto; o que ficar pendente sai às 9h05 e às 19h05. O disparo manual continua disponível, e só ele pode forçar um deploy no pico **[P-20-13]**.
 - **RN-20-033** — **Volta de versão:** o Railway republica a versão anterior com um clique. Por isso as migrações precisam ser compatíveis com a versão anterior (RN-20-030).
 - **RN-20-034** — **Desenvolvimento local:** `bin/dev` com Postgres (pgvector) e Redis via Docker Compose, letter_opener (D-026), varredura de vírus simulada e chamadas externas (IA, Twilio, Mercado Pago, eSocial) em modo de teste ou simulado **[P-20-14]**.
 - **RN-20-035** — **Dependências:** Dependabot ligado para gems, imagens Docker e GitHub Actions, com revisão semanal **[P-20-15]**.
@@ -253,7 +253,7 @@ Gems e ferramentas novas: `sentry-ruby`, `sentry-rails`, `sentry-sidekiq`, `logr
 | P-20-10 | Registros de DNS, com DMARC em quarentena |
 | P-20-11 | Empresa de demonstração, feature flags e migrações seguras |
 | P-20-12 | Etapas do CI e proteção da branch |
-| P-20-13 | Deploy com aprovação manual, fora dos picos do ponto |
+| P-20-13 | Deploy fora dos picos do ponto; automático depois do CI verde desde a D-575 |
 | P-20-14 | Desenvolvimento local com Docker Compose e serviços simulados |
 | P-20-15 | Dependabot |
 | P-20-16 | pg_dump criptografado, IAM só de gravação, monitorado |

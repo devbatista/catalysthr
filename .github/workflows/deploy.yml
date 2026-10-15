@@ -1,9 +1,19 @@
-# Production deploy to Railway (spec 20, RN-20-032, P-20-13).
-# Manual only: someone runs this workflow from the Actions tab, which is the approval.
-# Deploys are refused during time-clock peaks (07h-09h and 17h-19h, Brasília) unless forced.
+# Production deploy to Railway (spec 20, RN-20-032; D-575).
+#
+# Automatic: when the CI of a push to main finishes green, the current main is
+# deployed. Deploys never start during time-clock peaks (07h-09h and 17h-19h,
+# Brasília); whatever was held back goes out at 09h05 and 19h05. The manual run
+# stays available, and only it can force a deploy during a peak.
 name: Deploy
 
 on:
+  workflow_run:
+    workflows: [ CI ]
+    types: [ completed ]
+    branches: [ main ]
+  schedule:
+    - cron: "5 12 * * *"   # 09:05 in Brasília
+    - cron: "5 22 * * *"   # 19:05 in Brasília
   workflow_dispatch:
     inputs:
       force:
@@ -15,38 +25,72 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
-# Read access to Actions is needed to check the CI result of the commit.
+# Read access to Actions and deployments is needed to check the CI result and the
+# commit already in production.
 permissions:
   contents: read
   actions: read
+  deployments: read
 
 jobs:
+  # Decides without touching the production environment, so a skipped run is not
+  # recorded as a deployment.
+  decide:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push') }}
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+
+    steps:
+      - name: Check peak hours, CI and what is already deployed
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          hour=$(TZ=America/Sao_Paulo date +%H)
+          if [ "$FORCE" != "true" ] && { [ "$hour" -ge 7 ] && [ "$hour" -lt 9 ] || [ "$hour" -ge 17 ] && [ "$hour" -lt 19 ]; }; then
+            message="Pico do ponto ($hour h em Brasília). O deploy fica para as 9h05 ou 19h05."
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+              echo "$message Rode de novo fora do pico ou marque 'force'."
+              exit 1
+            fi
+            echo "::notice::$message"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          conclusion=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --commit "$GITHUB_SHA" --json conclusion --jq '.[0].conclusion')
+          if [ "$conclusion" != "success" ]; then
+            echo "::notice::O CI de $GITHUB_SHA não está verde (resultado: ${conclusion:-sem execução}). Nada a publicar."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          deployed=""
+          for id in $(gh api "repos/$GITHUB_REPOSITORY/deployments?environment=production&per_page=20" --jq '.[].id'); do
+            if [ "$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses" --jq '.[0].state')" = "success" ]; then
+              deployed=$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq '.sha')
+              break
+            fi
+          done
+          if [ "$deployed" = "$GITHUB_SHA" ] && [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]; then
+            echo "::notice::$GITHUB_SHA já está em produção."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
   deploy:
+    needs: decide
+    if: ${{ needs.decide.outputs.deploy == 'true' }}
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-      - name: Refuse deploys during time-clock peaks
-        if: ${{ !inputs.force }}
-        run: |
-          hour=$(TZ=America/Sao_Paulo date +%H)
-          if [ "$hour" -ge 7 ] && [ "$hour" -lt 9 ] || [ "$hour" -ge 17 ] && [ "$hour" -lt 19 ]; then
-            echo "Pico do ponto ($hour h em Brasília). Rode de novo fora do pico ou marque 'force'."
-            exit 1
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v7
-
-      - name: Require green CI on this commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          conclusion=$(gh run list --workflow ci.yml --commit "$GITHUB_SHA" --json conclusion --jq '.[0].conclusion')
-          if [ "$conclusion" != "success" ]; then
-            echo "O CI deste commit não está verde (resultado: ${conclusion:-sem execução})."
-            exit 1
-          fi
 
       - name: Install Railway CLI
         run: npm install --global @railway/cli
