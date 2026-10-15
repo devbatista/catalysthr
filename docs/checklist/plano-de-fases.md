@@ -80,7 +80,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências
-- [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR
+- [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
 
 ### Pronto quando
