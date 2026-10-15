@@ -1,0 +1,12 @@
+<div class="mx-auto max-w-md px-6 py-12">
+  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
+  <p class="mt-2 text-sm"><%= t(".instructions") %></p>
+
+  <ul class="mt-6 grid grid-cols-2 gap-2 rounded-lg bg-white p-4 font-mono text-lg ring-1 ring-slate-200">
+    <% @codes.each do |code| %>
+      <li><%= code %></li>
+    <% end %>
+  </ul>
+
+  <p class="mt-6"><%= link_to t(".continue"), root_path, class: "inline-block rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white" %></p>
+</div>

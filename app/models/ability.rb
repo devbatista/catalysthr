@@ -7,6 +7,10 @@ class Ability
   def initialize(user, area:)
     return if user.nil?
 
+    # Everyone manages the security of their own account (RN-02-042, RN-02-043, RN-02-053).
+    can :manage, :own_security
+    can :destroy, [ UserSession, TrustedDevice ], user_id: user.id
+
     case area
     when :admin
       merge(PlatformAbility.new(user))

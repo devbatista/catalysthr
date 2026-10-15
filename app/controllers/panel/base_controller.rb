@@ -5,6 +5,7 @@ module Panel
   class BaseController < ApplicationController
     before_action :authenticate_user!
     before_action :require_legal_acceptance
+    before_action :require_mfa_setup
 
     private
 

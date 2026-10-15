@@ -6,4 +6,6 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :brand
   # Host, protocol and port of the request, for links sent by e-mail.
   attribute :url_options
+  # The signed-in person's open session (D-576).
+  attribute :user_session
 end

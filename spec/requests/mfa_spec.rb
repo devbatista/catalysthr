@@ -1,0 +1,217 @@
+require "rails_helper"
+
+# Spec 02: MFA (RN-02-040 to RN-02-043, D-580).
+RSpec.describe "MFA", type: :request do
+  include ActiveJob::TestHelper
+
+  let(:partner) { create(:partner) }
+  let(:brand) { create(:brand, owner: partner) }
+  let(:company) { create(:company, partner: partner) }
+  let!(:user) { create(:user, cpf: "12345678909", email: "maria@example.com") }
+
+  before do
+    brand.subdomains.create!(slug: "aurora")
+    Flipper.enable(FeatureFlags::SIGN_IN)
+    publish_platform_legal_documents
+    host! "aurora.painel.catalysthr.com.br"
+  end
+
+  def sign_in_with(password = "Catalyst#2026")
+    post "/entrar", params: { user: { login: "12345678909", password: password } }
+  end
+
+  def submit_code(code, remember: false)
+    post "/entrar/codigo", params: { otp_code: code, remember_device: remember ? "1" : "0" }
+  end
+
+  def set_up_mfa
+    get "/seguranca/mfa/ativar"
+    secret = session[Account::MfaController::SECRET_KEY]
+    post "/seguranca/mfa", params: { otp_code: ROTP::TOTP.new(secret).now }
+  end
+
+  describe "first access with a role that requires MFA" do
+    it "does not let an HR analyst go on without the authenticator (CA-02-006)" do
+      invitation = Invitations::Create.call(organization: company, roles: %w[hr_analyst], channels: %w[link],
+        invited_by: user, name: "Joana Prado", cpf: "11144477735", email: "joana@example.com")
+      patch "/convite", params: { token: invitation.token, password: "Joana#2026", password_confirmation: "Joana#2026" }
+      post "/primeiro-acesso/termos", params: { accept: { terms: "1", privacy: "1" } }
+
+      get "/"
+      expect(response).to redirect_to("/seguranca/mfa/ativar")
+
+      get "/seguranca/mfa/ativar"
+      expect(response.body).to include("<svg", "O seu perfil exige a verificação em duas etapas")
+      expect(response.headers["Cache-Control"]).to eq("no-store")
+
+      post "/seguranca/mfa", params: { otp_code: "000000" }
+      expect(response).to have_http_status(:unprocessable_content)
+
+      set_up_mfa
+      expect(response.body).to include("Códigos de recuperação")
+      expect(response.body.scan(%r{<li>[0-9a-f]{10}</li>}).size).to eq(10)
+
+      get "/"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "requires it from the client's manager too (CA-02-017, P-02-39)" do
+      create(:membership, user: user, organization: company, roles: %w[client_manager])
+      accept_legal_documents(user, brand)
+      sign_in_with
+
+      get "/"
+      expect(response).to redirect_to("/seguranca/mfa/ativar")
+    end
+
+    it "requires it in every organization once one role requires it (RN-02-041)" do
+      create(:membership, user: user, organization: company, roles: %w[manager])
+      other_company = create(:company, partner: partner)
+      create(:membership, user: user, organization: other_company, roles: %w[hr_admin])
+
+      expect(user.mfa_required?).to be(true)
+    end
+  end
+
+  describe "sign-in with MFA" do
+    before do
+      create(:membership, user: user, organization: company, roles: %w[hr_admin])
+      accept_legal_documents(user, brand)
+      enable_mfa(user)
+    end
+
+    it "asks for the code after the right password" do
+      sign_in_with
+      expect(response).to redirect_to("/entrar/codigo")
+
+      get "/"
+      expect(response).to redirect_to("/entrar")
+
+      submit_code(user.reload.current_otp)
+      expect(response).to redirect_to("/")
+      get "/"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "answers a wrong password the same way, without asking for the code" do
+      sign_in_with("Errada#2026")
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("CPF, e-mail ou senha inválidos.")
+    end
+
+    it "accepts each recovery code once" do
+      codes = user.regenerate_recovery_codes!
+
+      sign_in_with
+      submit_code(codes.first)
+      expect(response).to redirect_to("/")
+      delete "/sair"
+
+      sign_in_with
+      submit_code(codes.first)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "locks the account after 5 wrong attempts, adding passwords and codes (D-580)" do
+      perform_enqueued_jobs do
+        3.times { sign_in_with("Errada#2026") }
+        sign_in_with
+        2.times { submit_code("000000") }
+      end
+
+      expect(user.reload).to be_access_locked
+      expect(response).to redirect_to("/entrar")
+      expect(ActionMailer::Base.deliveries.last.subject).to eq("Desbloqueio do acesso")
+    end
+
+    it "gives 5 minutes to type the code" do
+      sign_in_with
+
+      travel 6.minutes do
+        submit_code(user.reload.current_otp)
+        expect(response).to redirect_to("/entrar")
+        expect(flash[:alert]).to include("O tempo para digitar o código terminou")
+      end
+    end
+
+    it "skips the code on a remembered device until the password changes (CA-02-007)" do
+      sign_in_with
+      submit_code(user.reload.current_otp, remember: true)
+      delete "/sair"
+
+      travel 29.days do
+        sign_in_with
+        expect(response).to redirect_to("/")
+
+        patch "/seguranca/senha", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
+          password_confirmation: "Nova#Senha2026" } }
+        delete "/sair"
+
+        sign_in_with("Nova#Senha2026")
+        expect(response).to redirect_to("/entrar/codigo")
+      end
+    end
+
+    it "asks for the code again after the 30 days" do
+      sign_in_with
+      submit_code(user.reload.current_otp, remember: true)
+      delete "/sair"
+
+      travel 31.days do
+        sign_in_with
+        expect(response).to redirect_to("/entrar/codigo")
+      end
+    end
+  end
+
+  describe "security page" do
+    before { accept_legal_documents(user, brand) }
+
+    it "lets a person whose MFA is optional turn it off with the password (RN-02-040)" do
+      create(:membership, user: user, organization: company, roles: %w[manager])
+      sign_in_with
+      set_up_mfa
+
+      delete "/seguranca/mfa", params: { current_password: "Errada#2026" }
+      expect(user.reload).to be_mfa_enabled
+
+      delete "/seguranca/mfa", params: { current_password: "Catalyst#2026" }
+      expect(user.reload).not_to be_mfa_enabled
+      expect(user.otp_secret).to be_nil
+    end
+
+    it "does not let a required MFA be turned off" do
+      create(:membership, user: user, organization: company, roles: %w[hr_admin])
+      enable_mfa(user)
+      sign_in_with
+      submit_code(user.reload.current_otp)
+
+      delete "/seguranca/mfa", params: { current_password: "Catalyst#2026" }
+
+      expect(flash[:alert]).to eq("O seu perfil exige a verificação em duas etapas.")
+      expect(user.reload).to be_mfa_enabled
+    end
+
+    it "replaces the recovery codes (P-02-20)" do
+      create(:membership, user: user, organization: company, roles: %w[manager])
+      sign_in_with
+      set_up_mfa
+      old_codes = response.body.scan(%r{<li>([0-9a-f]{10})</li>}).flatten
+
+      post "/seguranca/codigos", params: { current_password: "Catalyst#2026" }
+      new_codes = response.body.scan(%r{<li>([0-9a-f]{10})</li>}).flatten
+
+      expect(new_codes.size).to eq(10)
+      expect(user.reload.invalidate_otp_backup_code!(old_codes.first)).to be(false)
+      expect(user.invalidate_otp_backup_code!(new_codes.first)).to be(true)
+    end
+  end
+
+  it "keeps the authenticator secret encrypted in the database (D-086)" do
+    enable_mfa(user)
+
+    stored = User.connection.select_value("SELECT otp_secret FROM users WHERE id = #{user.id}")
+    expect(stored).not_to include(user.otp_secret)
+  end
+end

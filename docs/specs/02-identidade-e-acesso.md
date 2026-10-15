@@ -1,7 +1,7 @@
 # 02 — Identidade e acesso
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-579 ([decisoes.md](decisoes.md))
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-580 ([decisoes.md](decisoes.md))
 > Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -87,7 +87,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 ### Senha e bloqueio
 
 - **RN-02-030** — A senha tem no mínimo 8 caracteres, com pelo menos uma letra maiúscula, um número e um símbolo (D-180). Ela também não pode conter o CPF nem a data de nascimento do usuário **[P-02-13]**.
-- **RN-02-031** — Após **5 tentativas erradas**, a conta é bloqueada até o desbloqueio (D-181). O usuário escolhe como desbloquear: link no e-mail ou código no WhatsApp. O contador é por usuário, em todas as marcas **[P-02-14]**.
+- **RN-02-031** — Após **5 tentativas erradas**, a conta é bloqueada até o desbloqueio (D-181). O usuário escolhe como desbloquear: link no e-mail ou código no WhatsApp. O contador é por usuário, em todas as marcas **[P-02-14]**, e soma as senhas e os códigos de MFA errados (D-580).
 - **RN-02-032** — Além do bloqueio por conta, há limite de tentativas por IP (Rack::Attack), para frear ataques que testam muitos CPFs **[P-02-15]**.
 - **RN-02-033** — Recuperação de senha (D-179):
   - por **link no e-mail**, válido por 2 horas **[P-02-16]**;

@@ -83,6 +83,15 @@ pt-BR:
         login: "CPF ou e-mail"
         password: "Senha"
         submit: "Entrar"
+      second_factor:
+        title: "Código de verificação"
+        instructions: "Digite o código de 6 dígitos do app autenticador ou um dos códigos de recuperação."
+        code: "Código"
+        remember_device: "Lembrar este dispositivo por 30 dias"
+        submit: "Entrar"
+        expired: "O tempo para digitar o código terminou. Entre de novo."
+      verify_second_factor:
+        invalid_code: "Código inválido. Depois de 5 tentativas erradas, somando senha e código, o acesso é bloqueado."
     passwords:
       new:
         title: "Recuperar a senha"
@@ -100,6 +109,76 @@ pt-BR:
         instructions: "Informe seu CPF ou e-mail. Se o acesso estiver bloqueado e houver cadastro com e-mail, enviamos um link para desbloquear."
         login: "CPF ou e-mail"
         submit: "Enviar"
+  account:
+    security: "Segurança"
+    back: "Voltar"
+    back_to_security: "Voltar para Segurança"
+    invalid_password: "Senha atual incorreta."
+    security:
+      show:
+        title: "Segurança"
+        current_password: "Senha atual"
+        unknown_browser: "Navegador desconhecido"
+        password:
+          title: "Senha"
+          change: "Trocar a senha"
+        mfa:
+          title: "Verificação em duas etapas (MFA)"
+          enabled:
+            one: "Ativada com o app autenticador. Resta 1 código de recuperação."
+            other: "Ativada com o app autenticador. Restam %{count} códigos de recuperação."
+          required: "O seu perfil exige a verificação em duas etapas."
+          optional: "Opcional para o seu perfil. Com ela, entrar exige também um código do app autenticador."
+          enable: "Ativar"
+          regenerate: "Gerar novos códigos de recuperação"
+          disable: "Desativar"
+        devices:
+          title: "Dispositivos lembrados"
+          empty: "Nenhum dispositivo lembrado."
+          details: "Último uso em %{last_used}. Lembrado até %{expires}."
+          forget: "Esquecer"
+        sessions:
+          title: "Sessões abertas"
+          admin: "Área administrativa"
+          details: "IP %{ip}, último acesso em %{last_seen}"
+          current: "Esta sessão"
+          end: "Encerrar"
+    passwords:
+      edit:
+        title: "Trocar a senha"
+        effect: "Ao trocar a senha, as outras sessões são encerradas e os dispositivos lembrados são esquecidos."
+        current_password: "Senha atual"
+        password: "Nova senha"
+        password_confirmation: "Repita a nova senha"
+        submit: "Salvar a nova senha"
+      update:
+        updated: "Senha alterada. As outras sessões foram encerradas."
+    mfa:
+      new:
+        title: "Ativar a verificação em duas etapas"
+        required: "O seu perfil exige a verificação em duas etapas. Ative para continuar."
+        install: "Instale um app autenticador no celular, como Google Authenticator, Microsoft Authenticator ou Authy."
+        scan: "No app, leia o QR code abaixo."
+        manual: "Se não conseguir ler o QR code, digite esta chave no app:"
+        confirm: "Digite o código de 6 dígitos que aparece no app."
+        code: "Código do app"
+        submit: "Ativar"
+      create:
+        invalid_code: "Código inválido. Confira se a hora do celular está certa e tente de novo."
+      destroy:
+        required: "O seu perfil exige a verificação em duas etapas."
+        disabled: "Verificação em duas etapas desativada."
+    recovery_codes:
+      show:
+        title: "Códigos de recuperação"
+        instructions: "Guarde estes 10 códigos em um lugar seguro. Cada um entra uma única vez, no lugar do código do app, se você perder o celular. Eles não serão mostrados de novo."
+        continue: "Já guardei os códigos"
+    sessions:
+      destroy:
+        ended: "Sessão encerrada."
+    trusted_devices:
+      destroy:
+        forgotten: "Dispositivo esquecido. O código será pedido de novo nele."
   invitation_mailer:
     invitation:
       subject: "Convite para acessar %{brand}"
@@ -144,6 +223,7 @@ pt-BR:
         login: "CPF ou e-mail"
         password: "Senha"
         password_confirmation: "Confirmação da senha"
+        current_password: "Senha atual"
         reset_password_token: "Link de redefinição"
         unlock_token: "Link de desbloqueio"
       membership:

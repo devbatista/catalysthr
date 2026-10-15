@@ -40,6 +40,8 @@ O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas co
 | Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost |
 | Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost |
 
+Todas essas pessoas têm perfil com MFA obrigatório (RN-02-040). No primeiro login, o sistema pede para ativar um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) lendo o QR code.
+
 Os domínios vêm de `ADMIN_HOST` e `PANEL_DOMAIN` (padrão em produção: `admin.catalysthr.com.br` e `painel.catalysthr.com.br`).
 
 Portas locais:

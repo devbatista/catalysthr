@@ -9,7 +9,7 @@ RSpec.describe "Terms and privacy policy", type: :request do
   let!(:author) { create(:user, platform_role: "superadmin") }
 
   before do
-    create(:membership, user: user, organization: company)
+    create(:membership, user: user, organization: company, roles: %w[manager])
     brand.subdomains.create!(slug: "aurora")
     Flipper.enable(FeatureFlags::SIGN_IN)
     host! "aurora.painel.catalysthr.com.br"

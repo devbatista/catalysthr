@@ -36,6 +36,9 @@ class Membership < ApplicationRecord
   validate :roles_of_organization
   validate :invitation_channels_available
 
+  # Suspending, ending or removing a role ends the sessions that relied on it (RN-02-063).
+  after_update_commit :end_sessions, if: :access_reduced?
+
   scope :with_access, -> { where(status: ACCESS_STATUSES) }
 
   # Memberships a brand's subdomain considers at sign-in (RN-01-002): the partner's
@@ -60,7 +63,7 @@ class Membership < ApplicationRecord
   end
 
   def self.token_digest(token)
-    OpenSSL::Digest::SHA256.hexdigest(token)
+    SecureToken.digest(token)
   end
 
   # The brand whose subdomain the person uses: the partner's for the partner and its
@@ -78,7 +81,7 @@ class Membership < ApplicationRecord
   # A new token replaces the previous one, which stops working (RN-02-012, P-02-07).
   # Only its digest is stored; the token itself goes in the link.
   def issue_invitation!(channels:, invited_by:)
-    token = SecureRandom.urlsafe_base64(32)
+    token = SecureToken.generate
     update!(
       invitation_token_digest: self.class.token_digest(token), invitation_channels: channels,
       invitation_sent_at: Time.current, invitation_expires_at: INVITATION_VALIDITY.from_now,
@@ -101,6 +104,16 @@ class Membership < ApplicationRecord
   end
 
   private
+
+  def access_reduced?
+    (saved_change_to_status? && !status.in?(ACCESS_STATUSES)) ||
+      (saved_change_to_roles? && (roles_before_last_save.to_a - roles).any?)
+  end
+
+  def end_sessions
+    user.user_sessions.active.where(area: "panel", brand: subdomain_brand)
+      .update_all(revoked_at: Time.current, revoked_reason: "access_changed")
+  end
 
   def invitation_channels_available
     errors.add(:invitation_channels, :unavailable) if (invitation_channels - INVITATION_CHANNELS).any?

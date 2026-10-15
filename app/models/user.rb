@@ -2,15 +2,24 @@
 # The CatalystHR team is marked by platform_role, without a membership (P-02-01).
 class User < ApplicationRecord
   PLATFORM_ROLES = %w[superadmin support finance].freeze
+  # Roles that make MFA mandatory in every sign-in, in any organization (RN-02-040,
+  # RN-02-041, D-082, P-02-39). The CatalystHR team always uses it.
+  MFA_REQUIRED_ROLES = %w[partner_admin consultant hr_admin hr_analyst client_manager].freeze
 
-  devise :database_authenticatable, :recoverable, :lockable, :trackable,
-    authentication_keys: [ :login ], reset_password_keys: [ :login ], unlock_keys: [ :login ]
+  # two_factor_authenticatable replaces database_authenticatable: having both would let
+  # the password alone pass the sign-in (devise-two-factor). 10 single-use recovery
+  # codes (RN-02-042, D-083).
+  devise :two_factor_authenticatable, :two_factor_backupable, :recoverable, :lockable, :trackable,
+    authentication_keys: [ :login ], reset_password_keys: [ :login ], unlock_keys: [ :login ],
+    otp_number_of_backup_codes: 10, otp_backup_code_length: 5
 
   # Deterministic, so the CPF can be searched and kept unique (RN-02-001, D-086).
   encrypts :cpf, deterministic: true
 
   has_many :memberships, dependent: :restrict_with_error
   has_many :consents, dependent: :restrict_with_error
+  has_many :trusted_devices, dependent: :delete_all
+  has_many :user_sessions, dependent: :delete_all
 
   enum :status, { active: "active", deactivated: "deactivated" }, validate: true
   enum :platform_role, PLATFORM_ROLES.index_by(&:itself), validate: { allow_nil: true }
@@ -27,6 +36,10 @@ class User < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, allow_nil: true
   validates :password, password_policy: true, confirmation: true
   validate :email_or_mobile_phone
+
+  # A new password ends the other sessions and forgets the remembered devices
+  # (RN-02-043, RN-02-053). The current session, if any, stays open.
+  after_update :end_access_after_password_change, if: :saved_change_to_encrypted_password?
 
   # Who may sign in where (RN-02-004, RN-01-002): the CatalystHR team only at the
   # admin host; everyone else only at a brand where they hold an active or read-only
@@ -85,7 +98,56 @@ class User < ApplicationRecord
     encrypted_password.present?
   end
 
+  def mfa_required?
+    platform_role.present? ||
+      memberships.where.not(status: "revoked").where("roles && ARRAY[?]::varchar[]", MFA_REQUIRED_ROLES).exists?
+  end
+
+  def mfa_enabled?
+    otp_required_for_login?
+  end
+
+  # Turns on the authenticator after the person proves it works with a first code.
+  # Returns the recovery codes, shown only once (RN-02-042).
+  def enable_mfa!(secret:, code:)
+    return unless validate_and_consume_otp!(code, otp_secret: secret)
+
+    self.otp_secret = secret
+    self.otp_required_for_login = true
+    codes = generate_otp_backup_codes!
+    save!(validate: false)
+    codes
+  end
+
+  def disable_mfa!
+    update!(otp_secret: nil, otp_required_for_login: false, otp_backup_codes: nil, consumed_timestep: nil)
+  end
+
+  # New codes replace the previous ones (RN-02-042, P-02-20).
+  def regenerate_recovery_codes!
+    codes = generate_otp_backup_codes!
+    save!(validate: false)
+    codes
+  end
+
+  # A code from the app or a recovery code, used once.
+  def valid_second_factor?(code)
+    code = code.to_s.strip
+    return false if code.empty?
+
+    validate_and_consume_otp!(code) || invalidate_otp_backup_code!(code.downcase)
+  end
+
+  def revoke_sessions!(reason:, except: nil)
+    user_sessions.active.where.not(id: except).update_all(revoked_at: Time.current, revoked_reason: reason)
+  end
+
   private
+
+  def end_access_after_password_change
+    revoke_sessions!(reason: "password_changed", except: Current.user_session&.id)
+    trusted_devices.active.update_all(revoked_at: Time.current)
+  end
 
   # RN-02-002, P-02-04: without e-mail or mobile phone there is no way to recover access.
   def email_or_mobile_phone
