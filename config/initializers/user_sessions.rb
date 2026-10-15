@@ -50,7 +50,7 @@ Rails.application.config.after_initialize do
   Warden::Manager.before_failure do |env, options|
     # Warden has already pointed PATH_INFO to the failure app; the original path is kept.
     request = Rack::Request.new(env)
-    next unless options[:scope] == :user && request.post? && options[:attempted_path] == "/entrar"
+    next unless options[:scope] == :user && request.post? && options[:attempted_path] == "/sign-in"
 
     user = User.find_by_login(request.params.dig("user", "login"))
     AccessEvent.record!(kind: "auth", action: "sign_in_failed", user: user, metadata: { step: "password" }) if user

@@ -4,6 +4,8 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :area
   # The brand of the subdomain being accessed (spec 01, RN-01-001).
   attribute :brand
+  # The company chosen after sign-in, the tenant of the request (RN-01-004, RN-01-005).
+  attribute :company
   # Host, protocol and port of the request, for links sent by e-mail.
   attribute :url_options
   # The signed-in person's open session (D-576).

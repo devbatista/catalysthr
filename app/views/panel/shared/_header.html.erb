@@ -1,0 +1,26 @@
+<header class="border-b border-slate-200 bg-white">
+  <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+    <%= link_to root_path, class: "font-bold text-brand-primary" do %>
+      <%= Current.brand.commercial_name %>
+    <% end %>
+
+    <% if authorized_companies.many? %>
+      <%= form_with url: current_company_path, method: :post, class: "flex items-center gap-2 text-sm" do |form| %>
+        <%= form.label :company_id, t(".company"), class: "sr-only" %>
+        <%= form.select :company_id, authorized_companies.map { |company| [ company.name, company.id ] },
+          { selected: Current.company&.id, include_blank: Current.company.nil? }, class: "rounded-lg border border-slate-300 px-2 py-1" %>
+        <%= form.submit t(".switch"), class: "rounded-lg px-2 py-1 ring-1 ring-slate-300" %>
+      <% end %>
+    <% elsif Current.company %>
+      <span class="text-sm"><%= Current.company.name %></span>
+    <% end %>
+
+    <nav class="flex items-center gap-4 text-sm">
+      <% if Current.company && can?(:read, Membership) %>
+        <%= link_to t(".users"), memberships_path, class: "underline" %>
+      <% end %>
+      <%= link_to t("account.security"), account_root_path, class: "underline" %>
+      <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "underline" %>
+    </nav>
+  </div>
+</header>

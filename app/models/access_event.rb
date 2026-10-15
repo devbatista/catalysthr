@@ -16,7 +16,7 @@ class AccessEvent < ApplicationRecord
   # Request data (IP, browser, request id) comes from Current.
   def self.record!(kind:, action:, user:, subject: nil, company: nil, field: nil, metadata: {})
     create!(
-      kind: kind, action: action, user: user, subject: subject, company: company, field: field,
+      kind: kind, action: action, user: user, subject: subject, company: company || Current.company, field: field,
       metadata: metadata, ip: Current.ip, user_agent: Current.user_agent.to_s.first(500).presence,
       request_id: Current.request_id
     )

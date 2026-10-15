@@ -34,7 +34,7 @@ RSpec.describe Invitations do
     it "gives a link to the subdomain of the company's partner (RN-02-011)" do
       invitation = invite
 
-      expect(invitation.link).to eq("http://aurora.painel.catalysthr.com.br/convite?token=#{invitation.token}")
+      expect(invitation.link).to eq("http://aurora.painel.catalysthr.com.br/invitation?token=#{invitation.token}")
     end
 
     it "sends the e-mail from the brand, with the link, after the transaction (CA-01-008)" do

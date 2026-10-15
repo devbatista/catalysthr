@@ -36,7 +36,79 @@ pt-BR:
         support: "Suporte:"
       index:
         greeting: "Olá, %{name}."
+        company: "Empresa: %{company}."
         subtitle: "Você entrou em %{brand}. As telas do painel estão em construção."
+    shared:
+      header:
+        company: "Empresa"
+        switch: "Trocar"
+        users: "Usuários"
+    companies:
+      index:
+        title: "Escolha a empresa"
+        instructions: "Você tem acesso a mais de uma empresa. Depois, dá para trocar pelo seletor no topo."
+    memberships:
+      roles_fields:
+        roles: "Perfis"
+        modules: "Módulos do RH analista"
+        modules_hint: "Valem só para o perfil RH analista. Cadastros, painéis e assistente são sempre liberados."
+      index:
+        title: "Usuários"
+        invite: "Convidar"
+        name: "Nome"
+        roles: "Perfis"
+        status: "Situação"
+      new:
+        title: "Convidar usuário"
+        instructions: "Convide pessoas do RH e gestores. Colaboradores são convidados pela admissão. Se o CPF já tiver cadastro na plataforma, a pessoa entra com a senha que já usa."
+        name: "Nome completo"
+        cpf: "CPF"
+        email: "E-mail"
+        mobile_phone: "Celular"
+        channels: "Como enviar o convite"
+        submit: "Convidar"
+        cancel: "Cancelar"
+      invited:
+        title: "Convite criado para %{name}"
+        validity: "O convite vale até %{date}."
+        email_sent: "Enviamos o convite para %{email}."
+        link_title: "Link para entregar em mãos"
+        link_instructions: "Envie este link ou mostre o QR code à pessoa. Ele vale uma única vez e só aparece agora."
+        back: "Voltar para Usuários"
+      edit:
+        title: "Perfis de %{name}"
+        submit: "Salvar"
+        cancel: "Cancelar"
+      update:
+        updated: "Perfis atualizados."
+      destroy:
+        revoked: "Acesso removido."
+      reset_mfa:
+        reset: "Verificação em duas etapas redefinida. A pessoa foi avisada e ativa de novo no próximo acesso."
+      contact:
+        corrected: "Contato corrigido. A pessoa já pode recuperar o acesso."
+      show:
+        back: "Voltar para Usuários"
+        roles: "Perfis"
+        status: "Situação"
+        modules: "Módulos liberados"
+        email: "E-mail"
+        mobile_phone: "Celular"
+        mfa: "Verificação em duas etapas"
+        mfa_on: "Ativada"
+        mfa_off: "Desativada"
+        edit: "Alterar perfis"
+        resend: "Reenviar o convite"
+        resend_submit: "Reenviar"
+        contact: "Corrigir o contato"
+        contact_hint: "Use quando a pessoa perdeu o acesso ao e-mail e ao celular. Ela recupera a senha sozinha depois. A mudança fica registrada e o e-mail antigo recebe um aviso."
+        contact_submit: "Salvar o contato"
+        support_only: "Esta pessoa também tem acesso a outra organização. A correção de contato e a redefinição da verificação em duas etapas são feitas pelo suporte."
+        reset_mfa: "Redefinir a verificação em duas etapas"
+        reset_mfa_confirm: "Redefinir a verificação em duas etapas desta pessoa? As sessões dela serão encerradas."
+        cancel_invitation: "Cancelar o convite"
+        revoke: "Remover o acesso"
+        revoke_confirm: "Remover o acesso desta pessoa à empresa? As sessões dela serão encerradas."
     invitations:
       show:
         title: "Olá, %{name}. Boas-vindas!"
@@ -179,6 +251,49 @@ pt-BR:
     trusted_devices:
       destroy:
         forgotten: "Dispositivo esquecido. O código será pedido de novo nele."
+  roles:
+    superadmin: "Superadmin"
+    support: "Suporte"
+    finance: "Financeiro"
+    partner_admin: "Administrador do parceiro"
+    consultant: "Consultor"
+    hr_admin: "RH administrador"
+    hr_analyst: "RH analista"
+    manager: "Gestor"
+    employee: "Colaborador"
+    client_manager: "Gestor do cliente"
+    firm_admin: "Administrador do escritório"
+    accountant: "Contador"
+  modules:
+    admissao: "Admissão"
+    documentos: "Documentos"
+    solicitacoes: "Solicitações"
+    ponto: "Ponto"
+    folha: "Folha"
+    esocial: "eSocial"
+    recrutamento: "Recrutamento"
+    avaliacao: "Avaliação"
+  membership_statuses:
+    invited: "Convidado"
+    active: "Ativo"
+    suspended: "Suspenso"
+    read_only: "Somente leitura"
+    revoked: "Removido"
+  invitation_channels:
+    email: "E-mail"
+    link: "Link ou QR code para entregar em mãos"
+  account_mailer:
+    mfa_reset:
+      subject: "Verificação em duas etapas redefinida em %{brand}"
+      greeting: "Olá, %{name}."
+      body: "A verificação em duas etapas da sua conta em %{brand} foi redefinida por quem administra o seu acesso."
+      next_step: "No próximo acesso, entre com a sua senha e ative de novo o app autenticador."
+      not_you: "Se você não pediu isso, fale com o RH da empresa ou com o suporte."
+    contact_changed:
+      subject: "Contato da sua conta alterado em %{brand}"
+      greeting: "Olá, %{name}."
+      body: "O e-mail de acesso da sua conta em %{brand} foi alterado por quem administra o seu acesso. Este endereço não recebe mais os avisos da conta."
+      not_you: "Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
   invitation_mailer:
     invitation:
       subject: "Convite para acessar %{brand}"
@@ -230,6 +345,7 @@ pt-BR:
         roles: "Perfis"
         status: "Situação"
         invitation_channels: "Canais do convite"
+        enabled_modules: "Módulos liberados"
       legal_document:
         kind: "Tipo"
         body: "Texto"
@@ -287,6 +403,10 @@ pt-BR:
             base:
               already_member: "A pessoa já tem acesso a esta organização"
               not_invited: "O convite já foi aceito ou cancelado"
+              last_hr_admin: "A empresa precisa de pelo menos um RH administrador ativo"
+            enabled_modules:
+              not_releasable: "incluem um módulo que não existe"
+              role_without_modules: "só valem para o RH analista e o consultor"
               without_subdomain: "A organização ainda não tem um endereço de acesso"
         reserved_slug:
           attributes:

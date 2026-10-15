@@ -1,0 +1,23 @@
+<%# Roles the company's HR gives, and the modules of the HR analyst (D-191) %>
+<fieldset>
+  <legend class="text-sm font-medium"><%= t("panel.memberships.roles_fields.roles") %></legend>
+  <% CompanyAbility::INVITABLE_ROLES.each do |role| %>
+    <label class="mt-2 flex items-center gap-2 text-sm">
+      <%= check_box_tag "#{scope}[roles][]", role, selected_roles.include?(role), id: "#{scope}_role_#{role}" %>
+      <%= t("roles.#{role}") %>
+    </label>
+  <% end %>
+</fieldset>
+
+<fieldset>
+  <legend class="text-sm font-medium"><%= t("panel.memberships.roles_fields.modules") %></legend>
+  <p class="text-xs text-slate-500"><%= t("panel.memberships.roles_fields.modules_hint") %></p>
+  <div class="mt-2 grid grid-cols-2 gap-2">
+    <% Membership::RELEASABLE_MODULES.each do |mod| %>
+      <label class="flex items-center gap-2 text-sm">
+        <%= check_box_tag "#{scope}[enabled_modules][]", mod, selected_modules.include?(mod), id: "#{scope}_module_#{mod}" %>
+        <%= t("modules.#{mod}") %>
+      </label>
+    <% end %>
+  </div>
+</fieldset>

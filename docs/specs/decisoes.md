@@ -216,6 +216,7 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-579 | O superadmin publica os termos de uso e a política de privacidade da CatalystHR numa tela da área administrativa. Cada publicação cria uma versão nova (D-577), com o autor e a data | 2026-10-15 |
 | D-580 | Códigos de MFA errados contam no mesmo contador de tentativas da senha. Com 5 erros, somando os dois, a conta é bloqueada até o desbloqueio (RN-02-031) | 2026-10-15 |
 | D-581 | O suporte entra numa empresa direta pela área administrativa: escolhe a empresa, informa o motivo e recebe um token de uso único que abre o subdomínio da empresa, onde age como consultor (P-03-02), com escrita real. A sessão segue a inatividade de 30 minutos da equipe (RN-02-050) e cada acesso entra nos eventos de acesso. O suporte continua sem membership (P-02-01) e só faz login pelo admin (RN-02-004). Usa o mesmo mecanismo de token do impersonate (RN-02-082) | 2026-10-15 |
+| D-582 | Quem administra o perfil (RN-02-044, P-02-17) só corrige o e-mail ou o celular e só redefine o MFA de quem não tem acesso a nenhuma outra organização (membership que não esteja revogada) nem papel na equipe CatalystHR. Nos outros casos, quem faz é o suporte CatalystHR. Quando o contato muda, o e-mail antigo recebe um aviso. Motivo: o usuário é único na plataforma, e sem essa regra o RH de uma empresa poderia trocar o e-mail de quem é RH de outra, recuperar a senha e entrar nela | 2026-10-15 |
 
 ## Permissões (spec 03)
 

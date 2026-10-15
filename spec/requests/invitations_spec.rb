@@ -20,13 +20,13 @@ RSpec.describe "Invitation", type: :request do
   end
 
   def accept(token, password: "Joana#2026", confirmation: password)
-    patch "/convite", params: { token: token, password: password, password_confirmation: confirmation }
+    patch "/invitation", params: { token: token, password: password, password_confirmation: confirmation }
   end
 
   it "takes a person without e-mail from the link to the password, then to the terms (CA-02-001)" do
     invitation = invite
 
-    get "/convite", params: { token: invitation.token }
+    get "/invitation", params: { token: invitation.token }
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Olá, Joana. Boas-vindas!", "crie a sua senha")
 
@@ -35,7 +35,7 @@ RSpec.describe "Invitation", type: :request do
     expect(invitation.membership.reload).to be_active
 
     get "/"
-    expect(response).to redirect_to("/primeiro-acesso/termos")
+    expect(response).to redirect_to("/first-access/terms")
   end
 
   it "refuses a password outside the rules and keeps the invitation open (RN-02-030)" do
@@ -52,7 +52,7 @@ RSpec.describe "Invitation", type: :request do
     invitation = invite
 
     travel 72.hours + 1.minute do
-      get "/convite", params: { token: invitation.token }
+      get "/invitation", params: { token: invitation.token }
       expect(response).to have_http_status(:not_found)
       expect(response.body).to include("Convite expirado")
     end
@@ -62,7 +62,7 @@ RSpec.describe "Invitation", type: :request do
     first = invite
     Invitations::Resend.call(membership: first.membership, channels: %w[link], invited_by: inviter)
 
-    get "/convite", params: { token: first.token }
+    get "/invitation", params: { token: first.token }
 
     expect(response.body).to include("Convite expirado")
   end
@@ -70,9 +70,9 @@ RSpec.describe "Invitation", type: :request do
   it "works once" do
     invitation = invite
     accept(invitation.token)
-    delete "/sair"
+    delete "/sign-out"
 
-    get "/convite", params: { token: invitation.token }
+    get "/invitation", params: { token: invitation.token }
     expect(response.body).to include("Convite expirado")
   end
 
@@ -81,7 +81,7 @@ RSpec.describe "Invitation", type: :request do
     create(:brand, commercial_name: "Outra marca").subdomains.create!(slug: "outra")
 
     host! "outra.painel.catalysthr.com.br"
-    get "/convite", params: { token: invitation.token }
+    get "/invitation", params: { token: invitation.token }
 
     expect(response.body).to include("Convite expirado")
   end
@@ -94,7 +94,7 @@ RSpec.describe "Invitation", type: :request do
     it "confirms the current password instead of creating another" do
       invitation = invite
 
-      get "/convite", params: { token: invitation.token }
+      get "/invitation", params: { token: invitation.token }
       expect(response.body).to include("confirme a senha que você já usa")
 
       accept(invitation.token, password: "Antiga#2026")

@@ -4,7 +4,7 @@ module Panel
   class LegalAcceptancesController < BaseController
     layout "auth"
 
-    skip_before_action :require_legal_acceptance, :require_mfa_setup
+    skip_before_action :require_legal_acceptance, :require_mfa_setup, :set_current_company
 
     before_action :load_acceptance
 

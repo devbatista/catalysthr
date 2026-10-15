@@ -5,7 +5,7 @@ module Panel
   class InvitationsController < BaseController
     layout "auth"
 
-    skip_before_action :authenticate_user!, :require_legal_acceptance, :require_mfa_setup
+    skip_before_action :authenticate_user!, :require_legal_acceptance, :require_mfa_setup, :set_current_company
     public_actions :show, :update
 
     before_action :load_invitation

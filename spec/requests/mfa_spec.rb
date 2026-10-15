@@ -17,34 +17,34 @@ RSpec.describe "MFA", type: :request do
   end
 
   def sign_in_with(password = "Catalyst#2026")
-    post "/entrar", params: { user: { login: "12345678909", password: password } }
+    post "/sign-in", params: { user: { login: "12345678909", password: password } }
   end
 
   def submit_code(code, remember: false)
-    post "/entrar/codigo", params: { otp_code: code, remember_device: remember ? "1" : "0" }
+    post "/sign-in/code", params: { otp_code: code, remember_device: remember ? "1" : "0" }
   end
 
   def set_up_mfa
-    get "/seguranca/mfa/ativar"
+    get "/security/mfa/new"
     secret = session[Account::MfaController::SECRET_KEY]
-    post "/seguranca/mfa", params: { otp_code: ROTP::TOTP.new(secret).now }
+    post "/security/mfa", params: { otp_code: ROTP::TOTP.new(secret).now }
   end
 
   describe "first access with a role that requires MFA" do
     it "does not let an HR analyst go on without the authenticator (CA-02-006)" do
       invitation = Invitations::Create.call(organization: company, roles: %w[hr_analyst], channels: %w[link],
         invited_by: user, name: "Joana Prado", cpf: "11144477735", email: "joana@example.com")
-      patch "/convite", params: { token: invitation.token, password: "Joana#2026", password_confirmation: "Joana#2026" }
-      post "/primeiro-acesso/termos", params: { accept: { terms: "1", privacy: "1" } }
+      patch "/invitation", params: { token: invitation.token, password: "Joana#2026", password_confirmation: "Joana#2026" }
+      post "/first-access/terms", params: { accept: { terms: "1", privacy: "1" } }
 
       get "/"
-      expect(response).to redirect_to("/seguranca/mfa/ativar")
+      expect(response).to redirect_to("/security/mfa/new")
 
-      get "/seguranca/mfa/ativar"
+      get "/security/mfa/new"
       expect(response.body).to include("<svg", "O seu perfil exige a verificação em duas etapas")
       expect(response.headers["Cache-Control"]).to eq("no-store")
 
-      post "/seguranca/mfa", params: { otp_code: "000000" }
+      post "/security/mfa", params: { otp_code: "000000" }
       expect(response).to have_http_status(:unprocessable_content)
 
       set_up_mfa
@@ -61,7 +61,7 @@ RSpec.describe "MFA", type: :request do
       sign_in_with
 
       get "/"
-      expect(response).to redirect_to("/seguranca/mfa/ativar")
+      expect(response).to redirect_to("/security/mfa/new")
     end
 
     it "requires it in every organization once one role requires it (RN-02-041)" do
@@ -82,10 +82,10 @@ RSpec.describe "MFA", type: :request do
 
     it "asks for the code after the right password" do
       sign_in_with
-      expect(response).to redirect_to("/entrar/codigo")
+      expect(response).to redirect_to("/sign-in/code")
 
       get "/"
-      expect(response).to redirect_to("/entrar")
+      expect(response).to redirect_to("/sign-in")
 
       submit_code(user.reload.current_otp)
       expect(response).to redirect_to("/")
@@ -106,7 +106,7 @@ RSpec.describe "MFA", type: :request do
       sign_in_with
       submit_code(codes.first)
       expect(response).to redirect_to("/")
-      delete "/sair"
+      delete "/sign-out"
 
       sign_in_with
       submit_code(codes.first)
@@ -121,7 +121,7 @@ RSpec.describe "MFA", type: :request do
       end
 
       expect(user.reload).to be_access_locked
-      expect(response).to redirect_to("/entrar")
+      expect(response).to redirect_to("/sign-in")
       expect(ActionMailer::Base.deliveries.last.subject).to eq("Desbloqueio do acesso")
     end
 
@@ -130,7 +130,7 @@ RSpec.describe "MFA", type: :request do
 
       travel 6.minutes do
         submit_code(user.reload.current_otp)
-        expect(response).to redirect_to("/entrar")
+        expect(response).to redirect_to("/sign-in")
         expect(flash[:alert]).to include("O tempo para digitar o código terminou")
       end
     end
@@ -138,29 +138,29 @@ RSpec.describe "MFA", type: :request do
     it "skips the code on a remembered device until the password changes (CA-02-007)" do
       sign_in_with
       submit_code(user.reload.current_otp, remember: true)
-      delete "/sair"
+      delete "/sign-out"
 
       travel 29.days do
         sign_in_with
         expect(response).to redirect_to("/")
 
-        patch "/seguranca/senha", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
+        patch "/security/password", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
           password_confirmation: "Nova#Senha2026" } }
-        delete "/sair"
+        delete "/sign-out"
 
         sign_in_with("Nova#Senha2026")
-        expect(response).to redirect_to("/entrar/codigo")
+        expect(response).to redirect_to("/sign-in/code")
       end
     end
 
     it "asks for the code again after the 30 days" do
       sign_in_with
       submit_code(user.reload.current_otp, remember: true)
-      delete "/sair"
+      delete "/sign-out"
 
       travel 31.days do
         sign_in_with
-        expect(response).to redirect_to("/entrar/codigo")
+        expect(response).to redirect_to("/sign-in/code")
       end
     end
   end
@@ -173,10 +173,10 @@ RSpec.describe "MFA", type: :request do
       sign_in_with
       set_up_mfa
 
-      delete "/seguranca/mfa", params: { current_password: "Errada#2026" }
+      delete "/security/mfa", params: { current_password: "Errada#2026" }
       expect(user.reload).to be_mfa_enabled
 
-      delete "/seguranca/mfa", params: { current_password: "Catalyst#2026" }
+      delete "/security/mfa", params: { current_password: "Catalyst#2026" }
       expect(user.reload).not_to be_mfa_enabled
       expect(user.otp_secret).to be_nil
     end
@@ -187,7 +187,7 @@ RSpec.describe "MFA", type: :request do
       sign_in_with
       submit_code(user.reload.current_otp)
 
-      delete "/seguranca/mfa", params: { current_password: "Catalyst#2026" }
+      delete "/security/mfa", params: { current_password: "Catalyst#2026" }
 
       expect(flash[:alert]).to eq("O seu perfil exige a verificação em duas etapas.")
       expect(user.reload).to be_mfa_enabled
@@ -199,7 +199,7 @@ RSpec.describe "MFA", type: :request do
       set_up_mfa
       old_codes = response.body.scan(%r{<li>([0-9a-f]{10})</li>}).flatten
 
-      post "/seguranca/codigos", params: { current_password: "Catalyst#2026" }
+      post "/security/recovery-codes", params: { current_password: "Catalyst#2026" }
       new_codes = response.body.scan(%r{<li>([0-9a-f]{10})</li>}).flatten
 
       expect(new_codes.size).to eq(10)
