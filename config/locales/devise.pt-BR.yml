@@ -1,0 +1,45 @@
+# Devise messages. Sign-in, recovery and unlock answers never say whether a CPF or
+# e-mail exists (RN-02-034, P-01-03).
+pt-BR:
+  devise:
+    failure:
+      already_authenticated: "Você já entrou."
+      inactive: "CPF, e-mail ou senha inválidos."
+      invalid: "CPF, e-mail ou senha inválidos. Depois de 5 tentativas erradas, o acesso é bloqueado: use \"Desbloquear acesso\"."
+      not_found_in_database: "CPF, e-mail ou senha inválidos. Depois de 5 tentativas erradas, o acesso é bloqueado: use \"Desbloquear acesso\"."
+      locked: "CPF, e-mail ou senha inválidos. Depois de 5 tentativas erradas, o acesso é bloqueado: use \"Desbloquear acesso\"."
+      last_attempt: "CPF, e-mail ou senha inválidos."
+      timeout: "Sua sessão terminou. Entre de novo."
+      unauthenticated: "Entre para continuar."
+      unconfirmed: "CPF, e-mail ou senha inválidos."
+    mailer:
+      reset_password_instructions:
+        subject: "Redefinição de senha"
+      unlock_instructions:
+        subject: "Desbloqueio do acesso"
+      password_change:
+        subject: "Senha alterada"
+      email_changed:
+        subject: "E-mail alterado"
+      confirmation_instructions:
+        subject: "Confirmação de e-mail"
+    passwords:
+      no_token: "Este link de redefinição não é válido. Peça um novo."
+      send_instructions: "Se houver cadastro, enviamos as instruções."
+      send_paranoid_instructions: "Se houver cadastro, enviamos as instruções."
+      updated: "Senha alterada. Entre com a nova senha."
+      updated_not_active: "Senha alterada. Entre com a nova senha."
+    sessions:
+      signed_in: "Você entrou."
+      signed_out: "Você saiu."
+      already_signed_out: "Você saiu."
+    unlocks:
+      send_instructions: "Se houver cadastro, enviamos as instruções."
+      send_paranoid_instructions: "Se houver cadastro, enviamos as instruções."
+      unlocked: "Acesso desbloqueado. Entre com sua senha."
+  errors:
+    messages:
+      already_confirmed: "já foi confirmado"
+      expired: "expirou. Peça um novo"
+      not_found: "não encontrado"
+      not_locked: "não está bloqueado"

@@ -1,7 +1,7 @@
 # 02 — Identidade e acesso
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570 ([decisoes.md](decisoes.md))
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-578 ([decisoes.md](decisoes.md))
 > Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -82,7 +82,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
   5. consentimento de WhatsApp: só para quem tem celular cadastrado. Pode ser recusado.
 - **RN-02-015** — Todo aceite e consentimento guarda: tipo, versão do texto, decisão (aceite ou recusa), data e hora, IP e user agent. Consentimentos podem ser revogados depois pelo portal **[P-02-10]**.
 - **RN-02-016** — O WhatsApp só envia o convite se a empresa registrar que obteve a autorização do colaborador (por exemplo, na ficha de admissão). Antes do primeiro acesso, não existe consentimento dado pela própria pessoa, e a Meta exige opt-in para mensagens iniciadas pela empresa **[P-02-11]**.
-- **RN-02-017** — Termos de uso e política de privacidade têm versão. Quando a marca publica uma versão nova, cada usuário aceita de novo no próximo acesso **[P-02-12]**.
+- **RN-02-017** — Termos de uso e política de privacidade têm versão. Quando a marca publica uma versão nova, cada usuário aceita de novo no próximo acesso **[P-02-12]**. As versões ficam em `legal_documents`, com o texto de cada uma mantido (D-577). Sem texto próprio, a marca usa os da CatalystHR (D-578).
 
 ### Senha e bloqueio
 
@@ -110,7 +110,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 - **RN-02-050** — Tempo de inatividade (D-089): **30 minutos** para equipe CatalystHR, parceiro, RH, gestor, gestor do cliente e contabilidade; **14 dias** para o colaborador. A contabilidade não foi citada em D-089 e entra aqui como proposta **[P-02-23]**.
 - **RN-02-051** — Quem tem perfis com tempos diferentes na mesma marca (por exemplo, gestor e colaborador) fica com o **mais restrito**, 30 minutos **[P-02-24]**.
 - **RN-02-052** — Ver ou baixar dado sensível exige confirmar a senha (ou a passkey, RN-02-045). A confirmação vale **5 minutos** (D-183). Dado sensível segue a lista de D-086 (documentos pessoais, salário e dados bancários, saúde, biometria).
-- **RN-02-053** — O usuário vê as sessões abertas e pode encerrar as outras. Trocar a senha encerra todas, menos a atual **[P-02-25]**.
+- **RN-02-053** — O usuário vê as sessões abertas e pode encerrar as outras. Trocar a senha encerra todas, menos a atual **[P-02-25]**. As sessões ficam na tabela `user_sessions`, conferida a cada requisição (D-576).
 
 ### Ciclo de vida da membership
 
@@ -196,7 +196,16 @@ accounting_firm_companies
 consents                                                          [P-02-10]
   id, user_id, kind ('terms'|'privacy'|'biometrics'|'whatsapp')
   scope_type, scope_id     -- Brand para termos e privacidade; Company para biometria e WhatsApp
+  legal_document_id (nullable; a versão aceita dos termos ou da política, D-577)
   document_version, granted (bool), ip, user_agent, decided_at, revoked_at
+
+legal_documents                                                   [D-577, D-578]
+  id, brand_id (nullable = textos da CatalystHR), kind ('terms'|'privacy')
+  version, body, published_at, published_by_id
+
+user_sessions                                                     [D-576]
+  id, user_id, token_digest, area ('admin'|'panel'), brand_id (nullable)
+  user_agent, ip, last_seen_at, expires_at, revoked_at, revoked_reason
 
 trusted_devices                                                   [P-02-21]
   id, user_id, token_digest, user_agent, last_used_at, expires_at, revoked_at

@@ -182,7 +182,7 @@ brands                                   [P-01-01]
   primary_color, secondary_color, accent_color
   login_welcome_text
   support_email, support_phone
-  terms_url_or_text, privacy_policy_text
+  -- termos e política de privacidade: em legal_documents, com versão (D-577, spec 02)
   email_domain, email_domain_status, ses_identity_arn, email_domain_checked_at
   whatsapp_sender_id (nullable; número próprio)
   Active Storage: logo_light, logo_dark, favicon, pwa_icon, login_image

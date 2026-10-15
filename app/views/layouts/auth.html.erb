@@ -1,0 +1,13 @@
+<%# Sign-in, recovery and unlock pages, inside the admin or the brand's layout %>
+<% content_for :content do %>
+  <div class="mx-auto flex max-w-md flex-col justify-center px-6 py-12 <%= "min-h-screen" if Current.area == :panel %>">
+    <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+      <%= render "users/shared/header" %>
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </div>
+
+    <%= render "users/shared/links" %>
+  </div>
+<% end %>
+<%= render template: Current.area == :panel ? "layouts/panel" : "layouts/application" %>

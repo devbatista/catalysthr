@@ -81,6 +81,14 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor, ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3
 - [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
+  - Specs 02 e 03 no mesmo ciclo, em 5 PRs (2026-10-15):
+    - [ ] 1. Base: criptografia de campos, `User`, `Membership`, login por marca, senha, bloqueio, recuperação por e-mail, Rack::Attack, esqueleto da `Ability` e teste de cobertura de autorização
+    - [ ] 2. Convites (e-mail e link ou QR), primeiro acesso, `consents` e `legal_documents` (D-577, D-578)
+    - [ ] 3. MFA, dispositivos lembrados e `user_sessions` (D-576)
+    - [ ] 4. Abilities por organização, equipe do parceiro, escritório contábil, regras de alteração de perfis
+    - [ ] 5. Impersonate em simulação, mascaramento e `access_events`
+  - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
+  - Ficam para depois: WhatsApp (quando a Twilio for aprovada) e passkeys (fase 2, spec 16)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências

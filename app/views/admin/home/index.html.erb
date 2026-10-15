@@ -1,4 +1,10 @@
 <% content_for :title, t(".title") %>
 
 <h1 class="text-3xl font-bold"><%= t(".title") %></h1>
-<p class="mt-2 text-lg"><%= t(".subtitle") %></p>
+<%= render "shared/flash" %>
+<p class="mt-2 text-lg"><%= t(".greeting", name: current_user.first_name) %></p>
+<p class="mt-2"><%= t(".subtitle") %></p>
+
+<div class="max-w-xs">
+  <%= render "users/shared/sign_out" %>
+</div>
