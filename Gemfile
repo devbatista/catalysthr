@@ -38,6 +38,13 @@ gem "solid_cache"
 # Safe, backward-compatible migrations (P-20-11)
 gem "strong_migrations"
 
+# Company isolation: every company-owned model is scoped to the current tenant (D-150, P-01-05)
+gem "acts_as_tenant", "~> 2.2"
+
+# Feature flags stored in Postgres (P-20-11)
+gem "flipper", "~> 1.4"
+gem "flipper-active_record", "~> 1.4"
+
 # Observability: errors, performance and JSON logs (D-506, D-510)
 gem "sentry-ruby"
 gem "sentry-rails"

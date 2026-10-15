@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title><%= content_for(:title) || Current.brand.commercial_name %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="application-name" content="<%= Current.brand.app_name %>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="<%= Current.brand.colors[:primary] %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= tag.link rel: "manifest", href: manifest_path %>
+    <% if Current.brand.favicon.attached? %>
+      <%= tag.link rel: "icon", href: url_for(Current.brand.favicon) %>
+    <% else %>
+      <link rel="icon" href="/icon.png" type="image/png">
+    <% end %>
+
+    <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031) %>
+    <style>
+      :root {
+        --brand-primary: <%= Current.brand.colors[:primary] %>;
+        --brand-secondary: <%= Current.brand.colors[:secondary] %>;
+        --brand-accent: <%= Current.brand.colors[:accent] %>;
+      }
+    </style>
+
+    <%= stylesheet_link_tag :app %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-brand-secondary">
+    <%= yield %>
+  </body>
+</html>

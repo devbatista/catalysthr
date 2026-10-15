@@ -5,3 +5,9 @@
 #   cron: "0 4 * * *"            # 01:00 in Brasília
 #   class: "Billing::DailyUsageJob"
 #   queue: default
+
+# Releases subdomains whose 90-day redirect is over (spec 01, RN-01-022)
+brands_release_expired_subdomains:
+  cron: "0 6 * * *"            # 03:00 in Brasília
+  class: "Brands::ReleaseExpiredSubdomainsJob"
+  queue: "default"
