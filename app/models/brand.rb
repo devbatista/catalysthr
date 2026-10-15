@@ -55,6 +55,17 @@ class Brand < ApplicationRecord
   end
 
   # Address of a page on the brand's subdomain, for links sent outside a request.
+  # Companies reached through this brand's subdomain: the partner's, or the direct
+  # company itself (D-154, D-121). A partner's company with its own brand still uses the
+  # partner's subdomain.
+  def served_companies
+    case owner
+    when Partner then owner.companies
+    when Company then owner.direct? ? Company.where(id: owner_id) : Company.none
+    else Company.none
+    end
+  end
+
   def panel_url(path = "/", **params)
     config = Rails.configuration.x
     url = "#{config.panel_protocol}://#{active_subdomain.slug}.#{config.panel_domain}#{path}"

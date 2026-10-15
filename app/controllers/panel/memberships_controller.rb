@@ -36,7 +36,7 @@ module Panel
         organization: membership_organization, roles: @form[:roles] & invitable_roles,
         enabled_modules: releases_modules? ? @form[:enabled_modules] : [], channels: @form[:channels],
         invited_by: current_user, name: @form[:name], cpf: @form[:cpf], email: @form[:email].presence,
-        mobile_phone: @form[:mobile_phone].presence
+        mobile_phone: @form[:mobile_phone].presence, brand: invitation_brand
       )
       if assignable_companies
         Memberships::AssignCompanies.call(membership: @invitation.membership, company_ids: @form[:company_ids], by: current_user)
@@ -75,7 +75,7 @@ module Panel
     def resend_invitation
       authorize! membership_permission(:resend_invitation), @membership
       @invitation = Invitations::Resend.call(membership: @membership, channels: Array(params[:channels]),
-        invited_by: current_user)
+        invited_by: current_user, brand: invitation_brand)
       render "panel/memberships/invited"
     rescue ActiveRecord::RecordInvalid => error
       redirect_to url_for(action: :show, id: @membership), alert: error.record.errors.full_messages.to_sentence
@@ -83,14 +83,14 @@ module Panel
 
     def reset_mfa
       authorize! membership_permission(:reset_mfa), @membership
-      Users::ResetMfa.call(membership: @membership, by: current_user)
+      Users::ResetMfa.call(membership: @membership, by: current_user, brand: Current.brand)
       redirect_to url_for(action: :show, id: @membership), notice: t("panel.memberships.reset_mfa.reset")
     end
 
     def contact
       authorize! membership_permission(:correct_contact), @membership
       Users::CorrectContact.call(membership: @membership, email: params[:email].presence,
-        mobile_phone: params[:mobile_phone].presence, by: current_user)
+        mobile_phone: params[:mobile_phone].presence, by: current_user, brand: Current.brand)
       redirect_to url_for(action: :show, id: @membership), notice: t("panel.memberships.contact.corrected")
     rescue ActiveRecord::RecordInvalid => error
       @errors = error.record.errors.full_messages
@@ -131,6 +131,12 @@ module Panel
     # (P-03-06).
     def releases_modules?
       true
+    end
+
+    # The brand of the invitation link, when the organization has none of its own, as an
+    # accounting firm (D-586).
+    def invitation_brand
+      nil
     end
 
     # The companies a consultant can be assigned to, on the partner's team (D-052).

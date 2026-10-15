@@ -14,7 +14,7 @@ module Panel
     before_action :require_mfa_setup
     before_action :set_current_company
 
-    helper_method :authorized_companies, :partner_membership
+    helper_method :authorized_companies, :partner_membership, :firm_membership
 
     private
 
@@ -37,12 +37,21 @@ module Panel
       @partner_membership = owner.is_a?(Partner) ? Membership.active.find_by(user: current_user, organization: owner) : nil
     end
 
+    # The membership in an accounting firm that serves a company of this brand, if any
+    # (D-586).
+    def firm_membership
+      return @firm_membership if defined?(@firm_membership)
+
+      @firm_membership = Membership.active.for_brand(Current.brand)
+        .where(user: current_user, organization_type: "AccountingFirm").order(:id).first
+    end
+
     # The current company stays in the session and is the request's tenant (RN-01-005).
-    # With a single company, it is chosen at once, except for the partner's team, who
-    # starts at the partner's panel (RN-01-004).
+    # With a single company, it is chosen at once, except for the partner's and the
+    # accounting firm's teams, who start at their own area (RN-01-004).
     def set_current_company
       company = authorized_companies.find_by(id: session[CURRENT_COMPANY_KEY]) if session[CURRENT_COMPANY_KEY]
-      company ||= authorized_companies.first if authorized_companies.one? && partner_membership.nil?
+      company ||= authorized_companies.first if authorized_companies.one? && partner_membership.nil? && firm_membership.nil?
       return session.delete(CURRENT_COMPANY_KEY) if company.nil?
 
       session[CURRENT_COMPANY_KEY] = company.id

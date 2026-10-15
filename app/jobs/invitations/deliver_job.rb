@@ -4,11 +4,13 @@ module Invitations
   class DeliverJob < ApplicationJob
     queue_as :critical
 
-    def perform(membership, token)
+    # The brand is given for an accounting firm's invitation (D-586); jobs enqueued
+    # before it existed have none and use the membership's own.
+    def perform(membership, token, brand = nil)
       return unless membership.invitation_open?
       return unless membership.invitation_token_digest == Membership.token_digest(token)
 
-      InvitationMailer.invitation(membership, token).deliver_now
+      InvitationMailer.invitation(membership, token, brand).deliver_now
     end
   end
 end

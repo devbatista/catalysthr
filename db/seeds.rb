@@ -37,6 +37,13 @@ serra_azul_brand = Brand.find_or_create_by!(owner: serra_azul) do |brand|
 end
 serra_azul_brand.subdomains.find_or_create_by!(slug: "serraazul")
 
+# An accounting firm serving the Padaria (D-170, D-171).
+exata = AccountingFirm.find_or_create_by!(cnpj: "11222333000181") { |firm| firm.name = "Contábil Exata" }
+AccountingFirmCompany.find_or_create_by!(accounting_firm: exata, company: Company.find_by!(cnpj: "12ABC34501DE35")) do |link|
+  link.status = "active"
+  link.accepted_at = Time.current
+end
+
 # Fictional people, all with the password "Catalyst#2026". Sign in with the CPF or the e-mail.
 FeatureFlags.declare
 Flipper.enable(FeatureFlags::SIGN_IN)
@@ -48,6 +55,8 @@ Flipper.enable(FeatureFlags::SIGN_IN)
   [ "Beatriz Nunes", "39053344705", "beatriz@aurora.example", {}, aurora, %w[partner_admin] ],
   [ "Ana Ribeiro", "11144477735", "ana@aurora.example", {}, aurora, %w[consultant] ],
   [ "Maria Souza", "12345678909", "maria@padaria.example", {}, Company.find_by!(cnpj: "12ABC34501DE35"), %w[hr_admin] ],
+  # The accounting firm's administrator, at http://aurora.painel.localhost:3000 (MFA optional)
+  [ "Eva Martins", "71460238001", "eva@exata.example", {}, exata, %w[firm_admin] ],
   # Direct company's HR, at http://serraazul.painel.localhost:3000
   [ "Carlos Mendes", "98765432100", "carlos@serraazul.example", {}, serra_azul, %w[hr_admin] ]
 ].each do |name, cpf, email, attributes, organization, roles|

@@ -32,3 +32,17 @@ FactoryBot.define do
     sequence(:slug) { |n| "marca#{n}" }
   end
 end
+
+FactoryBot.define do
+  factory :accounting_firm do
+    name { "Contábil Exata" }
+    cnpj { generate(:cnpj) }
+  end
+
+  factory :accounting_firm_company do
+    accounting_firm
+    company
+    status { "active" }
+    accepted_at { status == "active" ? Time.current : nil }
+  end
+end

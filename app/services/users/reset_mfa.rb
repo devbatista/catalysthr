@@ -7,9 +7,10 @@ module Users
       new(**).call
     end
 
-    def initialize(membership:, by:)
+    def initialize(membership:, by:, brand: nil)
       @membership = membership
       @by = by
+      @brand = brand
     end
 
     def call
@@ -19,7 +20,7 @@ module Users
         user.revoke_sessions!(reason: "mfa_reset")
         user.trusted_devices.active.update_all(revoked_at: Time.current)
       end
-      AccountMailer.mfa_reset(@membership).deliver_later if user.email.present?
+      AccountMailer.mfa_reset(@membership, @brand).deliver_later if user.email.present?
       user
     end
   end

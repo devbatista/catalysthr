@@ -54,17 +54,16 @@ class Membership < ApplicationRecord
 
   # Memberships a brand's subdomain considers at sign-in (RN-01-002): the partner's
   # own and its companies', or the direct company's. A partner's company is always
-  # reached through the partner's subdomain (D-154).
+  # reached through the partner's subdomain (D-154). An accounting firm's count while
+  # the firm has a pending or active link with a company of the brand (D-586).
   def self.for_brand(brand)
-    case brand&.owner
-    when Partner
-      partner = brand.owner
-      where(organization: partner).or(where(organization_type: "Company", organization_id: partner.companies.select(:id)))
-    when Company
-      brand.owner.direct? ? where(organization: brand.owner) : none
-    else
-      none
-    end
+    return none if brand.nil?
+
+    companies = brand.served_companies.select(:id)
+    firms = AccountingFirmCompany.open.where(company_id: companies).select(:accounting_firm_id)
+    scope = where(organization_type: "Company", organization_id: companies)
+      .or(where(organization_type: "AccountingFirm", organization_id: firms))
+    brand.owner.is_a?(Partner) ? scope.or(where(organization: brand.owner)) : scope
   end
 
   def self.find_by_invitation_token(token)
@@ -78,15 +77,27 @@ class Membership < ApplicationRecord
   end
 
   # The brand whose subdomain the person uses: the partner's for the partner and its
-  # companies (D-154), or the direct company's.
+  # companies (D-154), or the direct company's. An accounting firm has none of its own:
+  # its people use the brand of each company it serves, named by whoever writes to them
+  # (D-586).
   def subdomain_brand
-    organization.is_a?(Company) ? organization.subdomain_brand : organization.brand
+    case organization
+    when Company then organization.subdomain_brand
+    when Partner then organization.brand
+    end
   end
 
   # Sender name of the e-mails. In replace mode, the company's name (P-01-18).
-  def sender_name
+  def sender_name(brand = subdomain_brand)
     company_brand = organization.brand if organization.is_a?(Company) && organization.brand_replace?
-    (company_brand || subdomain_brand).commercial_name
+    (company_brand || brand)&.commercial_name
+  end
+
+  # Brands whose subdomain this membership opens.
+  def access_brands
+    return [ subdomain_brand ].compact unless organization.is_a?(AccountingFirm)
+
+    Company.where(id: organization.accounting_firm_companies.open.select(:company_id)).map(&:subdomain_brand).compact.uniq
   end
 
   # A new token replaces the previous one, which stops working (RN-02-012, P-02-07).
@@ -131,8 +142,8 @@ class Membership < ApplicationRecord
     update!(status: "active", invitation_token_digest: nil)
   end
 
-  def invitation_url(token)
-    subdomain_brand.panel_url("/invitation", token: token)
+  def invitation_url(token, brand: subdomain_brand)
+    brand.panel_url("/invitation", token: token)
   end
 
   private
@@ -143,7 +154,7 @@ class Membership < ApplicationRecord
   end
 
   def end_sessions
-    user.user_sessions.active.where(area: "panel", brand: subdomain_brand)
+    user.user_sessions.active.where(area: "panel", brand: access_brands)
       .update_all(revoked_at: Time.current, revoked_reason: "access_changed")
   end
 

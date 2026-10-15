@@ -16,6 +16,12 @@
     <% end %>
 
     <nav class="flex items-center gap-4 text-sm">
+      <% if can?(:read, :firm_panel) %>
+        <%= link_to t(".firm"), firm_root_path, class: "underline" %>
+      <% end %>
+      <% if Current.company && can?(:read, AccountingFirmCompany.new(company: Current.company)) %>
+        <%= link_to t(".accounting_firm"), accounting_firm_path, class: "underline" %>
+      <% end %>
       <% if can?(:read, :partner_panel) %>
         <%= link_to t(".portfolio"), partner_root_path, class: "underline" %>
       <% end %>

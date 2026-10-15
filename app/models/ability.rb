@@ -1,7 +1,7 @@
 # What a person may do (spec 03, RN-03-001, P-03-08): the sum of small partial
 # abilities. The platform's applies in the admin area; in the brand's panel, the
-# partner's applies when the partner owns the subdomain, and the company's inside the
-# current company. The accounting firm's comes with its panel.
+# partner's applies when the partner owns the subdomain, the accounting firm's when
+# the firm serves a company of the brand, and the company's inside the current company.
 class Ability
   include CanCan::Ability
 
@@ -20,6 +20,7 @@ class Ability
       can :read, :panel_home
       can :accept, :legal_documents
       merge(PartnerAbility.new(user, brand.owner)) if brand&.owner.is_a?(Partner)
+      merge(AccountingFirmAbility.new(user, brand)) if brand
       merge(CompanyAbility.new(user, company)) if company
     end
   end
