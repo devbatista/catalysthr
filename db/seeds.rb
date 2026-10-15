@@ -58,3 +58,12 @@ Flipper.enable(FeatureFlags::SIGN_IN)
     membership.status = "active"
   end
 end
+
+# Fictional CatalystHR legal texts, so the first access can be completed (D-578, D-579).
+author = User.find_by!(cpf: "52998224725")
+LegalDocument::KINDS.each do |kind|
+  next if LegalDocument.platform.exists?(kind: kind)
+
+  LegalDocument.create!(kind: kind, published_by: author,
+    body: "Texto fictício de desenvolvimento. Os textos reais são publicados pelo superadmin em /textos-legais.")
+end

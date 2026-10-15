@@ -82,13 +82,14 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
   - Specs 02 e 03 no mesmo ciclo, em 5 PRs (2026-10-15):
-    - [ ] 1. Base: criptografia de campos, `User`, `Membership`, login por marca, senha, bloqueio, recuperação por e-mail, Rack::Attack, esqueleto da `Ability` e teste de cobertura de autorização
-    - [ ] 2. Convites (e-mail e link ou QR), primeiro acesso, `consents` e `legal_documents` (D-577, D-578)
+    - [x] 1. Base: criptografia de campos, `User`, `Membership`, login por marca, senha, bloqueio, recuperação por e-mail, Rack::Attack, esqueleto da `Ability` e teste de cobertura de autorização (PR #19)
+    - [ ] 2. Motor de convites (e-mail e link), primeiro acesso, `consents`, `legal_documents` (D-577, D-578) e a tela de publicação dos termos da CatalystHR (D-579). As telas de convidar entram no bloco 4 e na spec 19, e o QR code entra com elas
+    - [ ] Depois do deploy do bloco 2: migração que remove `terms_text` e `privacy_policy_text` da `brands`, hoje ignoradas pelo model (strong_migrations)
     - [ ] 3. MFA, dispositivos lembrados e `user_sessions` (D-576)
     - [ ] 4. Abilities por organização, equipe do parceiro, escritório contábil, regras de alteração de perfis
     - [ ] 5. Impersonate em simulação, mascaramento e `access_events`
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
-  - Ficam para depois: WhatsApp (quando a Twilio for aprovada) e passkeys (fase 2, spec 16)
+  - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências

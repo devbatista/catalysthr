@@ -19,6 +19,8 @@ RSpec.describe "Sign-in", type: :request do
     brand.subdomains.create!(slug: "aurora")
     Flipper.enable(FeatureFlags::SIGN_IN)
     host! "aurora.painel.catalysthr.com.br"
+    publish_platform_legal_documents
+    accept_legal_documents(user, brand)
   end
 
   def sign_in_with(login, password = "Catalyst#2026")

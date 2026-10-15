@@ -8,5 +8,7 @@ class PlatformAbility
     return if user.platform_role.nil?
 
     can :read, :admin_home
+    # The CatalystHR legal texts (D-579).
+    can [ :read, :create ], LegalDocument, brand_id: nil if user.superadmin?
   end
 end

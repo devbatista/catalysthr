@@ -1,5 +1,5 @@
 <h1 class="mt-6 text-xl font-semibold"><%= t(".title") %></h1>
-<p class="mt-2 text-sm"><%= t(".rules") %></p>
+<%= render "users/shared/password_rules" %>
 <%= render "users/shared/error_messages" %>
 
 <%= form_with model: resource, scope: resource_name, url: user_password_path, method: :put, class: "mt-6 space-y-4" do |form| %>

@@ -12,7 +12,12 @@ class Brand < ApplicationRecord
   IMAGE_TYPES = %w[image/png image/jpeg image/webp].freeze
   MAX_IMAGE_SIZE = 2.megabytes
 
+  # Legal texts moved to legal_documents, with versions (D-577). The columns are
+  # removed once this version is in production (strong_migrations).
+  self.ignored_columns += %w[terms_text privacy_policy_text]
+
   belongs_to :owner, polymorphic: true
+  has_many :legal_documents, dependent: :restrict_with_error
   has_many :subdomains, class_name: "BrandSubdomain", dependent: :destroy
   has_one :active_subdomain, -> { active }, class_name: "BrandSubdomain"
 
@@ -45,6 +50,13 @@ class Brand < ApplicationRecord
 
   def app_name
     short_name.presence || commercial_name
+  end
+
+  # Address of a page on the brand's subdomain, for links sent outside a request.
+  def panel_url(path = "/", **params)
+    config = Rails.configuration.x
+    url = "#{config.panel_protocol}://#{active_subdomain.slug}.#{config.panel_domain}#{path}"
+    params.any? ? "#{url}?#{params.to_query}" : url
   end
 
   private

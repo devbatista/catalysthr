@@ -7,6 +7,7 @@
 class Rack::Attack
   SIGN_IN_PATH = "/entrar"
   RECOVERY_PATHS = %w[/senha /desbloqueio].freeze
+  INVITATION_PATH = "/convite"
 
   # Sign-in attempts per address.
   throttle("sign_in/ip", limit: 30, period: 1.minute) do |request|
@@ -26,6 +27,11 @@ class Rack::Attack
     login = request.params.dig("user", "login").to_s.strip.downcase
     login = Cpf.normalize(login) if Cpf.looks_like_cpf?(login)
     OpenSSL::Digest::SHA256.hexdigest(login) if login.present?
+  end
+
+  # Password attempts on invitation links, which count toward the lockout too.
+  throttle("invitation/ip", limit: 10, period: 15.minutes) do |request|
+    request.ip if request.patch? && request.path == INVITATION_PATH
   end
 
   self.throttled_responder = lambda do |_request|

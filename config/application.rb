@@ -52,6 +52,8 @@ module CatalystHr
     # <slug>.<panel_domain>. Development overrides them with *.localhost.
     config.x.admin_host = ENV.fetch("ADMIN_HOST", "admin.catalysthr.com.br")
     config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.catalysthr.com.br")
+    # Protocol of the links sent by e-mail; HTTPS in production (force_ssl).
+    config.x.panel_protocol = ENV.fetch("PANEL_PROTOCOL", Rails.env.production? ? "https" : "http")
     config.middleware.use HostResolver
 
     # Request limits per IP (RN-02-032, config/initializers/rack_attack.rb).

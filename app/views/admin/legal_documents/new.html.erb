@@ -1,0 +1,30 @@
+<% content_for :title, t(".title") %>
+
+<h1 class="text-3xl font-bold"><%= t(".title") %></h1>
+<p class="mt-2"><%= t(".instructions") %></p>
+
+<% if @document.errors.any? %>
+  <div class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+    <ul class="list-disc space-y-1 pl-5">
+      <% @document.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @document, url: admin_legal_documents_path, class: "mt-6 max-w-3xl space-y-4" do |form| %>
+  <div>
+    <%= form.label :kind, class: "block text-sm font-medium" %>
+    <%= form.select :kind, LegalDocument::KINDS.map { |kind| [ t("admin.legal_documents.kinds.#{kind}"), kind ] }, {},
+      class: "mt-1 block rounded-lg border border-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :body, class: "block text-sm font-medium" %>
+    <%= form.text_area :body, rows: 20, required: true, class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+  </div>
+
+  <%= form.submit t(".submit"), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+  <%= link_to t(".cancel"), admin_legal_documents_path, class: "ml-4 underline" %>
+<% end %>

@@ -13,6 +13,7 @@ class Ability
     when :panel
       # Sign-in only accepts a membership in the brand (RN-01-002).
       can :read, :panel_home
+      can :accept, :legal_documents
     end
   end
 end

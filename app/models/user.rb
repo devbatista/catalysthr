@@ -10,6 +10,7 @@ class User < ApplicationRecord
   encrypts :cpf, deterministic: true
 
   has_many :memberships, dependent: :restrict_with_error
+  has_many :consents, dependent: :restrict_with_error
 
   enum :status, { active: "active", deactivated: "deactivated" }, validate: true
   enum :platform_role, PLATFORM_ROLES.index_by(&:itself), validate: { allow_nil: true }
@@ -77,6 +78,11 @@ class User < ApplicationRecord
 
   def first_name
     name.split.first
+  end
+
+  # An invited person has no password until the first access (RN-02-014).
+  def password_set?
+    encrypted_password.present?
   end
 
   private

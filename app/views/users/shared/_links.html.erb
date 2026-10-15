@@ -1,4 +1,7 @@
 <nav class="mt-6 flex flex-col items-center gap-2 text-sm">
+  <% if user_signed_in? %>
+    <%= render "users/shared/sign_out" %>
+  <% else %>
   <% unless controller_name == "sessions" %>
     <%= link_to t(".sign_in"), new_user_session_path, class: "underline" %>
   <% end %>
@@ -7,6 +10,7 @@
   <% end %>
   <% unless controller_name == "unlocks" %>
     <%= link_to t(".unlock"), new_user_unlock_path, class: "underline" %>
+  <% end %>
   <% end %>
 
   <% brand = Current.brand %>
