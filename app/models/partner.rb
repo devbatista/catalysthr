@@ -1,6 +1,8 @@
 # A partner resells the platform under its own brand to its client companies
 # (D-120). Partner data is not company-scoped and does not use acts_as_tenant (D-151).
 class Partner < ApplicationRecord
+  audited
+
   has_one :brand, as: :owner, dependent: :destroy
   has_many :companies, dependent: :restrict_with_error
 

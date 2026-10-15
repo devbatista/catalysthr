@@ -1,6 +1,8 @@
 # <slug>.painel.catalysthr.com.br, owned by a partner's or a direct company's brand
 # (D-153, D-154, P-01-15). States: active -> redirecting (90 days) -> released.
 class BrandSubdomain < ApplicationRecord
+  audited
+
   REDIRECT_PERIOD = 90.days
   # Built-in reserved slugs (RN-01-021); the superadmin adds more in ReservedSlug.
   RESERVED = %w[

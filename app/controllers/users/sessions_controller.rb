@@ -11,7 +11,7 @@ module Users
     def create
       user = User.find_for_database_authentication(login: sign_in_params[:login])
       return super unless user&.mfa_enabled?
-      return reject unless user.valid_for_authentication? { user.valid_password?(sign_in_params[:password].to_s) }
+      return reject(user) unless user.valid_for_authentication? { user.valid_password?(sign_in_params[:password].to_s) }
       return complete_sign_in(user) if remembered_device?(user)
 
       session[PENDING_KEY] = { "user_id" => user.id, "until" => PENDING_VALIDITY.from_now.to_i }
@@ -26,7 +26,10 @@ module Users
       user = pending_user
       return expired unless user
 
-      if user.valid_for_authentication? { user.valid_second_factor?(params[:otp_code]) }
+      second_factor_valid = user.valid_for_authentication? { user.valid_second_factor?(params[:otp_code]) }
+      user.record_auth_event("sign_in_failed", step: "second_factor") unless second_factor_valid
+
+      if second_factor_valid
         session.delete(PENDING_KEY)
         remember_device(user) if params[:remember_device] == "1"
         complete_sign_in(user)
@@ -41,7 +44,8 @@ module Users
 
     private
 
-    def reject
+    def reject(user)
+      user.record_auth_event("sign_in_failed", step: "password")
       self.resource = User.new(login: sign_in_params[:login])
       flash.now[:alert] = t("devise.failure.invalid")
       render :new, status: :unprocessable_content

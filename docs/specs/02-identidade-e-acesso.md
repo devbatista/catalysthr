@@ -1,7 +1,7 @@
 # 02 — Identidade e acesso
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-580 ([decisoes.md](decisoes.md))
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-581 ([decisoes.md](decisoes.md))
 > Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -60,7 +60,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 - **RN-02-001** — O CPF é obrigatório para todos os usuários, inclusive equipe CatalystHR, parceiro e contabilidade (D-173), e é único na plataforma. Ele fica criptografado de forma determinística, para permitir a busca (D-086).
 - **RN-02-002** — O e-mail é opcional e, quando existe, é único na plataforma. Todo usuário precisa ter **e-mail ou celular**, para conseguir recuperar o acesso **[P-02-04]**.
 - **RN-02-003** — O campo de login aceita CPF (com ou sem máscara) ou e-mail. Se o texto tem só dígitos e pontuação de CPF, a busca é por CPF; senão, por e-mail **[P-02-05]**.
-- **RN-02-004** — O login só é aceito se o usuário tiver membership ativa ou em período de leitura na marca do subdomínio (RN-01-002). A equipe CatalystHR entra só por `admin.catalysthr.com.br` **[P-02-06]**.
+- **RN-02-004** — O login só é aceito se o usuário tiver membership ativa ou em período de leitura na marca do subdomínio (RN-01-002). A equipe CatalystHR entra só por `admin.catalysthr.com.br` **[P-02-06]**. O suporte chega a uma empresa direta a partir do admin, com um token de uso único (D-581).
 - **RN-02-005** — Um prestador PJ é um usuário comum, identificado pelo CPF. O CNPJ fica no vínculo do tipo PJ (D-174).
 
 ### Convite e primeiro acesso

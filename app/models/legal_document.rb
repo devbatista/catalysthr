@@ -2,6 +2,8 @@
 # brand, it is the CatalystHR text, used by brands without their own (RN-01-032,
 # D-578). Versions are never edited: a change is a new version (RN-02-017).
 class LegalDocument < ApplicationRecord
+  audited
+
   KINDS = %w[terms privacy].freeze
 
   belongs_to :brand, optional: true

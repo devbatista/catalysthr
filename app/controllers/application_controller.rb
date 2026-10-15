@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   layout :area_layout
 
   before_action :set_host_context
+  # Who made each change in the trail (RN-05-010). PaperTrail no longer adds it by itself.
+  before_action :set_paper_trail_whodunnit
   before_action :require_sign_in_feature
   before_action :check_area_access, if: :user_signed_in?
 
@@ -48,6 +50,14 @@ class ApplicationController < ActionController::Base
     Current.area = request.env[HostResolver::AREA]
     Current.brand = Brand.find(request.env.fetch(HostResolver::BRAND_ID)) if Current.area == :panel
     Current.url_options = { host: request.host, protocol: request.protocol, port: request.optional_port }.compact
+    Current.ip = request.remote_ip
+    Current.user_agent = request.user_agent
+    Current.request_id = request.request_id
+  end
+
+  # Extra columns of each PaperTrail version (RN-05-010).
+  def info_for_paper_trail
+    { ip: request.remote_ip, request_id: request.request_id }
   end
 
   def area_layout

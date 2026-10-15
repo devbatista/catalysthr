@@ -1,7 +1,7 @@
 # 03 — Permissões
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-030, D-051, D-052, D-086, D-090, D-111, D-116, D-122, D-127, D-142, D-143, D-162, D-166, D-171, D-172, D-185 a D-187, D-190 a D-194, D-570 ([decisoes.md](decisoes.md))
+> Decisões: D-030, D-051, D-052, D-086, D-090, D-111, D-116, D-122, D-127, D-142, D-143, D-162, D-166, D-171, D-172, D-185 a D-187, D-190 a D-194, D-570, D-581 ([decisoes.md](decisoes.md))
 > Base: a matriz de acesso da apresentação (página 6). Os itens **[P-03-01]** a **[P-03-37]** foram aprovados, alguns com ajuste (D-194, seção 9). Os itens **[P-03-38]** a **[P-03-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -50,7 +50,7 @@ Quando uma membership tem vários perfis (D-051), as permissões se **somam**. E
 - **Consultor (D-192):** dentro de cada empresa atribuída, age como **RHN com escopo T**, ou seja, analista de todas as unidades.
 - **Administrador do parceiro:** **não opera dentro das empresas**. Ele tem só a visão consolidada da carteira e as ações de carteira da seção 4.1: cadastrar a empresa, convidar o primeiro RHA e alterar ou remover RHAs. Para operar dentro de uma empresa, a membership dele precisa ter também o perfil de consultor, com a empresa atribuída (D-051) **[P-03-01]**.
 - **Suporte CatalystHR:**
-  - nas **empresas diretas**, age como consultor (RHN com escopo T), para fazer implantação e atendimento (D-127) **[P-03-02]**;
+  - nas **empresas diretas**, age como consultor (RHN com escopo T), para fazer implantação e atendimento (D-127) **[P-03-02]**. Entra pela área administrativa, com um token de uso único que abre o subdomínio da empresa (D-581);
   - nas **empresas de parceiros**, só acessa por impersonate, que é somente leitura com simulação (D-185, D-186) **[P-03-02]**.
 - **Superadmin:** nas empresas, acessa só por impersonate. Fora delas, tem acesso total à área administrativa **[P-03-03]**.
 

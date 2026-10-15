@@ -8,4 +8,6 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :url_options
   # The signed-in person's open session (D-576).
   attribute :user_session
+  # Request data for the audit (spec 05, RN-05-010, RN-05-020).
+  attribute :ip, :user_agent, :request_id
 end
