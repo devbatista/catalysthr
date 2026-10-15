@@ -1,5 +1,70 @@
 pt-BR:
-  home:
-    index:
-      title: "CatalystHR"
-      subtitle: "Plataforma em construção."
+  admin:
+    home:
+      index:
+        title: "CatalystHR"
+        subtitle: "Área administrativa em construção."
+  panel:
+    home:
+      index:
+        default_welcome: "Acesse sua conta."
+        coming_soon: "O acesso será liberado em breve."
+        support: "Suporte:"
+  activerecord:
+    models:
+      partner: "Parceiro"
+      company: "Empresa"
+      brand: "Marca"
+      brand_subdomain: "Subdomínio"
+      reserved_slug: "Subdomínio reservado"
+    attributes:
+      partner:
+        name: "Nome"
+        legal_name: "Razão social"
+        cnpj: "CNPJ"
+      company:
+        name: "Nome"
+        legal_name: "Razão social"
+        cnpj: "CNPJ"
+        brand_display_mode: "Exibição da marca"
+      brand:
+        commercial_name: "Nome comercial"
+        short_name: "Nome curto do app"
+        primary_color: "Cor primária"
+        secondary_color: "Cor secundária"
+        accent_color: "Cor de destaque"
+        login_welcome_text: "Texto de boas-vindas"
+        support_email: "E-mail de suporte"
+        support_phone: "Telefone de suporte"
+        terms_text: "Termos de uso"
+        privacy_policy_text: "Política de privacidade"
+        logo_light: "Logo (versão clara)"
+        logo_dark: "Logo (versão escura)"
+        favicon: "Favicon"
+        pwa_icon_large: "Ícone do app (512×512)"
+        pwa_icon_small: "Ícone do app (192×192)"
+        login_image: "Imagem da tela de login"
+      brand_subdomain:
+        slug: "Subdomínio"
+        brand: "Marca"
+      reserved_slug:
+        slug: "Subdomínio"
+    errors:
+      models:
+        brand_subdomain:
+          attributes:
+            slug:
+              invalid: "deve ter de 3 a 40 caracteres, com letras minúsculas sem acento, números e hífen, sem começar nem terminar com hífen"
+              reserved: "é um nome reservado"
+            brand:
+              without_subdomain: "de empresa de parceiro usa o subdomínio do parceiro"
+        reserved_slug:
+          attributes:
+            slug:
+              invalid: "deve ter de 3 a 40 caracteres, com letras minúsculas sem acento, números e hífen, sem começar nem terminar com hífen"
+  errors:
+    messages:
+      invalid_cnpj: "não é um CNPJ válido"
+      low_contrast: "precisa ter contraste mínimo de 4,5:1 com o texto branco, para ficar legível (contraste atual: %{ratio}:1)"
+      image_type: "precisa ser uma imagem PNG, JPEG ou WebP"
+      image_size: "precisa ter no máximo 2 MB"

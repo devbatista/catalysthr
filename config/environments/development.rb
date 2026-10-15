@@ -1,6 +1,11 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # Hosts for local brands: http://<slug>.painel.localhost:3000 and http://admin.localhost:3000
+  config.x.admin_host = ENV.fetch("ADMIN_HOST", "admin.localhost")
+  config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.localhost")
+  config.hosts << ".localhost" << ".#{config.x.panel_domain}"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Make code changes take effect immediately without server restart.

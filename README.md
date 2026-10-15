@@ -23,7 +23,15 @@ bin/setup                # instala as gems, prepara o banco e sobe o servidor
 bin/dev                  # web, Tailwind e Sidekiq
 ```
 
-A aplicação abre em http://localhost (porta 80).
+Cada requisição é resolvida pelo host (spec 01, RN-01-001), então `http://localhost` responde 404. Depois de `bin/rails db:seed`, que cria dados fictícios só em desenvolvimento:
+
+| Endereço local | O que abre |
+|---|---|
+| http://aurora.painel.localhost | Marca de um parceiro, com cores próprias |
+| http://serraazul.painel.localhost | Empresa direta sem marca configurada (nome em texto) |
+| http://admin.localhost | Área administrativa CatalystHR |
+
+Os domínios vêm de `ADMIN_HOST` e `PANEL_DOMAIN` (padrão em produção: `admin.catalysthr.com.br` e `painel.catalysthr.com.br`).
 
 Portas locais:
 

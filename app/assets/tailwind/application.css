@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+/* Brand colors (spec 01, RN-01-031). The panel layout sets the variables per brand;
+   elsewhere the CatalystHR defaults apply (RN-01-032). */
+@theme inline {
+  --color-brand-primary: var(--brand-primary, #085087);
+  --color-brand-secondary: var(--brand-secondary, #0A2A4A);
+  --color-brand-accent: var(--brand-accent, #1E9C86);
+}

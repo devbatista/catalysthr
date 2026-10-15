@@ -9,6 +9,8 @@
   - A documentação chama a solução de **Pagamentos Automáticos** e exige *"a autorização da equipe Comercial"* ([pré-requisitos](https://www.mercadopago.com.br/developers/pt/docs/automatic-payments/prerequisites)). Ela não confirma o valor variável
   - 2026-10-14: chamado aberto pelo suporte ao desenvolvimento, encaminhado a atendimento humano e ao comercial, na conta da DevBatista (produção e credenciais de teste). Pedidos: habilitar `card_on_file` sem CVV, confirmar o valor diferente a cada mês, tarifas e Pix Automático
   - O primeiro atendimento sugeriu as Assinaturas (preapproval), recusadas: valor fixo, novas tentativas próprias e cancelamento automático depois de 3 recusas, contra a D-496, a D-497 e a RN-19-042
+  - 2026-10-14, resposta ao chamado WCS-54705: o suporte técnico não habilita os Pagamentos Automáticos nem encaminhou ao comercial. Disse que o valor de uma assinatura não muda, o que contradiz a documentação do `PUT /preapproval/{id}`. Sem API pública de Pix Automático. O link "Contato comercial" do site (`/quero-usar/`) redireciona para o blog. Respondido no chamado pedindo o canal do comercial
+  - Se o comercial não liberar: avaliar outro fornecedor para o cartão (começando pelo Asaas), as Assinaturas do Mercado Pago (revisa a D-496 e a D-497) ou o cartão pago a cada fatura. Decisão do responsável
   - Tarifas atuais da conta no Checkout, informadas pelo suporte (não valem necessariamente para os Pagamentos Automáticos): crédito com recebimento na hora 4,98%, em 14 dias 4,49%, em 30 dias 3,98%
 - [ ] Confirmar a cobrança por PIX pela API de pagamentos, com QR e vencimento (D-481). A conta já recebe PIX e cartão; falta conferir o vencimento na integração
 - [ ] Configurar os webhooks e a assinatura de validação

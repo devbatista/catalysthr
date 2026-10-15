@@ -18,6 +18,8 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "../lib/middleware/host_resolver"
+
 module CatalystHr
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -26,7 +28,7 @@ module CatalystHr
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    config.autoload_lib(ignore: %w[assets tasks middleware])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -45,6 +47,12 @@ module CatalystHr
 
     # Background jobs run on Sidekiq (D-108, spec 20).
     config.active_job.queue_adapter = :sidekiq
+
+    # Hosts (spec 01, RN-01-001): the admin area and the brands' subdomains,
+    # <slug>.<panel_domain>. Development overrides them with *.localhost.
+    config.x.admin_host = ENV.fetch("ADMIN_HOST", "admin.catalysthr.com.br")
+    config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.catalysthr.com.br")
+    config.middleware.use HostResolver
 
     config.generators do |g|
       g.test_framework :rspec, fixtures: true, view_specs: false, helper_specs: false, routing_specs: false

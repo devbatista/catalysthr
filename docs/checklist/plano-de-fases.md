@@ -75,6 +75,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ### Entregas
 - [ ] **AWS (spec 20):** KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-arquivos` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso
 - [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
+  - [x] Parte 1: base do tenant (`acts_as_tenant` com `require_tenant`, jobs com a empresa), parceiros, empresas, marcas, subdomínios com reservados e redirecionamento de 90 dias, resolução pelo host com cache, tema por variáveis CSS com contraste mínimo, manifest do PWA, CNPJ numérico e alfanumérico, Flipper instalado
+  - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor, ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3
 - [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
