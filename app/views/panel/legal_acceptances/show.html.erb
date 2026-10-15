@@ -1,0 +1,29 @@
+<% if @acceptance.published? %>
+  <h1 class="mt-6 text-xl font-semibold"><%= t(".title") %></h1>
+  <p class="mt-2 text-sm"><%= t(".instructions") %></p>
+
+  <% if @error %>
+    <p class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert"><%= @error %></p>
+  <% end %>
+
+  <%= form_with url: legal_acceptance_path, method: :post, class: "mt-6 space-y-6" do |form| %>
+    <% @acceptance.pending.each do |document| %>
+      <section>
+        <h2 class="font-semibold"><%= t(".kinds.#{document.kind}") %></h2>
+        <p class="text-xs text-slate-500"><%= t(".version", version: document.version, date: l(document.published_at.to_date)) %></p>
+        <div class="mt-2 max-h-64 overflow-y-auto rounded-lg border border-slate-200 p-3 text-sm">
+          <%= simple_format(document.body) %>
+        </div>
+        <label class="mt-2 flex items-start gap-2 text-sm">
+          <%= check_box_tag "accept[#{document.kind}]", "1", false, class: "mt-1" %>
+          <span><%= t(".accept.#{document.kind}") %></span>
+        </label>
+      </section>
+    <% end %>
+
+    <%= form.submit t(".submit"), class: "w-full rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white" %>
+  <% end %>
+<% else %>
+  <h1 class="mt-6 text-xl font-semibold"><%= t(".unpublished_title") %></h1>
+  <p class="mt-2 text-sm"><%= t(".unpublished_body") %></p>
+<% end %>

@@ -8,6 +8,26 @@ pt-BR:
         title: "CatalystHR"
         greeting: "Olá, %{name}."
         subtitle: "As telas da área administrativa estão em construção."
+        legal_documents: "Termos de uso e política de privacidade da CatalystHR"
+    legal_documents:
+      kinds:
+        terms: "Termos de uso"
+        privacy: "Política de privacidade"
+      index:
+        title: "Textos legais da CatalystHR"
+        subtitle: "Valem para as marcas que não publicaram textos próprios. Uma versão publicada não muda: para alterar, publique uma nova. Quem já entrou aceita a nova versão no próximo acesso."
+        publish:
+          terms: "Publicar termos de uso"
+          privacy: "Publicar política de privacidade"
+        empty: "Nenhuma versão publicada. Enquanto não houver termos e política publicados, ninguém conclui o primeiro acesso nas marcas sem textos próprios."
+        item: "%{kind}, versão %{version}, publicada em %{date} por %{author}"
+      new:
+        title: "Publicar uma nova versão"
+        instructions: "O texto publicado não pode ser editado depois. Confira antes de publicar."
+        submit: "Publicar"
+        cancel: "Cancelar"
+      create:
+        published: "Versão %{version} publicada."
   panel:
     home:
       coming_soon:
@@ -17,8 +37,37 @@ pt-BR:
       index:
         greeting: "Olá, %{name}."
         subtitle: "Você entrou em %{brand}. As telas do painel estão em construção."
+    invitations:
+      show:
+        title: "Olá, %{name}. Boas-vindas!"
+        create_password: "Para aceitar o convite, crie a sua senha de acesso."
+        existing_account: "Você já tem cadastro na plataforma. Para aceitar o convite, confirme a senha que você já usa."
+        new_password: "Nova senha"
+        password_confirmation: "Repita a nova senha"
+        current_password: "Sua senha"
+        submit: "Aceitar o convite"
+      expired:
+        title: "Convite expirado"
+        body: "Este convite expirou ou não é mais válido. Peça um novo convite a quem enviou este."
+    legal_acceptances:
+      show:
+        title: "Termos de uso e política de privacidade"
+        instructions: "Para continuar, leia e aceite os textos abaixo."
+        version: "Versão %{version}, de %{date}"
+        kinds:
+          terms: "Termos de uso"
+          privacy: "Política de privacidade"
+        accept:
+          terms: "Li e aceito os termos de uso."
+          privacy: "Li e aceito a política de privacidade."
+        submit: "Continuar"
+        unpublished_title: "Acesso ainda não liberado"
+        unpublished_body: "Os termos de uso e a política de privacidade ainda não foram publicados. Fale com o suporte."
+      create:
+        must_accept: "Para continuar, marque o aceite de todos os textos."
   users:
     shared:
+      password_rules: "Use pelo menos 8 caracteres, com uma letra maiúscula, um número e um símbolo. A senha não pode conter seu CPF nem sua data de nascimento."
       header:
         default_welcome: "Acesse sua conta."
         admin_subtitle: "Área administrativa"
@@ -42,7 +91,6 @@ pt-BR:
         submit: "Enviar"
       edit:
         title: "Criar uma nova senha"
-        rules: "Use pelo menos 8 caracteres, com uma letra maiúscula, um número e um símbolo. A senha não pode conter seu CPF nem sua data de nascimento."
         password: "Nova senha"
         password_confirmation: "Repita a nova senha"
         submit: "Salvar a nova senha"
@@ -52,6 +100,14 @@ pt-BR:
         instructions: "Informe seu CPF ou e-mail. Se o acesso estiver bloqueado e houver cadastro com e-mail, enviamos um link para desbloquear."
         login: "CPF ou e-mail"
         submit: "Enviar"
+  invitation_mailer:
+    invitation:
+      subject: "Convite para acessar %{brand}"
+      greeting: "Olá, %{name}."
+      body: "Você recebeu um convite para acessar %{brand}."
+      action: "Aceitar o convite"
+      validity: "O link vale até %{date}."
+      ignore: "Se você não esperava este convite, ignore este e-mail."
   user_mailer:
     reset_password_instructions:
       greeting: "Olá, %{name}."
@@ -76,6 +132,8 @@ pt-BR:
       reserved_slug: "Subdomínio reservado"
       user: "Usuário"
       membership: "Acesso"
+      legal_document: "Texto legal"
+      consent: "Consentimento"
     attributes:
       user:
         name: "Nome"
@@ -91,6 +149,11 @@ pt-BR:
       membership:
         roles: "Perfis"
         status: "Situação"
+        invitation_channels: "Canais do convite"
+      legal_document:
+        kind: "Tipo"
+        body: "Texto"
+        version: "Versão"
       partner:
         name: "Nome"
         legal_name: "Razão social"
@@ -109,8 +172,6 @@ pt-BR:
         login_welcome_text: "Texto de boas-vindas"
         support_email: "E-mail de suporte"
         support_phone: "Telefone de suporte"
-        terms_text: "Termos de uso"
-        privacy_policy_text: "Política de privacidade"
         logo_light: "Logo (versão clara)"
         logo_dark: "Logo (versão escura)"
         favicon: "Favicon"
@@ -140,6 +201,13 @@ pt-BR:
             roles:
               not_allowed: "têm um perfil que não existe neste tipo de organização"
               client_manager_alone: "do gestor do cliente não podem incluir outros perfis da empresa"
+            invitation_channels:
+              unavailable: "incluem um canal que ainda não está disponível"
+              email_missing: "incluem o e-mail, mas a pessoa não tem e-mail cadastrado"
+            base:
+              already_member: "A pessoa já tem acesso a esta organização"
+              not_invited: "O convite já foi aceito ou cancelado"
+              without_subdomain: "A organização ainda não tem um endereço de acesso"
         reserved_slug:
           attributes:
             slug:

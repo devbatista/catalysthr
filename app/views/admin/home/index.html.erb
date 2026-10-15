@@ -5,6 +5,10 @@
 <p class="mt-2 text-lg"><%= t(".greeting", name: current_user.first_name) %></p>
 <p class="mt-2"><%= t(".subtitle") %></p>
 
+<% if can?(:read, LegalDocument) %>
+  <p class="mt-6"><%= link_to t(".legal_documents"), admin_legal_documents_path, class: "underline" %></p>
+<% end %>
+
 <div class="max-w-xs">
   <%= render "users/shared/sign_out" %>
 </div>

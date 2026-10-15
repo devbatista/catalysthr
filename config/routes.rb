@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   constraints ->(request) { request.env[HostResolver::AREA] == :admin } do
     scope module: :admin, as: :admin do
       root "home#index"
+      resources :legal_documents, only: %i[index new create], path: "textos-legais", path_names: { new: "publicar" }
     end
   end
 
@@ -22,6 +23,12 @@ Rails.application.routes.draw do
     scope module: :panel do
       root "home#index"
       get "manifest.webmanifest", to: "manifests#show", as: :manifest
+
+      # Invitation link and first access (RN-02-011, RN-02-014).
+      get "convite", to: "invitations#show", as: :invitation
+      patch "convite", to: "invitations#update"
+      get "primeiro-acesso/termos", to: "legal_acceptances#show", as: :legal_acceptance
+      post "primeiro-acesso/termos", to: "legal_acceptances#create"
     end
   end
 end

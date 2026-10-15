@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -86,6 +86,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_120100) do
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
 
+  create_table "consents", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "kind", null: false
+    t.string "scope_type", null: false
+    t.bigint "scope_id", null: false
+    t.bigint "legal_document_id"
+    t.integer "document_version", null: false
+    t.boolean "granted", null: false
+    t.string "ip"
+    t.string "user_agent"
+    t.datetime "decided_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["legal_document_id"], name: "index_consents_on_legal_document_id"
+    t.index ["scope_type", "scope_id"], name: "index_consents_on_scope"
+    t.index ["user_id"], name: "index_consents_on_user_id"
+  end
+
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
@@ -102,6 +121,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_120100) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
+  create_table "legal_documents", force: :cascade do |t|
+    t.bigint "brand_id"
+    t.string "kind", null: false
+    t.integer "version", null: false
+    t.text "body", null: false
+    t.datetime "published_at", null: false
+    t.bigint "published_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id", "kind", "version"], name: "index_legal_documents_on_brand_kind_and_version", unique: true, nulls_not_distinct: true
+    t.index ["brand_id"], name: "index_legal_documents_on_brand_id"
+    t.index ["published_by_id"], name: "index_legal_documents_on_published_by_id"
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "organization_type", null: false
@@ -110,6 +143,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_120100) do
     t.string "status", default: "invited", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "invited_by_id"
+    t.string "invitation_token_digest"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_expires_at"
+    t.string "invitation_channels", default: [], null: false, array: true
+    t.index ["invitation_token_digest"], name: "index_memberships_on_invitation_token_digest", unique: true
+    t.index ["invited_by_id"], name: "index_memberships_on_invited_by_id"
     t.index ["organization_type", "organization_id"], name: "index_memberships_on_organization"
     t.index ["user_id", "organization_type", "organization_id"], name: "index_memberships_on_user_and_organization", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
@@ -174,5 +214,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_120100) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "companies", "partners"
+  add_foreign_key "consents", "legal_documents"
+  add_foreign_key "consents", "users"
+  add_foreign_key "legal_documents", "brands"
+  add_foreign_key "legal_documents", "users", column: "published_by_id"
   add_foreign_key "memberships", "users"
+  add_foreign_key "memberships", "users", column: "invited_by_id"
 end

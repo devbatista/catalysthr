@@ -1,0 +1,5 @@
+<p><%= t(".greeting", name: @user.first_name) %></p>
+<p><%= t(".body", brand: @sender_name) %></p>
+<p><%= link_to t(".action"), @link %></p>
+<p><%= t(".validity", date: l(@expires_at, format: :long)) %></p>
+<p><%= t(".ignore") %></p>

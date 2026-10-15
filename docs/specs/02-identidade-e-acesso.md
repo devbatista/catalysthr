@@ -1,7 +1,7 @@
 # 02 — Identidade e acesso
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-578 ([decisoes.md](decisoes.md))
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-579 ([decisoes.md](decisoes.md))
 > Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -82,7 +82,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
   5. consentimento de WhatsApp: só para quem tem celular cadastrado. Pode ser recusado.
 - **RN-02-015** — Todo aceite e consentimento guarda: tipo, versão do texto, decisão (aceite ou recusa), data e hora, IP e user agent. Consentimentos podem ser revogados depois pelo portal **[P-02-10]**.
 - **RN-02-016** — O WhatsApp só envia o convite se a empresa registrar que obteve a autorização do colaborador (por exemplo, na ficha de admissão). Antes do primeiro acesso, não existe consentimento dado pela própria pessoa, e a Meta exige opt-in para mensagens iniciadas pela empresa **[P-02-11]**.
-- **RN-02-017** — Termos de uso e política de privacidade têm versão. Quando a marca publica uma versão nova, cada usuário aceita de novo no próximo acesso **[P-02-12]**. As versões ficam em `legal_documents`, com o texto de cada uma mantido (D-577). Sem texto próprio, a marca usa os da CatalystHR (D-578).
+- **RN-02-017** — Termos de uso e política de privacidade têm versão. Quando a marca publica uma versão nova, cada usuário aceita de novo no próximo acesso **[P-02-12]**. As versões ficam em `legal_documents`, com o texto de cada uma mantido (D-577). Sem texto próprio, a marca usa os da CatalystHR (D-578), que o superadmin publica na área administrativa (D-579).
 
 ### Senha e bloqueio
 

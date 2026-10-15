@@ -1,0 +1,9 @@
+<%= t(".greeting", name: @user.first_name) %>
+
+<%= t(".body", brand: @sender_name) %>
+
+<%= t(".action") %>: <%= @link %>
+
+<%= t(".validity", date: l(@expires_at, format: :long)) %>
+
+<%= t(".ignore") %>
