@@ -113,10 +113,10 @@ O consultor (CON) segue a coluna RHN com escopo T. O administrador do parceiro (
 | Base de conhecimento do sistema (D-106) | ✓ | ✓ | — | L | L |
 | Marca do parceiro e das empresas clientes (spec 01) | ✓ | ✓ | — | ✓ | — |
 | Marca da empresa direta (D-162) | ✓ | ✓ | — | — | — |
-| Equipe do parceiro (convidar, remover, atribuir empresas) | — | — | — | ✓ | — |
+| Equipe do parceiro (convidar administradores e consultores, remover, atribuir empresas; nunca a própria membership nem o último administrador ativo, D-584) | — | — | — | ✓ | — |
 | Liberar módulos do consultor | — | — | — | ✓ | — |
 | Cadastrar empresa cliente na carteira e convidar o primeiro RHA | — | — | — | ✓ **[P-03-14]** | — |
-| Alterar perfis ou remover RHA de empresa cliente | — | — | — | ✓ **[P-03-35]** | — |
+| Alterar perfis ou remover RHA de empresa cliente, e convidar um RHA novo para uma empresa que já existe (D-585) | — | — | — | ✓ **[P-03-35]** | — |
 | Modelos de processo do parceiro | — | — | — | ✓ | L |
 | Painel consolidado da carteira | — | — | — | C | C |
 | Impersonate | ✓ | ✓ | — | — | — |

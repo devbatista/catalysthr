@@ -1,0 +1,21 @@
+# syntax=docker/dockerfile:1
+# Development image (D-587, RN-20-034). The code comes from the compose.yml volume, so a
+# change shows at once; the production image stays in Dockerfile.
+ARG RUBY_VERSION=4.0.7
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
+
+# The same system packages as production, plus what builds the gems.
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev \
+      pkg-config postgresql-client 7zip && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+WORKDIR /rails
+ENV BUNDLE_PATH="/usr/local/bundle"
+
+# Gems baked into the image; the bundle volume keeps the ones installed after a Gemfile change.
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+ENTRYPOINT ["bin/docker-dev-entrypoint"]
+CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]

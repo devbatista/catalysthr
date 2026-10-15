@@ -1,0 +1,28 @@
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
+  <% if can?(:read, Membership.new(organization: partner_membership.organization)) %>
+    <%= link_to t(".team"), partner_team_members_path, class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+  <% end %>
+</div>
+<p class="mt-2 text-sm"><%= t(".subtitle", partner: partner_membership.organization.name) %></p>
+
+<% if @companies.empty? %>
+  <p class="mt-6"><%= t(".empty") %></p>
+<% else %>
+  <ul class="mt-6 space-y-2">
+    <% @companies.each do |company| %>
+      <li class="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-white px-4 py-3 ring-1 ring-slate-200">
+        <span class="font-semibold"><%= company.name %></span>
+        <span class="flex items-center gap-3 text-sm">
+          <% if can?(:read_hr_admin, Membership.new(organization: company, roles: %w[hr_admin])) %>
+            <%= link_to t(".hr_admins"), partner_company_hr_admins_path(company), class: "underline" %>
+          <% end %>
+          <% if authorized_companies.include?(company) %>
+            <%= button_to t(".enter"), current_company_path, params: { company_id: company.id },
+              class: "rounded-lg bg-brand-primary px-3 py-1 font-semibold text-white" %>
+          <% end %>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

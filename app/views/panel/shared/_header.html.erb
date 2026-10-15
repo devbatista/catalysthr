@@ -16,7 +16,10 @@
     <% end %>
 
     <nav class="flex items-center gap-4 text-sm">
-      <% if Current.company && can?(:read, Membership) %>
+      <% if can?(:read, :partner_panel) %>
+        <%= link_to t(".portfolio"), partner_root_path, class: "underline" %>
+      <% end %>
+      <% if Current.company && can?(:read, Membership.new(organization: Current.company)) %>
         <%= link_to t(".users"), memberships_path, class: "underline" %>
       <% end %>
       <%= link_to t("account.security"), account_root_path, class: "underline" %>

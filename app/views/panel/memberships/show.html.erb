@@ -1,57 +1,60 @@
 <% user = @membership.user %>
-<p class="text-sm"><%= link_to t(".back"), memberships_path, class: "underline" %></p>
+<p class="text-sm"><%= link_to membership_t("show.back"), url_for(action: :index), class: "underline" %></p>
 <h1 class="mt-4 text-2xl font-bold"><%= user.name %></h1>
-<%= render "errors" %>
+<%= render "panel/memberships/errors" %>
 
 <dl class="mt-6 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-  <div><dt class="font-medium"><%= t(".roles") %></dt><dd><%= @membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></dd></div>
-  <div><dt class="font-medium"><%= t(".status") %></dt><dd><%= t("membership_statuses.#{@membership.status}") %></dd></div>
+  <div><dt class="font-medium"><%= membership_t("show.roles") %></dt><dd><%= @membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></dd></div>
+  <div><dt class="font-medium"><%= membership_t("show.status") %></dt><dd><%= t("membership_statuses.#{@membership.status}") %></dd></div>
   <% if @membership.enabled_modules.any? %>
-    <div><dt class="font-medium"><%= t(".modules") %></dt><dd><%= @membership.enabled_modules.map { |mod| t("modules.#{mod}") }.join(", ") %></dd></div>
+    <div><dt class="font-medium"><%= membership_t("show.modules") %></dt><dd><%= @membership.enabled_modules.map { |mod| t("modules.#{mod}") }.join(", ") %></dd></div>
   <% end %>
-  <div><dt class="font-medium"><%= t(".email") %></dt><dd><%= user.email.presence || "—" %></dd></div>
-  <div><dt class="font-medium"><%= t(".mobile_phone") %></dt><dd><%= user.mobile_phone.presence || "—" %></dd></div>
-  <div><dt class="font-medium"><%= t(".mfa") %></dt><dd><%= t(user.mfa_enabled? ? ".mfa_on" : ".mfa_off") %></dd></div>
+  <% if @membership.roles.include?("consultant") %>
+    <div><dt class="font-medium"><%= membership_t("show.companies") %></dt><dd><%= @membership.assigned_companies.where(partner_id: @membership.organization_id).order(:name).map(&:name).join(", ").presence || "—" %></dd></div>
+  <% end %>
+  <div><dt class="font-medium"><%= membership_t("show.email") %></dt><dd><%= user.email.presence || "—" %></dd></div>
+  <div><dt class="font-medium"><%= membership_t("show.mobile_phone") %></dt><dd><%= user.mobile_phone.presence || "—" %></dd></div>
+  <div><dt class="font-medium"><%= membership_t("show.mfa") %></dt><dd><%= membership_t(user.mfa_enabled? ? "show.mfa_on" : "show.mfa_off") %></dd></div>
 </dl>
 
 <div class="mt-8 space-y-6">
-  <% if can?(:update, @membership) %>
-    <p><%= link_to t(".edit"), edit_membership_path(@membership), class: "underline" %></p>
+  <% if may_manage_membership?(:update, @membership) %>
+    <p><%= link_to membership_t("show.edit"), url_for(action: :edit, id: @membership), class: "underline" %></p>
   <% end %>
 
-  <% if @membership.invited? && can?(:resend_invitation, @membership) %>
-    <%= form_with url: resend_invitation_membership_path(@membership), method: :post, class: "space-y-2" do |form| %>
-      <p class="font-medium"><%= t(".resend") %></p>
+  <% if @membership.invited? && may_manage_membership?(:resend_invitation, @membership) %>
+    <%= form_with url: url_for(action: :resend_invitation, id: @membership), method: :post, class: "space-y-2" do |form| %>
+      <p class="font-medium"><%= membership_t("show.resend") %></p>
       <% Membership::INVITATION_CHANNELS.each do |channel| %>
         <label class="flex items-center gap-2 text-sm">
           <%= check_box_tag "channels[]", channel, channel == "email" && user.email.present?, id: "resend_channel_#{channel}" %>
           <%= t("invitation_channels.#{channel}") %>
         </label>
       <% end %>
-      <%= form.submit t(".resend_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+      <%= form.submit membership_t("show.resend_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
     <% end %>
   <% end %>
 
-  <% if can?(:correct_contact, @membership) %>
-    <%= form_with url: contact_membership_path(@membership), method: :patch, class: "max-w-xl space-y-2" do |form| %>
-      <p class="font-medium"><%= t(".contact") %></p>
-      <p class="text-xs text-slate-500"><%= t(".contact_hint") %></p>
-      <%= email_field_tag :email, user.email, class: "block w-full rounded-lg border border-slate-300 px-3 py-2", "aria-label": t(".email") %>
-      <%= telephone_field_tag :mobile_phone, user.mobile_phone, class: "block w-full rounded-lg border border-slate-300 px-3 py-2", "aria-label": t(".mobile_phone") %>
-      <%= form.submit t(".contact_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+  <% if may_manage_membership?(:correct_contact, @membership) %>
+    <%= form_with url: url_for(action: :contact, id: @membership), method: :patch, class: "max-w-xl space-y-2" do |form| %>
+      <p class="font-medium"><%= membership_t("show.contact") %></p>
+      <p class="text-xs text-slate-500"><%= membership_t("show.contact_hint") %></p>
+      <%= email_field_tag :email, user.email, class: "block w-full rounded-lg border border-slate-300 px-3 py-2", "aria-label": membership_t("show.email") %>
+      <%= telephone_field_tag :mobile_phone, user.mobile_phone, class: "block w-full rounded-lg border border-slate-300 px-3 py-2", "aria-label": membership_t("show.mobile_phone") %>
+      <%= form.submit membership_t("show.contact_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
     <% end %>
-  <% elsif can?(:update, @membership) %>
-    <p class="text-sm text-slate-500"><%= t(".support_only") %></p>
+  <% elsif membership_permission(:correct_contact) && may_manage_membership?(:update, @membership) %>
+    <p class="text-sm text-slate-500"><%= membership_t("show.support_only") %></p>
   <% end %>
 
-  <% if user.mfa_enabled? && can?(:reset_mfa, @membership) %>
-    <%= button_to t(".reset_mfa"), reset_mfa_membership_path(@membership), method: :post,
-      class: "rounded-lg px-4 py-2 ring-1 ring-slate-300", form: { data: { confirm: t(".reset_mfa_confirm") } } %>
+  <% if user.mfa_enabled? && may_manage_membership?(:reset_mfa, @membership) %>
+    <%= button_to membership_t("show.reset_mfa"), url_for(action: :reset_mfa, id: @membership), method: :post,
+      class: "rounded-lg px-4 py-2 ring-1 ring-slate-300", form: { data: { confirm: membership_t("show.reset_mfa_confirm") } } %>
   <% end %>
 
-  <% if can?(@membership.invited? ? :cancel_invitation : :revoke, @membership) %>
-    <%= button_to t(@membership.invited? ? ".cancel_invitation" : ".revoke"), membership_path(@membership), method: :delete,
+  <% if may_manage_membership?(@membership.invited? ? :cancel_invitation : :revoke, @membership) %>
+    <%= button_to membership_t(@membership.invited? ? "show.cancel_invitation" : "show.revoke"), url_for(action: :destroy, id: @membership), method: :delete,
       class: "rounded-lg px-4 py-2 font-semibold text-red-700 ring-1 ring-red-300",
-      form: { data: { confirm: t(".revoke_confirm") } } %>
+      form: { data: { confirm: membership_t("show.revoke_confirm") } } %>
   <% end %>
 </div>

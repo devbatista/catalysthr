@@ -1,23 +1,45 @@
-<%# Roles the company's HR gives, and the modules of the HR analyst (D-191) %>
-<fieldset>
-  <legend class="text-sm font-medium"><%= t("panel.memberships.roles_fields.roles") %></legend>
-  <% CompanyAbility::INVITABLE_ROLES.each do |role| %>
-    <label class="mt-2 flex items-center gap-2 text-sm">
-      <%= check_box_tag "#{scope}[roles][]", role, selected_roles.include?(role), id: "#{scope}_role_#{role}" %>
-      <%= t("roles.#{role}") %>
-    </label>
-  <% end %>
-</fieldset>
-
-<fieldset>
-  <legend class="text-sm font-medium"><%= t("panel.memberships.roles_fields.modules") %></legend>
-  <p class="text-xs text-slate-500"><%= t("panel.memberships.roles_fields.modules_hint") %></p>
-  <div class="mt-2 grid grid-cols-2 gap-2">
-    <% Membership::RELEASABLE_MODULES.each do |mod| %>
-      <label class="flex items-center gap-2 text-sm">
-        <%= check_box_tag "#{scope}[enabled_modules][]", mod, selected_modules.include?(mod), id: "#{scope}_module_#{mod}" %>
-        <%= t("modules.#{mod}") %>
+<%# Roles given on this screen, the modules of the HR analyst or the consultant (D-191, P-03-06) and, on the partner's team, the consultant's companies (D-052) %>
+<% if invitable_roles.one? %>
+  <%= hidden_field_tag "#{scope}[roles][]", invitable_roles.first, id: "#{scope}_role_#{invitable_roles.first}" %>
+<% else %>
+  <fieldset>
+    <legend class="text-sm font-medium"><%= membership_t("roles_fields.roles") %></legend>
+    <% invitable_roles.each do |role| %>
+      <label class="mt-2 flex items-center gap-2 text-sm">
+        <%= check_box_tag "#{scope}[roles][]", role, selected_roles.include?(role), id: "#{scope}_role_#{role}" %>
+        <%= t("roles.#{role}") %>
       </label>
     <% end %>
-  </div>
-</fieldset>
+  </fieldset>
+<% end %>
+
+<% if releases_modules? %>
+  <fieldset>
+    <legend class="text-sm font-medium"><%= membership_t("roles_fields.modules") %></legend>
+    <p class="text-xs text-slate-500"><%= membership_t("roles_fields.modules_hint") %></p>
+    <div class="mt-2 grid grid-cols-2 gap-2">
+      <% Membership::RELEASABLE_MODULES.each do |mod| %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= check_box_tag "#{scope}[enabled_modules][]", mod, selected_modules.include?(mod), id: "#{scope}_module_#{mod}" %>
+          <%= t("modules.#{mod}") %>
+        </label>
+      <% end %>
+    </div>
+  </fieldset>
+<% end %>
+
+<% if assignable_companies %>
+  <fieldset>
+    <legend class="text-sm font-medium"><%= membership_t("roles_fields.companies") %></legend>
+    <p class="text-xs text-slate-500"><%= membership_t("roles_fields.companies_hint") %></p>
+    <% if assignable_companies.empty? %>
+      <p class="mt-2 text-sm"><%= membership_t("roles_fields.no_companies") %></p>
+    <% end %>
+    <% assignable_companies.each do |company| %>
+      <label class="mt-2 flex items-center gap-2 text-sm">
+        <%= check_box_tag "#{scope}[company_ids][]", company.id, selected_company_ids.map(&:to_s).include?(company.id.to_s), id: "#{scope}_company_#{company.id}" %>
+        <%= company.name %>
+      </label>
+    <% end %>
+  </fieldset>
+<% end %>

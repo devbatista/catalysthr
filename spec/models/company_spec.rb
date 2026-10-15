@@ -35,4 +35,38 @@ RSpec.describe Company do
     direct_brand = create(:brand, owner: direct)
     expect(direct.subdomain_brand).to eq(direct_brand)
   end
+
+  describe ".operable_by (RN-01-005, RN-01-011)" do
+    let(:brand) { create(:brand) }
+    let(:partner) { brand.owner }
+    let(:user) { create(:user) }
+
+    it "lists the companies with a membership and the ones assigned to the consultant (D-052, D-192)" do
+      own = create(:company, partner: partner)
+      assigned = create(:company, partner: partner)
+      create(:company, partner: partner)
+      create(:membership, user: user, organization: own, roles: %w[manager])
+      consultant = create(:membership, user: user, organization: partner, roles: %w[consultant])
+      consultant.partner_membership_companies.create!(company: assigned)
+
+      expect(described_class.operable_by(user, brand: brand)).to contain_exactly(own, assigned)
+    end
+
+    it "leaves out the partner's administrator without the consultant role (P-03-01)" do
+      create(:company, partner: partner)
+      create(:membership, user: user, organization: partner, roles: %w[partner_admin])
+
+      expect(described_class.operable_by(user, brand: brand)).to be_empty
+    end
+
+    it "drops an assigned company moved to another partner (RN-01-052)" do
+      assigned = create(:company, partner: partner)
+      consultant = create(:membership, user: user, organization: partner, roles: %w[consultant])
+      consultant.partner_membership_companies.create!(company: assigned)
+
+      assigned.update!(partner: create(:partner))
+
+      expect(described_class.operable_by(user, brand: brand)).to be_empty
+    end
+  end
 end

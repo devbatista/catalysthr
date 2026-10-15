@@ -2,17 +2,26 @@
 # spec 03, RN-03-012 and RN-03-013). Each one becomes an access event of kind admin
 # (RN-05-020) and stays in the trail (RN-05-010).
 module Memberships
+  # The administrator role each organization keeps (RN-03-013, D-584).
+  ADMIN_ROLES = { "Company" => "hr_admin", "Partner" => "partner_admin", "AccountingFirm" => "firm_admin" }.freeze
+
   module_function
 
-  # A direct company keeps at least one active HR administrator (RN-03-013, P-03-36).
-  # A partner's company is served by the partner.
-  def ensure_hr_admin_remains!(membership, removing:)
-    company = membership.organization
-    return unless removing && company.is_a?(Company) && company.direct?
-    return if Membership.active.where(organization: company).where.not(id: membership.id)
-      .where("'hr_admin' = ANY(roles)").exists?
+  # The last active administrator is neither removed nor demoted: a direct company keeps
+  # an HR administrator (RN-03-013, P-03-36), and a partner or an accounting firm keeps
+  # its administrator (D-584). A partner's company is served by the partner. The
+  # organization's row is locked, so two administrators removing each other at the same
+  # time cannot both pass. Call it inside a transaction.
+  def ensure_admin_remains!(membership, keeping_roles:)
+    organization = membership.organization
+    role = ADMIN_ROLES.fetch(membership.organization_type)
+    return unless membership.active? && membership.roles.include?(role) && !keeping_roles.include?(role)
+    return if organization.is_a?(Company) && !organization.direct?
 
-    membership.errors.add(:base, :last_hr_admin)
+    organization.lock!
+    return if Membership.active.where(organization: organization).where.not(id: membership.id).with_role(role).exists?
+
+    membership.errors.add(:base, :"last_#{role}")
     raise ActiveRecord::RecordInvalid, membership
   end
 end

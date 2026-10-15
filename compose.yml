@@ -1,7 +1,43 @@
-# Serviços para o desenvolvimento local (spec 20, RN-20-034).
-# Uso: docker compose up -d
-# Portas diferentes das padrão para não conflitar com Postgres e Redis instalados na máquina.
+# Desenvolvimento local (spec 20, RN-20-034, D-587).
+# Uso: docker compose up    (web em http://aurora.painel.localhost:3000)
+# Postgres e Redis também ficam expostos na máquina, em portas diferentes das padrão,
+# para os testes e para quem usar um cliente de banco.
+x-app: &app
+  image: catalyst_hr-dev
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  environment:
+    DB_HOST: postgres
+    DB_PORT: 5432
+    REDIS_URL: redis://redis:6379/0
+  volumes:
+    - .:/rails
+    - bundle:/usr/local/bundle
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
 services:
+  web:
+    <<: *app
+    ports:
+      - "3000:3000"
+    # Para o `debugger`: docker compose attach web
+    stdin_open: true
+    tty: true
+
+  css:
+    <<: *app
+    # "always" mantém o watch rodando sem terminal interativo.
+    command: ["bin/rails", "tailwindcss:watch[always]"]
+
+  worker:
+    <<: *app
+    command: ["bundle", "exec", "sidekiq"]
+
   postgres:
     image: pgvector/pgvector:pg18
     environment:
@@ -26,5 +62,6 @@ services:
       - redis_data:/data
 
 volumes:
+  bundle:
   postgres_data:
   redis_data:

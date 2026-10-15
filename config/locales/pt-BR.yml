@@ -43,6 +43,7 @@ pt-BR:
         company: "Empresa"
         switch: "Trocar"
         users: "Usuários"
+        portfolio: "Carteira"
     companies:
       index:
         title: "Escolha a empresa"
@@ -92,6 +93,7 @@ pt-BR:
         roles: "Perfis"
         status: "Situação"
         modules: "Módulos liberados"
+        companies: "Empresas atribuídas"
         email: "E-mail"
         mobile_phone: "Celular"
         mfa: "Verificação em duas etapas"
@@ -109,6 +111,43 @@ pt-BR:
         cancel_invitation: "Cancelar o convite"
         revoke: "Remover o acesso"
         revoke_confirm: "Remover o acesso desta pessoa à empresa? As sessões dela serão encerradas."
+    partner_panel:
+      home:
+        index:
+          title: "Carteira"
+          subtitle: "Empresas clientes de %{partner} que você atende."
+          team: "Equipe"
+          empty: "Nenhuma empresa por aqui ainda."
+          hr_admins: "RH da empresa"
+          enter: "Entrar"
+      team_members:
+        roles_fields:
+          modules: "Módulos do consultor"
+          modules_hint: "Valem só para o perfil consultor, em todas as empresas atribuídas a ele. Cadastros, painéis e assistente são sempre liberados."
+          companies: "Empresas do consultor"
+          companies_hint: "O consultor só entra nas empresas marcadas, onde atua como RH analista de todas as unidades. O administrador sem o perfil consultor não entra nas empresas."
+          no_companies: "O parceiro ainda não tem empresas clientes."
+        index:
+          title: "Equipe"
+        new:
+          title: "Convidar para a equipe"
+          instructions: "Convide administradores e consultores do parceiro. Se o CPF já tiver cadastro na plataforma, a pessoa entra com a senha que já usa."
+        invited:
+          back: "Voltar para a equipe"
+        show:
+          back: "Voltar para a equipe"
+          revoke_confirm: "Remover o acesso desta pessoa ao parceiro? As sessões dela serão encerradas."
+      company_hr_admins:
+        index:
+          title: "RH administradores de %{organization}"
+          invite: "Convidar RH administrador"
+        new:
+          title: "Convidar RH administrador"
+          instructions: "A pessoa entra como RH administrador da empresa. Se o CPF já tiver cadastro na plataforma, ela entra com a senha que já usa."
+        invited:
+          back: "Voltar para o RH da empresa"
+        show:
+          back: "Voltar para o RH da empresa"
     invitations:
       show:
         title: "Olá, %{name}. Boas-vindas!"
@@ -404,10 +443,16 @@ pt-BR:
               already_member: "A pessoa já tem acesso a esta organização"
               not_invited: "O convite já foi aceito ou cancelado"
               last_hr_admin: "A empresa precisa de pelo menos um RH administrador ativo"
+              last_partner_admin: "O parceiro precisa de pelo menos um administrador ativo"
+              last_firm_admin: "O escritório precisa de pelo menos um administrador ativo"
+              without_subdomain: "A organização ainda não tem um endereço de acesso"
             enabled_modules:
               not_releasable: "incluem um módulo que não existe"
               role_without_modules: "só valem para o RH analista e o consultor"
-              without_subdomain: "A organização ainda não tem um endereço de acesso"
+        partner_membership_company:
+          attributes:
+            company:
+              other_partner: "não é cliente deste parceiro"
         reserved_slug:
           attributes:
             slug:

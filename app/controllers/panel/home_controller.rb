@@ -1,10 +1,16 @@
 module Panel
-  # Entry page after sign-in. With more than one company, the person chooses one first
-  # (RN-01-004). The partner's panel comes with block 4b.
+  # Entry page after sign-in (RN-01-004). The partner's team starts at the partner's
+  # panel; with more than one company, the person chooses one first.
   class HomeController < BaseController
     def index
       authorize! :read, :panel_home
-      redirect_to companies_path if Current.company.nil? && authorized_companies.many?
+      return if Current.company
+
+      if partner_membership
+        redirect_to partner_root_path
+      elsif authorized_companies.many?
+        redirect_to companies_path
+      end
     end
   end
 end

@@ -56,6 +56,24 @@ Rails.application.routes.draw do
           patch :contact
         end
       end
+
+      # The partner's panel (spec 03, section 4.1): portfolio, team and the HR of the
+      # client companies (D-584, D-585).
+      namespace :partner, module: :partner_panel do
+        root "home#index"
+        resources :team_members, path: "team" do
+          member do
+            post :resend_invitation, path: "resend-invitation"
+            post :reset_mfa, path: "reset-mfa"
+            patch :contact
+          end
+        end
+        resources :companies, only: [] do
+          resources :hr_admins, path: "hr-admins", controller: "company_hr_admins" do
+            post :resend_invitation, path: "resend-invitation", on: :member
+          end
+        end
+      end
     end
   end
 end

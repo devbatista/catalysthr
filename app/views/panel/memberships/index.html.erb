@@ -1,22 +1,22 @@
 <div class="flex flex-wrap items-center justify-between gap-4">
-  <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-  <% if can?(:invite, Membership) %>
-    <%= link_to t(".invite"), new_membership_path, class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+  <h1 class="text-2xl font-bold"><%= membership_t("index.title", organization: membership_organization.name) %></h1>
+  <% if can?(membership_permission(:invite), membership_collection_subject) %>
+    <%= link_to membership_t("index.invite"), url_for(action: :new), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
   <% end %>
 </div>
 
 <table class="mt-6 w-full text-left text-sm">
   <thead>
     <tr class="border-b border-slate-200">
-      <th class="py-2"><%= t(".name") %></th>
-      <th class="py-2"><%= t(".roles") %></th>
-      <th class="py-2"><%= t(".status") %></th>
+      <th class="py-2"><%= membership_t("index.name") %></th>
+      <th class="py-2"><%= membership_t("index.roles") %></th>
+      <th class="py-2"><%= membership_t("index.status") %></th>
     </tr>
   </thead>
   <tbody>
     <% @memberships.each do |membership| %>
       <tr class="border-b border-slate-100">
-        <td class="py-2"><%= link_to membership.user.name, membership_path(membership), class: "underline" %></td>
+        <td class="py-2"><%= link_to membership.user.name, url_for(action: :show, id: membership), class: "underline" %></td>
         <td class="py-2"><%= membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></td>
         <td class="py-2"><%= t("membership_statuses.#{membership.status}") %></td>
       </tr>
