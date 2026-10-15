@@ -57,11 +57,19 @@
 - [ ] Para parceiros com número próprio (D-161): ver se é preciso entrar no programa Tech Provider da Twilio
 - [ ] Configurar o SMS para o plantão (D-512)
 
-## Anthropic e Voyage AI — trava a fase 2
+## Anthropic — trava a fase 2 (pedir na metade da fase 1)
 
-- [ ] **Anthropic:** contratar a **retenção zero** e confirmar que ela está ativa na conta (D-380)
-- [ ] **Anthropic:** confirmar quais recursos usados estão cobertos pela retenção zero: Messages API, saídas estruturadas, citações e cache de prompt. Batch API e Files API não serão usadas (D-385)
-- [ ] **Voyage AI:** confirmar se oferece retenção zero. Se não oferecer, levar a decisão ao responsável (os trechos enviados são só dos materiais do assistente, sem dados de colaboradores)
+> Fatos de [API and data retention](https://platform.claude.com/docs/en/manage-claude/api-and-data-retention), conferidos em 2026-10-14: a retenção zero é pedida ao [comercial](https://claude.com/contact-sales) e ligada por organização. Cobre a Messages API e a contagem de tokens com os recursos elegíveis: PDF e imagem no corpo da requisição, citações, cache de prompt e saídas estruturadas (estas com ressalva: só o esquema JSON fica guardado por até 24 horas). Não cobre a Batch API nem a Files API (D-385). O Claude Sonnet 5.5 (RN-14-002) é compatível; os modelos Fable 5 e 5.1 não funcionam com retenção zero. Mesmo com ela, a Anthropic pode guardar por até 2 anos o conteúdo marcado pelos sistemas de segurança ou exigido por lei. Vale também para o Claude Code quando ele usa uma chave da organização; não vale para contas pessoais do Claude.
+
+- [ ] **Anthropic:** criar a organização **DevBatista** no Console, com `rafael@devbatista.com` como dona. Não usar a API com dados reais antes da retenção zero ativa
+- [ ] **Anthropic:** pedir a **retenção zero** ao comercial (D-380), com o texto preparado em 2026-10-14: uso só da Messages API com o Sonnet 5.5, sem Batch, Files, execução de código, conector MCP ou Managed Agents. Perguntar se exige contrato ou consumo mínimo e qual DPA se aplica (com a transferência internacional). Não aceitar custo antes de avaliar
+- [ ] **Anthropic:** confirmar por escrito que a retenção zero está ativa e cobre os recursos usados
+
+## Voyage AI — trava a fase 5
+
+> Fatos do [FAQ](https://docs.voyageai.com/docs/faq) e dos [Termos](https://www.voyageai.com/tos), conferidos em 2026-10-14: a retenção zero é um opt-out no painel, que exige cartão cadastrado e administrador da organização. O conteúdo enviado depois do opt-out é apagado logo após o processamento. **O opt-out não vale para o passado**, e não dá para desfazer pelo painel. A Voyage é da MongoDB: se o cadastro levar ao MongoDB Atlas, a configuração fica nas configurações da organização do Atlas.
+
+- [ ] **Voyage AI:** criar a conta da organização DevBatista, cadastrar o cartão e fazer o opt-out **antes de gerar a chave ou fazer qualquer chamada** (D-380)
 
 ## Railway — antes do primeiro cliente
 

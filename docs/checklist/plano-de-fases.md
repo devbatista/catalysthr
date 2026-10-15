@@ -96,8 +96,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ## Fase 2 — Núcleo de RH (16 a 22 semanas) · primeiro cliente
 
 ### Pré-requisitos
-- [ ] Anthropic: retenção zero contratada
-- [ ] Voyage: retenção zero confirmada (ou decisão sobre a alternativa)
+- [ ] Anthropic: retenção zero contratada. Criar a organização e pedir ao comercial lá pela metade da fase 1, umas 6 a 8 semanas antes da fase 2, porque o prazo de resposta não é documentado
 - [ ] Jurídico: prazos de retenção e transferência internacional validados; minutas de termos de uso, política de privacidade e contrato de tratamento de dados revisadas
 - [ ] WhatsApp pela Twilio: empresa verificada na Meta, remetente registrado e modelos aprovados
 - [ ] Especialista em DP: spec 09 conferida, menos as férias
@@ -109,7 +108,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 06:** motor de modelos de processo
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
 - [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável
-- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero
+- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
 - [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4)
 - [ ] **Spec 15 (resto):** WhatsApp, push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe"
@@ -178,6 +177,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ---
 
 ## Fase 5 — IA restante, recrutamento, avaliação e relatórios (12 a 16 semanas)
+
+### Pré-requisitos
+- [ ] Voyage: retenção zero pelo opt-out do painel, feito **antes da primeira chamada**, inclusive de teste (o opt-out não vale para o que foi enviado antes). Só o assistente usa a Voyage
 
 ### Entregas
 - [ ] **Spec 14 (resto):** resumo operacional, assistente (materiais, pgvector, Voyage, citações), redação
