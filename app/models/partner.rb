@@ -5,6 +5,7 @@ class Partner < ApplicationRecord
 
   has_one :brand, as: :owner, dependent: :destroy
   has_many :companies, dependent: :restrict_with_error
+  has_many :memberships, as: :organization, dependent: :restrict_with_error
 
   normalizes :cnpj, with: ->(cnpj) { Cnpj.normalize(cnpj) }
 

@@ -59,7 +59,8 @@ CatalystHR (admin.catalysthr.com.br)
 - **RN-01-002** — Em um subdomínio, o login só considera as memberships daquela marca (D-158):
   - memberships de parceiro desse parceiro;
   - memberships das empresas desse parceiro;
-  - ou memberships da empresa direta dona do subdomínio.
+  - ou memberships da empresa direta dona do subdomínio;
+  - memberships de escritório contábil, se o escritório tem ligação pendente ou ativa com alguma empresa da marca (D-586).
 
   Quem não tem membership na marca vê a mesma mensagem de credencial inválida, sem revelar que a conta existe em outra marca **[P-01-03]**.
 - **RN-01-003** — O cookie de sessão vale só para o host atual, sem compartilhar sessão entre subdomínios **[P-01-04]**.

@@ -14,7 +14,7 @@ module Panel
     before_action :require_mfa_setup
     before_action :set_current_company
 
-    helper_method :authorized_companies
+    helper_method :authorized_companies, :partner_membership
 
     private
 
@@ -24,20 +24,25 @@ module Panel
       redirect_to legal_acceptance_path if LegalAcceptance.new(current_user, Current.brand).pending?
     end
 
-    # Companies of the brand where the person has access (RN-01-002, RN-01-005). The
-    # consultant's assigned companies come with the partner's panel.
+    # Companies of the brand where the person operates (RN-01-005, RN-01-011).
     def authorized_companies
-      @authorized_companies ||= Company.where(
-        id: Membership.with_access.for_brand(Current.brand).where(user: current_user, organization_type: "Company")
-          .select(:organization_id)
-      ).order(:name)
+      @authorized_companies ||= Company.operable_by(current_user, brand: Current.brand).order(:name)
+    end
+
+    # The membership in the partner that owns the subdomain, if any.
+    def partner_membership
+      return @partner_membership if defined?(@partner_membership)
+
+      owner = Current.brand.owner
+      @partner_membership = owner.is_a?(Partner) ? Membership.active.find_by(user: current_user, organization: owner) : nil
     end
 
     # The current company stays in the session and is the request's tenant (RN-01-005).
-    # With a single company, it is chosen at once (RN-01-004).
+    # With a single company, it is chosen at once, except for the partner's team, who
+    # starts at the partner's panel (RN-01-004).
     def set_current_company
       company = authorized_companies.find_by(id: session[CURRENT_COMPANY_KEY]) if session[CURRENT_COMPANY_KEY]
-      company ||= authorized_companies.first if authorized_companies.one?
+      company ||= authorized_companies.first if authorized_companies.one? && partner_membership.nil?
       return session.delete(CURRENT_COMPANY_KEY) if company.nil?
 
       session[CURRENT_COMPANY_KEY] = company.id

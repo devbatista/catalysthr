@@ -123,8 +123,8 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 ### Escritório contábil
 
 - **RN-02-070** — O RH administrador cadastra o escritório pelo CNPJ e o e-mail de um administrador (D-171). Se o CNPJ já existe na plataforma, a ligação com a empresa fica pendente até o administrador do escritório aceitar **[P-02-29]**.
-- **RN-02-071** — O primeiro administrador do escritório entra por convite. A partir daí, ele convida e remove contadores e outros administradores (D-172).
-- **RN-02-072** — O contador acessa as empresas ligadas ao escritório pelo subdomínio da marca de cada empresa, com o mesmo login (D-158).
+- **RN-02-071** — O primeiro administrador do escritório entra por convite. A partir daí, ele convida e remove contadores e outros administradores (D-172). Ninguém altera a própria membership, e o último administrador ativo do escritório não pode ser removido nem rebaixado (D-584).
+- **RN-02-072** — O contador acessa as empresas ligadas ao escritório pelo subdomínio da marca de cada empresa, com o mesmo login (D-158). Dentro de uma marca, as empresas e os pedidos de aceite do escritório mostram só os daquela marca. Os convites e os e-mails saem com a marca da empresa que pediu a ligação, ou com a marca em que o administrador do escritório está, ao convidar a equipe (D-586).
 - **RN-02-073** — O RH administrador pode desligar o escritório da empresa a qualquer momento. O acesso dos contadores àquela empresa termina na hora.
 
 ### Impersonate (suporte)

@@ -20,6 +20,21 @@ class Company < ApplicationRecord
   validates :cnpj, presence: true, cnpj: true, uniqueness: true
   validates :brand_display_mode, absence: true, unless: :partner
 
+  # Companies of the brand where the person operates, the only ones the selector lists
+  # and accepts (RN-01-005, RN-01-011): those with a membership of the company and,
+  # for a consultant, the partner's companies assigned to them (D-052, D-192). The
+  # partner's administrator without the consultant role does not operate inside
+  # companies (P-03-01).
+  def self.operable_by(user, brand:)
+    memberships = Membership.with_access.for_brand(brand).where(user: user)
+    consultants = memberships.active.where(organization_type: "Partner").with_role("consultant")
+    assigned = PartnerMembershipCompany.joins(:membership, :company).merge(consultants)
+      .where("companies.partner_id = memberships.organization_id")
+
+    where(id: memberships.where(organization_type: "Company").select(:organization_id))
+      .or(where(id: assigned.select(:company_id)))
+  end
+
   def direct?
     partner_id.nil?
   end

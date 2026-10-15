@@ -24,6 +24,9 @@ class Membership < ApplicationRecord
   belongs_to :user
   belongs_to :organization, polymorphic: true
   belongs_to :invited_by, class_name: "User", optional: true
+  # Companies assigned to a consultant of the partner (D-052).
+  has_many :partner_membership_companies, dependent: :delete_all
+  has_many :assigned_companies, through: :partner_membership_companies, source: :company
 
   # RN-02-060: invited → active ⇄ suspended → read_only → revoked.
   enum :status, {
@@ -47,6 +50,7 @@ class Membership < ApplicationRecord
   after_update_commit :end_sessions, if: :access_reduced?
 
   scope :with_access, -> { where(status: ACCESS_STATUSES) }
+  scope :with_role, ->(role) { where("? = ANY(memberships.roles)", role) }
 
   # Memberships a brand's subdomain considers at sign-in (RN-01-002): the partner's
   # own and its companies', or the direct company's. A partner's company is always
@@ -106,6 +110,16 @@ class Membership < ApplicationRecord
 
   def audit_company_id
     organization_id if organization_type == "Company"
+  end
+
+  # The partner's companies this membership reaches in the partner's panel
+  # (RN-01-011): all of them for the administrator, the assigned ones for the
+  # consultant (D-052). A company moved to another partner drops out (RN-01-052).
+  def portfolio_companies
+    return Company.none unless organization_type == "Partner" && active?
+    return organization.companies if roles.include?("partner_admin")
+
+    assigned_companies.where(partner_id: organization_id)
   end
 
   def invitation_open?

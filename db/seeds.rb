@@ -44,7 +44,8 @@ Flipper.enable(FeatureFlags::SIGN_IN)
 [
   # CatalystHR team, at http://admin.localhost:3000
   [ "Paulo Lima", "52998224725", "paulo@catalysthr.example", { platform_role: "superadmin" }, nil, nil ],
-  # Partner's consultant and a client company's HR, at http://aurora.painel.localhost:3000
+  # Partner's administrator and consultant, and a client company's HR, at http://aurora.painel.localhost:3000
+  [ "Beatriz Nunes", "39053344705", "beatriz@aurora.example", {}, aurora, %w[partner_admin] ],
   [ "Ana Ribeiro", "11144477735", "ana@aurora.example", {}, aurora, %w[consultant] ],
   [ "Maria Souza", "12345678909", "maria@padaria.example", {}, Company.find_by!(cnpj: "12ABC34501DE35"), %w[hr_admin] ],
   # Direct company's HR, at http://serraazul.painel.localhost:3000
@@ -58,6 +59,10 @@ Flipper.enable(FeatureFlags::SIGN_IN)
     membership.status = "active"
   end
 end
+
+# The consultant serves the Padaria (D-052).
+Membership.find_by!(user: User.find_by!(cpf: "11144477735"), organization: aurora).partner_membership_companies
+  .find_or_create_by!(company: Company.find_by!(cnpj: "12ABC34501DE35"))
 
 # Fictional CatalystHR legal texts, so the first access can be completed (D-578, D-579).
 author = User.find_by!(cpf: "52998224725")

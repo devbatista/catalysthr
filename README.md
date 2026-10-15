@@ -36,7 +36,8 @@ O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas co
 | Pessoa | CPF | Onde entra |
 |---|---|---|
 | Paulo Lima (superadmin) | 529.982.247-25 | http://admin.localhost |
-| Ana Ribeiro (consultora da Aurora) | 111.444.777-35 | http://aurora.painel.localhost |
+| Beatriz Nunes (administradora da Aurora) | 390.533.447-05 | http://aurora.painel.localhost (painel do parceiro e equipe) |
+| Ana Ribeiro (consultora da Aurora, atende a Padaria Pão Quente) | 111.444.777-35 | http://aurora.painel.localhost |
 | Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost |
 | Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost |
 

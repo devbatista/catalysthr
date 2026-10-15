@@ -14,10 +14,11 @@ module Memberships
 
     def call
       action = @membership.invited? ? "invitation_cancelled" : "access_revoked"
-      Memberships.ensure_hr_admin_remains!(@membership, removing: @membership.roles.include?("hr_admin"))
-
       Membership.transaction do
+        Memberships.ensure_admin_remains!(@membership, keeping_roles: [])
         @membership.update!(status: "revoked", invitation_token_digest: nil)
+        # A consultant invited again starts without companies (D-052).
+        @membership.partner_membership_companies.destroy_all
         user = @membership.user
         if user.platform_role.nil? && !user.memberships.where.not(status: "revoked").exists?
           user.update!(status: "deactivated")

@@ -69,5 +69,58 @@ RSpec.describe Memberships do
 
       expect(AccessEvent.find_by!(subject: membership).action).to eq("invitation_cancelled")
     end
+
+    it "cancels the invitation of an HR administrator, which does not count as an active one" do
+      create(:membership, organization: company, roles: %w[hr_admin])
+      invited = create(:membership, organization: company, roles: %w[hr_admin], status: "invited")
+
+      described_class.call(membership: invited, by: actor)
+
+      expect(invited.reload).to be_revoked
+    end
+  end
+
+  describe "the last administrator of a partner or an accounting firm (D-584)" do
+    let(:partner) { create(:partner) }
+
+    it "keeps the partner's last active administrator" do
+      only_admin = create(:membership, organization: partner, roles: %w[partner_admin consultant])
+      create(:membership, organization: partner, roles: %w[partner_admin], status: "invited")
+
+      expect { Memberships::Revoke.call(membership: only_admin, by: actor) }
+        .to raise_error(ActiveRecord::RecordInvalid, /pelo menos um administrador ativo/)
+      expect { Memberships::UpdateAccess.call(membership: only_admin, roles: %w[consultant], enabled_modules: [], by: actor) }
+        .to raise_error(ActiveRecord::RecordInvalid, /pelo menos um administrador ativo/)
+      expect(only_admin.reload).to have_attributes(status: "active", roles: %w[partner_admin consultant])
+    end
+
+    it "lets an administrator go while another one stays" do
+      create(:membership, organization: partner, roles: %w[partner_admin])
+      leaving = create(:membership, organization: partner, roles: %w[partner_admin])
+
+      Memberships::Revoke.call(membership: leaving, by: actor)
+
+      expect(leaving.reload).to be_revoked
+    end
+  end
+
+  describe Memberships::AssignCompanies do
+    let(:partner) { create(:partner) }
+    let(:consultant) { create(:membership, organization: partner, roles: %w[consultant]) }
+
+    it "assigns only the partner's companies (D-052)" do
+      own = create(:company, partner: partner)
+      foreign = create(:company, :with_partner)
+
+      described_class.call(membership: consultant, company_ids: [ own.id, foreign.id ], by: actor)
+
+      expect(consultant.assigned_companies).to contain_exactly(own)
+    end
+
+    it "records nothing when the companies stay the same" do
+      described_class.call(membership: consultant, company_ids: [], by: actor)
+
+      expect(AccessEvent.where(action: "companies_assigned")).to be_empty
+    end
   end
 end
