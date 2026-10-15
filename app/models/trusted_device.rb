@@ -10,8 +10,9 @@ class TrustedDevice < ApplicationRecord
   # Returns the token for the browser's cookie; only its digest is kept here.
   def self.remember!(user:, user_agent:)
     token = SecureToken.generate
-    create!(user: user, token_digest: SecureToken.digest(token), user_agent: user_agent.to_s.first(500),
+    device = create!(user: user, token_digest: SecureToken.digest(token), user_agent: user_agent.to_s.first(500),
       last_used_at: Time.current, expires_at: VALIDITY.from_now)
+    AccessEvent.record!(kind: "auth", action: "trusted_device_remembered", user: user, subject: device)
     token
   end
 
@@ -22,6 +23,9 @@ class TrustedDevice < ApplicationRecord
   end
 
   def revoke!
-    update_columns(revoked_at: Time.current, updated_at: Time.current) if revoked_at.nil?
+    return unless revoked_at.nil?
+
+    update_columns(revoked_at: Time.current, updated_at: Time.current)
+    AccessEvent.record!(kind: "auth", action: "trusted_device_revoked", user: user, subject: self)
   end
 end

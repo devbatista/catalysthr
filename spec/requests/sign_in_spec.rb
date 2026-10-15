@@ -118,7 +118,11 @@ RSpec.describe "Sign-in", type: :request do
   describe "lockout (RN-02-031)" do
     it "keeps the account locked after 5 wrong attempts until the unlock link (CA-02-005)" do
       perform_enqueued_jobs do
-        5.times { sign_in_with("12345678909", "Errada#2026") }
+        4.times { sign_in_with("12345678909", "Errada#2026") }
+        expect(user.reload).not_to be_access_locked
+        expect(user.failed_attempts).to eq(4)
+
+        sign_in_with("12345678909", "Errada#2026")
       end
       expect(user.reload).to be_access_locked
 

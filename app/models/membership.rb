@@ -2,6 +2,8 @@
 # more roles (D-050 to D-052, P-02-36). Memberships cross companies, so they are not
 # tenant-scoped: every query names its organization.
 class Membership < ApplicationRecord
+  audited secret: %i[invitation_token_digest]
+
   # Roles per kind of organization (P-02-02).
   ROLES = {
     "Company" => %w[hr_admin hr_analyst manager employee client_manager],
@@ -88,6 +90,10 @@ class Membership < ApplicationRecord
       invited_by: invited_by
     )
     token
+  end
+
+  def audit_company_id
+    organization_id if organization_type == "Company"
   end
 
   def invitation_open?

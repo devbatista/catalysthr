@@ -66,6 +66,9 @@ gem "rqrcode", "~> 3.1"
 # Permissions as the sum of partial abilities (spec 03, P-03-08)
 gem "cancancan", "~> 3.7"
 
+# Change trail without sensitive fields (spec 05, RN-05-010, D-084)
+gem "paper_trail", "~> 17.0"
+
 # Request limits per IP against attempts on many CPFs (RN-02-032, P-02-15)
 gem "rack-attack", "~> 6.8"
 

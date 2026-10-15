@@ -16,6 +16,13 @@ class User < ApplicationRecord
   # Deterministic, so the CPF can be searched and kept unique (RN-02-001, D-086).
   encrypts :cpf, deterministic: true
 
+  # Sign-in bookkeeping changes on every sign-in and is not a change of the person's data.
+  audited sensitive: %i[cpf],
+    secret: %i[encrypted_password reset_password_token reset_password_sent_at unlock_token otp_secret
+      otp_backup_codes consumed_timestep],
+    ignore: %i[sign_in_count current_sign_in_at last_sign_in_at current_sign_in_ip last_sign_in_ip
+      failed_attempts locked_at]
+
   has_many :memberships, dependent: :restrict_with_error
   has_many :consents, dependent: :restrict_with_error
   has_many :trusted_devices, dependent: :delete_all
@@ -116,18 +123,35 @@ class User < ApplicationRecord
     self.otp_required_for_login = true
     codes = generate_otp_backup_codes!
     save!(validate: false)
+    record_auth_event("mfa_enabled")
     codes
   end
 
-  def disable_mfa!
+  # By the person, or by who administers the profile (RN-02-044), which is a reset.
+  def disable_mfa!(by: self)
     update!(otp_secret: nil, otp_required_for_login: false, otp_backup_codes: nil, consumed_timestep: nil)
+    AccessEvent.record!(kind: "auth", action: by == self ? "mfa_disabled" : "mfa_reset", user: by, subject: self)
   end
 
   # New codes replace the previous ones (RN-02-042, P-02-20).
   def regenerate_recovery_codes!
     codes = generate_otp_backup_codes!
     save!(validate: false)
+    record_auth_event("recovery_codes_regenerated")
     codes
+  end
+
+  # Lockout and unlock become access events (RN-05-020).
+  def lock_access!(options = {})
+    super.tap { record_auth_event("locked") }
+  end
+
+  def unlock_access!
+    super.tap { record_auth_event("unlocked") }
+  end
+
+  def record_auth_event(action, **metadata)
+    AccessEvent.record!(kind: "auth", action: action, user: self, subject: self, metadata: metadata)
   end
 
   # A code from the app or a recovery code, used once.
@@ -147,6 +171,7 @@ class User < ApplicationRecord
   def end_access_after_password_change
     revoke_sessions!(reason: "password_changed", except: Current.user_session&.id)
     trusted_devices.active.update_all(revoked_at: Time.current)
+    record_auth_event(encrypted_password_before_last_save.blank? ? "password_created" : "password_changed")
   end
 
   # RN-02-002, P-02-04: without e-mail or mobile phone there is no way to recover access.

@@ -10,10 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_170200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
+
+  create_table "access_events", force: :cascade do |t|
+    t.bigint "company_id"
+    t.bigint "user_id", null: false
+    t.bigint "impersonator_id"
+    t.string "kind", null: false
+    t.string "action", null: false
+    t.string "subject_type"
+    t.bigint "subject_id"
+    t.string "field"
+    t.string "ip"
+    t.string "user_agent"
+    t.string "request_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["company_id", "created_at"], name: "index_access_events_on_company_id_and_created_at"
+    t.index ["company_id"], name: "index_access_events_on_company_id"
+    t.index ["impersonator_id"], name: "index_access_events_on_impersonator_id"
+    t.index ["subject_type", "subject_id"], name: "index_access_events_on_subject"
+    t.index ["user_id", "created_at"], name: "index_access_events_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_access_events_on_user_id"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -245,6 +267,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_170200) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.jsonb "object"
+    t.jsonb "object_changes"
+    t.string "sensitive_fields", default: [], null: false, array: true
+    t.bigint "impersonator_id"
+    t.bigint "company_id"
+    t.string "ip"
+    t.string "request_id"
+    t.datetime "created_at", null: false
+    t.index ["company_id"], name: "index_versions_on_company_id"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  add_foreign_key "access_events", "companies"
+  add_foreign_key "access_events", "users"
+  add_foreign_key "access_events", "users", column: "impersonator_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brand_subdomains", "brands"

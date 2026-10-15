@@ -32,6 +32,13 @@ Devise.setup do |config|
   config.maximum_attempts = 5
   config.last_attempt_warning = false
 
+  # Recovery codes are checked in the second step of Users::SessionsController. Left in
+  # Warden, the two_factor_backupable strategy would run after a wrong password and count
+  # it again, locking the account at the third attempt instead of the fifth.
+  config.warden do |manager|
+    manager.default_strategies(scope: :user).delete(:two_factor_backupable)
+  end
+
   config.expire_all_remember_me_on_sign_out = true
   config.sign_out_via = :delete
   config.responder.error_status = :unprocessable_content

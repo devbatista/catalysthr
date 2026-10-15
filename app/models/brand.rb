@@ -1,6 +1,8 @@
 # Visual and communication settings of a partner, a direct company or a partner's
 # company with its own brand (P-01-01, D-159, D-163).
 class Brand < ApplicationRecord
+  audited
+
   # CatalystHR defaults for empty fields (RN-01-032), from the visual identity prototype.
   DEFAULT_COLORS = {
     primary: "#085087",
@@ -46,6 +48,10 @@ class Brand < ApplicationRecord
 
   def app_name
     short_name.presence || commercial_name
+  end
+
+  def audit_company_id
+    owner_id if owner_type == "Company"
   end
 
   # Address of a page on the brand's subdomain, for links sent outside a request.
