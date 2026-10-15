@@ -33,6 +33,9 @@ class CompanyAbility
 
   def hr_admin(user, company)
     can %i[read invite], Membership, organization_type: "Company", organization_id: company.id
+    # The company's accounting firm: register or link it, resend the first invitation,
+    # end the link (RN-02-070 to RN-02-073, D-588 to D-590).
+    can %i[read link resend_invitation unlink], AccountingFirmCompany, company_id: company.id
 
     # Nobody changes their own access; another HR administrator does (RN-03-012).
     can %i[update revoke resend_invitation cancel_invitation], Membership do |membership|

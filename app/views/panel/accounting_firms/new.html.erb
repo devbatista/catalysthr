@@ -1,0 +1,41 @@
+<h1 class="text-2xl font-bold"><%= t(".title") %></h1>
+<p class="mt-2 text-sm"><%= t(".instructions") %></p>
+<%= render "panel/memberships/errors" %>
+
+<%= form_with url: accounting_firm_path, method: :post, class: "mt-6 max-w-xl space-y-4" do |form| %>
+  <fieldset class="space-y-4">
+    <legend class="font-semibold"><%= t(".firm") %></legend>
+    <% [ [ :name, :text_field, "organization" ], [ :cnpj, :text_field, "off" ] ].each do |field, type, autocomplete| %>
+      <div>
+        <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "block text-sm font-medium" %>
+        <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
+          autocomplete: autocomplete, required: true, class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2") %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="space-y-4">
+    <legend class="font-semibold"><%= t(".admin") %></legend>
+    <p class="text-xs text-slate-500"><%= t(".admin_hint") %></p>
+    <% [ [ :admin_name, :text_field, "name" ], [ :admin_cpf, :text_field, "off" ], [ :admin_email, :email_field, "email" ],
+         [ :admin_mobile_phone, :telephone_field, "tel" ] ].each do |field, type, autocomplete| %>
+      <div>
+        <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "block text-sm font-medium" %>
+        <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
+          autocomplete: autocomplete, class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2") %>
+      </div>
+    <% end %>
+    <div>
+      <p class="text-sm font-medium"><%= t(".channels") %></p>
+      <% Membership::INVITATION_CHANNELS.each do |channel| %>
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <%= check_box_tag "accounting_firm[channels][]", channel, @form[:channels].include?(channel), id: "accounting_firm_channel_#{channel}" %>
+          <%= t("invitation_channels.#{channel}") %>
+        </label>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <%= form.submit t(".submit"), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+  <%= link_to t(".cancel"), accounting_firm_path, class: "ml-4 underline" %>
+<% end %>

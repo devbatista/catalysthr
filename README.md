@@ -44,9 +44,10 @@ O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas co
 | Beatriz Nunes (administradora da Aurora) | 390.533.447-05 | http://aurora.painel.localhost:3000 (painel do parceiro e equipe) |
 | Ana Ribeiro (consultora da Aurora, atende a Padaria Pão Quente) | 111.444.777-35 | http://aurora.painel.localhost:3000 |
 | Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost:3000 |
+| Eva Martins (administradora do escritório Contábil Exata, que atende a Padaria) | 714.602.380-01 | http://aurora.painel.localhost:3000 |
 | Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost:3000 |
 
-Todas essas pessoas têm perfil com MFA obrigatório (RN-02-040). No primeiro login, o sistema pede para ativar um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) lendo o QR code.
+Exceto a Eva, que é do escritório contábil (MFA opcional), todas têm perfil com MFA obrigatório (RN-02-040). No primeiro login, o sistema pede para ativar um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) lendo o QR code.
 
 Os domínios vêm de `ADMIN_HOST` e `PANEL_DOMAIN` (padrão em produção: `admin.catalysthr.com.br` e `painel.catalysthr.com.br`).
 

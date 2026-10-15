@@ -9,31 +9,35 @@ module Invitations
     end
 
     def initialize(organization:, roles:, channels:, invited_by:, name:, cpf:, email: nil, mobile_phone: nil,
-      enabled_modules: [])
+      enabled_modules: [], brand: nil)
       @organization = organization
       @roles = roles
       @enabled_modules = Array(enabled_modules).compact_blank
       @channels = Array(channels).map(&:to_s)
       @invited_by = invited_by
+      @brand = brand
       @person = { name: name, cpf: cpf, email: email, mobile_phone: mobile_phone }
     end
 
     # Returns the invitation, whose link the inviter can hand over (RN-02-011).
     def call
-      invitation = ActiveRecord::Base.transaction do
-        user = User.find_by(cpf: @person[:cpf]) || User.create!(@person)
-        membership = Membership.find_or_initialize_by(user: user, organization: @organization)
-        if membership.persisted? && !membership.invited? && !membership.revoked?
-          Invitations.refuse(membership, :base, :already_member)
-        end
-
-        modules = (Array(@roles) & Membership::ROLES_WITH_MODULES).any? ? @enabled_modules : []
-        membership.assign_attributes(roles: @roles, enabled_modules: modules, status: "invited")
-        Invitations.issue(membership, channels: @channels, invited_by: @invited_by)
-      end
-
+      invitation = ActiveRecord::Base.transaction { issue }
       Invitations.deliver(invitation)
       invitation
+    end
+
+    # Creates the invitation without sending it, for who wraps it in a larger
+    # transaction and sends it after the commit.
+    def issue
+      user = User.find_by(cpf: @person[:cpf]) || User.create!(@person)
+      membership = Membership.find_or_initialize_by(user: user, organization: @organization)
+      if membership.persisted? && !membership.invited? && !membership.revoked?
+        Invitations.refuse(membership, :base, :already_member)
+      end
+
+      modules = (Array(@roles) & Membership::ROLES_WITH_MODULES).any? ? @enabled_modules : []
+      membership.assign_attributes(roles: @roles, enabled_modules: modules, status: "invited")
+      Invitations.issue(membership, channels: @channels, invited_by: @invited_by, brand: @brand)
     end
   end
 end

@@ -94,6 +94,13 @@ RSpec.describe Memberships do
       expect(only_admin.reload).to have_attributes(status: "active", roles: %w[partner_admin consultant])
     end
 
+    it "keeps the accounting firm's last active administrator" do
+      only_admin = create(:membership, organization: create(:accounting_firm), roles: %w[firm_admin])
+
+      expect { Memberships::Revoke.call(membership: only_admin, by: actor) }
+        .to raise_error(ActiveRecord::RecordInvalid, /escritório precisa de pelo menos um administrador ativo/)
+    end
+
     it "lets an administrator go while another one stays" do
       create(:membership, organization: partner, roles: %w[partner_admin])
       leaving = create(:membership, organization: partner, roles: %w[partner_admin])

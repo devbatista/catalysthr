@@ -8,8 +8,9 @@ module Users
       new(**).call
     end
 
-    def initialize(membership:, email:, mobile_phone:, by:)
+    def initialize(membership:, email:, mobile_phone:, by:, brand: nil)
       @membership = membership
+      @brand = brand
       @email = email
       @mobile_phone = mobile_phone
       @by = by
@@ -25,7 +26,7 @@ module Users
 
       AccessEvent.record!(kind: "admin", action: "contact_corrected", user: @by, subject: @membership,
         metadata: { fields: changed })
-      AccountMailer.contact_changed(@membership, old_email).deliver_later if old_email.present? && changed.include?("email")
+      AccountMailer.contact_changed(@membership, old_email, @brand).deliver_later if old_email.present? && changed.include?("email")
       user
     end
   end

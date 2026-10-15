@@ -44,6 +44,8 @@ pt-BR:
         switch: "Trocar"
         users: "Usuários"
         portfolio: "Carteira"
+        firm: "Escritório"
+        accounting_firm: "Escritório contábil"
     companies:
       index:
         title: "Escolha a empresa"
@@ -111,6 +113,72 @@ pt-BR:
         cancel_invitation: "Cancelar o convite"
         revoke: "Remover o acesso"
         revoke_confirm: "Remover o acesso desta pessoa à empresa? As sessões dela serão encerradas."
+    accounting_firms:
+      show:
+        title: "Escritório contábil"
+        none: "Nenhum escritório contábil ligado à empresa. Ligado, ele recebe os encaminhamentos e acessa os relatórios que a empresa liberar."
+        link: "Cadastrar ou ligar escritório"
+        name: "Escritório"
+        cnpj: "CNPJ"
+        status: "Situação"
+        pending: "Aguardando o aceite do escritório"
+        active: "Ligado desde %{date}"
+        pending_admin: "O escritório ainda não tem um administrador ativo. Enquanto o convite não for aceito, ninguém do escritório acessa a empresa."
+        resend: "Reenviar o convite para %{name}"
+        resend_submit: "Reenviar"
+        unlink: "Desligar o escritório"
+        unlink_confirm: "Desligar o escritório? Os contadores perdem o acesso à empresa na hora."
+        cancel: "Cancelar o pedido"
+        cancel_confirm: "Cancelar o pedido de ligação com este escritório?"
+      new:
+        title: "Cadastrar ou ligar escritório contábil"
+        instructions: "A empresa tem um escritório contábil por vez. Se o CNPJ já estiver na plataforma, enviamos um pedido aos administradores do escritório, que aceitam ou recusam. Se não estiver, o escritório é cadastrado e a pessoa abaixo é convidada como administradora."
+        firm: "Escritório"
+        name: "Nome do escritório"
+        cnpj: "CNPJ"
+        admin: "Administrador do escritório"
+        admin_hint: "Só é usado se o escritório ainda não estiver na plataforma. Informe o e-mail ou o celular."
+        admin_name: "Nome completo"
+        admin_cpf: "CPF"
+        admin_email: "E-mail"
+        admin_mobile_phone: "Celular"
+        channels: "Como enviar o convite"
+        submit: "Continuar"
+        cancel: "Cancelar"
+      linked:
+        invited_title: "%{firm} cadastrado. Convite criado para %{name}"
+        requested_title: "Pedido enviado para %{firm}"
+        requested_body: "O escritório já está na plataforma. Os administradores dele foram avisados e aceitam ou recusam o pedido. Até lá, ninguém do escritório acessa a empresa."
+        back: "Voltar para Escritório contábil"
+      destroy:
+        ended: "Ligação encerrada."
+    firm_panel:
+      home:
+        index:
+          team: "Equipe"
+          subtitle: "Empresas de %{brand} atendidas pelo escritório."
+          empty: "Nenhuma empresa desta marca por aqui."
+          pending: "pede para ligar o escritório"
+          accept: "Aceitar"
+          refuse: "Recusar"
+          refuse_confirm: "Recusar o pedido de %{company}?"
+          enter: "Entrar"
+      links:
+        accept:
+          accepted: "Pedido de %{company} aceito. Os contadores já podem entrar na empresa."
+        refuse:
+          refused: "Pedido de %{company} recusado."
+      team_members:
+        index:
+          title: "Equipe do escritório"
+        new:
+          title: "Convidar para a equipe"
+          instructions: "Convide administradores e contadores do escritório. Se o CPF já tiver cadastro na plataforma, a pessoa entra com a senha que já usa."
+        invited:
+          back: "Voltar para a equipe"
+        show:
+          back: "Voltar para a equipe"
+          revoke_confirm: "Remover o acesso desta pessoa ao escritório? As sessões dela serão encerradas."
     partner_panel:
       home:
         index:
@@ -333,6 +401,13 @@ pt-BR:
       greeting: "Olá, %{name}."
       body: "O e-mail de acesso da sua conta em %{brand} foi alterado por quem administra o seu acesso. Este endereço não recebe mais os avisos da conta."
       not_you: "Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
+  accounting_firm_mailer:
+    link_requested:
+      subject: "%{company} pediu para ligar o seu escritório contábil"
+      greeting: "Olá, %{name}."
+      body: "A empresa %{company} pediu para ligar o escritório %{firm}. Entre na área do escritório para aceitar ou recusar o pedido."
+      action: "Ver o pedido"
+      ignore: "Se o escritório não atende esta empresa, recuse o pedido."
   invitation_mailer:
     invitation:
       subject: "Convite para acessar %{brand}"
@@ -367,7 +442,12 @@ pt-BR:
       membership: "Acesso"
       legal_document: "Texto legal"
       consent: "Consentimento"
+      accounting_firm: "Escritório contábil"
+      accounting_firm_company: "Ligação com o escritório"
     attributes:
+      accounting_firm:
+        name: "Nome do escritório"
+        cnpj: "CNPJ do escritório"
       user:
         name: "Nome"
         cpf: "CPF"
@@ -449,6 +529,10 @@ pt-BR:
             enabled_modules:
               not_releasable: "incluem um módulo que não existe"
               role_without_modules: "só valem para o RH analista e o consultor"
+        accounting_firm_company:
+          attributes:
+            base:
+              already_linked: "A empresa já tem um escritório contábil ligado ou um pedido pendente"
         partner_membership_company:
           attributes:
             company:

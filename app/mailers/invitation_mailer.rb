@@ -2,13 +2,14 @@
 class InvitationMailer < ApplicationMailer
   include BrandSender
 
-  def invitation(membership, token)
+  def invitation(membership, token, brand = nil)
+    brand ||= membership.subdomain_brand
     @user = membership.user
-    @sender_name = membership.sender_name
-    @link = membership.invitation_url(token)
+    @sender_name = membership.sender_name(brand)
+    @link = membership.invitation_url(token, brand: brand)
     @expires_at = membership.invitation_expires_at
 
     mail(to: @user.email, subject: t(".subject", brand: @sender_name),
-      **brand_headers(brand: membership.subdomain_brand, sender_name: @sender_name))
+      **brand_headers(brand: brand, sender_name: @sender_name))
   end
 end

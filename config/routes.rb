@@ -57,6 +57,28 @@ Rails.application.routes.draw do
         end
       end
 
+      # The company's accounting firm (RN-02-070 to RN-02-073).
+      resource :accounting_firm, path: "accounting-firm", only: %i[show new create destroy] do
+        post :resend_invitation, path: "resend-invitation"
+      end
+
+      # The accounting firm's area: requests, linked companies and team (D-586, D-590).
+      namespace :firm, module: :firm_panel do
+        root "home#index"
+        resources :links, only: [] do
+          member do
+            post :accept
+            post :refuse
+          end
+        end
+        resources :team_members, path: "team" do
+          member do
+            post :resend_invitation, path: "resend-invitation"
+            post :reset_mfa, path: "reset-mfa"
+          end
+        end
+      end
+
       # The partner's panel (spec 03, section 4.1): portfolio, team and the HR of the
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -35,6 +35,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_210000) do
     t.index ["subject_type", "subject_id"], name: "index_access_events_on_subject"
     t.index ["user_id", "created_at"], name: "index_access_events_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_access_events_on_user_id"
+  end
+
+  create_table "accounting_firm_companies", force: :cascade do |t|
+    t.bigint "accounting_firm_id", null: false
+    t.bigint "company_id", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "linked_by_id"
+    t.datetime "accepted_at"
+    t.datetime "ended_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accounting_firm_id"], name: "index_accounting_firm_companies_on_accounting_firm_id"
+    t.index ["company_id", "status"], name: "index_accounting_firm_companies_on_company_id_and_status"
+    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY ((ARRAY['pending'::character varying, 'active'::character varying])::text[]))"
+    t.index ["linked_by_id"], name: "index_accounting_firm_companies_on_linked_by_id"
+  end
+
+  create_table "accounting_firms", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "cnpj", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cnpj"], name: "index_accounting_firms_on_cnpj", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -298,6 +322,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_210000) do
   add_foreign_key "access_events", "companies"
   add_foreign_key "access_events", "users"
   add_foreign_key "access_events", "users", column: "impersonator_id"
+  add_foreign_key "accounting_firm_companies", "accounting_firms"
+  add_foreign_key "accounting_firm_companies", "companies"
+  add_foreign_key "accounting_firm_companies", "users", column: "linked_by_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brand_subdomains", "brands"

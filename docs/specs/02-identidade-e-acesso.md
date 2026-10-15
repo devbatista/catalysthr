@@ -122,7 +122,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 
 ### Escritório contábil
 
-- **RN-02-070** — O RH administrador cadastra o escritório pelo CNPJ e o e-mail de um administrador (D-171). Se o CNPJ já existe na plataforma, a ligação com a empresa fica pendente até o administrador do escritório aceitar **[P-02-29]**.
+- **RN-02-070** — O RH administrador cadastra o escritório pelo CNPJ e o e-mail de um administrador (D-171), com o nome do escritório e o nome, o CPF e o e-mail ou o celular do administrador (D-588). A empresa tem no máximo um escritório com ligação pendente ou ativa (D-589). Se o CNPJ já existe na plataforma, a ligação com a empresa fica pendente até o administrador do escritório aceitar **[P-02-29]**. Os administradores ativos do escritório são avisados por e-mail e aceitam ou recusam; a recusa ou o cancelamento pelo RHA encerra a ligação (D-590).
 - **RN-02-071** — O primeiro administrador do escritório entra por convite. A partir daí, ele convida e remove contadores e outros administradores (D-172). Ninguém altera a própria membership, e o último administrador ativo do escritório não pode ser removido nem rebaixado (D-584).
 - **RN-02-072** — O contador acessa as empresas ligadas ao escritório pelo subdomínio da marca de cada empresa, com o mesmo login (D-158). Dentro de uma marca, as empresas e os pedidos de aceite do escritório mostram só os daquela marca. Os convites e os e-mails saem com a marca da empresa que pediu a ligação, ou com a marca em que o administrador do escritório está, ao convidar a equipe (D-586).
 - **RN-02-073** — O RH administrador pode desligar o escritório da empresa a qualquer momento. O acesso dos contadores àquela empresa termina na hora.
@@ -149,7 +149,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 
 **Usuário:** `active` ⇄ `locked` (bloqueio por tentativas) · `deactivated` (sem nenhuma membership)
 
-**Escritório ↔ empresa:** `pending` (aguardando aceite do escritório) → `active` → `ended`
+**Escritório ↔ empresa:** `pending` (aguardando aceite do escritório) → `active` → `ended` (`pending` → `ended` na recusa ou no cancelamento, D-590)
 
 ## 6. Permissões
 
