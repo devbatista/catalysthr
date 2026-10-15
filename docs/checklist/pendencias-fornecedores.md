@@ -14,10 +14,24 @@
 - [ ] Configurar os webhooks e a assinatura de validação
 - [ ] Para uma fase seguinte, perguntar sobre a disponibilidade do **Pix Automático** pela API
 
-## Asaas e contador da CatalystHR — trava a fase 1
+## Asaas e contador da CatalystHR (Contabilizei) — trava a fase 1
 
-- [ ] **Contador:** definir o código do serviço municipal, a alíquota de ISS, as retenções e o momento do fato gerador da NFS-e (D-560 a D-562)
-- [ ] **Asaas:** abrir a conta da CatalystHR e configurar a emissão na prefeitura ou no Portal Nacional (`fiscalInfo/municipalOptions`)
+- [x] **Contador:** respostas recebidas em 2026-10-14 (D-560 a D-562). Falta registrar como decisão, depois dos pontos abaixo:
+  - serviço: item **01.05** da LC 116, código municipal **02798** (São Paulo); CNAE 6202-3/00, que atende segundo o contador
+  - ISS: empresa no **Simples Nacional**, ISS recolhido no DAS, alíquota efetiva atual de **2,01%**, devido em São Paulo para qualquer cliente
+  - retenções: **nenhuma** (federais não se aplicam ao Simples; ISS não retido no item 01.05)
+  - emissão depois da confirmação do pagamento é aceita, **desde que a competência esteja certa**
+  - valor: o total cobrado, com os descontos; tarifas do Mercado Pago não são deduzidas; faturas zeradas ficam sem nota
+  - sistema: **NFS-e Paulistana**; o Asaas emite com o **e-CNPJ** da DevBatista, que já existe
+  - descrição: "Licenciamento de software CatalystHR por assinatura - Competência MM/AAAA" e a menção de optante pelo Simples Nacional
+  - cancelamento: até 6 meses, desde que o DAS da competência não tenha sido pago
+  - reforma tributária: nada muda em 2026 para o Simples
+  - o CatalystOps pode ser faturado pelo mesmo CNPJ, com o produto identificado na descrição
+  - rotina da Contabilizei: notas e extratos conferidos na plataforma deles até o dia 5 do mês seguinte, como já é feito hoje
+- [ ] **Contador (com um especialista):** qual competência usar numa fatura que junta a mensalidade do ciclo que começa e o excedente do ciclo anterior, com ciclo que não começa no dia 1 (RN-19-040). Pode mudar a regra de uma nota por fatura (RN-19-100)
+- [ ] **Contador (com um especialista):** se a alíquota efetiva do Simples, que muda todo mês, precisa aparecer na nota, e quem informa o valor de cada mês
+- [ ] **Contador (com um especialista):** confirmar que o código 02798 está habilitado no CCM da empresa
+- [ ] **Asaas:** abrir a conta da DevBatista e configurar a emissão na NFS-e Paulistana com o e-CNPJ (`fiscalInfo/municipalOptions`). O certificado vence todo ano: renovar antes, ou as notas param
 - [ ] **Asaas:** confirmar o preço por nota (a página cita R$ 0,49, a confirmar)
 - [ ] **Asaas:** criar a chave de API e configurar o webhook de notas
 - [ ] **Asaas:** desligar o envio de e-mail das notas pelo Asaas (D-564)
