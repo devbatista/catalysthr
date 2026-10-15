@@ -23,12 +23,12 @@ RSpec.describe "Access events of sign-in and security", type: :request do
   end
 
   def sign_in_with(password = "Catalyst#2026")
-    post "/entrar", params: { user: { login: "12345678909", password: password } }, headers: { "User-Agent" => "Navegador de teste" }
+    post "/sign-in", params: { user: { login: "12345678909", password: password } }, headers: { "User-Agent" => "Navegador de teste" }
   end
 
   it "records sign-in and sign-out with the IP, the browser and the request id" do
     sign_in_with
-    delete "/sair"
+    delete "/sign-out"
 
     event = AccessEvent.find_by!(action: "sign_in")
     expect(event).to have_attributes(kind: "auth", user: user, ip: "127.0.0.1", user_agent: "Navegador de teste")
@@ -46,24 +46,24 @@ RSpec.describe "Access events of sign-in and security", type: :request do
   end
 
   it "does not record attempts with an unknown CPF" do
-    post "/entrar", params: { user: { login: "11144477735", password: "Errada#2026" } }
+    post "/sign-in", params: { user: { login: "11144477735", password: "Errada#2026" } }
 
     expect(AccessEvent.count).to eq(0)
   end
 
   it "records the password change, the MFA and the remembered device" do
     sign_in_with
-    patch "/seguranca/senha", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
+    patch "/security/password", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
       password_confirmation: "Nova#Senha2026" } }
 
-    get "/seguranca/mfa/ativar"
-    post "/seguranca/mfa", params: { otp_code: ROTP::TOTP.new(session[Account::MfaController::SECRET_KEY]).now }
-    delete "/sair"
+    get "/security/mfa/new"
+    post "/security/mfa", params: { otp_code: ROTP::TOTP.new(session[Account::MfaController::SECRET_KEY]).now }
+    delete "/sign-out"
 
     travel 1.minute do
-      post "/entrar", params: { user: { login: "12345678909", password: "Nova#Senha2026" } }
-      post "/entrar/codigo", params: { otp_code: "000000" }
-      post "/entrar/codigo", params: { otp_code: user.reload.current_otp, remember_device: "1" }
+      post "/sign-in", params: { user: { login: "12345678909", password: "Nova#Senha2026" } }
+      post "/sign-in/code", params: { otp_code: "000000" }
+      post "/sign-in/code", params: { otp_code: user.reload.current_otp, remember_device: "1" }
     end
 
     expect(actions).to eq(%w[sign_in password_changed mfa_enabled sign_out sign_in_failed trusted_device_remembered sign_in])
@@ -75,7 +75,7 @@ RSpec.describe "Access events of sign-in and security", type: :request do
     host! "admin.catalysthr.com.br"
     sign_in_with_mfa("52998224725", superadmin)
 
-    post "/textos-legais", params: { legal_document: { kind: "terms", body: "Nova versão" } }
+    post "/legal-documents", params: { legal_document: { kind: "terms", body: "Nova versão" } }
 
     version = LegalDocument.last.versions.sole
     expect(version).to have_attributes(event: "create", whodunnit: superadmin.id.to_s, ip: "127.0.0.1")

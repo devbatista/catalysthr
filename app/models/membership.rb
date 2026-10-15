@@ -17,6 +17,9 @@ class Membership < ApplicationRecord
   INVITATION_VALIDITY = 72.hours
   # Channels of the invitation (RN-02-011, D-177). WhatsApp comes with Twilio.
   INVITATION_CHANNELS = %w[email link].freeze
+  # Modules released per membership to the HR analyst and the consultant (D-191, P-03-04).
+  RELEASABLE_MODULES = %w[admissao documentos solicitacoes ponto folha esocial recrutamento avaliacao].freeze
+  ROLES_WITH_MODULES = %w[hr_analyst consultant].freeze
 
   belongs_to :user
   belongs_to :organization, polymorphic: true
@@ -32,11 +35,13 @@ class Membership < ApplicationRecord
   }, validate: true
 
   normalizes :roles, with: ->(roles) { roles.compact_blank.map(&:to_s).uniq }
+  normalizes :enabled_modules, with: ->(modules) { modules.compact_blank.map(&:to_s).uniq }
 
   validates :organization_type, inclusion: { in: ROLES.keys }
   validates :user_id, uniqueness: { scope: [ :organization_type, :organization_id ] }
   validate :roles_of_organization
   validate :invitation_channels_available
+  validate :modules_releasable
 
   # Suspending, ending or removing a role ends the sessions that relied on it (RN-02-063).
   after_update_commit :end_sessions, if: :access_reduced?
@@ -92,6 +97,13 @@ class Membership < ApplicationRecord
     token
   end
 
+  # Whether the person has no access anywhere else: no other membership that is not
+  # revoked and no role in the CatalystHR team. Only then who administers the profile
+  # corrects the contact or resets the MFA (D-582).
+  def exclusive_access?
+    user.platform_role.nil? && !user.memberships.where.not(id: id).where.not(status: "revoked").exists?
+  end
+
   def audit_company_id
     organization_id if organization_type == "Company"
   end
@@ -106,7 +118,7 @@ class Membership < ApplicationRecord
   end
 
   def invitation_url(token)
-    subdomain_brand.panel_url("/convite", token: token)
+    subdomain_brand.panel_url("/invitation", token: token)
   end
 
   private
@@ -119,6 +131,11 @@ class Membership < ApplicationRecord
   def end_sessions
     user.user_sessions.active.where(area: "panel", brand: subdomain_brand)
       .update_all(revoked_at: Time.current, revoked_reason: "access_changed")
+  end
+
+  def modules_releasable
+    errors.add(:enabled_modules, :not_releasable) if (enabled_modules - RELEASABLE_MODULES).any?
+    errors.add(:enabled_modules, :role_without_modules) if enabled_modules.any? && (roles & ROLES_WITH_MODULES).empty?
   end
 
   def invitation_channels_available

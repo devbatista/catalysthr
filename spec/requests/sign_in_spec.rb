@@ -25,7 +25,7 @@ RSpec.describe "Sign-in", type: :request do
   end
 
   def sign_in_with(login, password = "Catalyst#2026")
-    post "/entrar", params: { user: { login: login, password: password } }
+    post "/sign-in", params: { user: { login: login, password: password } }
   end
 
   def signed_in?
@@ -40,7 +40,7 @@ RSpec.describe "Sign-in", type: :request do
   it "keeps everything closed while the flag is off (P-20-11)" do
     Flipper.disable(FeatureFlags::SIGN_IN)
 
-    get "/entrar"
+    get "/sign-in"
     expect(response).to have_http_status(:not_found)
 
     get "/"
@@ -49,16 +49,16 @@ RSpec.describe "Sign-in", type: :request do
 
   it "shows the sign-in page with the brand (CA-01-001)" do
     get "/"
-    expect(response).to redirect_to("/entrar")
+    expect(response).to redirect_to("/sign-in")
 
-    get "/entrar"
+    get "/sign-in"
     expect(response.body).to include("Aurora RH", "Bem-vindo ao portal de RH da Aurora.", "CPF ou e-mail", "suporte@aurora.example")
   end
 
   it "renders every access page in Portuguese, in the panel and in the admin area" do
     [ "aurora.painel.catalysthr.com.br", "admin.catalysthr.com.br" ].each do |host|
       host! host
-      [ "/entrar", "/senha/solicitar", "/desbloqueio/solicitar", "/senha/redefinir?reset_password_token=x" ].each do |path|
+      [ "/sign-in", "/password/new", "/unlock/new", "/password/edit?reset_password_token=x" ].each do |path|
         get path
         expect(response).to have_http_status(:ok), "#{host}#{path}"
         expect(response.body).not_to include("translation_missing", "Translation missing"), "#{host}#{path}"
@@ -72,7 +72,7 @@ RSpec.describe "Sign-in", type: :request do
       expect(response).to redirect_to("/"), login
       expect(signed_in?).to be(true), login
 
-      delete "/sair"
+      delete "/sign-out"
       expect(signed_in?).to be(false)
     end
   end
@@ -134,7 +134,7 @@ RSpec.describe "Sign-in", type: :request do
       expect(mail.subject).to eq("Desbloqueio do acesso")
       expect(mail[:from].to_s).to eq("Aurora RH <nao-responda@catalysthr.com.br>")
       expect(mail.reply_to).to eq([ "suporte@aurora.example" ])
-      expect(last_link).to start_with("http://aurora.painel.catalysthr.com.br/desbloqueio?unlock_token=")
+      expect(last_link).to start_with("http://aurora.painel.catalysthr.com.br/unlock?unlock_token=")
 
       get last_link
       expect(user.reload).not_to be_access_locked
@@ -148,9 +148,9 @@ RSpec.describe "Sign-in", type: :request do
         5.times { sign_in_with("12345678909", "Errada#2026") }
         ActionMailer::Base.deliveries.clear
 
-        post "/desbloqueio", params: { user: { login: "12345678909" } }
+        post "/unlock", params: { user: { login: "12345678909" } }
         known = flash[:notice]
-        post "/desbloqueio", params: { user: { login: "11144477735" } }
+        post "/unlock", params: { user: { login: "11144477735" } }
 
         expect(flash[:notice]).to eq(known)
       end
@@ -162,9 +162,9 @@ RSpec.describe "Sign-in", type: :request do
   describe "recovery by e-mail (RN-02-033)" do
     it "answers the same for a CPF that does not exist (CA-02-016)" do
       perform_enqueued_jobs do
-        post "/senha", params: { user: { login: "11144477735" } }
+        post "/password", params: { user: { login: "11144477735" } }
         unknown = flash[:notice]
-        post "/senha", params: { user: { login: "123.456.789-09" } }
+        post "/password", params: { user: { login: "123.456.789-09" } }
 
         expect(flash[:notice]).to eq(unknown)
         expect(unknown).to eq("Se houver cadastro, enviamos as instruções.")
@@ -174,27 +174,27 @@ RSpec.describe "Sign-in", type: :request do
     end
 
     it "creates a new password through the link, within the rules (CA-02-004)" do
-      perform_enqueued_jobs { post "/senha", params: { user: { login: "maria@example.com" } } }
-      expect(last_link).to start_with("http://aurora.painel.catalysthr.com.br/senha/redefinir?reset_password_token=")
+      perform_enqueued_jobs { post "/password", params: { user: { login: "maria@example.com" } } }
+      expect(last_link).to start_with("http://aurora.painel.catalysthr.com.br/password/edit?reset_password_token=")
       token = Rack::Utils.parse_query(URI(last_link).query)["reset_password_token"]
 
-      put "/senha", params: { user: { reset_password_token: token, password: "catalyst1", password_confirmation: "catalyst1" } }
+      put "/password", params: { user: { reset_password_token: token, password: "catalyst1", password_confirmation: "catalyst1" } }
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("precisa ter pelo menos uma letra maiúscula")
 
-      put "/senha", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
-      expect(response).to redirect_to("/entrar")
+      put "/password", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
+      expect(response).to redirect_to("/sign-in")
 
       sign_in_with("12345678909", "Nova#Senha2026")
       expect(signed_in?).to be(true)
     end
 
     it "expires the link after 2 hours (P-02-16)" do
-      perform_enqueued_jobs { post "/senha", params: { user: { login: "maria@example.com" } } }
+      perform_enqueued_jobs { post "/password", params: { user: { login: "maria@example.com" } } }
       token = Rack::Utils.parse_query(URI(last_link).query)["reset_password_token"]
 
       travel 2.hours + 1.minute do
-        put "/senha", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
+        put "/password", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -202,7 +202,7 @@ RSpec.describe "Sign-in", type: :request do
     it "sends nothing to a person without e-mail; the WhatsApp code comes with Twilio" do
       user.update!(email: nil, mobile_phone: "11987654321")
 
-      perform_enqueued_jobs { post "/senha", params: { user: { login: "12345678909" } } }
+      perform_enqueued_jobs { post "/password", params: { user: { login: "12345678909" } } }
 
       expect(flash[:notice]).to eq("Se houver cadastro, enviamos as instruções.")
       expect(ActionMailer::Base.deliveries).to be_empty

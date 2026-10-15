@@ -65,5 +65,5 @@ LegalDocument::KINDS.each do |kind|
   next if LegalDocument.platform.exists?(kind: kind)
 
   LegalDocument.create!(kind: kind, published_by: author,
-    body: "Texto fictício de desenvolvimento. Os textos reais são publicados pelo superadmin em /textos-legais.")
+    body: "Texto fictício de desenvolvimento. Os textos reais são publicados pelo superadmin em /legal-documents.")
 end

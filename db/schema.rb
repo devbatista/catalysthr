@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -168,6 +168,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_180000) do
     t.datetime "invitation_sent_at"
     t.datetime "invitation_expires_at"
     t.string "invitation_channels", default: [], null: false, array: true
+    t.string "enabled_modules", default: [], null: false, array: true
+    t.bigint "unit_ids", default: [], null: false, array: true
     t.index ["invitation_token_digest"], name: "index_memberships_on_invitation_token_digest", unique: true
     t.index ["invited_by_id"], name: "index_memberships_on_invited_by_id"
     t.index ["organization_type", "organization_id"], name: "index_memberships_on_organization"

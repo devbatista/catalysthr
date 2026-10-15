@@ -1,0 +1,9 @@
+<%# Signed-in pages of the brand's panel: header with the company selector, then the page %>
+<% content_for :content do %>
+  <%= render "panel/shared/header" %>
+  <main class="mx-auto max-w-4xl px-6 py-8">
+    <%= render "shared/flash" %>
+    <%= yield %>
+  </main>
+<% end %>
+<%= render template: "layouts/panel" %>

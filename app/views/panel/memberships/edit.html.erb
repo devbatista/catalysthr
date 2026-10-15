@@ -1,0 +1,8 @@
+<h1 class="text-2xl font-bold"><%= t(".title", name: @membership.user.name) %></h1>
+<%= render "errors" %>
+
+<%= form_with url: membership_path(@membership), method: :patch, class: "mt-6 max-w-xl space-y-4" do |form| %>
+  <%= render "roles_fields", scope: "membership", selected_roles: @membership.roles, selected_modules: @membership.enabled_modules %>
+  <%= form.submit t(".submit"), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+  <%= link_to t(".cancel"), membership_path(@membership), class: "ml-4 underline" %>
+<% end %>

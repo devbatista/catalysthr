@@ -8,9 +8,11 @@ module Invitations
       new(**).call
     end
 
-    def initialize(organization:, roles:, channels:, invited_by:, name:, cpf:, email: nil, mobile_phone: nil)
+    def initialize(organization:, roles:, channels:, invited_by:, name:, cpf:, email: nil, mobile_phone: nil,
+      enabled_modules: [])
       @organization = organization
       @roles = roles
+      @enabled_modules = Array(enabled_modules).compact_blank
       @channels = Array(channels).map(&:to_s)
       @invited_by = invited_by
       @person = { name: name, cpf: cpf, email: email, mobile_phone: mobile_phone }
@@ -25,7 +27,8 @@ module Invitations
           Invitations.refuse(membership, :base, :already_member)
         end
 
-        membership.assign_attributes(roles: @roles, status: "invited")
+        modules = (Array(@roles) & Membership::ROLES_WITH_MODULES).any? ? @enabled_modules : []
+        membership.assign_attributes(roles: @roles, enabled_modules: modules, status: "invited")
         Invitations.issue(membership, channels: @channels, invited_by: @invited_by)
       end
 

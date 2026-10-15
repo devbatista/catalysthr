@@ -20,11 +20,11 @@ RSpec.describe "Terms and privacy policy", type: :request do
   end
 
   def sign_in
-    post "/entrar", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
+    post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
   end
 
   def accept_all
-    post "/primeiro-acesso/termos", params: { accept: { terms: "1", privacy: "1" } },
+    post "/first-access/terms", params: { accept: { terms: "1", privacy: "1" } },
       headers: { "User-Agent" => "Navegador de teste" }
   end
 
@@ -34,9 +34,9 @@ RSpec.describe "Terms and privacy policy", type: :request do
     sign_in
 
     get "/"
-    expect(response).to redirect_to("/primeiro-acesso/termos")
+    expect(response).to redirect_to("/first-access/terms")
 
-    get "/primeiro-acesso/termos"
+    get "/first-access/terms"
     expect(response.body).to include("Termos da CatalystHR", "Política da CatalystHR")
 
     accept_all
@@ -57,7 +57,7 @@ RSpec.describe "Terms and privacy policy", type: :request do
     publish("terms", "Termos da Aurora", brand: brand)
     sign_in
 
-    get "/primeiro-acesso/termos"
+    get "/first-access/terms"
 
     expect(response.body).to include("Termos da Aurora", "Política da CatalystHR")
     expect(response.body).not_to include("Termos da CatalystHR")
@@ -71,9 +71,9 @@ RSpec.describe "Terms and privacy policy", type: :request do
 
     publish("terms", "Termos versão 2")
     get "/"
-    expect(response).to redirect_to("/primeiro-acesso/termos")
+    expect(response).to redirect_to("/first-access/terms")
 
-    get "/primeiro-acesso/termos"
+    get "/first-access/terms"
     expect(response.body).to include("Termos versão 2")
     expect(response.body).not_to include("Política versão 1")
   end
@@ -83,7 +83,7 @@ RSpec.describe "Terms and privacy policy", type: :request do
     publish("privacy", "Política")
     sign_in
 
-    post "/primeiro-acesso/termos", params: { accept: { terms: "1" } }
+    post "/first-access/terms", params: { accept: { terms: "1" } }
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include("marque o aceite de todos os textos")
@@ -94,9 +94,9 @@ RSpec.describe "Terms and privacy policy", type: :request do
     sign_in
 
     get "/"
-    expect(response).to redirect_to("/primeiro-acesso/termos")
+    expect(response).to redirect_to("/first-access/terms")
 
-    get "/primeiro-acesso/termos"
+    get "/first-access/terms"
     expect(response.body).to include("ainda não foram publicados")
   end
 end

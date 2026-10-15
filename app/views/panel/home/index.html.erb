@@ -1,12 +1,5 @@
-<main class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
-  <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-    <%= render "brand_logo", brand: Current.brand %>
-    <%= render "shared/flash" %>
-
-    <p class="mt-6 text-center text-lg"><%= t(".greeting", name: current_user.first_name) %></p>
-    <p class="mt-2 text-center"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>
-
-    <p class="mt-6 text-center"><%= link_to t("account.security"), account_root_path, class: "underline" %></p>
-    <%= render "users/shared/sign_out" %>
-  </div>
-</main>
+<h1 class="text-2xl font-bold"><%= t(".greeting", name: current_user.first_name) %></h1>
+<% if Current.company %>
+  <p class="mt-2"><%= t(".company", company: Current.company.name) %></p>
+<% end %>
+<p class="mt-2"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>

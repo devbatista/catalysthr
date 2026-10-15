@@ -7,8 +7,8 @@ module MfaHelper
 
   # Signs in with the password and the current code from the app.
   def sign_in_with_mfa(login, user, password: "Catalyst#2026")
-    post "/entrar", params: { user: { login: login, password: password } }
-    post "/entrar/codigo", params: { otp_code: user.reload.current_otp }
+    post "/sign-in", params: { user: { login: login, password: password } }
+    post "/sign-in/code", params: { otp_code: user.reload.current_otp }
   end
 end
 

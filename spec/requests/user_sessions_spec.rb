@@ -21,7 +21,7 @@ RSpec.describe "Sessions", type: :request do
   end
 
   def sign_in_here(password = "Catalyst#2026")
-    post "/entrar", params: { user: { login: "12345678909", password: password } }
+    post "/sign-in", params: { user: { login: "12345678909", password: password } }
   end
 
   def signed_in?
@@ -30,7 +30,7 @@ RSpec.describe "Sessions", type: :request do
   end
 
   it "records the session with the brand, the IP and the browser" do
-    post "/entrar", params: { user: { login: "12345678909", password: "Catalyst#2026" } },
+    post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } },
       headers: { "User-Agent" => "Navegador de teste" }
 
     session_record = user.user_sessions.sole
@@ -72,7 +72,7 @@ RSpec.describe "Sessions", type: :request do
 
   it "closes the session at sign-out" do
     sign_in_here
-    delete "/sair"
+    delete "/sign-out"
 
     expect(user.user_sessions.sole.revoked_reason).to eq("sign_out")
   end
@@ -81,21 +81,21 @@ RSpec.describe "Sessions", type: :request do
     it "ends another session, which signs out at its next request (RN-02-053)" do
       other = open_session
       other.host! "aurora.painel.catalysthr.com.br"
-      other.post "/entrar", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
+      other.post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
 
       sign_in_here
-      get "/seguranca"
+      get "/security"
       expect(response.body).to include("Esta sessão", "Encerrar")
 
       other_session = user.user_sessions.order(:created_at).first
-      delete "/seguranca/sessoes/#{other_session.id}"
+      delete "/security/sessions/#{other_session.id}"
       expect(other_session.reload.revoked_reason).to eq("ended_by_user")
 
       # The redirect matchers read the main session, so the other one is checked by hand.
       other.get "/"
       expect(other.flash[:alert]).to eq("Sua sessão terminou. Entre de novo.")
       other.follow_redirect!
-      expect(other.response.location).to eq("http://aurora.painel.catalysthr.com.br/entrar")
+      expect(other.response.location).to eq("http://aurora.painel.catalysthr.com.br/sign-in")
       expect(signed_in?).to be(true)
     end
 
@@ -105,7 +105,7 @@ RSpec.describe "Sessions", type: :request do
         ip: "10.0.0.1", user_agent: "Outro"))
       sign_in_here
 
-      delete "/seguranca/sessoes/#{stranger_session.id}"
+      delete "/security/sessions/#{stranger_session.id}"
 
       expect(response).to have_http_status(:not_found)
       expect(stranger_session.reload.revoked_at).to be_nil
@@ -115,23 +115,23 @@ RSpec.describe "Sessions", type: :request do
   it "ends the other sessions and keeps this one when the password changes (RN-02-053)" do
     other = open_session
     other.host! "aurora.painel.catalysthr.com.br"
-    other.post "/entrar", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
+    other.post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
     sign_in_here
 
-    patch "/seguranca/senha", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
+    patch "/security/password", params: { user: { current_password: "Catalyst#2026", password: "Nova#Senha2026",
       password_confirmation: "Nova#Senha2026" } }
-    expect(response).to redirect_to("/seguranca")
+    expect(response).to redirect_to("/security")
 
     expect(signed_in?).to be(true)
     other.get "/"
-    expect(other.response.location).to eq("http://aurora.painel.catalysthr.com.br/entrar")
+    expect(other.response.location).to eq("http://aurora.painel.catalysthr.com.br/sign-in")
     expect(user.user_sessions.active.count).to eq(1)
   end
 
   it "refuses the password change with a wrong current password" do
     sign_in_here
 
-    patch "/seguranca/senha", params: { user: { current_password: "Errada#2026", password: "Nova#Senha2026",
+    patch "/security/password", params: { user: { current_password: "Errada#2026", password: "Nova#Senha2026",
       password_confirmation: "Nova#Senha2026" } }
 
     expect(response).to have_http_status(:unprocessable_content)
@@ -140,14 +140,14 @@ RSpec.describe "Sessions", type: :request do
 
   it "ends every session after a password reset by e-mail" do
     sign_in_here
-    delete "/sair"
+    delete "/sign-out"
     other = open_session
     other.host! "aurora.painel.catalysthr.com.br"
-    other.post "/entrar", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
+    other.post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
 
-    perform_enqueued_jobs { post "/senha", params: { user: { login: "maria@example.com" } } }
+    perform_enqueued_jobs { post "/password", params: { user: { login: "maria@example.com" } } }
     token = Rack::Utils.parse_query(URI(ActionMailer::Base.deliveries.last.text_part.body.to_s[%r{https?://\S+}]).query)["reset_password_token"]
-    put "/senha", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
+    put "/password", params: { user: { reset_password_token: token, password: "Nova#Senha2026", password_confirmation: "Nova#Senha2026" } }
 
     expect(user.user_sessions.active).to be_empty
   end

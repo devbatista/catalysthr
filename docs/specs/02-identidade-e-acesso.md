@@ -1,7 +1,7 @@
 # 02 — Identidade e acesso
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-581 ([decisoes.md](decisoes.md))
+> Decisões: D-029, D-050 a D-054, D-082, D-083, D-088, D-089, D-090, D-127, D-142, D-143, D-158, D-170 a D-189, D-425, D-426, D-570, D-576 a D-582 ([decisoes.md](decisoes.md))
 > Os itens **[P-02-01]** a **[P-02-37]** foram aprovados, alguns com ajuste (D-188, seção 10). Os itens **[P-02-38]** a **[P-02-41]** (gestor do cliente, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -93,7 +93,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
   - por **link no e-mail**, válido por 2 horas **[P-02-16]**;
   - por **código de 6 dígitos no WhatsApp**, válido por 10 minutos, com até 5 tentativas **[P-02-16]**.
 
-  O RH não gera link de redefinição. Se o usuário perdeu o e-mail e o celular, o RH (ou quem administra o perfil dele) corrige o contato no cadastro, com registro na auditoria, e o próprio usuário recupera a senha **[P-02-17]**.
+  O RH não gera link de redefinição. Se o usuário perdeu o e-mail e o celular, o RH (ou quem administra o perfil dele) corrige o contato no cadastro, com registro na auditoria, e o próprio usuário recupera a senha **[P-02-17]**. Se a pessoa tem acesso a outra organização ou é da equipe CatalystHR, só o suporte corrige, e o e-mail antigo recebe um aviso da mudança (D-582).
 - **RN-02-034** — A tela de recuperação responde sempre "se houver cadastro, enviamos as instruções", para não revelar se o CPF ou e-mail existe.
 
 ### MFA
@@ -102,7 +102,7 @@ O perfil `client_manager` (D-570) só existe em empresa que usa clientes de aloc
 - **RN-02-041** — A obrigatoriedade vale para o usuário, não para a área: quem tem um perfil obrigatório em qualquer organização usa MFA em todo login **[P-02-19]**.
 - **RN-02-042** — Métodos: app autenticador (TOTP) e 10 códigos de recuperação de uso único (D-083). Os códigos aparecem uma vez e podem ser gerados de novo, o que invalida os anteriores **[P-02-20]**.
 - **RN-02-043** — Depois de passar pelo MFA, o usuário pode marcar "lembrar este dispositivo" por **30 dias** (D-184). Ele vê a lista de dispositivos lembrados e pode revogar cada um. Trocar a senha revoga todos **[P-02-21]**.
-- **RN-02-044** — Se o usuário perde o app e os códigos de recuperação, o MFA é redefinido por quem administra o perfil: RH administrador para o RH e para os gestores do cliente (P-02-40), administrador do parceiro para a equipe dele, administrador do escritório para os contadores, e suporte CatalystHR para os demais. A redefinição fica na auditoria e avisa o usuário **[P-02-22]**.
+- **RN-02-044** — Se o usuário perde o app e os códigos de recuperação, o MFA é redefinido por quem administra o perfil: RH administrador para o RH e para os gestores do cliente (P-02-40), administrador do parceiro para a equipe dele, administrador do escritório para os contadores, e suporte CatalystHR para os demais. A redefinição fica na auditoria e avisa o usuário **[P-02-22]**. Se a pessoa tem acesso a outra organização ou é da equipe CatalystHR, só o suporte redefine (D-582).
 - **RN-02-045** — **Passkey** (D-425, D-426): o usuário pode cadastrar passkeys (WebAuthn) e entrar com a digital ou o rosto do aparelho. Entrar com passkey **cumpre o MFA**, inclusive nos perfis obrigatórios. A passkey também substitui a senha na confirmação de dados sensíveis (RN-02-052). Detalhes na [spec 16](16-portal-colaborador-pwa.md), seção 4.8.
 
 ### Sessão
