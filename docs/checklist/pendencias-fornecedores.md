@@ -14,7 +14,7 @@
   - Tarifas atuais da conta no Checkout, informadas pelo suporte (não valem necessariamente para os Pagamentos Automáticos): crédito com recebimento na hora 4,98%, em 14 dias 4,49%, em 30 dias 3,98%
 - [ ] Confirmar a cobrança por PIX pela API de pagamentos, com QR e vencimento (D-481). A conta já recebe PIX e cartão; falta conferir o vencimento na integração
 - [ ] Configurar os webhooks e a assinatura de validação
-- [ ] Para uma fase seguinte, perguntar sobre a disponibilidade do **Pix Automático** pela API
+- [x] Para uma fase seguinte, perguntar sobre a disponibilidade do **Pix Automático** pela API. Resposta em 2026-10-14: não há API pública nem previsão informada pelo suporte
 
 ## Asaas e contador da CatalystHR (Contabilizei) — trava a fase 1
 

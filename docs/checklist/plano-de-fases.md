@@ -35,7 +35,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ### Fora do desenvolvimento
 - [ ] Enviar o `pacote-juridico.md` ao jurídico
 - [ ] Enviar o `pacote-especialista-dp.md` ao especialista em DP
-- [ ] Abrir os pedidos da `pendencias-fornecedores.md` (Mercado Pago, Asaas e contador, AWS SES, WhatsApp pela Twilio, Anthropic, Voyage, Railway)
+- [x] Abrir os pedidos da `pendencias-fornecedores.md` (2026-10-14): Mercado Pago (chamado WCS-54705, aguardando o comercial), contador (respondido em parte), AWS SES (saída do sandbox em análise) e Meta (empresa já verificada). Reagendados de propósito: Anthropic na metade da fase 1, Voyage na fase 5, Railway antes do primeiro cliente, número do WhatsApp antes da fase 2
 - [ ] Redigir as minutas jurídicas em `juridico/` (termos de uso, política de privacidade, aviso do recrutamento, contrato de tratamento de dados) e mandar ao jurídico para revisão
 - [ ] Começar a procurar um parceiro piloto
 
@@ -54,6 +54,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Sentry: primeiro monitor externo para `/up`, em `health.painel.catalysthr.com.br`, a cada minuto, com alerta por e-mail (D-573, 2026-10-14)
 - [x] Docker Compose para o desenvolvimento local
 - [x] Workflow de deploy manual, com CI verde exigido e bloqueio nos picos do ponto; migrações no pre-deploy do serviço `web`, configurado no Railway (D-517)
+- [x] Deploy automático depois do CI verde na `main`, sem começar nos picos do ponto, com o pendente saindo às 9h05 e 19h05 (D-575, PR #17). Primeiro disparo automático em 2026-10-14, às 23h05
 - [x] Secret `RAILWAY_TOKEN` no GitHub, depois de criar o projeto no Railway
 - [x] Primeiro deploy pelo workflow, no endereço provisório do Railway (https://web-production-4e2f3.up.railway.app)
 
@@ -66,7 +67,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Pré-requisitos
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
-- [ ] Contador da CatalystHR: código do serviço, ISS, retenções e fato gerador da NFS-e
+- [x] Contador da CatalystHR: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
+- [ ] Contador da CatalystHR: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista)
 - [ ] Asaas: conta configurada na prefeitura ou no Portal Nacional
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
