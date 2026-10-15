@@ -8,8 +8,8 @@ RSpec.describe "CatalystHR legal texts", type: :request do
   end
 
   def sign_in(role)
-    user = create(:user, platform_role: role, cpf: "52998224725", name: "Paulo Lima")
-    post "/entrar", params: { user: { login: "52998224725", password: "Catalyst#2026" } }
+    user = enable_mfa(create(:user, platform_role: role, cpf: "52998224725", name: "Paulo Lima"))
+    sign_in_with_mfa("52998224725", user)
     user
   end
 

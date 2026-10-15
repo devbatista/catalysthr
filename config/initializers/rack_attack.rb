@@ -5,13 +5,13 @@
 # The limits are not in the spec. They leave room for a company where many people
 # sign in from the same office address.
 class Rack::Attack
-  SIGN_IN_PATH = "/entrar"
+  SIGN_IN_PATHS = %w[/entrar /entrar/codigo].freeze
   RECOVERY_PATHS = %w[/senha /desbloqueio].freeze
   INVITATION_PATH = "/convite"
 
-  # Sign-in attempts per address.
+  # Sign-in attempts per address, with the password or the MFA code.
   throttle("sign_in/ip", limit: 30, period: 1.minute) do |request|
-    request.ip if request.post? && request.path == SIGN_IN_PATH
+    request.ip if request.post? && SIGN_IN_PATHS.include?(request.path)
   end
 
   # Recovery and unlock requests per address, so nobody floods the e-mails.

@@ -57,6 +57,12 @@ gem "rails-i18n"
 # Sign-in by CPF or e-mail, password recovery and lockout (spec 02, P-02-35)
 gem "devise", "~> 5.0"
 
+# MFA with an authenticator app (TOTP) and recovery codes (RN-02-042, P-02-35)
+gem "devise-two-factor", "~> 6.4"
+
+# QR code of the authenticator setup, drawn as SVG on the server (RN-02-042)
+gem "rqrcode", "~> 3.1"
+
 # Permissions as the sum of partial abilities (spec 03, P-03-08)
 gem "cancancan", "~> 3.7"
 

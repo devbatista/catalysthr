@@ -12,7 +12,8 @@ RSpec.describe "Sign-in", type: :request do
   end
   let(:company) { create(:company, partner: partner) }
   let!(:user) { create(:user, name: "Maria Souza", cpf: "12345678909", email: "maria@example.com") }
-  let!(:membership) { create(:membership, user: user, organization: company) }
+  # A manager, whose MFA is optional; the MFA flows are in mfa_spec.rb.
+  let!(:membership) { create(:membership, user: user, organization: company, roles: %w[manager]) }
   let(:invalid_message) { "CPF, e-mail ou senha inválidos." }
 
   before do
@@ -105,8 +106,8 @@ RSpec.describe "Sign-in", type: :request do
       sign_in_with("12345678909")
       expect(response.body).to include(invalid_message)
 
-      staff = create(:user, :platform, name: "Paulo Lima", cpf: "52998224725")
-      sign_in_with("529.982.247-25")
+      staff = enable_mfa(create(:user, :platform, name: "Paulo Lima", cpf: "52998224725"))
+      sign_in_with_mfa("529.982.247-25", staff)
       expect(response).to redirect_to("/")
 
       get "/"
@@ -209,9 +210,10 @@ RSpec.describe "Sign-in", type: :request do
     expect(signed_in?).to be(true)
 
     membership.update!(status: "suspended")
+    expect(user.user_sessions.active).to be_empty
 
     get "/"
-    expect(response).to redirect_to("/entrar")
+    expect(flash[:alert]).to eq("Sua sessão terminou. Entre de novo.")
     expect(signed_in?).to be(false)
   end
 

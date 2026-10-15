@@ -83,9 +83,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
   - Specs 02 e 03 no mesmo ciclo, em 5 PRs (2026-10-15):
     - [x] 1. Base: criptografia de campos, `User`, `Membership`, login por marca, senha, bloqueio, recuperação por e-mail, Rack::Attack, esqueleto da `Ability` e teste de cobertura de autorização (PR #19)
-    - [ ] 2. Motor de convites (e-mail e link), primeiro acesso, `consents`, `legal_documents` (D-577, D-578) e a tela de publicação dos termos da CatalystHR (D-579). As telas de convidar entram no bloco 4 e na spec 19, e o QR code entra com elas
+    - [x] 2. Motor de convites (e-mail e link), primeiro acesso, `consents`, `legal_documents` (D-577, D-578) e a tela de publicação dos termos da CatalystHR (D-579). As telas de convidar entram no bloco 4 e na spec 19, e o QR code entra com elas (PR #20)
     - [ ] Depois do deploy do bloco 2: migração que remove `terms_text` e `privacy_policy_text` da `brands`, hoje ignoradas pelo model (strong_migrations)
-    - [ ] 3. MFA, dispositivos lembrados e `user_sessions` (D-576)
+    - [ ] 3. MFA (D-580), dispositivos lembrados, `user_sessions` (D-576) e uma tela mínima de Segurança no painel e no admin (senha, MFA, códigos, dispositivos e sessões). O visual do portal vem com a spec 16, e a redefinição do MFA de outra pessoa (RN-02-044) entra no bloco 4
     - [ ] 4. Abilities por organização, equipe do parceiro, escritório contábil, regras de alteração de perfis
     - [ ] 5. Impersonate em simulação, mascaramento e `access_events`
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação

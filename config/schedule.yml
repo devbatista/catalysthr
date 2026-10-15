@@ -11,3 +11,15 @@ brands_release_expired_subdomains:
   cron: "0 6 * * *"            # 03:00 in Brasília
   class: "Brands::ReleaseExpiredSubdomainsJob"
   queue: "default"
+
+# Deletes expired or forgotten remembered devices (spec 02, RN-02-043)
+trusted_devices_purge_expired:
+  cron: "10 6 * * *"           # 03:10 in Brasília
+  class: "TrustedDevices::PurgeExpiredJob"
+  queue: "default"
+
+# Deletes sessions closed for more than 30 days (spec 02, D-576)
+user_sessions_purge_expired:
+  cron: "20 6 * * *"           # 03:20 in Brasília
+  class: "UserSessions::PurgeExpiredJob"
+  queue: "default"

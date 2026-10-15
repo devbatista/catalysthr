@@ -77,6 +77,12 @@ class ApplicationController < ActionController::Base
     redirect_to new_user_session_path, alert: t("devise.failure.unauthenticated")
   end
 
+  # People with a role that requires MFA set it up before anything else (RN-02-014,
+  # item 3; RN-02-040; CA-02-006).
+  def require_mfa_setup
+    redirect_to new_account_mfa_path if !current_user.mfa_enabled? && current_user.mfa_required?
+  end
+
   def after_sign_out_path_for(_scope)
     new_user_session_path
   end

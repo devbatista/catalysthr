@@ -214,6 +214,7 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-577 | Os termos de uso e a política de privacidade ficam numa tabela de versões (`legal_documents`), e cada publicação cria uma versão nova. O aceite em `consents` aponta para a versão aceita, e o texto das versões antigas é mantido. Substitui os campos de texto legal da marca (spec 01) | 2026-10-15 |
 | D-578 | A marca sem termos ou política próprios usa os da CatalystHR. Até o jurídico revisar as minutas, o primeiro acesso fica atrás de feature flag, sem clientes reais | 2026-10-15 |
 | D-579 | O superadmin publica os termos de uso e a política de privacidade da CatalystHR numa tela da área administrativa. Cada publicação cria uma versão nova (D-577), com o autor e a data | 2026-10-15 |
+| D-580 | Códigos de MFA errados contam no mesmo contador de tentativas da senha. Com 5 erros, somando os dois, a conta é bloqueada até o desbloqueio (RN-02-031) | 2026-10-15 |
 
 ## Permissões (spec 03)
 

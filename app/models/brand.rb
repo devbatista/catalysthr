@@ -12,10 +12,6 @@ class Brand < ApplicationRecord
   IMAGE_TYPES = %w[image/png image/jpeg image/webp].freeze
   MAX_IMAGE_SIZE = 2.megabytes
 
-  # Legal texts moved to legal_documents, with versions (D-577). The columns are
-  # removed once this version is in production (strong_migrations).
-  self.ignored_columns += %w[terms_text privacy_policy_text]
-
   belongs_to :owner, polymorphic: true
   has_many :legal_documents, dependent: :restrict_with_error
   has_many :subdomains, class_name: "BrandSubdomain", dependent: :destroy

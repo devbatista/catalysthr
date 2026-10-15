@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_170200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -67,8 +67,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
     t.text "login_welcome_text"
     t.string "support_email"
     t.string "support_phone"
-    t.text "terms_text"
-    t.text "privacy_policy_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_type", "owner_id"], name: "index_brands_on_owner", unique: true
@@ -182,6 +180,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
+  create_table "trusted_devices", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token_digest", null: false
+    t.string "user_agent"
+    t.datetime "last_used_at"
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_trusted_devices_on_expires_at"
+    t.index ["token_digest"], name: "index_trusted_devices_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_trusted_devices_on_user_id"
+  end
+
+  create_table "user_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token_digest", null: false
+    t.string "area", null: false
+    t.bigint "brand_id"
+    t.string "user_agent"
+    t.string "ip"
+    t.datetime "last_seen_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.string "revoked_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_user_sessions_on_brand_id"
+    t.index ["expires_at"], name: "index_user_sessions_on_expires_at"
+    t.index ["token_digest"], name: "index_user_sessions_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_user_sessions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.string "cpf", null: false
@@ -203,6 +234,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "otp_secret"
+    t.integer "consumed_timestep"
+    t.boolean "otp_required_for_login", default: false, null: false
+    t.string "otp_backup_codes", array: true
     t.index ["cpf"], name: "index_users_on_cpf", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(email IS NOT NULL)"
     t.index ["platform_role"], name: "index_users_on_platform_role", where: "(platform_role IS NOT NULL)"
@@ -220,4 +255,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_150300) do
   add_foreign_key "legal_documents", "users", column: "published_by_id"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
+  add_foreign_key "trusted_devices", "users"
+  add_foreign_key "user_sessions", "brands"
+  add_foreign_key "user_sessions", "users"
 end

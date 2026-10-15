@@ -6,6 +6,7 @@
     <p class="mt-6 text-center text-lg"><%= t(".greeting", name: current_user.first_name) %></p>
     <p class="mt-2 text-center"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>
 
+    <p class="mt-6 text-center"><%= link_to t("account.security"), account_root_path, class: "underline" %></p>
     <%= render "users/shared/sign_out" %>
   </div>
 </main>

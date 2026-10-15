@@ -1,0 +1,28 @@
+<div class="mx-auto max-w-md px-6 py-12">
+  <p class="text-sm"><%= link_to t("account.back_to_security"), account_root_path, class: "underline" %></p>
+  <h1 class="mt-4 text-2xl font-bold"><%= t(".title") %></h1>
+  <%= render "users/shared/password_rules" %>
+  <p class="mt-2 text-sm"><%= t(".effect") %></p>
+
+  <% if current_user.errors.any? %>
+    <div class="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% current_user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: current_user, scope: :user, url: account_password_path, method: :patch, class: "mt-6 space-y-4" do |form| %>
+    <% [ [ :current_password, "current-password" ], [ :password, "new-password" ], [ :password_confirmation, "new-password" ] ].each do |field, autocomplete| %>
+      <div>
+        <%= form.label field, t(".#{field}"), class: "block text-sm font-medium" %>
+        <%= form.password_field field, required: true, autocomplete: autocomplete,
+          class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      </div>
+    <% end %>
+
+    <%= form.submit t(".submit"), class: "w-full rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white" %>
+  <% end %>
+</div>
