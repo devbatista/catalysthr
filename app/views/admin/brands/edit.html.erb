@@ -10,6 +10,10 @@
   <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
 <% end %>
 
+<% if FeatureFlags.enabled?(FeatureFlags::BRAND_EMAIL_DOMAIN) && can?(:manage_email_domain, @brand) %>
+  <%= render "shared/brands/email_domain", brand: @brand, url: admin_brand_email_domain_path(@brand) %>
+<% end %>
+
 <% if can?(:change_slug, @brand) %>
   <section class="mt-10 max-w-2xl">
     <h2 class="text-lg font-semibold"><%= t(".slug_title") %></h2>

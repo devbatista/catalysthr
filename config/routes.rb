@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       # companies' own brands with their display mode.
       resources :brands, only: %i[index edit update] do
         patch :slug, on: :member
+        resource :email_domain, only: %i[create destroy], path: "email-domain", controller: "brand_email_domains"
       end
       resources :companies, only: [] do
         resource :brand, only: %i[edit update], controller: "company_brands"
@@ -111,7 +112,9 @@ Rails.application.routes.draw do
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do
         root "home#index"
-        resource :brand, only: %i[edit update]
+        resource :brand, only: %i[edit update] do
+          resource :email_domain, only: %i[create destroy], path: "email-domain", controller: "brand_email_domains"
+        end
         resources :team_members, path: "team" do
           member do
             post :resend_invitation, path: "resend-invitation"

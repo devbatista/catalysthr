@@ -532,6 +532,26 @@ pt-BR:
       replace:
         name: "No lugar"
         hint: "logo, cores e nome da empresa no lugar dos do parceiro, inclusive como remetente dos e-mails"
+    email_domain:
+      title: "Domínio de e-mail"
+      not_configured: "Sem domínio próprio, os e-mails saem de %{address}, com o nome comercial da marca e o e-mail de suporte para as respostas."
+      label: "Domínio"
+      submit: "Cadastrar domínio"
+      hint: "Use um domínio que vocês administram, sem www. Depois de cadastrar, aparecem os registros para incluir no DNS."
+      registered: "Domínio cadastrado. Inclua os registros no DNS; a verificação é feita a cada hora."
+      removed: "Domínio removido. Os e-mails voltam a sair do endereço da plataforma."
+      statuses:
+        pending: "pendente de verificação"
+        verified: "verificado"
+        failed: "falhou"
+      checked_at: "conferido em %{time}"
+      sender: "Os e-mails saem de %{address}."
+      records_hint: "Inclua estes registros no DNS do domínio. Pode levar até 72 horas para o SES encontrá-los. Se a verificação falhar, confira os registros; para recomeçar, remova o domínio e cadastre de novo, com registros novos."
+      record_type: "Tipo"
+      record_name: "Nome"
+      record_value: "Valor"
+      remove: "Remover domínio"
+      remove_confirm: "Remover o domínio? Os e-mails voltam a sair do endereço da plataforma, e para usar o domínio de novo será preciso cadastrar e incluir registros novos no DNS."
   impersonations:
     ended: "O acesso como usuário terminou."
     stopped: "Acesso como usuário encerrado."
@@ -547,6 +567,14 @@ pt-BR:
       title: "Suporte CatalystHR em %{company}"
       real: "O que você salvar vale de verdade."
       stop: "Sair da empresa"
+  brand_mailer:
+    email_domain_status:
+      verified_subject: "Domínio de e-mail verificado: %{domain}"
+      failed_subject: "A verificação do domínio %{domain} falhou"
+      greeting: "Olá, %{name}."
+      verified: "O domínio %{domain} foi verificado. A partir de agora, os e-mails de %{brand} saem de no-reply@%{domain}."
+      failed: "O SES não conseguiu verificar o domínio %{domain} de %{brand}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
+      action: "Abrir a marca"
   accounting_firm_mailer:
     link_requested:
       subject: "%{company} pediu para ligar o seu escritório contábil"
@@ -650,6 +678,7 @@ pt-BR:
         pwa_icon_large: "Ícone do app (512×512)"
         pwa_icon_small: "Ícone do app (192×192)"
         login_image: "Imagem da tela de login"
+        email_domain: "Domínio de e-mail"
       brand_subdomain:
         slug: "Subdomínio"
         brand: "Marca"
@@ -706,6 +735,14 @@ pt-BR:
           attributes:
             company:
               other_partner: "não é cliente deste parceiro"
+        brand:
+          attributes:
+            email_domain:
+              invalid: "não é um domínio válido. Use só o domínio, como auroragestao.com.br, sem www, @ ou http"
+              unavailable: "não pode ser usado. Se o domínio é seu, fale com o suporte"
+              already_configured: "já está cadastrado. Remova o atual para cadastrar outro"
+            base:
+              ses_unavailable: "Não foi possível falar com o serviço de e-mail agora. Tente de novo em alguns minutos"
         reserved_slug:
           attributes:
             slug:

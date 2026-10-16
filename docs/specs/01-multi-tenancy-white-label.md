@@ -122,9 +122,11 @@ CatalystHR (admin.catalysthr.com.br)
 ### Canais de comunicação
 
 - **RN-01-040** — **E-mail:**
-  - o dono da marca pode cadastrar um domínio de e-mail, e o sistema cria a identidade no SES e mostra os registros DKIM e SPF que precisam ir para o DNS (D-040);
+  - o dono da marca pode cadastrar um domínio de e-mail, e o sistema cria a identidade no SES e mostra os registros DKIM e SPF que precisam ir para o DNS (D-040). O SPF vem do MAIL FROM `bounce.<domínio>` (D-596);
   - um job verifica o status periodicamente;
-  - enquanto o domínio não estiver verificado, ou se não houver domínio, vale o envio pelo domínio da plataforma (D-160): `"<Nome comercial> <nao-responda@catalysthr.com.br>"`, com o suporte da marca no reply-to.
+  - com o domínio verificado, os e-mails saem de `"<Nome comercial> <no-reply@<domínio>>"` (D-596);
+  - enquanto o domínio não estiver verificado, ou se não houver domínio, vale o envio pelo domínio da plataforma (D-160, D-596): `"<Nome comercial> <no-reply@catalysthr.com.br>"`, com o suporte da marca no reply-to;
+  - quem configura pode remover o domínio, o que apaga a identidade no SES. Um domínio só pode estar em uma marca, e o domínio da plataforma e os subdomínios dele são recusados (D-596).
 - **RN-01-041** — **WhatsApp:**
   - por padrão, os avisos saem do número da plataforma, com o nome da marca no texto;
   - o número próprio da marca é um item adicional do plano (D-041, D-161);
@@ -143,7 +145,7 @@ CatalystHR (admin.catalysthr.com.br)
 
 ## 5. Estados
 
-**Domínio de e-mail da marca:** `não configurado` → `pendente de verificação` → `verificado` → (`falhou`, que volta a `pendente` quando o DNS é corrigido)
+**Domínio de e-mail da marca:** `não configurado` → `pendente de verificação` → `verificado` → (`falhou`, que volta a `pendente` quando o DNS é corrigido). Remover o domínio volta a `não configurado` (D-596)
 
 **Slug:** `ativo` → `redirecionando` (90 dias) → `liberado`
 
@@ -206,7 +208,7 @@ company_transfers
 
 | Job | Quando | O que faz |
 |---|---|---|
-| `Brands::VerifyEmailDomainJob` | A cada hora, para domínios pendentes (sidekiq-cron) | Consulta o SES e atualiza o status. Avisa o admin do parceiro quando o domínio é verificado ou quando falha |
+| `Brands::VerifyEmailDomainJob` | A cada hora, para domínios pendentes ou com falha (sidekiq-cron, D-596) | Consulta o SES e atualiza o status. Avisa o admin do parceiro quando o domínio é verificado ou quando falha |
 | `Brands::ReleaseExpiredSubdomainsJob` | Diário | Libera os slugs cujo período de redirecionamento acabou |
 | `Companies::TransferNotificationJob` | Depois de uma transferência | Avisa os usuários da empresa sobre o endereço novo |
 
@@ -221,8 +223,8 @@ Integrações: SES (identidades de domínio), Twilio (remetentes), DNS e certifi
 - **CA-01-005** — Dado um job enfileirado para a empresa A, quando ele roda, então só lê e grava dados da empresa A, e consultas sem tenant geram erro.
 - **CA-01-006** — Dado que o slug `aurora` foi trocado para `auroragp` há 10 dias, quando alguém acessa `aurora.painel.../colaboradores`, então é redirecionado com 301 para `auroragp.painel.../colaboradores`.
 - **CA-01-007** — Dado que já se passaram 91 dias da troca, quando alguém acessa o slug antigo, então recebe a 404 neutra.
-- **CA-01-008** — Dado um domínio de e-mail ainda pendente, quando um convite é enviado, então ele sai de `nao-responda@catalysthr.com.br` com o nome comercial da marca e o reply-to de suporte.
-- **CA-01-009** — Dado um domínio verificado no SES, quando um convite é enviado, então ele sai do domínio da marca.
+- **CA-01-008** — Dado um domínio de e-mail ainda pendente, quando um convite é enviado, então ele sai de `no-reply@catalysthr.com.br` com o nome comercial da marca e o reply-to de suporte.
+- **CA-01-009** — Dado um domínio verificado no SES, quando um convite é enviado, então ele sai de `no-reply@<domínio da marca>`.
 - **CA-01-010** — Dada uma cor primária com contraste menor que 4.5:1 com branco, quando o admin do parceiro tenta salvar, então o sistema recusa e explica o motivo.
 - **CA-01-011** — Dado um colaborador no subdomínio da marca, quando ele instala o PWA, então o app aparece com o nome curto e o ícone da marca.
 - **CA-01-012** — Dada uma empresa transferida do parceiro X para o Y, quando um consultor de X tenta acessá-la, então não a encontra. Os colaboradores da empresa acessam pelo subdomínio de Y com o mesmo login.

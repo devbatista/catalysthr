@@ -12,6 +12,12 @@ brands_release_expired_subdomains:
   class: "Brands::ReleaseExpiredSubdomainsJob"
   queue: "default"
 
+# Asks SES about the brands' pending and failed e-mail domains (spec 01, RN-01-040, D-596)
+brands_verify_email_domains:
+  cron: "15 * * * *"           # every hour
+  class: "Brands::VerifyEmailDomainJob"
+  queue: "default"
+
 # Deletes expired or forgotten remembered devices (spec 02, RN-02-043)
 trusted_devices_purge_expired:
   cron: "10 6 * * *"           # 03:10 in Brasília

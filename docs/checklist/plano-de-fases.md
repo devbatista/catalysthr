@@ -1,6 +1,6 @@
 # Plano de fases — CatalystHR (checklist)
 
-> Última atualização: 2026-10-15
+> Última atualização: 2026-10-16
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
@@ -75,12 +75,12 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Railway: criptografia em repouso confirmada no Trust Center
 
 ### Entregas
-- [ ] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso
+- [ ] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Faltam os usuários do backup e da restauração, com o pg_dump diário
 - [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
   - [x] Parte 1: base do tenant (`acts_as_tenant` com `require_tenant`, jobs com a empresa), parceiros, empresas, marcas, subdomínios com reservados e redirecionamento de 90 dias, resolução pelo host com cache, tema por variáveis CSS com contraste mínimo, manifest do PWA, CNPJ numérico e alfanumérico, Flipper instalado
   - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3. Em 4 PRs (D-594):
     - [x] 2a. Ponto único de consulta entre empresas (RN-01-011), edição da marca sem imagens no painel do parceiro e no admin, com os modos `alongside` e `replace` (RN-01-034, RN-01-035), e a troca de slug pelo superadmin (PR #28)
-    - [ ] 2b. AWS de arquivos (D-595, passo a passo em `aws-arquivos.md`), Active Storage no S3 com prefixo por empresa (RN-01-014) e as imagens da marca, servidas só pela aplicação
+    - [x] 2b. AWS de arquivos (D-595, passo a passo em `aws-arquivos.md`), Active Storage no S3 com prefixo por empresa (RN-01-014) e as imagens da marca, servidas só pela aplicação (PR #29)
     - [ ] 2c. Domínio de e-mail da marca no SES, com o job de verificação (RN-01-040, CA-01-008, CA-01-009)
     - [ ] 2d. Transferência de empresa (RN-01-050 a RN-01-053)
 - [x] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação. Feita nos 5 blocos abaixo; WhatsApp e passkeys ficam para depois

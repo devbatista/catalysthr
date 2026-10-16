@@ -132,7 +132,7 @@ RSpec.describe "Sign-in", type: :request do
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq("Desbloqueio do acesso")
-      expect(mail[:from].to_s).to eq("Aurora RH <nao-responda@catalysthr.com.br>")
+      expect(mail[:from].to_s).to eq("Aurora RH <no-reply@catalysthr.com.br>")
       expect(mail.reply_to).to eq([ "suporte@aurora.example" ])
       expect(last_link).to start_with("http://aurora.painel.catalysthr.com.br/unlock?unlock_token=")
 

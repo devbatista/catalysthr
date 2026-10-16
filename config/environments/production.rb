@@ -59,14 +59,14 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "painel.catalysthr.com.br") }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # E-mail through SES in São Paulo, with the configuration set that publishes the
+  # delivery, bounce and complaint events (spec 15, P-15-24, D-596). The credentials are
+  # the application's IAM user, from AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+  config.action_mailer.delivery_method = :ses_v2
+  config.action_mailer.ses_v2_settings = {
+    region: ENV.fetch("AWS_REGION", "sa-east-1"),
+    configuration_set_name: ENV.fetch("SES_CONFIGURATION_SET", "catalysthr-padrao")
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

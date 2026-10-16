@@ -43,9 +43,39 @@ RSpec.describe Invitations do
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([ "joana@example.com" ])
       expect(mail.subject).to eq("Convite para acessar Aurora RH")
-      expect(mail[:from].to_s).to eq("Aurora RH <nao-responda@catalysthr.com.br>")
+      expect(mail[:from].to_s).to eq("Aurora RH <no-reply@catalysthr.com.br>")
       expect(mail.reply_to).to eq([ "suporte@aurora.example" ])
       expect(mail.text_part.body.to_s).to include(invitation.link)
+    end
+
+    it "sends from no-reply@ at the brand's domain once it is verified (CA-01-009, D-596)" do
+      brand.update!(email_domain: "aurora.com.br", email_domain_status: "verified")
+
+      perform_enqueued_jobs { invite }
+
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail[:from].to_s).to eq("Aurora RH <no-reply@aurora.com.br>")
+      expect(mail.reply_to).to eq([ "suporte@aurora.example" ])
+    end
+
+    it "keeps the platform's address while the domain is pending (CA-01-008)" do
+      brand.update!(email_domain: "aurora.com.br", email_domain_status: "pending")
+
+      perform_enqueued_jobs { invite }
+
+      expect(ActionMailer::Base.deliveries.last[:from].to_s).to eq("Aurora RH <no-reply@catalysthr.com.br>")
+    end
+
+    it "uses the partner's domain with the company's name in the replace mode (P-01-18)" do
+      brand.update!(email_domain: "aurora.com.br", email_domain_status: "verified")
+      create(:brand, owner: company, commercial_name: "Padaria Pão Quente")
+      company.update!(brand_display_mode: "replace")
+
+      perform_enqueued_jobs { invite }
+
+      from = ActionMailer::Base.deliveries.last[:from]
+      expect(from.display_names).to eq([ "Padaria Pão Quente" ])
+      expect(from.addresses).to eq([ "no-reply@aurora.com.br" ])
     end
 
     it "sends nothing by e-mail when only the link is asked for (CA-02-001)" do
@@ -88,7 +118,7 @@ RSpec.describe Invitations do
 
       from = ActionMailer::Base.deliveries.last[:from]
       expect(from.display_names).to eq([ "Padaria Pão Quente" ])
-      expect(from.addresses).to eq([ "nao-responda@catalysthr.com.br" ])
+      expect(from.addresses).to eq([ "no-reply@catalysthr.com.br" ])
     end
   end
 

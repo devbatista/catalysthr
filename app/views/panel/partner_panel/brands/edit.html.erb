@@ -6,3 +6,7 @@
   <%= render "shared/brands/fields", form: form, brand: @brand, fields: BrandEditing::FIELDS, images: Brands::AttachImages::KINDS %>
   <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
 <% end %>
+
+<% if FeatureFlags.enabled?(FeatureFlags::BRAND_EMAIL_DOMAIN) && can?(:manage_email_domain, @brand) %>
+  <%= render "shared/brands/email_domain", brand: @brand, url: partner_brand_email_domain_path %>
+<% end %>
