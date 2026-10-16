@@ -8,6 +8,10 @@ module Users
     PENDING_VALIDITY = 5.minutes
     DEVICE_COOKIE = :trusted_device
 
+    # Signing out during an impersonate ends it (RN-02-083).
+    real_writes_during_impersonation :destroy
+    before_action :leave_impersonation, only: :destroy, if: :impersonating?
+
     def create
       user = User.find_for_database_authentication(login: sign_in_params[:login])
       return super unless user&.mfa_enabled?
@@ -43,6 +47,11 @@ module Users
     end
 
     private
+
+    def leave_impersonation
+      end_impersonation(Current.impersonation, :manual)
+      redirect_to PlatformUrl.admin("/impersonations/new"), allow_other_host: true, notice: t("impersonations.stopped")
+    end
 
     def reject(user)
       user.record_auth_event("sign_in_failed", step: "password")

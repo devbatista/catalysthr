@@ -28,8 +28,10 @@
       <% if Current.company && can?(:read, Membership.new(organization: Current.company)) %>
         <%= link_to t(".users"), memberships_path, class: "underline" %>
       <% end %>
-      <%= link_to t("account.security"), account_root_path, class: "underline" %>
-      <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "underline" %>
+      <% unless impersonating? %>
+        <%= link_to t("account.security"), account_root_path, class: "underline" %>
+        <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "underline" %>
+      <% end %>
     </nav>
   </div>
 </header>

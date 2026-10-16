@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     scope module: :admin, as: :admin do
       root "home#index"
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
+      resources :impersonations, only: %i[new create]
     end
   end
 
@@ -39,6 +40,11 @@ Rails.application.routes.draw do
     scope module: :panel do
       root "home#index"
       get "manifest.webmanifest", to: "manifests#show", as: :manifest
+
+      # The subdomain's side of the impersonate: the one-time link and ending it (RN-02-082,
+      # RN-02-083).
+      get "impersonation", to: "impersonations#show", as: :impersonation
+      delete "impersonation", to: "impersonations#destroy", as: nil
 
       # Invitation link and first access (RN-02-011, RN-02-014).
       get "invitation", to: "invitations#show", as: :invitation

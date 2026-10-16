@@ -72,6 +72,9 @@ gem "paper_trail", "~> 17.0"
 # Request limits per IP against attempts on many CPFs (RN-02-032, P-02-15)
 gem "rack-attack", "~> 6.8"
 
+# Support sees the system as a user, read only with simulated writes (RN-02-080, P-02-37)
+gem "pretender", "~> 1.0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

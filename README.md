@@ -47,7 +47,7 @@ O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas co
 | Eva Martins (administradora do escritório Contábil Exata, que atende a Padaria) | 714.602.380-01 | http://aurora.painel.localhost:3000 |
 | Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost:3000 |
 
-Exceto a Eva, que é do escritório contábil (MFA opcional), todas têm perfil com MFA obrigatório (RN-02-040). No primeiro login, o sistema pede para ativar um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) lendo o QR code.
+Exceto a Eva, que é do escritório contábil (MFA opcional), todas têm perfil com MFA obrigatório (RN-02-040). O Paulo Lima pode ver o sistema como qualquer uma delas pelo impersonate, em http://admin.localhost:3000/impersonations/new, informando o CPF e um motivo; o que for salvo nesse modo é simulado e desfeito (RN-02-084). No primeiro login, o sistema pede para ativar um app autenticador (Google Authenticator, Microsoft Authenticator ou Authy) lendo o QR code.
 
 Os domínios vêm de `ADMIN_HOST` e `PANEL_DOMAIN` (padrão em produção: `admin.catalysthr.com.br` e `painel.catalysthr.com.br`).
 

@@ -1,4 +1,6 @@
+<%# The simulation notice has its own banner (panel/shared/_impersonation) %>
 <% flash.each do |type, message| %>
+  <% next if type.to_s == "simulation" %>
   <p class="mt-6 rounded-lg px-4 py-3 text-sm <%= type == "alert" ? "bg-red-50 text-red-800" : "bg-emerald-50 text-emerald-800" %>"
      role="<%= type == "alert" ? "alert" : "status" %>"><%= message %></p>
 <% end %>

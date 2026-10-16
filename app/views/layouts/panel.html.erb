@@ -34,6 +34,7 @@
   </head>
 
   <body class="min-h-screen bg-slate-50 text-brand-secondary">
+    <%= render "panel/shared/impersonation" if impersonating? %>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

@@ -4,6 +4,8 @@ Rails.application.configure do
   # Hosts for local brands: http://<slug>.painel.localhost:3000 and http://admin.localhost:3000
   config.x.admin_host = ENV.fetch("ADMIN_HOST", "admin.localhost")
   config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.localhost")
+  # The web container is published on port 3000 (compose.yml, D-587).
+  config.x.public_port = ENV.fetch("PUBLIC_PORT", "3000")
   config.hosts << ".localhost" << ".#{config.x.panel_domain}"
 
   # Local field encryption keys, public on purpose: never used outside development.

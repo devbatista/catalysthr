@@ -67,9 +67,7 @@ class Brand < ApplicationRecord
   end
 
   def panel_url(path = "/", **params)
-    config = Rails.configuration.x
-    url = "#{config.panel_protocol}://#{active_subdomain.slug}.#{config.panel_domain}#{path}"
-    params.any? ? "#{url}?#{params.to_query}" : url
+    PlatformUrl.build("#{active_subdomain.slug}.#{Rails.configuration.x.panel_domain}", path, **params)
   end
 
   private
