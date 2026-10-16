@@ -1,0 +1,28 @@
+<%# The person's own security pages, at the admin host and on every brand's subdomain. They
+    open before the terms and the MFA setup, so they have no menu, only the way back (D-597). %>
+<% content_for :content do %>
+  <header class="border-b border-line bg-white">
+    <div class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <% if Current.area == :panel %>
+        <%= link_to root_path, class: "no-underline hover:no-underline" do %>
+          <% if (logo = brand_image_path(header_brand, :logo_light)) %>
+            <%= image_tag logo, alt: header_brand_name, class: "h-8 w-auto" %>
+          <% else %>
+            <span class="text-lg font-extrabold text-brand-primary"><%= header_brand_name %></span>
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= link_to admin_root_path, class: "no-underline hover:no-underline" do %>
+          <%= render "shared/catalyst_wordmark", dark: false %>
+        <% end %>
+      <% end %>
+      <%= link_to t("account.back"), root_path, class: "text-sm font-semibold" %>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <%= render "shared/flash" %>
+    <%= yield %>
+  </main>
+<% end %>
+<%= render template: Current.area == :panel ? "layouts/panel" : "layouts/application" %>

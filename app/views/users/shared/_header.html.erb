@@ -1,12 +1,12 @@
 <% if Current.area == :panel %>
   <% if (login_image = brand_image_path(Current.brand, :login_image)) %>
-    <%= image_tag login_image, alt: "", class: "mx-auto mb-6 max-h-40 w-auto rounded-2xl" %>
+    <%= image_tag login_image, alt: "", class: "mx-auto mb-6 max-h-40 w-auto rounded-xl" %>
   <% end %>
   <%= render "panel/home/brand_logo", brand: Current.brand %>
-  <p class="mt-6 text-center text-lg">
+  <p class="mt-5 text-center text-base text-ink-soft">
     <%= Current.brand.login_welcome_text.presence || t(".default_welcome") %>
   </p>
 <% else %>
-  <p class="text-center text-2xl font-bold text-brand-primary">CatalystHR</p>
-  <p class="mt-2 text-center text-lg"><%= t(".admin_subtitle") %></p>
+  <p class="text-center"><%= render "shared/catalyst_wordmark", dark: false %></p>
+  <p class="mt-3 text-center text-base text-ink-soft"><%= t(".admin_subtitle") %></p>
 <% end %>

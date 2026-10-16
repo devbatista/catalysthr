@@ -12,6 +12,21 @@ module BrandingHelper
     replacing_brand&.colors(fallback: Current.brand) || Current.brand.colors
   end
 
+  # The sidebar has the secondary color as background (D-597). RN-01-031 checks only the
+  # primary's contrast, so the text takes whichever of white and ink reads better.
+  SIDEBAR_DARK_TEXT = "#0C1E33"
+
+  def sidebar_text_color(secondary = theme_colors[:secondary])
+    white = Brand::WHITE
+    ColorContrast.ratio(secondary, white) >= ColorContrast.ratio(secondary, SIDEBAR_DARK_TEXT) ? white : SIDEBAR_DARK_TEXT
+  end
+
+  # On a dark sidebar, the logo for dark backgrounds; on a light one, the other.
+  def sidebar_logo_path
+    kind = sidebar_text_color == Brand::WHITE ? :logo_dark : :logo_light
+    brand_image_path(header_brand, kind)
+  end
+
   def header_brand
     replacing_brand || Current.brand
   end

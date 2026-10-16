@@ -1,4 +1,6 @@
 <% content_for :title, t(".title") %>
 
-<h1 class="text-3xl font-bold"><%= t(".title") %></h1>
-<p class="mt-2 text-lg"><%= t(".subtitle") %></p>
+<main class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 py-12 text-center">
+  <%= render "shared/catalyst_wordmark", dark: false %>
+  <p class="mt-6 text-lg text-ink-soft"><%= t(".subtitle") %></p>
+</main>

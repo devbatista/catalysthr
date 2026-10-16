@@ -1,5 +1,8 @@
-<h1 class="text-2xl font-bold"><%= t(".greeting", name: current_user.first_name) %></h1>
+<h1 class="page-title"><%= t(".greeting", name: current_user.first_name) %></h1>
 <% if Current.company %>
-  <p class="mt-2"><%= t(".company", company: Current.company.name) %></p>
+  <p class="page-subtitle"><%= t(".company", company: Current.company.name) %></p>
 <% end %>
-<p class="mt-2"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>
+
+<div class="card card-body mt-6 max-w-2xl">
+  <p class="text-sm text-ink-soft"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>
+</div>

@@ -1,13 +1,13 @@
 <%# Fixed on every page of an impersonate (RN-02-083), with the simulation notice (RN-02-084) %>
 <% impersonation = Current.impersonation %>
 <div class="sticky top-0 z-50 bg-amber-400 text-slate-900" role="status">
-  <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-6 py-2 text-sm">
+  <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm sm:px-7">
     <p>
       <strong><%= t("impersonations.banner.seeing_as", name: impersonation.impersonated_user.name) %></strong>
       <span class="ml-2"><%= t("impersonations.banner.until", time: l(impersonation.expires_at.in_time_zone, format: "%H:%M")) %></span>
     </p>
     <%= button_to t("impersonations.banner.stop"), impersonation_path, method: :delete,
-      class: "rounded-lg bg-slate-900 px-3 py-1 font-semibold text-white" %>
+      class: "btn btn-sm cursor-pointer bg-ink text-white hover:bg-ink/90" %>
   </div>
   <% if Simulation.active? || flash[:simulation] %>
     <p class="bg-amber-200 px-6 py-1 text-center text-sm font-semibold"><%= t("impersonations.banner.simulation") %></p>

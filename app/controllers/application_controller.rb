@@ -170,7 +170,7 @@ class ApplicationController < ActionController::Base
     return if FeatureFlags.enabled?(FeatureFlags::SIGN_IN)
 
     if request.path == "/"
-      render "#{Current.area}/home/coming_soon"
+      render "#{Current.area}/home/coming_soon", layout: area_layout
     else
       head :not_found
     end

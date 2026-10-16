@@ -3,21 +3,21 @@
     <%= render "users/shared/sign_out" %>
   <% else %>
   <% unless controller_name == "sessions" %>
-    <%= link_to t(".sign_in"), new_user_session_path, class: "underline" %>
+    <%= link_to t(".sign_in"), new_user_session_path, class: "link-button" %>
   <% end %>
   <% unless controller_name == "passwords" %>
-    <%= link_to t(".forgot_password"), new_user_password_path, class: "underline" %>
+    <%= link_to t(".forgot_password"), new_user_password_path, class: "link-button" %>
   <% end %>
   <% unless controller_name == "unlocks" %>
-    <%= link_to t(".unlock"), new_user_unlock_path, class: "underline" %>
+    <%= link_to t(".unlock"), new_user_unlock_path, class: "link-button" %>
   <% end %>
   <% end %>
 
   <% brand = Current.brand %>
   <% if brand && (brand.support_email.present? || brand.support_phone.present?) %>
-    <p class="mt-4 text-center">
+    <p class="mt-4 text-center text-ink-soft">
       <%= t(".support") %>
-      <%= mail_to brand.support_email, class: "underline" if brand.support_email.present? %>
+      <%= mail_to brand.support_email, class: "link-button" if brand.support_email.present? %>
       <%= brand.support_phone %>
     </p>
   <% end %>

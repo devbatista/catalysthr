@@ -1,6 +1,6 @@
 <%# Without a logo, the commercial name appears as text (RN-01-032, P-01-02) %>
 <% if (path = brand_image_path(brand, :logo_light)) %>
-  <%= image_tag path, alt: brand.commercial_name, class: "mx-auto h-16 w-auto" %>
+  <%= image_tag path, alt: brand.commercial_name, class: "mx-auto h-14 w-auto" %>
 <% else %>
-  <p class="text-center text-2xl font-bold text-brand-primary"><%= brand.commercial_name %></p>
+  <p class="text-center text-2xl font-extrabold tracking-tight text-brand-primary"><%= brand.commercial_name %></p>
 <% end %>

@@ -16,7 +16,6 @@ pt-BR:
     impersonations:
       new:
         title: "Ver como um usuário"
-        back: "Voltar"
         instructions: "Abre o painel da marca como a pessoa vê, por no máximo 30 minutos. Leituras funcionam normalmente; o que você salvar é simulado e desfeito. Dados sensíveis aparecem mascarados."
         cpf: "CPF da pessoa"
         search: "Buscar"
@@ -29,7 +28,6 @@ pt-BR:
     brands:
       index:
         title: "Marcas"
-        back: "Voltar"
         query: "Nome comercial"
         search: "Buscar"
         edit: "Editar"
@@ -50,7 +48,6 @@ pt-BR:
     support_accesses:
       new:
         title: "Entrar numa empresa direta"
-        back: "Voltar"
         instructions: "Para implantação e atendimento. Você entra como consultor, com todos os módulos que a empresa contratou, e o que salvar vale de verdade. Empresas de parceiros só podem ser vistas pelo impersonate."
         query: "Nome ou CNPJ da empresa"
         search: "Buscar"
@@ -61,7 +58,6 @@ pt-BR:
     users:
       index:
         title: "Contato e verificação em duas etapas"
-        back: "Voltar"
         instructions: "Para quem também tem acesso a outra organização: nesses casos, só o suporte corrige o contato ou redefine a verificação em duas etapas. Sempre informe o motivo ou o número do chamado."
         cpf: "CPF da pessoa"
         search: "Buscar"
@@ -108,6 +104,50 @@ pt-BR:
         cancel: "Cancelar"
       create:
         published: "Versão %{version} publicada."
+  # The sidebar's menus (D-597)
+  navigation:
+    menu: "Menu"
+    close_menu: "Fechar o menu"
+    soon: "Em breve"
+    admin_subtitle: "Administração CatalystHR"
+    groups:
+      operation: "Operação"
+      personnel: "Departamento pessoal"
+      channels: "Canais e integrações"
+      company: "Empresa"
+      partner: "Parceiro"
+      firm: "Escritório contábil"
+      areas: "Outras áreas"
+      platform: "Plataforma"
+      support: "Suporte"
+      legal: "Jurídico"
+    home: "Painel"
+    users: "Usuários"
+    accounting_firm: "Escritório contábil"
+    companies: "Empresas"
+    portfolio: "Carteira"
+    team: "Equipe"
+    brand: "Marca e domínio"
+    firm_companies: "Empresas atendidas"
+    partner_area: "Painel do parceiro"
+    firm_area: "Área do escritório"
+    brands: "Marcas"
+    admin_users: "Usuários"
+    impersonate: "Ver como um usuário"
+    support_access: "Entrar numa empresa direta"
+    legal_documents: "Termos e política"
+    features:
+      employees: "Colaboradores"
+      admissions: "Admissões"
+      documents: "Documentos"
+      requests: "Solicitações"
+      assistant: "Assistente IA"
+      payroll: "Folha de pagamento"
+      time_tracking: "Ponto eletrônico"
+      performance: "Avaliação de desempenho"
+      whatsapp: "WhatsApp"
+      accounting_integrations: "Integrações contábeis"
+      process_templates: "Modelos de processo"
   panel:
     home:
       coming_soon:
@@ -122,10 +162,11 @@ pt-BR:
       header:
         company: "Empresa"
         switch: "Trocar"
-        users: "Usuários"
-        portfolio: "Carteira"
-        firm: "Escritório"
-        accounting_firm: "Escritório contábil"
+        choose: "Escolha a empresa"
+      coming_soon:
+        badge: "Em breve"
+        text: "Esta área ainda está em construção e será liberada numa próxima versão."
+        back: "Voltar para o início"
     companies:
       index:
         title: "Escolha a empresa"
@@ -235,8 +276,9 @@ pt-BR:
     firm_panel:
       home:
         index:
-          team: "Equipe"
           subtitle: "Empresas de %{brand} atendidas pelo escritório."
+          company: "Empresa"
+          actions: "Ações"
           empty: "Nenhuma empresa desta marca por aqui."
           pending: "pede para ligar o escritório"
           accept: "Aceitar"
@@ -264,11 +306,11 @@ pt-BR:
         index:
           title: "Carteira"
           subtitle: "Empresas clientes de %{partner} que você atende."
-          team: "Equipe"
+          company: "Empresa"
+          actions: "Ações"
           empty: "Nenhuma empresa por aqui ainda."
           hr_admins: "RH da empresa"
           enter: "Entrar"
-          brand: "Marca"
           company_brand: "Marca da empresa"
       team_members:
         roles_fields:

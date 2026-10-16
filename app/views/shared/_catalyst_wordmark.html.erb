@@ -1,0 +1,6 @@
+<%# CatalystHR's symbol and wordmark, from the visual identity. The dark version goes on dark
+    backgrounds. Only where the CatalystHR brand itself shows: the admin area. %>
+<span class="inline-flex items-center gap-2">
+  <%= image_tag dark ? "catalyst-symbol-dark.png" : "catalyst-symbol.png", alt: "", class: "h-6 w-auto" %>
+  <span class="font-wordmark text-[17px] font-extrabold italic <%= dark ? "text-white" : "text-[#085087]" %>">CATALYST<span class="<%= dark ? "text-catalyst-teal" : "text-[#1E9C86]" %>">HR</span></span>
+</span>

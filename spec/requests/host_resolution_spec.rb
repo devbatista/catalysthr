@@ -22,7 +22,7 @@ RSpec.describe "Host resolution", type: :request do
     host! "aurora.painel.catalysthr.com.br"
     get "/"
 
-    expect(response.body).to include('<p class="text-center text-2xl font-bold text-brand-primary">Aurora RH</p>')
+    expect(response.body).to match(%r{<p class="[^"]*text-brand-primary[^"]*">Aurora RH</p>})
   end
 
   it "opens the admin area at the admin host (D-156)" do

@@ -1,9 +1,27 @@
-<%# Signed-in pages of the brand's panel: header with the company selector, then the page %>
+<%# Signed-in pages of the brand's panel: the menu of the area the person is in, the company
+    in the top bar, then the page (D-597) %>
+<% content_for :sidebar_brand do %>
+  <%= link_to root_path, class: "flex items-center gap-2 no-underline hover:no-underline" do %>
+    <% if (logo = sidebar_logo_path) %>
+      <%= image_tag logo, alt: header_brand_name, class: "h-8 w-auto max-w-[180px] object-contain" %>
+    <% else %>
+      <span class="text-lg leading-tight font-extrabold text-brand-on-secondary"><%= header_brand_name %></span>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% content_for :topbar do %>
+  <%= render "panel/shared/company_switcher" %>
+<% end %>
+
 <% content_for :content do %>
-  <%= render "panel/shared/header" %>
-  <main class="mx-auto max-w-4xl px-6 py-8">
-    <%= render "shared/flash" %>
+  <% subtitle = case panel_context
+     when :partner then partner_membership&.organization&.name
+     when :firm then firm_membership&.organization&.name
+     else Current.company&.name
+     end %>
+  <%= render layout: "shared/app_shell", locals: { navigation: panel_navigation, subtitle: subtitle } do %>
     <%= yield %>
-  </main>
+  <% end %>
 <% end %>
 <%= render template: "layouts/panel" %>

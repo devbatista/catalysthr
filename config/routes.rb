@@ -86,6 +86,10 @@ Rails.application.routes.draw do
         end
       end
 
+      # The prototype's modules not built yet (D-597).
+      get "soon/:feature", to: "coming_soon#show", as: :coming_soon,
+        constraints: { feature: Regexp.union(ComingSoon::COMPANY_FEATURES) }
+
       # The company's accounting firm (RN-02-070 to RN-02-073).
       resource :accounting_firm, path: "accounting-firm", only: %i[show new create destroy] do
         post :resend_invitation, path: "resend-invitation"
@@ -112,6 +116,8 @@ Rails.application.routes.draw do
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do
         root "home#index"
+        get "soon/:feature", to: "coming_soon#show", as: :coming_soon,
+          constraints: { feature: Regexp.union(ComingSoon::PARTNER_FEATURES) }
         resource :brand, only: %i[edit update] do
           resource :email_domain, only: %i[create destroy], path: "email-domain", controller: "brand_email_domains"
         end

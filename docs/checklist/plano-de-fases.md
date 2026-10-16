@@ -81,7 +81,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3. Em 4 PRs (D-594):
     - [x] 2a. Ponto único de consulta entre empresas (RN-01-011), edição da marca sem imagens no painel do parceiro e no admin, com os modos `alongside` e `replace` (RN-01-034, RN-01-035), e a troca de slug pelo superadmin (PR #28)
     - [x] 2b. AWS de arquivos (D-595, passo a passo em `aws-arquivos.md`), Active Storage no S3 com prefixo por empresa (RN-01-014) e as imagens da marca, servidas só pela aplicação (PR #29)
-    - [ ] 2c. Domínio de e-mail da marca no SES, com o job de verificação (RN-01-040, CA-01-008, CA-01-009)
+    - [x] 2c. Domínio de e-mail da marca no SES, com o job de verificação (RN-01-040, CA-01-008, CA-01-009) (PR #30)
     - [ ] 2d. Transferência de empresa (RN-01-050 a RN-01-053)
 - [x] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação. Feita nos 5 blocos abaixo; WhatsApp e passkeys ficam para depois
 - [x] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`. Feita nos 5 blocos abaixo; os escopos U, E e K e as regras de cada módulo entram com a spec 04 em diante, e os módulos contratados com a spec 19
@@ -99,6 +99,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - O cadastro de empresa cliente pelo parceiro (P-03-14) entra com a spec 19, junto com o plano e os módulos (RN-19-081)
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
+- [ ] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
   - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04

@@ -1,22 +1,22 @@
 <% brand = Current.brand %>
 
-<main class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
-  <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+<main class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-12 sm:px-6">
+  <div class="card p-6 shadow-sm sm:p-8">
     <%= render "brand_logo", brand: brand %>
 
-    <p class="mt-6 text-center text-lg">
+    <p class="mt-5 text-center text-base text-ink-soft">
       <%= brand.login_welcome_text.presence || t(".default_welcome") %>
     </p>
 
-    <p class="mt-6 rounded-lg bg-brand-primary px-4 py-3 text-center font-semibold text-white">
+    <p class="mt-6 rounded-lg bg-brand-primary px-4 py-3 text-center text-sm font-bold text-white">
       <%= t(".coming_soon") %>
     </p>
   </div>
 
   <% if brand.support_email.present? || brand.support_phone.present? %>
-    <p class="mt-6 text-center text-sm">
+    <p class="mt-6 text-center text-sm text-ink-soft">
       <%= t(".support") %>
-      <%= mail_to brand.support_email, class: "underline" if brand.support_email.present? %>
+      <%= mail_to brand.support_email, class: "link-button" if brand.support_email.present? %>
       <%= brand.support_phone %>
     </p>
   <% end %>
