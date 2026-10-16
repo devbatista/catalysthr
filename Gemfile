@@ -75,6 +75,9 @@ gem "rack-attack", "~> 6.8"
 # Support sees the system as a user, read only with simulated writes (RN-02-080, P-02-37)
 gem "pretender", "~> 1.0"
 
+# Files on S3 in São Paulo, encrypted with SSE-KMS by the bucket (spec 20, RN-01-014, D-595)
+gem "aws-sdk-s3", "~> 1.0", require: false
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

@@ -5,8 +5,8 @@
 <p class="mt-1 text-sm text-slate-500"><%= t("admin.brands.index.owners.#{@brand.owner_type.underscore}") %>: <%= @brand.owner.name %></p>
 <%= render "shared/flash" %>
 
-<%= form_with model: @brand, url: admin_brand_path(@brand), method: :patch, class: "mt-6 max-w-2xl space-y-4" do |form| %>
-  <%= render "shared/brands/fields", form: form, brand: @brand, fields: BrandEditing::FIELDS %>
+<%= form_with model: @brand, url: admin_brand_path(@brand), method: :patch, multipart: true, class: "mt-6 max-w-2xl space-y-4" do |form| %>
+  <%= render "shared/brands/fields", form: form, brand: @brand, fields: BrandEditing::FIELDS, images: Brands::AttachImages::KINDS %>
   <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
 <% end %>
 

@@ -21,7 +21,7 @@ module Admin
 
     def update
       authorize! :update, @brand
-      if @brand.update(brand_params)
+      if save_brand(@brand)
         redirect_to edit_admin_brand_path(@brand), notice: t("brands.updated")
       else
         render :edit, status: :unprocessable_content

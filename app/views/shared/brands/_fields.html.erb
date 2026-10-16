@@ -59,6 +59,30 @@
   </div>
 <% end %>
 
+<% if local_assigns[:images].present? %>
+  <fieldset>
+    <legend class="text-sm font-medium"><%= t("brands.fields.images") %></legend>
+    <p class="text-xs text-slate-500"><%= t("brands.fields.images_hint") %></p>
+    <div class="mt-2 space-y-3">
+      <% images.each do |kind| %>
+        <div class="rounded-lg bg-white p-3 ring-1 ring-slate-200">
+          <%= label_tag "brand_images_#{kind}", t("brands.fields.#{kind}"), class: "block text-sm font-medium" %>
+          <p class="text-xs text-slate-500"><%= t("brands.fields.#{kind}_hint") %></p>
+          <% if brand.persisted? && brand.public_send(kind).attached? %>
+            <p class="mt-1 text-xs"><%= t("brands.fields.current_file", name: brand.public_send(kind).filename) %></p>
+            <label class="mt-1 flex items-center gap-2 text-xs">
+              <%= check_box_tag "remove_images[]", kind, false, id: "remove_images_#{kind}" %>
+              <%= t("brands.fields.remove") %>
+            </label>
+          <% end %>
+          <%= file_field_tag "brand_images[#{kind}]", id: "brand_images_#{kind}", accept: Brand::IMAGE_TYPES.join(","),
+            class: "mt-2 block w-full text-sm" %>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+<% end %>
+
 <% if local_assigns[:company] %>
   <fieldset>
     <legend class="text-sm font-medium"><%= t("brands.fields.display_mode") %></legend>

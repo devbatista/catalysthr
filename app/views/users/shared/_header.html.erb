@@ -1,4 +1,7 @@
 <% if Current.area == :panel %>
+  <% if (login_image = brand_image_path(Current.brand, :login_image)) %>
+    <%= image_tag login_image, alt: "", class: "mx-auto mb-6 max-h-40 w-auto rounded-2xl" %>
+  <% end %>
   <%= render "panel/home/brand_logo", brand: Current.brand %>
   <p class="mt-6 text-center text-lg">
     <%= Current.brand.login_welcome_text.presence || t(".default_welcome") %>

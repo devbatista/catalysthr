@@ -12,13 +12,13 @@
 
     <%= tag.link rel: "manifest", href: manifest_path %>
     <%# The brand's icons, or the CatalystHR ones when it has none (D-159, RN-01-035) %>
-    <% if Current.brand.favicon.attached? %>
-      <%= tag.link rel: "icon", href: url_for(Current.brand.favicon) %>
+    <% if (favicon = brand_image_path(Current.brand, :favicon)) %>
+      <%= tag.link rel: "icon", href: favicon %>
     <% else %>
       <link rel="icon" href="/favicon.ico" sizes="48x48">
       <link rel="icon" href="/icon.png" type="image/png">
     <% end %>
-    <%= tag.link rel: "apple-touch-icon", href: Current.brand.pwa_icon_large.attached? ? url_for(Current.brand.pwa_icon_large) : "/apple-touch-icon.png" %>
+    <%= tag.link rel: "apple-touch-icon", href: brand_image_path(Current.brand, :pwa_icon_large) || "/apple-touch-icon.png" %>
 
     <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031) %>
     <style>

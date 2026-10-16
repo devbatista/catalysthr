@@ -61,7 +61,9 @@ RSpec.describe "Host resolution", type: :request do
 
         expect(response).to have_http_status(:moved_permanently)
         expect(response.location).to eq("http://auroragp.painel.catalysthr.com.br/colaboradores?pagina=2")
-        expect(response.headers["cache-control"]).to eq("public, max-age=#{80.days.to_i}")
+        # The change and the request may fall a second apart.
+        max_age = response.headers["cache-control"][/\Apublic, max-age=(\d+)\z/, 1].to_i
+        expect(max_age).to be_between(80.days.to_i - 1, 80.days.to_i)
       end
     end
 

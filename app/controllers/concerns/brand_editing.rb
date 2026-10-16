@@ -7,7 +7,22 @@ module BrandEditing
   private
 
   def brand_params
-    params.require(:brand).permit(*FIELDS).to_h.transform_values(&:presence)
+    params.fetch(:brand, {}).permit(*FIELDS).to_h.transform_values(&:presence)
+  end
+
+  def image_files
+    params.fetch(:brand_images, {}).permit(*Brands::AttachImages::KINDS).to_h
+  end
+
+  def image_removals
+    Array(params[:remove_images])
+  end
+
+  # Saves the fields and the images of a brand that owns a subdomain together: nothing
+  # is saved when either is invalid.
+  def save_brand(brand)
+    brand.assign_attributes(brand_params)
+    brand.valid? && Brands::AttachImages.call(brand: brand, files: image_files, removals: image_removals) && brand.save
   end
 
   def company_brand_params

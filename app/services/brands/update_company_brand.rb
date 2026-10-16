@@ -1,8 +1,8 @@
 module Brands
   # A partner's client company's own brand and how it shows after sign-in (RN-01-034,
-  # RN-01-035, D-163, D-165): the brand is created on the first save. Only the name and
-  # the colors (and the logo, with the images) apply to it: the sign-in, the subdomain,
-  # the support and the e-mail domain stay the partner's.
+  # RN-01-035, D-163, D-165): the brand is created on the first save. Only the name, the
+  # colors and the logo apply to it: the sign-in, the subdomain, the support and the
+  # e-mail domain stay the partner's.
   class UpdateCompanyBrand
     ATTRIBUTES = %i[commercial_name primary_color secondary_color accent_color].freeze
 
@@ -10,16 +10,21 @@ module Brands
       new(**).call
     end
 
-    def initialize(company:, attributes:, display_mode:)
+    def initialize(company:, attributes:, display_mode:, files: {}, removals: [])
       @company = company
       @attributes = attributes.to_h.symbolize_keys.slice(*ATTRIBUTES)
       @display_mode = display_mode
+      @files = files
+      @removals = removals
     end
 
     # Returns the brand; it holds the errors when it is invalid.
     def call
       brand = @company.brand || @company.build_brand
       brand.assign_attributes(@attributes.transform_values(&:presence))
+      return brand unless brand.valid? &&
+        AttachImages.call(brand: brand, files: @files, removals: @removals, kinds: AttachImages::COMPANY_KINDS)
+
       Brand.transaction do
         brand.save!
         @company.update!(brand_display_mode: @display_mode) if @display_mode.present?
