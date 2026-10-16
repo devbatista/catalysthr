@@ -8,9 +8,10 @@ module Users
     PENDING_VALIDITY = 5.minutes
     DEVICE_COOKIE = :trusted_device
 
-    # Signing out during an impersonate ends it (RN-02-083).
+    # Signing out during an impersonate or a support entry ends it (RN-02-083, D-581).
     real_writes_during_impersonation :destroy
     before_action :leave_impersonation, only: :destroy, if: :impersonating?
+    before_action :leave_support_access, only: :destroy, if: -> { Current.support_access }
 
     def create
       user = User.find_for_database_authentication(login: sign_in_params[:login])
@@ -51,6 +52,11 @@ module Users
     def leave_impersonation
       end_impersonation(Current.impersonation, :manual)
       redirect_to PlatformUrl.admin("/impersonations/new"), allow_other_host: true, notice: t("impersonations.stopped")
+    end
+
+    def leave_support_access
+      end_support_access(Current.support_access, :manual)
+      redirect_to PlatformUrl.admin("/support-accesses/new"), allow_other_host: true, notice: t("support_accesses.stopped")
     end
 
     def reject(user)

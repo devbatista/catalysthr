@@ -33,6 +33,13 @@ Rails.application.routes.draw do
       root "home#index"
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
       resources :impersonations, only: %i[new create]
+      resources :support_accesses, only: %i[new create], path: "support-accesses"
+      resources :users, only: :index do
+        member do
+          patch :contact
+          post :reset_mfa, path: "reset-mfa"
+        end
+      end
     end
   end
 
@@ -45,6 +52,10 @@ Rails.application.routes.draw do
       # RN-02-083).
       get "impersonation", to: "impersonations#show", as: :impersonation
       delete "impersonation", to: "impersonations#destroy", as: nil
+
+      # The support's entry into a direct company (D-581).
+      get "support-access", to: "support_accesses#show", as: :support_access
+      delete "support-access", to: "support_accesses#destroy", as: nil
 
       # Invitation link and first access (RN-02-011, RN-02-014).
       get "invitation", to: "invitations#show", as: :invitation

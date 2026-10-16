@@ -5,7 +5,7 @@
 class Ability
   include CanCan::Ability
 
-  def initialize(user, area:, brand: nil, company: nil)
+  def initialize(user, area:, brand: nil, company: nil, support_access: nil)
     return if user.nil?
 
     # Everyone manages the security of their own account (RN-02-042, RN-02-043, RN-02-053).
@@ -21,7 +21,7 @@ class Ability
       can :accept, :legal_documents
       merge(PartnerAbility.new(user, brand.owner)) if brand&.owner.is_a?(Partner)
       merge(AccountingFirmAbility.new(user, brand)) if brand
-      merge(CompanyAbility.new(user, company)) if company
+      merge(CompanyAbility.new(user, company, support_access: support_access)) if company
     end
   end
 end

@@ -83,13 +83,13 @@ module Panel
 
     def reset_mfa
       authorize! membership_permission(:reset_mfa), @membership
-      Users::ResetMfa.call(membership: @membership, by: current_user, brand: Current.brand)
+      Users::ResetMfa.call(user: @membership.user, membership: @membership, by: current_user, brand: Current.brand)
       redirect_to url_for(action: :show, id: @membership), notice: t("panel.memberships.reset_mfa.reset")
     end
 
     def contact
       authorize! membership_permission(:correct_contact), @membership
-      Users::CorrectContact.call(membership: @membership, email: params[:email].presence,
+      Users::CorrectContact.call(user: @membership.user, membership: @membership, email: params[:email].presence,
         mobile_phone: params[:mobile_phone].presence, by: current_user, brand: Current.brand)
       redirect_to url_for(action: :show, id: @membership), notice: t("panel.memberships.contact.corrected")
     rescue ActiveRecord::RecordInvalid => error

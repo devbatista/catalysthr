@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -256,6 +256,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100000) do
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
+  create_table "support_accesses", force: :cascade do |t|
+    t.bigint "support_user_id", null: false
+    t.bigint "company_id", null: false
+    t.bigint "brand_id", null: false
+    t.text "reason", null: false
+    t.string "token_digest"
+    t.datetime "token_expires_at", null: false
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.string "ended_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_support_accesses_on_brand_id"
+    t.index ["company_id"], name: "index_support_accesses_on_company_id"
+    t.index ["support_user_id"], name: "index_support_accesses_on_support_user_id"
+    t.index ["token_digest"], name: "index_support_accesses_on_token_digest", unique: true
+  end
+
   create_table "trusted_devices", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "token_digest", null: false
@@ -359,6 +377,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100000) do
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "partner_membership_companies", "companies"
   add_foreign_key "partner_membership_companies", "memberships"
+  add_foreign_key "support_accesses", "brands"
+  add_foreign_key "support_accesses", "companies"
+  add_foreign_key "support_accesses", "users", column: "support_user_id"
   add_foreign_key "trusted_devices", "users"
   add_foreign_key "user_sessions", "brands"
   add_foreign_key "user_sessions", "users"

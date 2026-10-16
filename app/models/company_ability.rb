@@ -1,7 +1,8 @@
 # What a person may do inside the current company (spec 03, section 4.2), by the roles
 # of the membership there. A consultant of the company's partner, with the company
 # assigned, acts as an HR analyst of all units (D-192), with the modules the partner
-# released (P-03-06). Listings use hash conditions, so accessible_by works
+# released (P-03-06). The support entering a direct company acts the same way, with
+# every module the company contracted (D-581, D-593). Listings use hash conditions, so accessible_by works
 # (RN-03-002). A read-only membership (D-090) manages nothing (RN-03-004).
 class CompanyAbility
   include CanCan::Ability
@@ -12,17 +13,21 @@ class CompanyAbility
   INVITABLE_ROLES = %w[hr_admin hr_analyst manager].freeze
   HR_ROLES = %w[hr_admin hr_analyst].freeze
 
-  def initialize(user, company)
+  def initialize(user, company, support_access: nil)
     membership = Membership.with_access.find_by(user: user, organization: company)
     roles = membership.nil? || membership.read_only? ? [] : membership.roles
     # The HR analyst's rules come with the modules (spec 04 onwards, RN-03-005); the
-    # consultant gets them through this role.
-    roles += [ "hr_analyst" ] if consultant_of?(user, company)
+    # consultant and the support get them through this role.
+    roles += [ "hr_analyst" ] if consultant_of?(user, company) || support_at?(user, company, support_access)
 
     hr_admin(user, company) if roles.include?("hr_admin")
   end
 
   private
+
+  def support_at?(user, company, support_access)
+    support_access&.running? && support_access.company_id == company.id && support_access.support_user_id == user.id
+  end
 
   def consultant_of?(user, company)
     return false if company.direct?

@@ -127,10 +127,12 @@ class User < ApplicationRecord
     codes
   end
 
-  # By the person, or by who administers the profile (RN-02-044), which is a reset.
-  def disable_mfa!(by: self)
+  # By the person, or by who administers the profile or the support (RN-02-044, D-582),
+  # which is a reset.
+  def disable_mfa!(by: self, reason: nil)
     update!(otp_secret: nil, otp_required_for_login: false, otp_backup_codes: nil, consumed_timestep: nil)
-    AccessEvent.record!(kind: "auth", action: by == self ? "mfa_disabled" : "mfa_reset", user: by, subject: self)
+    AccessEvent.record!(kind: "auth", action: by == self ? "mfa_disabled" : "mfa_reset", user: by, subject: self,
+      metadata: { reason: reason }.compact)
   end
 
   # New codes replace the previous ones (RN-02-042, P-02-20).
