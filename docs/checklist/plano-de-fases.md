@@ -1,6 +1,6 @@
 # Plano de fases — CatalystHR (checklist)
 
-> Última atualização: 2026-10-14
+> Última atualização: 2026-10-15
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
@@ -79,8 +79,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
   - [x] Parte 1: base do tenant (`acts_as_tenant` com `require_tenant`, jobs com a empresa), parceiros, empresas, marcas, subdomínios com reservados e redirecionamento de 90 dias, resolução pelo host com cache, tema por variáveis CSS com contraste mínimo, manifest do PWA, CNPJ numérico e alfanumérico, Flipper instalado
   - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3
-- [ ] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação
-- [ ] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`
+- [x] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação. Feita nos 5 blocos abaixo; WhatsApp e passkeys ficam para depois
+- [x] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`. Feita nos 5 blocos abaixo; os escopos U, E e K e as regras de cada módulo entram com a spec 04 em diante, e os módulos contratados com a spec 19
   - Specs 02 e 03 no mesmo ciclo, em 5 PRs (2026-10-15):
     - [x] 1. Base: criptografia de campos, `User`, `Membership`, login por marca, senha, bloqueio, recuperação por e-mail, Rack::Attack, esqueleto da `Ability` e teste de cobertura de autorização (PR #19)
     - [x] 2. Motor de convites (e-mail e link), primeiro acesso, `consents`, `legal_documents` (D-577, D-578) e a tela de publicação dos termos da CatalystHR (D-579). As telas de convidar entram no bloco 4 e na spec 19, e o QR code entra com elas (PR #20)
@@ -91,13 +91,13 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
     - [x] 4b-1. Painel do parceiro (D-583): `PartnerAbility`, equipe (D-584), empresas e módulos do consultor (D-052, P-03-06), consultor como RHN com escopo T nas empresas atribuídas (D-192) e o PA vendo, alterando, removendo e convidando RHAs das empresas clientes (P-03-35, D-585) (PR #24)
     - [x] 4b-2. Escritório contábil (D-583): cadastro e ligação pelo RHA com aceite ou recusa (RN-02-070, P-02-29, D-588 a D-590), equipe (RN-02-071, D-584), login por marca (D-586), desligamento (RN-02-073) e `AccountingFirmAbility` (PR #25)
     - [x] 5a. Impersonate em simulação (RN-02-080 a RN-02-088), o ponto único de dado sensível com a máscara (RN-05-001, D-592) e os eventos `impersonation` (D-591) (PR #26)
-    - [ ] 5b. Entrada do suporte nas empresas diretas pelo admin (D-581), com todos os módulos contratados (D-593), e as telas do suporte para corrigir contato e redefinir MFA (D-582)
+    - [x] 5b. Entrada do suporte nas empresas diretas pelo admin (D-581), com todos os módulos contratados (D-593), e as telas do suporte para corrigir contato e redefinir MFA (D-582) (PR #27)
   - O cadastro de empresa cliente pelo parceiro (P-03-14) entra com a spec 19, junto com o plano e os módulos (RN-19-081)
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
-  - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). Faltam a confirmação de senha para ver dado sensível (RN-02-052) e o mascaramento
+  - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências
 - [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
