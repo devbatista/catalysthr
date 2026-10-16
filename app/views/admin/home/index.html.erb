@@ -8,6 +8,12 @@
 <% if can?(:create, ImpersonationSession) %>
   <p class="mt-6"><%= link_to t(".impersonate"), new_admin_impersonation_path, class: "underline" %></p>
 <% end %>
+<% if can?(:create, SupportAccess) %>
+  <p class="mt-2"><%= link_to t(".support_access"), new_admin_support_access_path, class: "underline" %></p>
+<% end %>
+<% if can?(:read, User.new) %>
+  <p class="mt-2"><%= link_to t(".users"), admin_users_path, class: "underline" %></p>
+<% end %>
 
 <% if can?(:read, LegalDocument) %>
   <p class="mt-6"><%= link_to t(".legal_documents"), admin_legal_documents_path, class: "underline" %></p>

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
 
   # The session key of the running impersonate (RN-02-080).
   IMPERSONATION_KEY = "impersonation_session_id"
+  # The session key of the support's running entry into a direct company (D-581).
+  SUPPORT_ACCESS_KEY = "support_access_id"
 
   layout :area_layout
 
@@ -15,6 +17,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_host_context
   before_action :check_impersonation
+  before_action :check_support_access
   # Who made each change in the trail (RN-05-010). PaperTrail no longer adds it by itself.
   before_action :set_paper_trail_whodunnit
   before_action :require_sign_in_feature
@@ -59,7 +62,8 @@ class ApplicationController < ActionController::Base
   end
 
   def current_ability
-    @current_ability ||= Ability.new(current_user, area: Current.area, brand: Current.brand, company: Current.company)
+    @current_ability ||= Ability.new(current_user, area: Current.area, brand: Current.brand, company: Current.company,
+      support_access: Current.support_access)
   end
 
   private
@@ -118,6 +122,32 @@ class ApplicationController < ActionController::Base
     sign_out(:user)
   end
 
+  # The support's entry holds while it is open, at its brand, for the same person, whose
+  # own session ends after 30 minutes of inactivity (D-581, RN-02-050).
+  def check_support_access
+    access_id = session[SUPPORT_ACCESS_KEY]
+    return if access_id.nil?
+
+    access = SupportAccess.find_by(id: access_id)
+    if access&.running? && access.brand_id == Current.brand&.id && current_user&.id == access.support_user_id
+      Current.support_access = access
+    else
+      end_support_access(access, :timeout)
+      redirect_to PlatformUrl.admin("/support-accesses/new"), allow_other_host: true, alert: t("support_accesses.ended")
+    end
+  end
+
+  def end_support_access(access, reason)
+    if access&.running?
+      access.end!(reason)
+      AccessEvent.record!(kind: "auth", action: "support_access_ended", user: access.support_user, subject: access,
+        company: access.company, metadata: { reason: reason.to_s })
+    end
+    Current.support_access = nil
+    session.delete(SUPPORT_ACCESS_KEY)
+    sign_out(:user)
+  end
+
   def simulated_request?
     impersonating? && !request.get? && !request.head? && !real_write_action_names.include?(action_name)
   end
@@ -149,6 +179,8 @@ class ApplicationController < ActionController::Base
   # A session only lasts while the person may still sign in at this address: a
   # suspended or removed membership ends access at the next request (RN-02-063).
   def check_area_access
+    # The support has no membership; its entry into the company is the access (D-581).
+    return if Current.support_access
     return if User.allowed_at(area: Current.area, brand: Current.brand).exists?(current_user.id)
 
     sign_out(current_user)

@@ -19,16 +19,21 @@ module Panel
     private
 
     # Nothing else opens until the terms and the policy in force are accepted
-    # (RN-02-014, RN-02-017). An impersonate does not accept them for the person.
+    # (RN-02-014, RN-02-017). An impersonate does not accept them for the person, and the
+    # support works under the CatalystHR contract (D-581).
     def require_legal_acceptance
-      return if impersonating?
+      return if impersonating? || Current.support_access
 
       redirect_to legal_acceptance_path if LegalAcceptance.new(current_user, Current.brand).pending?
     end
 
     # Companies of the brand where the person operates (RN-01-005, RN-01-011).
     def authorized_companies
-      @authorized_companies ||= Company.operable_by(current_user, brand: Current.brand).order(:name)
+      @authorized_companies ||= if Current.support_access
+        Company.where(id: Current.support_access.company_id)
+      else
+        Company.operable_by(current_user, brand: Current.brand).order(:name)
+      end
     end
 
     # The membership in the partner that owns the subdomain, if any.

@@ -10,6 +10,8 @@ pt-BR:
         subtitle: "As telas da área administrativa estão em construção."
         legal_documents: "Termos de uso e política de privacidade da CatalystHR"
         impersonate: "Ver como um usuário (impersonate)"
+        support_access: "Entrar numa empresa direta (suporte)"
+        users: "Contato e verificação em duas etapas de usuários"
     impersonations:
       new:
         title: "Ver como um usuário"
@@ -23,6 +25,48 @@ pt-BR:
         reason: "Motivo ou número do chamado"
         rules: "O início, cada página e o fim ficam registrados com o seu nome, o da pessoa e o motivo."
         submit: "Abrir como esta pessoa"
+    support_accesses:
+      new:
+        title: "Entrar numa empresa direta"
+        back: "Voltar"
+        instructions: "Para implantação e atendimento. Você entra como consultor, com todos os módulos que a empresa contratou, e o que salvar vale de verdade. Empresas de parceiros só podem ser vistas pelo impersonate."
+        query: "Nome ou CNPJ da empresa"
+        search: "Buscar"
+        not_found: "Nenhuma empresa direta encontrada."
+        reason: "Motivo ou número do chamado"
+        rules: "A entrada e a saída ficam registradas com o seu nome e o motivo. A sessão termina depois de 30 minutos sem uso."
+        submit: "Entrar na empresa"
+    users:
+      index:
+        title: "Contato e verificação em duas etapas"
+        back: "Voltar"
+        instructions: "Para quem também tem acesso a outra organização: nesses casos, só o suporte corrige o contato ou redefine a verificação em duas etapas. Sempre informe o motivo ou o número do chamado."
+        cpf: "CPF da pessoa"
+        search: "Buscar"
+        not_found: "Nenhum usuário de cliente com este CPF."
+        email: "E-mail"
+        mobile_phone: "Celular"
+        mfa: "Verificação em duas etapas"
+        mfa_on: "Ativada"
+        mfa_off: "Desativada"
+        status: "Conta"
+        statuses:
+          active: "Ativa"
+          deactivated: "Desativada"
+        accesses: "Acessos"
+        contact: "Corrigir o contato"
+        contact_hint: "A pessoa recupera a senha sozinha depois. O e-mail antigo recebe um aviso, sem o endereço novo."
+        reason: "Motivo ou número do chamado"
+        contact_submit: "Salvar o contato"
+        reset_mfa: "Redefinir a verificação em duas etapas"
+        reset_mfa_confirm: "Redefinir a verificação em duas etapas desta pessoa? As sessões dela serão encerradas."
+        reset_mfa_submit: "Redefinir"
+      contact:
+        reason_required: "Informe o motivo ou o número do chamado."
+        corrected: "Contato corrigido. A pessoa já pode recuperar o acesso."
+      reset_mfa:
+        reason_required: "Informe o motivo ou o número do chamado."
+        reset: "Verificação em duas etapas redefinida. A pessoa foi avisada e ativa de novo no próximo acesso."
     legal_documents:
       kinds:
         terms: "Termos de uso"
@@ -427,6 +471,13 @@ pt-BR:
       until: "até %{time}"
       stop: "Encerrar"
       simulation: "Simulação: nada foi salvo"
+  support_accesses:
+    ended: "A entrada na empresa terminou."
+    stopped: "Saída da empresa registrada."
+    banner:
+      title: "Suporte CatalystHR em %{company}"
+      real: "O que você salvar vale de verdade."
+      stop: "Sair da empresa"
   accounting_firm_mailer:
     link_requested:
       subject: "%{company} pediu para ligar o seu escritório contábil"
@@ -471,7 +522,12 @@ pt-BR:
       accounting_firm: "Escritório contábil"
       accounting_firm_company: "Ligação com o escritório"
       impersonation_session: "Acesso como usuário"
+      support_access: "Entrada do suporte"
     attributes:
+      support_access:
+        reason: "Motivo"
+        company: "Empresa"
+        support_user: "Quem entra"
       impersonation_session:
         reason: "Motivo"
         brand: "Marca"
@@ -561,6 +617,12 @@ pt-BR:
             enabled_modules:
               not_releasable: "incluem um módulo que não existe"
               role_without_modules: "só valem para o RH analista e o consultor"
+        support_access:
+          attributes:
+            support_user:
+              not_support: "precisa ser do suporte CatalystHR"
+            company:
+              not_direct: "não é uma empresa direta com endereço de acesso; empresas de parceiros só pelo impersonate"
         impersonation_session:
           attributes:
             impersonator:

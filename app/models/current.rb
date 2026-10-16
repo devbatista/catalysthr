@@ -15,4 +15,6 @@ class Current < ActiveSupport::CurrentAttributes
   # The running impersonate session, if any (RN-02-080), and whether this request's
   # writes are being simulated (RN-02-084).
   attribute :impersonation, :simulation
+  # The support's running entry into a direct company, if any (D-581).
+  attribute :support_access
 end

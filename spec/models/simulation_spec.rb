@@ -17,7 +17,7 @@ RSpec.describe Simulation do
 
     described_class.run do
       Invitations::DeliverJob.perform_later(membership, "token")
-      AccountMailer.mfa_reset(membership).deliver_later
+      AccountMailer.mfa_reset(membership.user, membership).deliver_later
     end
 
     expect(enqueued_jobs).to be_empty
@@ -26,7 +26,7 @@ RSpec.describe Simulation do
   it "does not deliver e-mails sent right away" do
     membership = create(:membership)
 
-    described_class.run { AccountMailer.mfa_reset(membership).deliver_now }
+    described_class.run { AccountMailer.mfa_reset(membership.user, membership).deliver_now }
 
     expect(ActionMailer::Base.deliveries).to be_empty
   end

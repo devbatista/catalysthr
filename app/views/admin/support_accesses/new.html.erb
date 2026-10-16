@@ -1,0 +1,34 @@
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), admin_root_path, class: "underline" %></p>
+<h1 class="mt-4 text-3xl font-bold"><%= t(".title") %></h1>
+<p class="mt-2"><%= t(".instructions") %></p>
+<%= render "shared/flash" %>
+
+<%= form_with url: new_admin_support_access_path, method: :get, class: "mt-6 flex max-w-xl items-end gap-3" do |form| %>
+  <div class="flex-1">
+    <%= form.label :q, t(".query"), class: "block text-sm font-medium" %>
+    <%= form.text_field :q, value: @query, autocomplete: "off", required: true, minlength: 3,
+      class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+  </div>
+  <%= form.submit t(".search"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+<% end %>
+
+<% if @query.length >= 3 && @companies.empty? %>
+  <p class="mt-6"><%= t(".not_found") %></p>
+<% end %>
+
+<% @companies.each do |company| %>
+  <section class="mt-6 max-w-xl rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+    <h2 class="text-lg font-semibold"><%= company.name %></h2>
+    <p class="text-sm"><%= Cnpj.format(company.cnpj) %></p>
+    <%= form_with url: admin_support_accesses_path, method: :post, class: "mt-4 space-y-3" do |form| %>
+      <%= hidden_field_tag :company_id, company.id, id: "company_#{company.id}" %>
+      <%= label_tag "reason_#{company.id}", t(".reason"), class: "block text-sm font-medium" %>
+      <%= text_area_tag :reason, nil, id: "reason_#{company.id}", required: true, maxlength: 500, rows: 2,
+        class: "block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      <p class="text-xs text-slate-500"><%= t(".rules") %></p>
+      <%= form.submit t(".submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
+    <% end %>
+  </section>
+<% end %>
