@@ -17,7 +17,7 @@ module Panel
       def update
         authorize! (@brand.new_record? ? :create : :update), @brand
         @brand = Brands::UpdateCompanyBrand.call(company: @company, attributes: company_brand_params,
-          display_mode: display_mode_param(@company))
+          display_mode: display_mode_param(@company), files: image_files, removals: image_removals)
         if @brand.errors.empty?
           redirect_to edit_partner_company_brand_path(@company), notice: t("brands.updated")
         else

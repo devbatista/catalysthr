@@ -26,10 +26,16 @@ module Panel
     private
 
     def icons(brand)
-      large = brand.pwa_icon_large.attached? ? url_for(brand.pwa_icon_large) : "/icon.png"
-      icons = [ { src: large, sizes: "512x512", type: "image/png" } ]
-      icons << { src: url_for(brand.pwa_icon_small), sizes: "192x192", type: "image/png" } if brand.pwa_icon_small.attached?
-      icons
+      icons = [ icon(brand, :pwa_icon_large, "512x512") || { src: "/icon.png", sizes: "512x512", type: "image/png" } ]
+      icons << icon(brand, :pwa_icon_small, "192x192")
+      icons.compact
+    end
+
+    def icon(brand, kind, sizes)
+      attachment = brand.public_send(kind)
+      return unless attachment.attached?
+
+      { src: helpers.brand_image_path(brand, kind), sizes: sizes, type: attachment.blob.content_type }
     end
   end
 end

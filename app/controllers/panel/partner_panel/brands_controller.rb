@@ -12,7 +12,7 @@ module Panel
 
       def update
         authorize! :update, @brand
-        if @brand.update(brand_params)
+        if save_brand(@brand)
           redirect_to edit_partner_brand_path, notice: t("brands.updated")
         else
           render :edit, status: :unprocessable_content

@@ -5,7 +5,8 @@
 <p class="mt-2 text-sm"><%= t("brands.edit.company_hint") %></p>
 <%= render "shared/flash" %>
 
-<%= form_with model: @brand, url: admin_company_brand_path(@company), method: :patch, class: "mt-6 max-w-2xl space-y-4" do |form| %>
-  <%= render "shared/brands/fields", form: form, brand: @brand, fields: Brands::UpdateCompanyBrand::ATTRIBUTES, company: @company %>
+<%= form_with model: @brand, url: admin_company_brand_path(@company), method: :patch, multipart: true, class: "mt-6 max-w-2xl space-y-4" do |form| %>
+  <%= render "shared/brands/fields", form: form, brand: @brand, fields: Brands::UpdateCompanyBrand::ATTRIBUTES,
+    images: Brands::AttachImages::COMPANY_KINDS, company: @company %>
   <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
 <% end %>

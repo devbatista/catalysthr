@@ -55,6 +55,9 @@ Rails.application.routes.draw do
     scope module: :panel do
       root "home#index"
       get "manifest.webmanifest", to: "manifests#show", as: :manifest
+      # The brand's images (RN-01-014, RN-01-030).
+      get "brand-assets/company/:kind", to: "brand_assets#company", as: :company_brand_asset
+      get "brand-assets/:kind", to: "brand_assets#show", as: :brand_asset
 
       # The subdomain's side of the impersonate: the one-time link and ending it (RN-02-082,
       # RN-02-083).

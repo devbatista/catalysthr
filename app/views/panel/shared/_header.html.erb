@@ -1,7 +1,14 @@
 <header class="border-b border-slate-200 bg-white">
   <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-    <%= link_to root_path, class: "font-bold text-brand-primary" do %>
-      <%= header_brand_name %>
+    <%= link_to root_path, class: "flex items-center gap-3 font-bold text-brand-primary" do %>
+      <% if (logo = brand_image_path(header_brand, :logo_light)) %>
+        <%= image_tag logo, alt: header_brand_name, class: "h-8 w-auto" %>
+      <% else %>
+        <%= header_brand_name %>
+      <% end %>
+      <% if (company_logo = alongside_company_logo_path) %>
+        <%= image_tag company_logo, alt: Current.company.brand.commercial_name, class: "h-8 w-auto" %>
+      <% end %>
     <% end %>
 
     <% if authorized_companies.many? %>

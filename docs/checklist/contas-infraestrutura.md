@@ -60,7 +60,7 @@
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 
 - [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)
-- [ ] **[Claude]** S3 `catalysthr-arquivos` (nome a confirmar): privado, bloqueio de acesso público, SSE-KMS com S3 Bucket Key, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
+- [ ] **[Claude]** S3 `catalysthr-files` (nome confirmado em 2026-10-16, D-595): privado, bloqueio de acesso público, SSE-KMS com S3 Bucket Key, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
 - [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS com S3 Bucket Key, regra de ciclo de vida que apaga aos 35 dias (D-502)
 - [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES
 

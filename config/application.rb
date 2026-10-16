@@ -57,6 +57,9 @@ module CatalystHr
     # Port of the links, only when it is not the protocol's default (development).
     config.x.public_port = ENV["PUBLIC_PORT"].presence
     config.middleware.use HostResolver
+    # Files are only served by the application's own controllers, after checking who
+    # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.
+    config.active_storage.draw_routes = false
 
     # Request limits per IP (RN-02-032, config/initializers/rack_attack.rb).
     config.middleware.use Rack::Attack
