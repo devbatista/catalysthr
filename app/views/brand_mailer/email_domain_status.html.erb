@@ -1,0 +1,3 @@
+<p><%= t(".greeting", name: @user.first_name) %></p>
+<p><%= t(@verified ? ".verified" : ".failed", domain: @brand.email_domain, brand: @brand.commercial_name) %></p>
+<p><%= link_to t(".action"), @link %></p>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_120200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -115,6 +115,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_110000) do
     t.string "support_phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email_domain"
+    t.string "email_domain_status"
+    t.jsonb "email_domain_records", default: [], null: false
+    t.datetime "email_domain_checked_at"
+    t.bigint "email_domain_registered_by_id"
+    t.index ["email_domain"], name: "index_brands_on_email_domain", unique: true
+    t.index ["email_domain_status"], name: "index_brands_on_email_domain_status"
     t.index ["owner_type", "owner_id"], name: "index_brands_on_owner", unique: true
   end
 
@@ -365,6 +372,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_110000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brand_subdomains", "brands"
+  add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"

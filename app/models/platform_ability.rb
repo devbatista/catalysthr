@@ -22,6 +22,8 @@ class PlatformAbility
       can :update_brand_display_mode, Company
     end
     can :change_slug, Brand if user.superadmin?
+    # The e-mail domain of the brands that own a subdomain (spec 01, section 6, D-596).
+    can :manage_email_domain, Brand, &:email_domain_configurable? if user.superadmin? || user.support?
     # Contact and MFA of the clients' users who also reach another organization (D-582).
     # Never of the CatalystHR team.
     can %i[read correct_contact reset_mfa], User, platform_role: nil if user.superadmin? || user.support?

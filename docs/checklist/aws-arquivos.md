@@ -164,7 +164,7 @@ Console: **IAM → Usuários → Criar usuário**.
 ```
 
 - [x] Aba **Credenciais de segurança → Criar chave de acesso** (criada em 2026-10-16, descrição `railway-producao`) → caso de uso **Aplicação em execução fora da AWS** (o nome exato pode variar um pouco no console). Deixe a página aberta: o segredo só aparece uma vez.
-- [ ] As permissões de SES e SNS entram no bloco 2c. Os usuários de backup e de restauração entram com o pg_dump diário (spec 20).
+- [ ] As permissões de SES entram no bloco 2c (passo 6). As de SNS entram com os eventos de e-mail (spec 15). Os usuários de backup e de restauração entram com o pg_dump diário (spec 20).
 
 ## 4. Variáveis no Railway
 
@@ -180,3 +180,56 @@ Depois de salvar, feche a página da chave na AWS. Se o segredo vazar, desative 
 ## 5. Conferência
 
 - [ ] Me avise "feito". Eu confiro só o que dá para ver sem segredo: que o deploy sobe e que o upload de um logo de teste funciona em produção, depois do merge do 2b, fora do horário de pico.
+
+## 6. Permissões de e-mail (bloco 2c da spec 01)
+
+Decisão: D-596. Regras: RN-01-040, RN-20-051. O bloco 2c liga o envio pelo SES em produção e cadastra os domínios de e-mail das marcas. O usuário `catalysthr-app` precisa de uma segunda política em linha. Faça isto **antes do merge do 2c**: sem a política, os e-mails de produção falham.
+
+Console: **IAM → Usuários do IAM → `catalysthr-app` → Permissões → Adicionar permissões → Criar política em linha → JSON**, nome `catalysthr-app-email`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EnviarEmail",
+      "Effect": "Allow",
+      "Action": ["ses:SendEmail", "ses:SendRawEmail"],
+      "Resource": [
+        "arn:aws:ses:sa-east-1:464986173446:identity/*",
+        "arn:aws:ses:sa-east-1:464986173446:configuration-set/catalysthr-padrao"
+      ]
+    },
+    {
+      "Sid": "DominiosDasMarcas",
+      "Effect": "Allow",
+      "Action": [
+        "ses:CreateEmailIdentity",
+        "ses:GetEmailIdentity",
+        "ses:DeleteEmailIdentity",
+        "ses:PutEmailIdentityMailFromAttributes"
+      ],
+      "Resource": [
+        "arn:aws:ses:sa-east-1:464986173446:identity/*",
+        "arn:aws:ses:sa-east-1:464986173446:configuration-set/catalysthr-padrao"
+      ]
+    },
+    {
+      "Sid": "ProtegerDominioDaPlataforma",
+      "Effect": "Deny",
+      "Action": [
+        "ses:CreateEmailIdentity",
+        "ses:DeleteEmailIdentity",
+        "ses:PutEmailIdentityMailFromAttributes"
+      ],
+      "Resource": "arn:aws:ses:sa-east-1:464986173446:identity/catalysthr.com.br"
+    }
+  ]
+}
+```
+
+O `Deny` impede que a aplicação apague ou altere a identidade `catalysthr.com.br`, mesmo com um defeito no código. O código também recusa esse domínio.
+
+- [ ] Política em linha `catalysthr-app-email` criada.
+- [ ] Nenhuma variável nova no Railway: a região, as chaves e o configuration set (`catalysthr-padrao`, padrão no código) já bastam.
+- [ ] Enquanto o SES estiver no sandbox, só saem e-mails para endereços verificados no SES. Os outros falham e aparecem no Sentry.

@@ -3,8 +3,10 @@
 module FeatureFlags
   # Sign-in, recovery and unlock (spec 02). Off until the release in production.
   SIGN_IN = :sign_in
+  # The brand's e-mail domain in SES (spec 01, RN-01-040, D-596).
+  BRAND_EMAIL_DOMAIN = :brand_email_domain
 
-  ALL = [ SIGN_IN ].freeze
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN ].freeze
 
   module_function
 

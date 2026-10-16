@@ -78,6 +78,10 @@ gem "pretender", "~> 1.0"
 # Files on S3 in São Paulo, encrypted with SSE-KMS by the bucket (spec 20, RN-01-014, D-595)
 gem "aws-sdk-s3", "~> 1.0", require: false
 
+# E-mail through SES in São Paulo, and the brands' e-mail domains (spec 15, RN-01-040, D-596)
+gem "aws-actionmailer-ses", "~> 1.2"
+gem "aws-sdk-sesv2", "~> 1.112"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
