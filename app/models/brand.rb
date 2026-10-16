@@ -38,12 +38,18 @@ class Brand < ApplicationRecord
 
   after_commit :expire_host_lookup
 
-  def colors
-    {
-      primary: primary_color || DEFAULT_COLORS[:primary],
-      secondary: secondary_color || DEFAULT_COLORS[:secondary],
-      accent: accent_color || DEFAULT_COLORS[:accent]
-    }
+  # Empty colors come from the fallback brand and then from CatalystHR (RN-01-032,
+  # RN-01-035).
+  def colors(fallback: nil)
+    DEFAULT_COLORS.to_h do |name, default|
+      [ name, public_send(:"#{name}_color") || fallback&.public_send(:"#{name}_color") || default ]
+    end
+  end
+
+  # Whether the brand owns a subdomain: a partner's or a direct company's (D-154, D-121).
+  # A partner's company with its own brand uses the partner's (RN-01-034).
+  def owns_subdomain?
+    owner.is_a?(Partner) || (owner.is_a?(Company) && owner.direct?)
   end
 
   def app_name

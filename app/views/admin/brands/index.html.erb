@@ -1,0 +1,39 @@
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), admin_root_path, class: "underline" %></p>
+<h1 class="mt-4 text-3xl font-bold"><%= t(".title") %></h1>
+<%= render "shared/flash" %>
+
+<%= form_with url: admin_brands_path, method: :get, class: "mt-6 flex max-w-xl items-end gap-3" do |form| %>
+  <div class="flex-1">
+    <%= form.label :q, t(".query"), class: "block text-sm font-medium" %>
+    <%= form.text_field :q, value: @query, class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+  </div>
+  <%= form.submit t(".search"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+<% end %>
+
+<ul class="mt-6 space-y-3">
+  <% @brands.each do |brand| %>
+    <li class="rounded-lg bg-white px-4 py-3 ring-1 ring-slate-200">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span>
+          <span class="font-semibold"><%= brand.commercial_name %></span>
+          <span class="ml-2 text-sm text-slate-500">
+            <%= t(".owners.#{brand.owner_type.underscore}") %> · <%= brand.active_subdomain&.slug || t(".no_subdomain") %>
+          </span>
+        </span>
+        <% if can?(:update, brand) %><%= link_to t(".edit"), edit_admin_brand_path(brand), class: "text-sm underline" %><% end %>
+      </div>
+      <% if brand.owner.is_a?(Partner) && brand.owner.companies.any? %>
+        <ul class="mt-2 space-y-1 pl-4 text-sm">
+          <% brand.owner.companies.order(:name).each do |company| %>
+            <li class="flex items-center justify-between gap-3">
+              <span><%= company.name %> <span class="text-slate-500">(<%= t("brands.display_modes.#{company.brand_display_mode}.name") %>)</span></span>
+              <%= link_to t(".company_brand"), edit_admin_company_brand_path(company), class: "underline" %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

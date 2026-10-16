@@ -33,6 +33,14 @@ Rails.application.routes.draw do
       root "home#index"
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
       resources :impersonations, only: %i[new create]
+      # Brands (spec 01, section 6): partners' and direct companies', and the client
+      # companies' own brands with their display mode.
+      resources :brands, only: %i[index edit update] do
+        patch :slug, on: :member
+      end
+      resources :companies, only: [] do
+        resource :brand, only: %i[edit update], controller: "company_brands"
+      end
       resources :support_accesses, only: %i[new create], path: "support-accesses"
       resources :users, only: :index do
         member do
@@ -100,6 +108,7 @@ Rails.application.routes.draw do
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do
         root "home#index"
+        resource :brand, only: %i[edit update]
         resources :team_members, path: "team" do
           member do
             post :resend_invitation, path: "resend-invitation"
@@ -108,6 +117,7 @@ Rails.application.routes.draw do
           end
         end
         resources :companies, only: [] do
+          resource :brand, only: %i[edit update], controller: "company_brands"
           resources :hr_admins, path: "hr-admins", controller: "company_hr_admins" do
             post :resend_invitation, path: "resend-invitation", on: :member
           end

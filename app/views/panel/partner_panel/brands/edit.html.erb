@@ -1,0 +1,8 @@
+<p class="text-sm"><%= link_to t("brands.back_to_portfolio"), partner_root_path, class: "underline" %></p>
+<h1 class="mt-4 text-2xl font-bold"><%= t("brands.edit.partner_title") %></h1>
+<p class="mt-2 text-sm"><%= t("brands.edit.partner_hint") %></p>
+
+<%= form_with model: @brand, url: partner_brand_path, method: :patch, class: "mt-6 max-w-2xl space-y-4" do |form| %>
+  <%= render "shared/brands/fields", form: form, brand: @brand, fields: BrandEditing::FIELDS %>
+  <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+<% end %>
