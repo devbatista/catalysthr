@@ -227,6 +227,8 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-591 | O bloco 5 das specs 02 e 03 sai em dois PRs: 5a, o impersonate em simulação com a máscara e os eventos de acesso, e 5b, a entrada do suporte nas empresas diretas (D-581) e as telas do suporte para corrigir contato e redefinir MFA (D-582) | 2026-10-15 |
 | D-592 | O ponto único de leitura de dado sensível (RN-05-001) entra no bloco 5a só com a máscara do impersonate (RN-02-086). A confirmação de senha por 5 minutos (RN-02-052, D-183) e o evento de leitura (`sensitive_read`) entram com a spec 04, quando houver campo sensível na tela | 2026-10-15 |
 | D-593 | Na empresa direta, o suporte opera todos os módulos que a empresa contratou (D-581, P-03-02), porque faz implantação e atendimento (D-127). Não há quem libere módulos para ele, como o administrador do parceiro faz com o consultor (P-03-06) | 2026-10-15 |
+| D-594 | A parte 2 da spec 01 sai em quatro PRs: 2a, o ponto único de consulta entre empresas (RN-01-011) e a edição da marca sem imagens, com os modos, a troca de slug e o job que libera slugs; 2b, o S3 com prefixo por empresa e URLs assinadas (RN-01-014) e as imagens da marca; 2c, o domínio de e-mail no SES (RN-01-040); 2d, a transferência de empresa (RN-01-050 a RN-01-053) | 2026-10-16 |
+| D-595 | Os recursos da AWS para arquivos (chaves KMS, buckets `catalysthr-arquivos` e `catalysthr-backups` e o usuário IAM da aplicação) são criados no bloco 2b da spec 01, pelo responsável, no console, seguindo um passo a passo, sem chaves no chat. Custo aceito: cerca de US$ 2 por mês nas chaves KMS, mais o uso do S3 | 2026-10-16 |
 
 ## Permissões (spec 03)
 

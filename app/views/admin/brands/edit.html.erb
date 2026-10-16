@@ -1,0 +1,25 @@
+<% content_for :title, @brand.commercial_name %>
+
+<p class="text-sm"><%= link_to t("admin.brands.index.title"), admin_brands_path, class: "underline" %></p>
+<h1 class="mt-4 text-3xl font-bold"><%= @brand.commercial_name %></h1>
+<p class="mt-1 text-sm text-slate-500"><%= t("admin.brands.index.owners.#{@brand.owner_type.underscore}") %>: <%= @brand.owner.name %></p>
+<%= render "shared/flash" %>
+
+<%= form_with model: @brand, url: admin_brand_path(@brand), method: :patch, class: "mt-6 max-w-2xl space-y-4" do |form| %>
+  <%= render "shared/brands/fields", form: form, brand: @brand, fields: BrandEditing::FIELDS %>
+  <%= form.submit t("brands.edit.submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>
+
+<% if can?(:change_slug, @brand) %>
+  <section class="mt-10 max-w-2xl">
+    <h2 class="text-lg font-semibold"><%= t(".slug_title") %></h2>
+    <p class="mt-1 text-sm"><%= t(".slug_current", url: @brand.active_subdomain ? @brand.panel_url : "—") %></p>
+    <p class="mt-1 text-xs text-slate-500"><%= t(".slug_hint") %></p>
+    <%= form_with url: slug_admin_brand_path(@brand), method: :patch, class: "mt-3 flex items-end gap-3",
+      data: { confirm: t(".slug_confirm") } do |form| %>
+      <%= form.text_field :slug, value: @brand.active_subdomain&.slug, required: true, pattern: "[a-z0-9-]{3,40}",
+        "aria-label": t(".slug_label"), class: "block w-64 rounded-lg border border-slate-300 px-3 py-2 font-mono" %>
+      <%= form.submit t(".slug_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+    <% end %>
+  </section>
+<% end %>

@@ -15,6 +15,13 @@ class PlatformAbility
     # Entering a direct company as a consultant (D-581, P-03-02); the superadmin only sees
     # companies by impersonate (P-03-03).
     can :create, SupportAccess if user.support?
+    # Brands of partners, direct companies and client companies, with the display mode;
+    # only the superadmin changes a slug (spec 01, section 6, P-01-17).
+    if user.superadmin? || user.support?
+      can %i[read create update], Brand
+      can :update_brand_display_mode, Company
+    end
+    can :change_slug, Brand if user.superadmin?
     # Contact and MFA of the clients' users who also reach another organization (D-582).
     # Never of the CatalystHR team.
     can %i[read correct_contact reset_mfa], User, platform_role: nil if user.superadmin? || user.support?

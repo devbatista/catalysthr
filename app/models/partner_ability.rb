@@ -20,6 +20,12 @@ class PartnerAbility
   def admin(user, partner)
     team(user, partner)
 
+    # The partner's brand and the client companies' own brands and display mode
+    # (RN-01-034, D-165, D-166; spec 01, section 6).
+    can %i[read update], Brand, owner_type: "Partner", owner_id: partner.id
+    can %i[read create update], Brand, owner_type: "Company", owner_id: partner.companies.pluck(:id)
+    can :update_brand_display_mode, Company, partner_id: partner.id
+
     # The HR administrators of the client companies: see, invite, change or remove them
     # (P-03-35, D-585). Never one's own membership (RN-03-012).
     can %i[read_hr_admin invite_hr_admin], Membership do |membership|

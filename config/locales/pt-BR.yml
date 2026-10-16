@@ -12,6 +12,7 @@ pt-BR:
         impersonate: "Ver como um usuário (impersonate)"
         support_access: "Entrar numa empresa direta (suporte)"
         users: "Contato e verificação em duas etapas de usuários"
+        brands: "Marcas"
     impersonations:
       new:
         title: "Ver como um usuário"
@@ -25,6 +26,27 @@ pt-BR:
         reason: "Motivo ou número do chamado"
         rules: "O início, cada página e o fim ficam registrados com o seu nome, o da pessoa e o motivo."
         submit: "Abrir como esta pessoa"
+    brands:
+      index:
+        title: "Marcas"
+        back: "Voltar"
+        query: "Nome comercial"
+        search: "Buscar"
+        edit: "Editar"
+        company_brand: "Marca da empresa"
+        no_subdomain: "sem endereço"
+        owners:
+          partner: "Parceiro"
+          company: "Empresa direta"
+      edit:
+        slug_title: "Endereço (slug)"
+        slug_current: "Endereço atual: %{url}"
+        slug_hint: "O endereço antigo continua redirecionando por 90 dias e depois é liberado. Os convites e os e-mails passam a usar o novo na hora."
+        slug_label: "Novo slug"
+        slug_submit: "Trocar o endereço"
+        slug_confirm: "Trocar o endereço da marca? Avise os clientes: o antigo redireciona só por 90 dias."
+      slug:
+        changed: "Endereço trocado. O antigo redireciona por 90 dias."
     support_accesses:
       new:
         title: "Entrar numa empresa direta"
@@ -246,6 +268,8 @@ pt-BR:
           empty: "Nenhuma empresa por aqui ainda."
           hr_admins: "RH da empresa"
           enter: "Entrar"
+          brand: "Marca"
+          company_brand: "Marca da empresa"
       team_members:
         roles_fields:
           modules: "Módulos do consultor"
@@ -351,7 +375,7 @@ pt-BR:
         login: "CPF ou e-mail"
         submit: "Enviar"
   account:
-    security: "Segurança"
+    security_link: "Segurança"
     back: "Voltar"
     back_to_security: "Voltar para Segurança"
     invalid_password: "Senha atual incorreta."
@@ -463,6 +487,35 @@ pt-BR:
       greeting: "Olá, %{name}."
       body: "O e-mail de acesso da sua conta em %{brand} foi alterado por quem administra o seu acesso. Este endereço não recebe mais os avisos da conta."
       not_you: "Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
+  brands:
+    updated: "Marca salva."
+    back_to_portfolio: "Voltar para a carteira"
+    edit:
+      partner_title: "Marca do parceiro"
+      partner_hint: "Vale na tela de login, no painel, no portal, no aplicativo instalado e nos e-mails. Campos vazios usam o padrão CatalystHR. O logo, o favicon e os ícones chegam em breve."
+      company_title: "Marca de %{company}"
+      company_hint: "A tela de login, o endereço, o suporte e o domínio de e-mail continuam os do parceiro. Campos vazios usam os do parceiro e, na falta deles, os da CatalystHR."
+      submit: "Salvar"
+    fields:
+      commercial_name: "Nome comercial"
+      short_name: "Nome curto do aplicativo"
+      short_name_hint: "Aparece embaixo do ícone no celular. Vazio, usa o nome comercial."
+      colors: "Cores"
+      colors_hint: "No formato #RRGGBB. A cor primária precisa de contraste de pelo menos 4,5:1 com o texto branco."
+      primary_color: "Primária"
+      secondary_color: "Secundária"
+      accent_color: "Destaque"
+      login_welcome_text: "Texto de boas-vindas da tela de login"
+      support_email: "E-mail de suporte"
+      support_phone: "Telefone de suporte"
+      display_mode: "Como a empresa aparece depois do login"
+    display_modes:
+      alongside:
+        name: "Ao lado"
+        hint: "cores, textos e suporte do parceiro, com o logo da empresa no cabeçalho"
+      replace:
+        name: "No lugar"
+        hint: "logo, cores e nome da empresa no lugar dos do parceiro, inclusive como remetente dos e-mails"
   impersonations:
     ended: "O acesso como usuário terminou."
     stopped: "Acesso como usuário encerrado."

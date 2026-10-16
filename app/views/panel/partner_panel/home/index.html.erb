@@ -1,8 +1,14 @@
 <div class="flex flex-wrap items-center justify-between gap-4">
   <h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-  <% if can?(:read, Membership.new(organization: partner_membership.organization)) %>
-    <%= link_to t(".team"), partner_team_members_path, class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
-  <% end %>
+  <span class="flex gap-2">
+    <% partner_brand = partner_membership.organization.brand %>
+    <% if partner_brand && can?(:update, partner_brand) %>
+      <%= link_to t(".brand"), edit_partner_brand_path, class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+    <% end %>
+    <% if can?(:read, Membership.new(organization: partner_membership.organization)) %>
+      <%= link_to t(".team"), partner_team_members_path, class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+    <% end %>
+  </span>
 </div>
 <p class="mt-2 text-sm"><%= t(".subtitle", partner: partner_membership.organization.name) %></p>
 
@@ -14,6 +20,9 @@
       <li class="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-white px-4 py-3 ring-1 ring-slate-200">
         <span class="font-semibold"><%= company.name %></span>
         <span class="flex items-center gap-3 text-sm">
+          <% if can?(:update_brand_display_mode, company) %>
+            <%= link_to t(".company_brand"), edit_partner_company_brand_path(company), class: "underline" %>
+          <% end %>
           <% if can?(:read_hr_admin, Membership.new(organization: company, roles: %w[hr_admin])) %>
             <%= link_to t(".hr_admins"), partner_company_hr_admins_path(company), class: "underline" %>
           <% end %>

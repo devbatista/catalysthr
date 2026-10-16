@@ -6,7 +6,7 @@
     <meta name="application-name" content="<%= Current.brand.app_name %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="<%= Current.brand.colors[:primary] %>">
+    <meta name="theme-color" content="<%= theme_colors[:primary] %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -23,9 +23,9 @@
     <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031) %>
     <style>
       :root {
-        --brand-primary: <%= Current.brand.colors[:primary] %>;
-        --brand-secondary: <%= Current.brand.colors[:secondary] %>;
-        --brand-accent: <%= Current.brand.colors[:accent] %>;
+        --brand-primary: <%= theme_colors[:primary] %>;
+        --brand-secondary: <%= theme_colors[:secondary] %>;
+        --brand-accent: <%= theme_colors[:accent] %>;
       }
     </style>
 
