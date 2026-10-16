@@ -54,6 +54,8 @@ module CatalystHr
     config.x.panel_domain = ENV.fetch("PANEL_DOMAIN", "painel.catalysthr.com.br")
     # Protocol of the links sent by e-mail; HTTPS in production (force_ssl).
     config.x.panel_protocol = ENV.fetch("PANEL_PROTOCOL", Rails.env.production? ? "https" : "http")
+    # Port of the links, only when it is not the protocol's default (development).
+    config.x.public_port = ENV["PUBLIC_PORT"].presence
     config.middleware.use HostResolver
 
     # Request limits per IP (RN-02-032, config/initializers/rack_attack.rb).

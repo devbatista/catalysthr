@@ -224,6 +224,9 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 | D-588 | Ao cadastrar o escritório contábil (D-171), o RHA informa o nome e o CNPJ do escritório e o nome, o CPF (D-173) e o e-mail ou o celular do administrador. O convite usa o motor de convites (RN-02-011), com link e QR code | 2026-10-15 |
 | D-589 | A empresa tem no máximo um escritório contábil com ligação pendente ou ativa. Para trocar, o RHA desliga o atual (RN-02-073) e liga o novo. Segue a spec 06, que fala do escritório ligado à empresa | 2026-10-15 |
 | D-590 | Quando o CNPJ do escritório já existe (P-02-29), os administradores ativos do escritório recebem um e-mail com a marca da empresa e aceitam ou recusam o pedido na área do escritório. A recusa, ou o cancelamento pelo RHA, encerra a ligação (`ended`). Os dados de administrador digitados pelo RHA não geram convite nesse caso | 2026-10-15 |
+| D-591 | O bloco 5 das specs 02 e 03 sai em dois PRs: 5a, o impersonate em simulação com a máscara e os eventos de acesso, e 5b, a entrada do suporte nas empresas diretas (D-581) e as telas do suporte para corrigir contato e redefinir MFA (D-582) | 2026-10-15 |
+| D-592 | O ponto único de leitura de dado sensível (RN-05-001) entra no bloco 5a só com a máscara do impersonate (RN-02-086). A confirmação de senha por 5 minutos (RN-02-052, D-183) e o evento de leitura (`sensitive_read`) entram com a spec 04, quando houver campo sensível na tela | 2026-10-15 |
+| D-593 | Na empresa direta, o suporte opera todos os módulos que a empresa contratou (D-581, P-03-02), porque faz implantação e atendimento (D-127). Não há quem libere módulos para ele, como o administrador do parceiro faz com o consultor (P-03-06) | 2026-10-15 |
 
 ## Permissões (spec 03)
 

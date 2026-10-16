@@ -3,6 +3,9 @@
 module Account
   class BaseController < ApplicationController
     before_action :authenticate_user!
+    # The person's password, MFA, codes and sessions never open during an impersonate
+    # (RN-02-087).
+    before_action :forbidden, if: :impersonating?
     # The MFA secret and the recovery codes must not stay in any cache.
     before_action { response.headers["Cache-Control"] = "no-store" }
 

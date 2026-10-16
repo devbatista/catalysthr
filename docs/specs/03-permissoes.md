@@ -50,7 +50,7 @@ Quando uma membership tem vários perfis (D-051), as permissões se **somam**. E
 - **Consultor (D-192):** dentro de cada empresa atribuída, age como **RHN com escopo T**, ou seja, analista de todas as unidades.
 - **Administrador do parceiro:** **não opera dentro das empresas**. Ele tem só a visão consolidada da carteira e as ações de carteira da seção 4.1: cadastrar a empresa, convidar o primeiro RHA e alterar ou remover RHAs. Para operar dentro de uma empresa, a membership dele precisa ter também o perfil de consultor, com a empresa atribuída (D-051) **[P-03-01]**.
 - **Suporte CatalystHR:**
-  - nas **empresas diretas**, age como consultor (RHN com escopo T), para fazer implantação e atendimento (D-127) **[P-03-02]**. Entra pela área administrativa, com um token de uso único que abre o subdomínio da empresa (D-581);
+  - nas **empresas diretas**, age como consultor (RHN com escopo T), para fazer implantação e atendimento (D-127) **[P-03-02]**. Entra pela área administrativa, com um token de uso único que abre o subdomínio da empresa (D-581), e opera todos os módulos contratados pela empresa (D-593);
   - nas **empresas de parceiros**, só acessa por impersonate, que é somente leitura com simulação (D-185, D-186) **[P-03-02]**.
 - **Superadmin:** nas empresas, acessa só por impersonate. Fora delas, tem acesso total à área administrativa **[P-03-03]**.
 

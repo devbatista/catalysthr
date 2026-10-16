@@ -19,8 +19,10 @@ module Panel
     private
 
     # Nothing else opens until the terms and the policy in force are accepted
-    # (RN-02-014, RN-02-017).
+    # (RN-02-014, RN-02-017). An impersonate does not accept them for the person.
     def require_legal_acceptance
+      return if impersonating?
+
       redirect_to legal_acceptance_path if LegalAcceptance.new(current_user, Current.brand).pending?
     end
 

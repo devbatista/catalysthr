@@ -9,6 +9,20 @@ pt-BR:
         greeting: "Olá, %{name}."
         subtitle: "As telas da área administrativa estão em construção."
         legal_documents: "Termos de uso e política de privacidade da CatalystHR"
+        impersonate: "Ver como um usuário (impersonate)"
+    impersonations:
+      new:
+        title: "Ver como um usuário"
+        back: "Voltar"
+        instructions: "Abre o painel da marca como a pessoa vê, por no máximo 30 minutos. Leituras funcionam normalmente; o que você salvar é simulado e desfeito. Dados sensíveis aparecem mascarados."
+        cpf: "CPF da pessoa"
+        search: "Buscar"
+        not_found: "Nenhum usuário de cliente com este CPF. A equipe CatalystHR não pode ser vista como usuário."
+        no_access: "Esta pessoa não tem acesso ativo em nenhuma marca."
+        brand: "Marca"
+        reason: "Motivo ou número do chamado"
+        rules: "O início, cada página e o fim ficam registrados com o seu nome, o da pessoa e o motivo."
+        submit: "Abrir como esta pessoa"
     legal_documents:
       kinds:
         terms: "Termos de uso"
@@ -216,6 +230,10 @@ pt-BR:
           back: "Voltar para o RH da empresa"
         show:
           back: "Voltar para o RH da empresa"
+    impersonations:
+      expired:
+        title: "Link expirado"
+        body: "Este link de acesso já foi usado ou expirou. Volte à área administrativa e abra de novo."
     invitations:
       show:
         title: "Olá, %{name}. Boas-vindas!"
@@ -401,6 +419,14 @@ pt-BR:
       greeting: "Olá, %{name}."
       body: "O e-mail de acesso da sua conta em %{brand} foi alterado por quem administra o seu acesso. Este endereço não recebe mais os avisos da conta."
       not_you: "Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
+  impersonations:
+    ended: "O acesso como usuário terminou."
+    stopped: "Acesso como usuário encerrado."
+    banner:
+      seeing_as: "Você está vendo como %{name}"
+      until: "até %{time}"
+      stop: "Encerrar"
+      simulation: "Simulação: nada foi salvo"
   accounting_firm_mailer:
     link_requested:
       subject: "%{company} pediu para ligar o seu escritório contábil"
@@ -444,7 +470,13 @@ pt-BR:
       consent: "Consentimento"
       accounting_firm: "Escritório contábil"
       accounting_firm_company: "Ligação com o escritório"
+      impersonation_session: "Acesso como usuário"
     attributes:
+      impersonation_session:
+        reason: "Motivo"
+        brand: "Marca"
+        impersonator: "Quem acessa"
+        impersonated_user: "Pessoa"
       accounting_firm:
         name: "Nome do escritório"
         cnpj: "CNPJ do escritório"
@@ -529,6 +561,12 @@ pt-BR:
             enabled_modules:
               not_releasable: "incluem um módulo que não existe"
               role_without_modules: "só valem para o RH analista e o consultor"
+        impersonation_session:
+          attributes:
+            impersonator:
+              not_allowed: "não pode ver o sistema como outro usuário"
+            impersonated_user:
+              not_reachable: "não tem acesso a esta marca ou é da equipe CatalystHR"
         accounting_firm_company:
           attributes:
             base:

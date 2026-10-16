@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -163,6 +163,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_220000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "impersonation_sessions", force: :cascade do |t|
+    t.bigint "impersonator_id", null: false
+    t.bigint "impersonated_user_id", null: false
+    t.bigint "brand_id", null: false
+    t.text "reason", null: false
+    t.string "token_digest"
+    t.datetime "token_expires_at", null: false
+    t.datetime "started_at"
+    t.datetime "expires_at"
+    t.datetime "ended_at"
+    t.string "ended_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_impersonation_sessions_on_brand_id"
+    t.index ["impersonated_user_id"], name: "index_impersonation_sessions_on_impersonated_user_id"
+    t.index ["impersonator_id"], name: "index_impersonation_sessions_on_impersonator_id"
+    t.index ["token_digest"], name: "index_impersonation_sessions_on_token_digest", unique: true
   end
 
   create_table "legal_documents", force: :cascade do |t|
@@ -331,6 +350,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_220000) do
   add_foreign_key "companies", "partners"
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"
+  add_foreign_key "impersonation_sessions", "brands"
+  add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
+  add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
   add_foreign_key "legal_documents", "brands"
   add_foreign_key "legal_documents", "users", column: "published_by_id"
   add_foreign_key "memberships", "users"

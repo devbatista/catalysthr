@@ -68,7 +68,7 @@ O CPF da pessoa é dado pessoal comum, mas fica criptografado (D-086) e é masca
 | **Impersonate** | Mascarado. Arquivos de saúde, biometria e documentos pessoais não abrem (D-187, P-02-33) |
 | **Listagens** | Telas de lista nunca mostram dado sensível. Ele só aparece no detalhe, depois da confirmação de senha **[P-05-05]** |
 
-- **RN-05-001** — A leitura de dado sensível é marcada no código por um ponto único (por exemplo, `reveal_sensitive(record, :salary)`). Esse ponto checa a permissão, pede a confirmação de senha, registra o evento de acesso e aplica a máscara do impersonate. Campo sensível exibido fora dele quebra um teste **[P-05-06]**.
+- **RN-05-001** — A leitura de dado sensível é marcada no código por um ponto único (por exemplo, `reveal_sensitive(record, :salary)`). Esse ponto checa a permissão, pede a confirmação de senha, registra o evento de acesso e aplica a máscara do impersonate. Campo sensível exibido fora dele quebra um teste **[P-05-06]**. O ponto único nasce com a máscara do impersonate; a confirmação de senha e o evento de leitura entram com a spec 04 (D-592).
 
 ## 4. Auditoria e retenção
 

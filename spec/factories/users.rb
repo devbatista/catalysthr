@@ -24,3 +24,13 @@ FactoryBot.define do
     status { "active" }
   end
 end
+
+FactoryBot.define do
+  factory :impersonation_session do
+    association :impersonator, factory: :user, platform_role: "support"
+    association :impersonated_user, factory: :user
+    brand
+    reason { "Chamado 123" }
+    token_expires_at { 2.minutes.from_now }
+  end
+end

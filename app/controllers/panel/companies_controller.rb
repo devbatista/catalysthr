@@ -2,6 +2,9 @@ module Panel
   # Choosing and switching the current company (RN-01-004, RN-01-005). Only the
   # authorized companies are listed or accepted.
   class CompaniesController < BaseController
+    # Choosing the company only changes the browser's session.
+    real_writes_during_impersonation :select
+
     def index
       authorize! :read, :panel_home
     end

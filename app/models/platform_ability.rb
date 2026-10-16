@@ -10,5 +10,7 @@ class PlatformAbility
     can :read, :admin_home
     # The CatalystHR legal texts (D-579).
     can [ :read, :create ], LegalDocument, brand_id: nil if user.superadmin?
+    # Seeing the system as a client's user (RN-02-080, D-185).
+    can :create, ImpersonationSession if user.platform_role.in?(ImpersonationSession::IMPERSONATORS)
   end
 end
