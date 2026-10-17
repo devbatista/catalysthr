@@ -1,44 +1,50 @@
-<h1 class="text-2xl font-bold"><%= t(".title") %></h1>
+<h1 class="page-title"><%= t(".title") %></h1>
 
 <% if @link.nil? %>
-  <p class="mt-4"><%= t(".none") %></p>
-  <% if can?(:link, AccountingFirmCompany.new(company: Current.company)) %>
-    <p class="mt-6"><%= link_to t(".link"), new_accounting_firm_path, class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %></p>
-  <% end %>
+  <div class="card card-body mt-6 max-w-2xl">
+    <p class="text-sm text-ink-soft"><%= t(".none") %></p>
+    <% if can?(:link, AccountingFirmCompany.new(company: Current.company)) %>
+      <p class="mt-4"><%= link_to t(".link"), new_accounting_firm_path, class: "btn btn-primary" %></p>
+    <% end %>
+  </div>
 <% else %>
   <% firm = @link.accounting_firm %>
-  <dl class="mt-6 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-    <div><dt class="font-medium"><%= t(".name") %></dt><dd><%= firm.name %></dd></div>
-    <div><dt class="font-medium"><%= t(".cnpj") %></dt><dd><%= Cnpj.format(firm.cnpj) %></dd></div>
-    <div>
-      <dt class="font-medium"><%= t(".status") %></dt>
-      <dd><%= @link.pending? ? t(".pending") : t(".active", date: l(@link.accepted_at.to_date, format: :long)) %></dd>
-    </div>
-  </dl>
+  <div class="card card-body mt-6 max-w-3xl">
+    <dl class="details-list">
+      <div><dt><%= t(".name") %></dt><dd><%= firm.name %></dd></div>
+      <div><dt><%= t(".cnpj") %></dt><dd class="font-mono"><%= Cnpj.format(firm.cnpj) %></dd></div>
+      <div>
+        <dt><%= t(".status") %></dt>
+        <dd>
+          <span class="pill <%= @link.pending? ? "pill-warn" : "pill-ok" %>"><%= @link.pending? ? t(".pending") : t(".active", date: l(@link.accepted_at.to_date, format: :long)) %></span>
+        </dd>
+      </div>
+    </dl>
+  </div>
 
   <% if @pending_admins.any? && can?(:resend_invitation, @link) %>
-    <section class="mt-8 space-y-4">
-      <p class="text-sm"><%= t(".pending_admin") %></p>
+    <section class="card card-body mt-6 max-w-3xl space-y-4">
+      <p class="text-sm text-ink-soft"><%= t(".pending_admin") %></p>
       <% @pending_admins.each do |membership| %>
         <%= form_with url: resend_invitation_accounting_firm_path, method: :post, class: "space-y-2" do |form| %>
           <%= hidden_field_tag :membership_id, membership.id, id: "resend_membership_#{membership.id}" %>
-          <p class="font-medium"><%= t(".resend", name: membership.user.name) %></p>
+          <p class="card-title"><%= t(".resend", name: membership.user.name) %></p>
           <% Membership::INVITATION_CHANNELS.each do |channel| %>
             <label class="flex items-center gap-2 text-sm">
               <%= check_box_tag "channels[]", channel, channel == "email" && membership.user.email.present?, id: "resend_#{membership.id}_#{channel}" %>
               <%= t("invitation_channels.#{channel}") %>
             </label>
           <% end %>
-          <%= form.submit t(".resend_submit"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+          <%= form.submit t(".resend_submit"), class: "btn btn-secondary" %>
         <% end %>
       <% end %>
     </section>
   <% end %>
 
   <% if can?(:unlink, @link) %>
-    <div class="mt-8">
+    <div class="mt-6">
       <%= button_to t(@link.pending? ? ".cancel" : ".unlink"), accounting_firm_path, method: :delete,
-        class: "rounded-lg px-4 py-2 font-semibold text-red-700 ring-1 ring-red-300",
+        class: "btn btn-danger",
         form: { data: { confirm: t(@link.pending? ? ".cancel_confirm" : ".unlink_confirm") } } %>
     </div>
   <% end %>

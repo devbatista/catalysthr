@@ -1,9 +1,221 @@
 @import "tailwindcss";
 
+/* Fonts of the visual identity, served by the app itself: no request to Google (D-597).
+   Licenses next to the files, in app/assets/fonts. */
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("manrope.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("jetbrains-mono.woff2") format("woff2");
+}
+
+/* Only the CatalystHR wordmark uses it */
+@font-face {
+  font-family: "Exo 2";
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url("exo-2.woff2") format("woff2");
+}
+
 /* Brand colors (spec 01, RN-01-031). The panel layout sets the variables per brand;
-   elsewhere the CatalystHR defaults apply (RN-01-032). */
+   elsewhere the CatalystHR defaults apply (RN-01-032). The sidebar uses the secondary
+   color, with its text light or dark by contrast (D-597). */
 @theme inline {
   --color-brand-primary: var(--brand-primary, #085087);
   --color-brand-secondary: var(--brand-secondary, #0A2A4A);
   --color-brand-accent: var(--brand-accent, #1E9C86);
+  --color-brand-on-secondary: var(--brand-on-secondary, #FFFFFF);
+}
+
+/* Fixed tokens of the prototype (docs/prototype/CatalystRH_visual_identity) */
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-wordmark: "Exo 2", "Manrope", sans-serif;
+
+  --color-canvas: #F4F7FA;
+  --color-ink: #0C1E33;
+  --color-ink-strong: #0A2A4A;
+  --color-ink-soft: #4A5B70;
+  --color-ink-muted: #6B7A8D;
+  --color-line: #D8E1EB;
+  --color-line-soft: #EEF2F6;
+  --color-line-strong: #C9D4E0;
+  --color-catalyst-navy: #062A4D;
+  --color-catalyst-teal: #5FD3BC;
+
+  --color-ok-bg: #E3F5F1;
+  --color-ok: #0D6B5B;
+  --color-warn-bg: #FCF1DC;
+  --color-warn: #7A4E0A;
+  --color-bad-bg: #FDE9E5;
+  --color-bad: #9E3422;
+  --color-bad-line: #E3A99C;
+  --color-info-bg: #EAF4FC;
+  --color-info: #085087;
+  --color-mute-bg: #EEF1F5;
+  --color-mute: #3E4E61;
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+
+  a {
+    @apply text-brand-primary;
+  }
+
+  a:hover {
+    @apply underline;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-primary;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    @apply size-4 shrink-0 accent-brand-accent;
+  }
+}
+
+/* Components of the prototype, used by the ERB views */
+@layer components {
+  .page-title {
+    @apply text-2xl font-extrabold tracking-tight text-ink-strong sm:text-[26px];
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-sm text-ink-soft;
+  }
+
+  .section-title {
+    @apply text-base font-extrabold text-ink-strong;
+  }
+
+  /* A link, or a button that reads as one */
+  .link-button {
+    @apply cursor-pointer font-semibold text-brand-primary hover:underline;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[10px] tracking-widest text-ink-muted uppercase;
+  }
+
+  .card {
+    @apply rounded-xl border border-line bg-white;
+  }
+
+  .card-body {
+    @apply p-5;
+  }
+
+  .card-title {
+    @apply text-sm font-extrabold text-ink-strong;
+  }
+
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-[13px] font-bold whitespace-nowrap no-underline transition-colors hover:no-underline disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply bg-brand-primary text-white hover:bg-brand-primary/90;
+  }
+
+  .btn-secondary {
+    @apply border border-line-strong bg-white text-ink-strong hover:bg-canvas;
+  }
+
+  .btn-danger {
+    @apply border border-bad-line bg-white text-bad hover:bg-bad-bg;
+  }
+
+  .btn-sm {
+    @apply rounded-md px-2.5 py-1.5 text-xs;
+  }
+
+  .btn-block {
+    @apply w-full py-3 text-sm;
+  }
+
+  .field-label {
+    @apply block text-[13px] font-semibold text-ink-strong;
+  }
+
+  .field-hint {
+    @apply mt-1 text-xs text-ink-muted;
+  }
+
+  .input {
+    @apply mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20;
+  }
+
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold whitespace-nowrap;
+  }
+
+  .pill-ok { @apply bg-ok-bg text-ok; }
+  .pill-warn { @apply bg-warn-bg text-warn; }
+  .pill-bad { @apply bg-bad-bg text-bad; }
+  .pill-info { @apply bg-info-bg text-info; }
+  .pill-mute { @apply bg-mute-bg text-mute; }
+
+  .pill-soon {
+    @apply rounded border border-dashed px-1.5 py-0.5 font-mono text-[8.5px] tracking-wider uppercase;
+  }
+
+  .alert-ok {
+    @apply rounded-lg border border-ok/20 bg-ok-bg px-4 py-3 text-sm text-ok;
+  }
+
+  .alert-bad {
+    @apply rounded-lg border border-bad-line bg-bad-bg px-4 py-3 text-sm text-bad;
+  }
+
+  .alert-info {
+    @apply rounded-lg border border-info/20 bg-info-bg px-4 py-3 text-sm text-info;
+  }
+
+  .data-table {
+    @apply w-full text-left text-[13px];
+  }
+
+  .data-table th {
+    @apply bg-canvas px-4 py-2.5 text-xs font-bold text-ink-soft;
+  }
+
+  .data-table td {
+    @apply border-t border-line-soft px-4 py-3 align-middle;
+  }
+
+  .details-list {
+    @apply grid grid-cols-1 gap-x-6 gap-y-4 text-[13px] sm:grid-cols-2;
+  }
+
+  .details-list dt {
+    @apply text-xs font-semibold text-ink-muted;
+  }
+
+  .details-list dd {
+    @apply mt-0.5 text-ink;
+  }
+
+  .nav-link {
+    @apply flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-[13.5px] font-semibold text-brand-on-secondary/85 no-underline hover:bg-brand-on-secondary/10 hover:text-brand-on-secondary hover:no-underline;
+  }
+
+  .nav-link-active {
+    @apply bg-white text-ink-strong hover:bg-white hover:text-ink-strong;
+  }
 }

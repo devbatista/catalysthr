@@ -1,11 +1,11 @@
-<h1 class="text-2xl font-bold"><%= t(".title") %></h1>
-<p class="mt-2"><%= t(".instructions") %></p>
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".instructions") %></p>
 
-<ul class="mt-6 space-y-2">
+<ul class="card mt-6 max-w-2xl divide-y divide-line-soft overflow-hidden">
   <% authorized_companies.each do |company| %>
     <li>
       <%= button_to company.name, current_company_path, params: { company_id: company.id },
-        class: "w-full rounded-lg bg-white px-4 py-3 text-left font-semibold ring-1 ring-slate-200" %>
+        class: "w-full cursor-pointer px-5 py-3.5 text-left text-sm font-bold text-ink-strong hover:bg-canvas" %>
     </li>
   <% end %>
 </ul>

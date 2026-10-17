@@ -3,7 +3,7 @@
   <%= hidden_field_tag "#{scope}[roles][]", invitable_roles.first, id: "#{scope}_role_#{invitable_roles.first}" %>
 <% else %>
   <fieldset>
-    <legend class="text-sm font-medium"><%= membership_t("roles_fields.roles") %></legend>
+    <legend class="field-label"><%= membership_t("roles_fields.roles") %></legend>
     <% invitable_roles.each do |role| %>
       <label class="mt-2 flex items-center gap-2 text-sm">
         <%= check_box_tag "#{scope}[roles][]", role, selected_roles.include?(role), id: "#{scope}_role_#{role}" %>
@@ -15,8 +15,8 @@
 
 <% if releases_modules? %>
   <fieldset>
-    <legend class="text-sm font-medium"><%= membership_t("roles_fields.modules") %></legend>
-    <p class="text-xs text-slate-500"><%= membership_t("roles_fields.modules_hint") %></p>
+    <legend class="field-label"><%= membership_t("roles_fields.modules") %></legend>
+    <p class="field-hint"><%= membership_t("roles_fields.modules_hint") %></p>
     <div class="mt-2 grid grid-cols-2 gap-2">
       <% Membership::RELEASABLE_MODULES.each do |mod| %>
         <label class="flex items-center gap-2 text-sm">
@@ -30,8 +30,8 @@
 
 <% if assignable_companies %>
   <fieldset>
-    <legend class="text-sm font-medium"><%= membership_t("roles_fields.companies") %></legend>
-    <p class="text-xs text-slate-500"><%= membership_t("roles_fields.companies_hint") %></p>
+    <legend class="field-label"><%= membership_t("roles_fields.companies") %></legend>
+    <p class="field-hint"><%= membership_t("roles_fields.companies_hint") %></p>
     <% if assignable_companies.empty? %>
       <p class="mt-2 text-sm"><%= membership_t("roles_fields.no_companies") %></p>
     <% end %>

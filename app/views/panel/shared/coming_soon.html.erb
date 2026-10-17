@@ -1,0 +1,13 @@
+<%# A module of the prototype not built yet (D-597). No date is promised. %>
+<% feature_name = t(ComingSoon.translation_key(@feature)) %>
+<% content_for :title, feature_name %>
+
+<div class="flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= feature_name %></h1>
+  <span class="pill pill-mute"><%= t(".badge") %></span>
+</div>
+
+<div class="card card-body mt-6 max-w-xl border-dashed">
+  <p class="text-sm text-ink-soft"><%= t(".text") %></p>
+  <p class="mt-4"><%= link_to t(".back"), panel_context == :partner ? partner_root_path : root_path, class: "btn btn-secondary" %></p>
+</div>

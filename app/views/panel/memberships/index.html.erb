@@ -1,25 +1,27 @@
 <div class="flex flex-wrap items-center justify-between gap-4">
-  <h1 class="text-2xl font-bold"><%= membership_t("index.title", organization: membership_organization.name) %></h1>
+  <h1 class="page-title"><%= membership_t("index.title", organization: membership_organization.name) %></h1>
   <% if can?(membership_permission(:invite), membership_collection_subject) %>
-    <%= link_to membership_t("index.invite"), url_for(action: :new), class: "rounded-lg bg-brand-primary px-4 py-2 font-semibold text-white" %>
+    <%= link_to membership_t("index.invite"), url_for(action: :new), class: "btn btn-primary" %>
   <% end %>
 </div>
 
-<table class="mt-6 w-full text-left text-sm">
-  <thead>
-    <tr class="border-b border-slate-200">
-      <th class="py-2"><%= membership_t("index.name") %></th>
-      <th class="py-2"><%= membership_t("index.roles") %></th>
-      <th class="py-2"><%= membership_t("index.status") %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @memberships.each do |membership| %>
-      <tr class="border-b border-slate-100">
-        <td class="py-2"><%= link_to membership.user.name, url_for(action: :show, id: membership), class: "underline" %></td>
-        <td class="py-2"><%= membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></td>
-        <td class="py-2"><%= t("membership_statuses.#{membership.status}") %></td>
+<div class="card mt-6 overflow-x-auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= membership_t("index.name") %></th>
+        <th><%= membership_t("index.roles") %></th>
+        <th><%= membership_t("index.status") %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @memberships.each do |membership| %>
+        <tr>
+          <td><%= link_to membership.user.name, url_for(action: :show, id: membership), class: "link-button" %></td>
+          <td class="text-ink-soft"><%= membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></td>
+          <td><%= membership_status_pill(membership.status) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

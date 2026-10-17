@@ -1,0 +1,17 @@
+<%# Signed-in pages of the CatalystHR admin area, with CatalystHR's own colors (D-597) %>
+<% content_for :sidebar_brand do %>
+  <%= link_to admin_root_path, class: "no-underline hover:no-underline" do %>
+    <%= render "shared/catalyst_wordmark", dark: true %>
+  <% end %>
+<% end %>
+
+<% content_for :topbar do %>
+  <span class="text-sm font-bold text-ink-strong"><%= t("navigation.admin_subtitle") %></span>
+<% end %>
+
+<% content_for :content do %>
+  <%= render layout: "shared/app_shell", locals: { navigation: admin_navigation, subtitle: t("navigation.admin_subtitle") } do %>
+    <%= yield %>
+  <% end %>
+<% end %>
+<%= render template: "layouts/application" %>

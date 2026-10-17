@@ -1,0 +1,117 @@
+require "rails_helper"
+
+# D-597: the sidebar's menus, with the prototype's modules not built yet as "Em breve",
+# and the sidebar's text color by contrast with the brand's secondary color.
+RSpec.describe "Navigation", type: :request do
+  let(:partner) { create(:partner, name: "Aurora Gestão de Pessoas") }
+  let(:brand) { create(:brand, owner: partner, commercial_name: "Aurora RH") }
+  let(:padaria) { create(:company, partner: partner, name: "Padaria Pão Quente") }
+  let(:transportes) { create(:company, partner: partner, name: "Transportes Rápidos") }
+  let!(:user) { create(:user, cpf: "12345678909") }
+
+  before do
+    brand.subdomains.create!(slug: "aurora")
+    Flipper.enable(FeatureFlags::SIGN_IN)
+    publish_platform_legal_documents
+    accept_legal_documents(user, brand)
+    host! "aurora.painel.catalysthr.com.br"
+  end
+
+  def sign_in
+    post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
+  end
+
+  describe "in a company" do
+    before do
+      create(:membership, user: user, organization: padaria, roles: %w[manager])
+      sign_in
+    end
+
+    it "lists every module of the prototype, the ones not built yet as \"Em breve\"" do
+      get "/"
+
+      expect(response.body).to include("Painel", "Colaboradores", "Folha de pagamento", "Ponto eletrônico", "Integrações contábeis")
+      expect(response.body.scan(">Em breve<").size).to eq(ComingSoon::COMPANY_FEATURES.size)
+      expect(response.body).to include('href="/soon/payroll"')
+    end
+
+    it "opens the coming-soon page of a module, marked in the menu" do
+      get "/soon/time-tracking"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("<title>Ponto eletrônico</title>", "Esta área ainda está em construção")
+      expect(response.body).to match(%r{<a(?=[^>]*aria-current="page")(?=[^>]*href="/soon/time-tracking")})
+    end
+
+    it "answers 404 for a module that is not in the list" do
+      get "/soon/recruitment"
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  it "sends to the company chooser before a company is chosen" do
+    create(:membership, user: user, organization: padaria, roles: %w[manager])
+    create(:membership, user: user, organization: transportes, roles: %w[manager])
+    sign_in
+
+    get "/soon/payroll"
+
+    expect(response).to redirect_to("/companies")
+  end
+
+  describe "in the partner's panel" do
+    before do
+      create(:membership, user: user, organization: partner, roles: %w[partner_admin])
+      enable_mfa(user)
+      sign_in_with_mfa("12345678909", user)
+    end
+
+    it "shows the partner's menu and its module not built yet" do
+      get "/partner"
+
+      expect(response.body).to include("Carteira", "Equipe", "Marca e domínio", "Modelos de processo")
+      expect(response.body).not_to include("Folha de pagamento")
+
+      get "/partner/soon/process-templates"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Modelos de processo", "Em breve")
+    end
+  end
+
+  describe "the sidebar's text color (D-597)" do
+    before do
+      create(:membership, user: user, organization: padaria, roles: %w[manager])
+    end
+
+    it "is white on a dark secondary color" do
+      sign_in
+      get "/"
+
+      expect(response.body).to include("--brand-on-secondary: #FFFFFF")
+    end
+
+    it "is dark on a light secondary color" do
+      brand.update!(secondary_color: "#F4F7FA")
+      sign_in
+      get "/"
+
+      expect(response.body).to include("--brand-on-secondary: #0C1E33")
+    end
+  end
+
+  describe "in the admin area" do
+    let!(:superadmin) { enable_mfa(create(:user, cpf: "52998224725", platform_role: "superadmin")) }
+
+    it "shows the admin's menu, only with what the person may open" do
+      host! "admin.catalysthr.com.br"
+      sign_in_with_mfa("52998224725", superadmin)
+
+      get "/"
+
+      expect(response.body).to include("Marcas", "Ver como um usuário", "Termos e política")
+      # Only the support enters a direct company (D-581)
+      expect(response.body).not_to include("Entrar numa empresa direta", "Em breve")
+    end
+  end
+end

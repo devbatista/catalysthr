@@ -20,12 +20,14 @@
     <% end %>
     <%= tag.link rel: "apple-touch-icon", href: brand_image_path(Current.brand, :pwa_icon_large) || "/apple-touch-icon.png" %>
 
-    <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031) %>
+    <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031), and the
+        sidebar's text color (D-597) %>
     <style>
       :root {
         --brand-primary: <%= theme_colors[:primary] %>;
         --brand-secondary: <%= theme_colors[:secondary] %>;
         --brand-accent: <%= theme_colors[:accent] %>;
+        --brand-on-secondary: <%= sidebar_text_color %>;
       }
     </style>
 
@@ -33,7 +35,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-brand-secondary">
+  <body class="min-h-screen">
     <%= render "panel/shared/impersonation" if impersonating? %>
     <%= render "panel/shared/support_access" if Current.support_access %>
     <%= content_for?(:content) ? yield(:content) : yield %>

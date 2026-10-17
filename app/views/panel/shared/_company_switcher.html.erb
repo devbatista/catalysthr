@@ -1,0 +1,18 @@
+<%# The current company, and the selector when the person has more than one (RN-01-004, RN-01-005) %>
+<div class="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+  <% if (company_logo = alongside_company_logo_path) %>
+    <%= image_tag company_logo, alt: Current.company.brand.commercial_name, class: "h-7 w-auto" %>
+  <% end %>
+
+  <% if authorized_companies.many? %>
+    <%= form_with url: current_company_path, method: :post, class: "flex items-center gap-2" do |form| %>
+      <%= form.label :company_id, t("panel.shared.header.company"), class: "sr-only" %>
+      <%= form.select :company_id, authorized_companies.map { |company| [ company.name, company.id ] },
+        { selected: Current.company&.id, prompt: (t("panel.shared.header.choose") if Current.company.nil?) },
+        class: "rounded-lg border border-line bg-white px-3 py-1.5 text-sm font-bold text-ink-strong" %>
+      <%= form.submit t("panel.shared.header.switch"), class: "btn btn-secondary btn-sm" %>
+    <% end %>
+  <% elsif Current.company %>
+    <span class="text-sm font-bold text-ink-strong"><%= Current.company.name %></span>
+  <% end %>
+</div>

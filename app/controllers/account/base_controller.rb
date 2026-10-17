@@ -2,6 +2,8 @@
 # They open before the terms and the MFA steps, because the MFA setup is one of them.
 module Account
   class BaseController < ApplicationController
+    layout "account"
+
     before_action :authenticate_user!
     # The person's password, MFA, codes and sessions never open during an impersonate
     # (RN-02-087).

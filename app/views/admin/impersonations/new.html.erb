@@ -1,31 +1,29 @@
 <% content_for :title, t(".title") %>
 
-<p class="text-sm"><%= link_to t(".back"), admin_root_path, class: "underline" %></p>
-<h1 class="mt-4 text-3xl font-bold"><%= t(".title") %></h1>
-<p class="mt-2"><%= t(".instructions") %></p>
-<%= render "shared/flash" %>
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".instructions") %></p>
 
-<%= form_with url: new_admin_impersonation_path, method: :get, class: "mt-6 flex max-w-xl items-end gap-3" do |form| %>
+<%= form_with url: new_admin_impersonation_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
-    <%= form.label :cpf, t(".cpf"), class: "block text-sm font-medium" %>
+    <%= form.label :cpf, t(".cpf"), class: "field-label" %>
     <%= form.text_field :cpf, value: @cpf, autocomplete: "off", required: true,
-      class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+      class: "input" %>
   </div>
-  <%= form.submit t(".search"), class: "rounded-lg px-4 py-2 ring-1 ring-slate-300" %>
+  <%= form.submit t(".search"), class: "btn btn-secondary" %>
 <% end %>
 
 <% if @cpf.present? && @user.nil? %>
-  <p class="mt-6"><%= t(".not_found") %></p>
+  <p class="alert-info mt-6 max-w-xl"><%= t(".not_found") %></p>
 <% elsif @user %>
-  <section class="mt-8 max-w-xl rounded-2xl bg-white p-6 ring-1 ring-slate-200">
-    <h2 class="text-lg font-semibold"><%= @user.name %></h2>
+  <section class="card card-body mt-6 max-w-xl">
+    <h2 class="card-title"><%= @user.name %></h2>
     <% if @brands.empty? %>
-      <p class="mt-2"><%= t(".no_access") %></p>
+      <p class="mt-2 text-sm text-ink-soft"><%= t(".no_access") %></p>
     <% else %>
       <%= form_with url: admin_impersonations_path, method: :post, class: "mt-4 space-y-4" do |form| %>
         <%= hidden_field_tag :user_id, @user.id %>
         <fieldset>
-          <legend class="text-sm font-medium"><%= t(".brand") %></legend>
+          <legend class="field-label"><%= t(".brand") %></legend>
           <% @brands.each_with_index do |brand, index| %>
             <label class="mt-2 flex items-center gap-2 text-sm">
               <%= radio_button_tag :brand_id, brand.id, index.zero? %>
@@ -34,12 +32,12 @@
           <% end %>
         </fieldset>
         <div>
-          <%= label_tag :reason, t(".reason"), class: "block text-sm font-medium" %>
+          <%= label_tag :reason, t(".reason"), class: "field-label" %>
           <%= text_area_tag :reason, nil, required: true, maxlength: 500, rows: 3,
-            class: "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2" %>
+            class: "input" %>
         </div>
-        <p class="text-xs text-slate-500"><%= t(".rules") %></p>
-        <%= form.submit t(".submit"), class: "rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white" %>
+        <p class="field-hint"><%= t(".rules") %></p>
+        <%= form.submit t(".submit"), class: "btn btn-primary" %>
       <% end %>
     <% end %>
   </section>

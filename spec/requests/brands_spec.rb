@@ -80,7 +80,7 @@ RSpec.describe "Brands", type: :request do
       get "/"
 
       expect(response.body).to include("--brand-primary: #9E3422", "--brand-secondary: #112233")
-      expect(response.body).to match(%r{href="/">\s*Padaria Pão Quente})
+      expect(response.body).to match(%r{href="/">\s*<span[^>]*>Padaria Pão Quente</span>})
     end
   end
 

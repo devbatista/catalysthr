@@ -1,0 +1,56 @@
+<%# The signed-in shell (D-597): the sidebar in the brand's secondary color, the top bar and
+    the page. On small screens, the sidebar opens as a drawer (application.js). %>
+<div class="group/shell lg:flex" data-shell>
+  <button type="button" tabindex="-1" data-sidebar-toggle aria-controls="sidebar" aria-label="<%= t("navigation.close_menu") %>"
+    class="fixed inset-0 z-30 hidden cursor-default bg-ink/40 group-data-[sidebar-open=true]/shell:block lg:hidden"></button>
+
+  <aside id="sidebar" aria-label="<%= t("navigation.menu") %>"
+    class="fixed inset-y-0 left-0 z-40 flex w-[228px] -translate-x-full flex-col gap-5 overflow-y-auto bg-brand-secondary px-3 py-5 text-brand-on-secondary transition-transform group-data-[sidebar-open=true]/shell:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:translate-x-0">
+    <div class="px-1.5"><%= yield :sidebar_brand %></div>
+
+    <nav class="flex flex-col gap-5">
+      <% navigation.each do |group| %>
+        <div class="flex flex-col gap-0.5">
+          <span class="px-2.5 pb-1.5 font-mono text-[10px] tracking-widest text-brand-on-secondary/60 uppercase"><%= group.label %></span>
+          <% group.items.each do |item| %>
+            <%= link_to item.path, class: class_names("nav-link", "nav-link-active" => item.active), "aria-current": ("page" if item.active) do %>
+              <span class="flex-1"><%= item.label %></span>
+              <% if item.soon %><span class="pill-soon"><%= t("navigation.soon") %></span><% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </nav>
+
+    <div class="mt-auto border-t border-brand-on-secondary/15 pt-3">
+      <div class="flex items-center gap-2.5 px-1.5">
+        <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-on-secondary/15 text-[11px] font-extrabold" aria-hidden="true"><%= initials(current_user.name) %></span>
+        <span class="flex min-w-0 flex-col text-xs leading-snug">
+          <strong class="truncate"><%= current_user.name %></strong>
+          <% if subtitle.present? %><span class="truncate text-brand-on-secondary/70"><%= subtitle %></span><% end %>
+        </span>
+      </div>
+      <% unless impersonating? %>
+        <div class="mt-2 flex flex-col gap-0.5">
+          <%= link_to t("account.security_link"), account_root_path, class: "nav-link" %>
+          <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "nav-link cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </aside>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex min-h-14 flex-wrap items-center gap-3 border-b border-line bg-white px-4 py-2.5 sm:px-7">
+      <button type="button" class="btn btn-secondary btn-sm lg:hidden" data-sidebar-toggle aria-controls="sidebar" aria-expanded="false">
+        <svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm.75 4.5a.75.75 0 0 0 0 1.5h14.5a.75.75 0 0 0 0-1.5H2.75Z" clip-rule="evenodd"/></svg>
+        <%= t("navigation.menu") %>
+      </button>
+      <%= yield :topbar %>
+    </header>
+
+    <main class="w-full max-w-6xl px-4 py-6 sm:px-7 sm:py-8">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+  </div>
+</div>
