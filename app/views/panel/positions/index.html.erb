@@ -1,0 +1,36 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Position) %>
+    <%= link_to t(".new"), new_position_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @positions.empty? %>
+  <p class="card card-body mt-6 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th><%= t(".cbo") %></th>
+          <th><%= t(".salary_range") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @positions.each do |position| %>
+          <tr>
+            <td><%= link_to position.name, position_path(position), class: "link-button" %></td>
+            <td class="text-ink-soft"><span class="font-mono text-xs"><%= position.cbo_code %></span> <%= @occupations[position.cbo_code]&.title %></td>
+            <td class="whitespace-nowrap text-ink-soft"><%= salary_range(position) %></td>
+            <td><span class="pill <%= position.active? ? "pill-ok" : "pill-mute" %>"><%= t("positions.statuses.#{position.status}") %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -67,6 +67,8 @@ module NavigationHelper
       nav_group(:company, [
         (nav_item(t("navigation.users"), memberships_path, controller_path == "panel/memberships") if can?(:read, Membership.new(organization: company))),
         (nav_item(t("navigation.units"), units_path, controller_path == "panel/units") if can?(:read, Unit)),
+        (nav_item(t("navigation.departments"), departments_path, controller_path == "panel/departments") if can?(:read, Department)),
+        (nav_item(t("navigation.positions"), positions_path, controller_path == "panel/positions") if can?(:read, Position)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.settings"), edit_company_settings_path, controller_path == "panel/company_settings") if can?(:update_settings, company))
       ])

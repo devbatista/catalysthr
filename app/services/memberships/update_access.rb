@@ -22,6 +22,7 @@ module Memberships
         Memberships.ensure_admin_remains!(@membership, keeping_roles: @roles)
         @membership.update!(roles: @roles,
           enabled_modules: (@roles & Membership::ROLES_WITH_MODULES).any? ? @enabled_modules : [])
+        Memberships.release_company_assignments!(@membership)
       end
       record("roles_changed", before[:roles], @membership.roles)
       record("modules_changed", before[:enabled_modules], @membership.enabled_modules)

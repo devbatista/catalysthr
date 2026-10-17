@@ -49,7 +49,9 @@ module Panel
     private
 
     def load_unit
-      @unit = Unit.find(params[:id])
+      # Out of the person's scope answers 404; inside it, an action not allowed answers 403
+      # (RN-03-006).
+      @unit = Unit.accessible_by(current_ability, :read).find(params[:id])
     end
 
     def unit_params

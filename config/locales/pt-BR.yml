@@ -127,6 +127,18 @@ pt-BR:
         cancel: "Cancelar"
       create:
         published: "Versão %{version} publicada."
+  departments:
+    statuses:
+      active: "Ativo"
+      inactive: "Inativo"
+  positions:
+    statuses:
+      active: "Ativo"
+      inactive: "Inativo"
+    range:
+      between: "%{min} a %{max}"
+      from: "a partir de %{min}"
+      up_to: "até %{max}"
   units:
     statuses:
       active: "Ativa"
@@ -191,6 +203,8 @@ pt-BR:
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
     units: "Unidades"
+    departments: "Departamentos"
+    positions: "Cargos"
     settings: "Configurações"
     features:
       employees: "Colaboradores"
@@ -271,6 +285,88 @@ pt-BR:
         longitude: "Longitude"
         map_attribution: "Mapa © colaboradores do OpenStreetMap."
         submit: "Salvar unidade"
+        cancel: "Cancelar"
+    departments:
+      index:
+        title: "Departamentos"
+        subtitle: "As áreas de cada unidade, com os gestores. A equipe de um gestor inclui os subdepartamentos."
+        new: "Novo departamento"
+        new_in_unit: "Novo departamento nesta unidade"
+        empty: "Nenhum departamento por aqui ainda."
+        no_manager: "sem gestor"
+      show:
+        back: "Voltar para Departamentos"
+        unit: "Unidade"
+        parent: "Dentro de"
+        managers: "Gestores"
+        no_manager: "Sem gestor"
+        approvals: "Aprovações do gestor"
+        approvals_above: "Vão para o gestor acima: %{names}."
+        approvals_hr: "Nenhum departamento acima tem gestor: vão para o RH."
+        edit: "Editar"
+        new_child: "Novo subdepartamento"
+      new:
+        title: "Novo departamento"
+      edit:
+        title: "Editar %{name}"
+      create:
+        created: "Departamento cadastrado."
+      update:
+        updated: "Departamento salvo."
+      form:
+        name: "Nome do departamento"
+        unit: "Unidade"
+        choose_unit: "Escolha a unidade"
+        unit_hint: "A unidade não muda depois, porque os subdepartamentos ficam nela."
+        parent: "Dentro de (departamento pai)"
+        no_parent: "Nenhum (departamento principal)"
+        parent_hint: "O departamento pai precisa ser da mesma unidade."
+        managers: "Gestores"
+        managers_hint: "Qualquer um deles pode aprovar. Só aparecem pessoas com o perfil gestor ativo."
+        no_managers: "Ninguém tem o perfil gestor ainda. Convide em Usuários."
+        status: "Situação"
+        status_hint: "Um departamento só é inativado depois de inativar os subdepartamentos."
+        submit: "Salvar departamento"
+        cancel: "Cancelar"
+    positions:
+      index:
+        title: "Cargos"
+        subtitle: "Os cargos valem para todas as unidades da empresa."
+        new: "Novo cargo"
+        empty: "Nenhum cargo por aqui ainda."
+        name: "Cargo"
+        cbo: "CBO"
+        salary_range: "Faixa salarial"
+        status: "Situação"
+      show:
+        back: "Voltar para Cargos"
+        cbo: "CBO"
+        salary_range: "Faixa salarial"
+        description: "Descrição"
+        requirements: "Requisitos"
+        edit: "Editar"
+      new:
+        title: "Novo cargo"
+      edit:
+        title: "Editar %{name}"
+      create:
+        created: "Cargo cadastrado."
+      update:
+        updated: "Cargo salvo."
+      form:
+        name: "Nome do cargo"
+        cbo: "Ocupação na CBO"
+        cbo_placeholder: "Busque pelo código ou pelo nome, como 252405 ou analista de recursos humanos"
+        cbo_code: "Código"
+        cbo_none: "Nenhuma ocupação encontrada."
+        cbo_hint: "O código precisa estar na tabela oficial da CBO."
+        salary_min: "Salário mínimo da faixa (R$)"
+        salary_max: "Salário máximo da faixa (R$)"
+        salary_hint: "Opcional. Um salário fora da faixa não é bloqueado: o sistema pede uma justificativa."
+        description: "Descrição"
+        requirements: "Requisitos"
+        status: "Situação"
+        submit: "Salvar cargo"
         cancel: "Cancelar"
     company_settings:
       edit:
@@ -800,7 +896,25 @@ pt-BR:
       support_access: "Entrada do suporte"
       unit: "Unidade"
       company_transfer: "Transferência de empresa"
+      department: "Departamento"
+      department_manager: "Gestor do departamento"
+      position: "Cargo"
     attributes:
+      department:
+        name: "Nome"
+        unit: "Unidade"
+        parent: "Departamento pai"
+        status: "Situação"
+      department_manager:
+        membership: "Gestor"
+      position:
+        name: "Nome"
+        cbo_code: "CBO"
+        salary_min_cents: "Salário mínimo"
+        salary_max_cents: "Salário máximo"
+        description: "Descrição"
+        requirements: "Requisitos"
+        status: "Situação"
       unit:
         name: "Nome"
         registration_type: "Tipo de inscrição"
@@ -903,6 +1017,26 @@ pt-BR:
           attributes:
             unit:
               other_company: "precisa ser desta empresa"
+        department:
+          attributes:
+            parent:
+              other_unit: "precisa ser da mesma unidade"
+              cycle: "não pode ser o próprio departamento nem um departamento abaixo dele"
+            status:
+              active_children: "inativa só depois de inativar os subdepartamentos"
+        department_manager:
+          attributes:
+            membership:
+              not_manager: "precisa ter acesso ativo à empresa com o perfil gestor"
+        position:
+          attributes:
+            cbo_code:
+              not_official: "não está na tabela oficial da CBO"
+            salary_min_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            salary_max_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+              below_minimum: "não pode ser menor que o salário mínimo da faixa"
         brand_subdomain:
           attributes:
             slug:
