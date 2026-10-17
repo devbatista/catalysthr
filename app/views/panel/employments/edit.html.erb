@@ -1,0 +1,68 @@
+<%# The fields of the employment's kind (RN-04-053, P-04-27). The final list is checked
+    against the eSocial layout in spec 13 (P-04-15, D-602). %>
+<% content_for :title, t(".title") %>
+<% fields = Employment::DETAILS.fetch(@employment.kind) %>
+
+<p class="text-sm"><%= link_to t(".back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", kind: t("employments.kinds.#{@employment.kind}"), registration: @employment.registration_number) %></p>
+
+<%= form_with model: @employment, url: employment_path(@employment), method: :patch, class: "card card-body mt-6 max-w-3xl space-y-5" do |form| %>
+  <% if @employment.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% @employment.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @employment.clt? %>
+    <div>
+      <%= form.label :category, t(".category"), class: "field-label" %>
+      <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] }, {}, class: "input" %>
+    </div>
+  <% end %>
+
+  <% if fields.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".no_details") %></p>
+  <% else %>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <% fields.each do |key| %>
+        <% id = "employment_details_#{key}" %>
+        <% name = "employment[details][#{key}]" %>
+        <% value = @employment.detail(key) %>
+        <div class="<%= "sm:col-span-2" if key.in?(%w[contract_object internship_area school_name agent_name contractor_legal_name admission_type]) %>">
+          <% if key == "assurance_clause" %>
+            <%= hidden_field_tag name, "0", id: nil %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag name, "1", value == true, id: id %>
+              <%= t("employments.details.#{key}") %>
+            </label>
+          <% else %>
+            <%= label_tag id, t("employments.details.#{key}"), class: "field-label" %>
+            <% if Employment::OPTIONS.key?(key) %>
+              <%= select_tag name, options_for_select(Employment::OPTIONS[key].map { |option| [ t("employments.options.#{key}.#{option}"), option ] }, value),
+                include_blank: true, id: id, class: "input" %>
+            <% elsif key.in?(Employment::DATE_DETAILS) %>
+              <%= date_field_tag name, value, id: id, class: "input" %>
+            <% elsif key == "union_base_month" %>
+              <%= select_tag name, options_for_select((1..12).map { |month| [ t("date.month_names")[month], month ] }, value),
+                include_blank: true, id: id, class: "input" %>
+            <% elsif key == "contract_object" %>
+              <%= text_area_tag name, value, id: id, rows: 3, class: "input" %>
+            <% else %>
+              <%= text_field_tag name, value, id: id, autocomplete: "off",
+                class: "input #{"font-mono" if key.in?(Employment::CNPJ_DETAILS + %w[supervisor_cpf insurance_policy])}" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <p class="field-hint"><%= t(".esocial_hint") %></p>
+  <% end %>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), employee_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

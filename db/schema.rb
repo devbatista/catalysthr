@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -144,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
     t.string "employer_type"
     t.string "document"
     t.integer "read_only_period_days", default: 365, null: false
+    t.integer "next_registration_number", default: 1, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
@@ -205,6 +206,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
     t.index ["company_id"], name: "index_departments_on_company_id"
     t.index ["parent_id"], name: "index_departments_on_parent_id"
     t.index ["unit_id"], name: "index_departments_on_unit_id"
+  end
+
+  create_table "employment_revisions", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "employment_id", null: false
+    t.date "effective_on", null: false
+    t.bigint "position_id", null: false
+    t.string "cbo_code", limit: 6, null: false
+    t.text "salary_cents"
+    t.string "salary_unit", null: false
+    t.text "variable_salary_description"
+    t.bigint "unit_id", null: false
+    t.bigint "department_id"
+    t.decimal "weekly_hours", precision: 4, scale: 2
+    t.string "reason", null: false
+    t.text "justification"
+    t.bigint "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_employment_revisions_on_company_id"
+    t.index ["created_by_id"], name: "index_employment_revisions_on_created_by_id"
+    t.index ["department_id"], name: "index_employment_revisions_on_department_id"
+    t.index ["employment_id", "effective_on", "id"], name: "idx_on_employment_id_effective_on_id_45d58acd76"
+    t.index ["employment_id"], name: "index_employment_revisions_on_employment_id"
+    t.index ["position_id"], name: "index_employment_revisions_on_position_id"
+    t.index ["unit_id"], name: "index_employment_revisions_on_unit_id"
+  end
+
+  create_table "employments", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "worker_profile_id", null: false
+    t.string "kind", null: false
+    t.string "category"
+    t.string "registration_number", null: false
+    t.string "status", default: "active", null: false
+    t.date "started_on", null: false
+    t.date "ended_on"
+    t.string "termination_reason"
+    t.jsonb "details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "registration_number"], name: "index_employments_on_company_id_and_registration_number", unique: true
+    t.index ["company_id"], name: "index_employments_on_company_id"
+    t.index ["worker_profile_id"], name: "index_employments_on_worker_profile_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -464,6 +509,57 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  create_table "worker_profiles", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "membership_id", null: false
+    t.string "social_name"
+    t.string "sex"
+    t.string "race"
+    t.string "marital_status"
+    t.string "education_level"
+    t.string "birth_city"
+    t.string "birth_state"
+    t.string "birth_country"
+    t.string "nationality"
+    t.text "rg_number"
+    t.string "rg_issuer"
+    t.string "rg_state"
+    t.date "rg_issued_on"
+    t.text "ctps_number"
+    t.string "ctps_series"
+    t.string "ctps_state"
+    t.text "pis_nis"
+    t.text "voter_id"
+    t.text "cnh_number"
+    t.string "cnh_category"
+    t.date "cnh_expires_on"
+    t.text "class_registration"
+    t.string "class_registration_issuer"
+    t.text "foreign_registration"
+    t.boolean "lives_abroad", default: false, null: false
+    t.string "postal_code"
+    t.string "street"
+    t.string "street_number"
+    t.string "complement"
+    t.string "district"
+    t.string "city"
+    t.string "ibge_city_code"
+    t.string "state"
+    t.string "foreign_country"
+    t.text "foreign_address"
+    t.date "arrived_on"
+    t.string "immigration_condition"
+    t.boolean "married_to_brazilian"
+    t.boolean "brazilian_children"
+    t.text "disability"
+    t.string "personal_phone"
+    t.string "personal_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_worker_profiles_on_company_id"
+    t.index ["membership_id"], name: "index_worker_profiles_on_membership_id", unique: true
+  end
+
   add_foreign_key "access_events", "companies"
   add_foreign_key "access_events", "users"
   add_foreign_key "access_events", "users", column: "impersonator_id"
@@ -487,6 +583,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
   add_foreign_key "departments", "companies"
   add_foreign_key "departments", "departments", column: "parent_id"
   add_foreign_key "departments", "units"
+  add_foreign_key "employment_revisions", "companies"
+  add_foreign_key "employment_revisions", "departments"
+  add_foreign_key "employment_revisions", "employments"
+  add_foreign_key "employment_revisions", "positions"
+  add_foreign_key "employment_revisions", "units"
+  add_foreign_key "employment_revisions", "users", column: "created_by_id"
+  add_foreign_key "employments", "companies"
+  add_foreign_key "employments", "worker_profiles"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
@@ -507,4 +611,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
   add_foreign_key "units", "companies"
   add_foreign_key "user_sessions", "brands"
   add_foreign_key "user_sessions", "users"
+  add_foreign_key "worker_profiles", "companies"
+  add_foreign_key "worker_profiles", "memberships"
 end

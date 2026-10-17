@@ -1,7 +1,7 @@
 # 04 — Cadastros
 
-> Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-10-17
+> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600, D-602, D-603 ([decisoes.md](decisoes.md))
 > Os itens **[P-04-01]** a **[P-04-29]** foram todos aprovados sem ajuste (D-214, seção 10). Os itens **[P-04-30]** a **[P-04-36]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -103,12 +103,12 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - modelo de admissão (spec 06);
   - tipos de documento exigidos (spec 08).
 - **RN-04-031** — O CBO é validado contra a tabela oficial da CBO, carregada no sistema e atualizada pela equipe CatalystHR **[P-04-13]**.
-- **RN-04-032** — Um salário fora da faixa do cargo não é bloqueado. O sistema mostra um alerta e pede uma justificativa, que fica registrada na revisão do vínculo **[P-04-14]**.
+- **RN-04-032** — Um salário fora da faixa do cargo não é bloqueado. O sistema mostra um alerta e pede uma justificativa, que fica registrada na revisão do vínculo **[P-04-14]**. A faixa é mensal: só o salário mensal é comparado (D-603).
 
 ### Ficha da pessoa (WorkerProfile)
 
-- **RN-04-040** — A ficha é criada junto com a primeira membership de empresa que tenha ou venha a ter vínculo, por exemplo na admissão. Cada empresa tem a própria ficha (D-209). A ficha de uma empresa nunca é lida por outra **[P-04-01]**. Na fase 1, antes da admissão e da importação, o RH cadastra à mão quem já trabalha na empresa: a tela "Novo colaborador" cria a pessoa, a membership de colaborador sem enviar convite, a ficha e o vínculo (D-600).
-- **RN-04-041** — A ficha segue os grupos de dados do trabalhador do eSocial (D-206) **[P-04-15]**:
+- **RN-04-040** — A ficha é criada junto com a primeira membership de empresa que tenha ou venha a ter vínculo, por exemplo na admissão. Cada empresa tem a própria ficha (D-209). A ficha de uma empresa nunca é lida por outra **[P-04-01]**. Na fase 1, antes da admissão e da importação, o RH cadastra à mão quem já trabalha na empresa: a tela "Novo colaborador" cria a pessoa, a membership de colaborador sem enviar convite, a ficha e o vínculo (D-600). Se o CPF já tiver conta na plataforma, a ficha nova se liga a essa pessoa, sem mostrar nem alterar dados de outra empresa e sem trocar o e-mail ou o celular de login (D-602).
+- **RN-04-041** — A ficha segue os grupos de dados do trabalhador do eSocial (D-206) **[P-04-15]**. Os campos de lista usam valores próprios do sistema; a correspondência com os códigos do eSocial entra na spec 13 (D-602):
 
   | Grupo | Campos |
   |---|---|
@@ -170,7 +170,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - jornada (horas semanais, tipo de jornada, escala, definida na spec 11);
   - motivo da mudança;
   - justificativa (RN-04-032) **[P-04-02]**.
-- **RN-04-061** — A revisão vigente numa data é a de maior "vigente a partir de" que não passe dessa data. A folha calcula cada período com a revisão vigente em cada dia **[P-04-20]**.
+- **RN-04-061** — A revisão vigente numa data é a de maior "vigente a partir de" que não passe dessa data; entre duas da mesma data, a registrada por último. A folha calcula cada período com a revisão vigente em cada dia **[P-04-20]**. A revisão futura pode ser editada ou excluída até entrar em vigor; depois, só se corrige com uma revisão nova de motivo "Correção" (D-603).
 - **RN-04-062** — É permitido registrar uma revisão **futura**, por exemplo um aumento a partir de 01/12, e uma revisão **retroativa**. A retroativa avisa que pode exigir recálculo de folhas já fechadas e retificação no eSocial. Esse tratamento fica nas specs 12 e 13 **[P-04-21]**.
 - **RN-04-063** — Toda revisão que muda cargo, salário ou jornada gera uma pendência de eSocial (S-2206) para a spec 13 **[P-04-22]**.
 - **RN-04-064** — O departamento da revisão precisa pertencer à unidade da revisão.
@@ -316,7 +316,7 @@ Todas as tabelas com `company_id` usam acts_as_tenant (D-150) e PaperTrail (D-08
 | Consulta de CEP | Preenche o endereço pelo CEP. Consulta o ViaCEP e, se falhar, a BrasilAPI. O preenchimento manual é sempre possível (D-215) **[P-04-28]** |
 | Coordenadas da unidade | Ao salvar ou alterar o endereço, o Nominatim (OpenStreetMap) sugere a posição, respeitando o limite de 1 requisição por segundo e com o app identificado. O RH confirma ou arrasta o pino num mapa Leaflet com o OpenStreetMap. Se o endereço não for encontrado, o RH marca direto no mapa (D-216) |
 | Tabela CBO | Carga e atualização da tabela oficial pela equipe CatalystHR |
-| `Employments::ApplyScheduledRevisionsJob` | Diário: avisa o RH sobre as revisões que entram em vigor no dia e gera as pendências de eSocial **[P-04-29]** |
+| `Employments::ApplyScheduledRevisionsJob` | Diário: avisa o RH sobre as revisões que entram em vigor no dia e gera as pendências de eSocial **[P-04-29]**. Entra com as notificações (spec 15, D-602) |
 
 ## 9. Critérios de aceite
 

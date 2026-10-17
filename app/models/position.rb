@@ -33,6 +33,16 @@ class Position < ApplicationRecord
     (salary_min_cents.nil? || cents >= salary_min_cents) && (salary_max_cents.nil? || cents <= salary_max_cents)
   end
 
+  # "R$ 2.000,00 a R$ 3.500,00", "a partir de R$ 2.000,00", "até R$ 3.500,00" or "—".
+  def salary_range_text
+    min, max = [ salary_min_cents, salary_max_cents ].map { |cents| cents && "R$ #{MoneyCents.format(cents)}" }
+    return I18n.t("positions.range.between", min: min, max: max) if min && max
+    return I18n.t("positions.range.from", min: min) if min
+    return I18n.t("positions.range.up_to", max: max) if max
+
+    "—"
+  end
+
   private
 
   # Only an active code is accepted when the CBO changes; a position keeps a code that

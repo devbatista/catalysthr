@@ -34,6 +34,11 @@ class Rack::Attack
     request.ip if request.patch? && request.path == INVITATION_PATH
   end
 
+  # Password confirmations before sensitive data (RN-02-052), per address.
+  throttle("sensitive_confirmation/ip", limit: 10, period: 15.minutes) do |request|
+    request.ip if request.post? && request.path == "/confirm-password"
+  end
+
   self.throttled_responder = lambda do |_request|
     [ 429, { "content-type" => "text/plain; charset=utf-8" }, [ I18n.t("rack_attack.throttled") ] ]
   end

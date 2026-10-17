@@ -1,0 +1,85 @@
+<%# "Novo colaborador" (RN-04-040, D-600, D-602): who already works in the company,
+    registered by the HR without an invitation. %>
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), employees_path, class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with model: @registration, scope: :employee, url: employees_path, method: :post, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+  <% if @registration.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% @registration.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".person") %></h2>
+    <p class="field-hint"><%= t(".existing_person_hint") %></p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= form.label :cpf, t(".cpf"), class: "field-label" %>
+        <%= form.text_field :cpf, required: true, inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
+      </div>
+      <div>
+        <%= form.label :birth_date, t(".birth_date"), class: "field-label" %>
+        <%= form.date_field :birth_date, class: "input" %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :name, t(".name"), class: "field-label" %>
+        <%= form.text_field :name, maxlength: 120, autocomplete: "off", class: "input" %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :social_name, t(".social_name"), class: "field-label" %>
+        <%= form.text_field :social_name, maxlength: 120, autocomplete: "off", class: "input" %>
+        <p class="field-hint"><%= t(".social_name_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :email, t(".email"), class: "field-label" %>
+        <%= form.email_field :email, autocomplete: "off", class: "input" %>
+      </div>
+      <div>
+        <%= form.label :mobile_phone, t(".mobile_phone"), class: "field-label" %>
+        <%= form.telephone_field :mobile_phone, autocomplete: "off", class: "input" %>
+      </div>
+    </div>
+    <p class="field-hint"><%= t(".contact_hint") %></p>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".employment") %></h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= form.label :kind, t(".kind"), class: "field-label" %>
+        <%= form.select :kind, Employment::KINDS.map { |kind| [ t("employments.kinds.#{kind}"), kind ] }, {}, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :category, t(".category"), class: "field-label" %>
+        <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] },
+          {}, class: "input" %>
+        <p class="field-hint"><%= t(".category_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :registration_number, t(".registration_number"), class: "field-label" %>
+        <%= form.text_field :registration_number, required: true, maxlength: 30, class: "input font-mono" %>
+        <p class="field-hint"><%= t(".registration_number_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :started_on, t(".started_on"), class: "field-label" %>
+        <%= form.date_field :started_on, required: true, max: Date.current, class: "input" %>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".conditions") %></h2>
+    <%= render "panel/employment_revisions/conditions_fields", form: form, revision: @registration, salary: @registration.salary %>
+  </section>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), employees_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

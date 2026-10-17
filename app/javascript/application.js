@@ -24,11 +24,14 @@ document.addEventListener("keydown", (event) => {
 })
 
 // The unit's form: the address by CEP (D-215) and the position on the map, which the HR
-// confirms or moves (RN-04-012, D-216). Without JavaScript, the fields are filled by hand.
+// confirms or moves (RN-04-012, D-216). The person's record reuses the CEP lookup, with
+// its own field names (data-address-scope). Without JavaScript, the fields are filled by
+// hand.
 const unitForm = document.querySelector("[data-unit-form]")
 
 if (unitForm) {
-  const field = (name) => unitForm.elements[`unit[${name}]`]
+  const scope = unitForm.dataset.addressScope || "unit"
+  const field = (name) => unitForm.querySelector(`[name="${scope}[${name}]"]`)
   const setStatus = (selector, text) => { unitForm.querySelector(selector).textContent = text }
 
   unitForm.querySelector("[data-postal-code-lookup]")?.addEventListener("click", async (event) => {

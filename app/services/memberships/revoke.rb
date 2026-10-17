@@ -16,6 +16,7 @@ module Memberships
       action = @membership.invited? ? "invitation_cancelled" : "access_revoked"
       Membership.transaction do
         Memberships.ensure_admin_remains!(@membership, keeping_roles: [])
+        Memberships.ensure_no_open_employment!(@membership)
         @membership.update!(status: "revoked", invitation_token_digest: nil)
         # A consultant invited again starts without companies (D-052).
         @membership.partner_membership_companies.destroy_all

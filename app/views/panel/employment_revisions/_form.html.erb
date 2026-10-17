@@ -1,0 +1,35 @@
+<%# A revision of the employment (RN-04-060 to RN-04-064, D-603). %>
+<%= form_with model: revision, url: url, method: method, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+  <% if revision.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% revision.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= form.label :effective_on, t("panel.employment_revisions.form.effective_on"), class: "field-label" %>
+        <%= form.date_field :effective_on, required: true, min: @employment.started_on, class: "input" %>
+        <p class="field-hint"><%= t("panel.employment_revisions.form.effective_on_hint") %></p>
+      </div>
+      <% unless revision.reason_admission? %>
+        <div>
+          <%= form.label :reason, t("panel.employment_revisions.form.reason"), class: "field-label" %>
+          <%= form.select :reason, EmploymentRevision::CHANGE_REASONS.map { |reason| [ t("employment_revisions.reasons.#{reason}"), reason ] },
+            { prompt: t("panel.employment_revisions.form.choose_reason") }, required: true, class: "input" %>
+          <p class="field-hint"><%= t("panel.employment_revisions.form.reason_hint") %></p>
+        </div>
+      <% end %>
+    </div>
+    <%= render "panel/employment_revisions/conditions_fields", form: form, revision: revision,
+      salary: @salary_typed || (@base_revision && reveal_confirmed(@base_revision, :salary_cents, as: :money, section: :pay)) %>
+  </section>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <%= form.submit t("panel.employment_revisions.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.employment_revisions.form.cancel"), employee_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

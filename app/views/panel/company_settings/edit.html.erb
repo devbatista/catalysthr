@@ -45,6 +45,11 @@
       <%= form.number_field :read_only_period_days, min: 0, max: 3650, required: true, class: "input w-32" %>
       <p class="field-hint"><%= t(".read_only_period_hint") %></p>
     </div>
+    <div>
+      <%= form.label :next_registration_number, t(".next_registration_number"), class: "field-label" %>
+      <%= form.number_field :next_registration_number, min: 1, required: true, class: "input w-40 font-mono" %>
+      <p class="field-hint"><%= t(".next_registration_number_hint") %></p>
+    </div>
   </section>
 
   <div><%= form.submit t(".submit"), class: "btn btn-primary" %></div>

@@ -85,9 +85,10 @@ class Department < ApplicationRecord
     errors.add(:parent, :cycle) if self.class.subtree_ids(id).include?(parent_id)
   end
 
-  # Only an empty department is inactivated (RN-04-025, P-04-12). The check for active
-  # employments comes with them, in spec 04's block 4c.
+  # Only an empty department is inactivated: no active subdepartment and no open
+  # employment in it, now or later (RN-04-025, P-04-12).
   def empty_before_inactive
     errors.add(:status, :active_children) if children.active.exists?
+    errors.add(:status, :open_employments) if EmploymentRevision.placing_open_employments.exists?(department_id: id)
   end
 end

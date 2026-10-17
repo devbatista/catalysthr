@@ -1,0 +1,192 @@
+<%# The person's record (RN-04-040 to RN-04-064). The manager sees the basic data only
+    (spec 03, section 4.3); documents, health data and pay show after the password
+    (RN-02-052). %>
+<% content_for :title, @profile.display_name %>
+<% user = @profile.user %>
+<% personal = can?(:read_personal, @profile) %>
+<% pay = can?(:read_pay, @profile) %>
+
+<p class="text-sm"><%= link_to t(".back"), employees_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <span class="avatar size-11 text-sm" aria-hidden="true"><%= initials(@profile.display_name) %></span>
+  <div class="min-w-0">
+    <h1 class="page-title"><%= @profile.display_name %></h1>
+    <% if @profile.social_name && personal %>
+      <p class="text-sm text-ink-soft"><%= t(".civil_name", name: user.name) %></p>
+    <% end %>
+  </div>
+  <% if can?(:update, @profile) %>
+    <%= link_to t(".edit"), edit_employee_path(@profile), class: "btn btn-secondary sm:ml-auto" %>
+  <% end %>
+</div>
+
+<div class="mt-6 max-w-4xl space-y-6">
+  <% @profile.employments.sort_by { |item| [ item.open? ? 0 : 1, -item.started_on.jd ] }.each do |employment| %>
+    <% current = employment.effective_revision %>
+    <section class="card card-body" id="employment-<%= employment.id %>">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 class="card-title"><%= employment_kind(employment) %> · <%= t(".registration", number: employment.registration_number) %></h2>
+          <p class="text-sm text-ink-soft">
+            <%= t(".started_on", date: l(employment.started_on)) %><% if employment.ended_on %> · <%= t(".ended_on", date: l(employment.ended_on)) %><% end %>
+          </p>
+        </div>
+        <%= employment_status_pill(employment) %>
+      </div>
+
+      <% if current %>
+        <dl class="details-list mt-4">
+          <div><dt><%= t(".position") %></dt><dd><%= current.position.name %> <span class="font-mono text-xs text-ink-muted"><%= current.cbo_code %></span></dd></div>
+          <div><dt><%= t(".place") %></dt><dd><%= revision_place(current) %></dd></div>
+          <div><dt><%= t(".weekly_hours") %></dt><dd><%= current.weekly_hours ? t(".hours", hours: number_with_precision(current.weekly_hours, strip_insignificant_zeros: true)) : "—" %></dd></div>
+          <% if pay %>
+            <div><dt><%= t(".salary") %></dt><dd><%= revision_salary(current) %> <%= reveal_link(@profile, :pay) %></dd></div>
+          <% end %>
+        </dl>
+      <% end %>
+
+      <% employment.scheduled_revisions.each do |scheduled| %>
+        <p class="alert-info mt-4"><%= t(".scheduled", date: l(scheduled.effective_on), reason: t("employment_revisions.reasons.#{scheduled.reason}")) %></p>
+      <% end %>
+
+      <% if personal %>
+        <% details = employment.details.reject { |_key, value| value.nil? } %>
+        <% if details.any? %>
+          <details class="mt-4 rounded-lg border border-line-soft">
+            <summary class="cursor-pointer px-4 py-2.5 text-sm font-semibold"><%= t(".details") %></summary>
+            <dl class="details-list px-4 pb-4">
+              <% details.each do |key, value| %>
+                <div><dt><%= t("employments.details.#{key}") %></dt><dd><%= employment_detail_value(key, value) %></dd></div>
+              <% end %>
+            </dl>
+          </details>
+        <% end %>
+
+        <h3 class="section-title mt-5"><%= t(".history") %></h3>
+        <div class="mt-2 overflow-x-auto rounded-lg border border-line-soft">
+          <table class="data-table min-w-[640px]">
+            <thead>
+              <tr>
+                <th><%= t(".effective_on") %></th>
+                <th><%= t(".position") %></th>
+                <th><%= t(".place") %></th>
+                <% if pay %><th><%= t(".salary") %></th><% end %>
+                <th><%= t(".reason") %></th>
+                <th><span class="sr-only"><%= t(".actions") %></span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% employment.revisions.reverse_each do |revision| %>
+                <tr>
+                  <td class="whitespace-nowrap">
+                    <%= l(revision.effective_on) %>
+                    <% if revision == current %><span class="pill pill-ok ml-1"><%= t(".in_force") %></span><% end %>
+                    <% if revision.future? %><span class="pill pill-info ml-1"><%= t(".future") %></span><% end %>
+                  </td>
+                  <td><%= revision.position.name %></td>
+                  <td><%= revision_place(revision) %></td>
+                  <% if pay %><td class="whitespace-nowrap"><%= revision_salary(revision) %></td><% end %>
+                  <td>
+                    <%= t("employment_revisions.reasons.#{revision.reason}") %>
+                    <% if revision.justification %><p class="text-xs text-ink-muted"><%= revision.justification %></p><% end %>
+                  </td>
+                  <td class="whitespace-nowrap text-right">
+                    <% if revision.future? && pay && can?(:update, @profile) %>
+                      <%= link_to t(".edit_revision"), edit_employment_revision_path(employment, revision), class: "link-button text-sm" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+
+      <% if can?(:update, @profile) %>
+        <div class="mt-5 flex flex-wrap gap-3 border-t border-line-soft pt-4">
+          <% if pay && employment.open? %>
+            <%= link_to t(".new_revision"), new_employment_revision_path(employment), class: "btn btn-secondary" %>
+          <% end %>
+          <%= link_to t(".edit_employment"), edit_employment_path(employment), class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+  <section class="card card-body">
+    <h2 class="card-title"><%= t(".contact") %></h2>
+    <dl class="details-list mt-3">
+      <div><dt><%= t(".email") %></dt><dd><%= user.email || "—" %></dd></div>
+      <div><dt><%= t(".mobile_phone") %></dt><dd><%= user.mobile_phone || "—" %></dd></div>
+      <% if personal %>
+        <div><dt><%= t(".personal_email") %></dt><dd><%= @profile.personal_email || "—" %></dd></div>
+        <div><dt><%= t(".personal_phone") %></dt><dd><%= @profile.personal_phone || "—" %></dd></div>
+      <% end %>
+    </dl>
+  </section>
+
+  <% if personal %>
+    <section class="card card-body">
+      <h2 class="card-title"><%= t(".personal") %></h2>
+      <dl class="details-list mt-3">
+        <div><dt><%= t(".cpf") %></dt><dd class="font-mono"><%= employee_cpf(user) %></dd></div>
+        <div><dt><%= t(".birth_date") %></dt><dd><%= user.birth_date ? l(user.birth_date) : "—" %></dd></div>
+        <div><dt><%= t(".sex") %></dt><dd><%= option_label("worker_profiles.sexes", @profile.sex) %></dd></div>
+        <div><dt><%= t(".race") %></dt><dd><%= option_label("worker_profiles.races", @profile.race) %></dd></div>
+        <div><dt><%= t(".marital_status") %></dt><dd><%= option_label("worker_profiles.marital_statuses", @profile.marital_status) %></dd></div>
+        <div><dt><%= t(".education_level") %></dt><dd><%= option_label("worker_profiles.education_levels", @profile.education_level) %></dd></div>
+        <div><dt><%= t(".birthplace") %></dt><dd><%= [ @profile.birth_city, @profile.birth_state, @profile.birth_country ].compact.join(" · ").presence || "—" %></dd></div>
+        <div><dt><%= t(".nationality") %></dt><dd><%= @profile.nationality || "—" %></dd></div>
+        <div class="sm:col-span-2"><dt><%= t(".address") %></dt><dd><%= worker_address(@profile).presence || "—" %></dd></div>
+        <% if @profile.arrived_on || @profile.immigration_condition %>
+          <div><dt><%= t(".arrived_on") %></dt><dd><%= @profile.arrived_on ? l(@profile.arrived_on) : "—" %></dd></div>
+          <div><dt><%= t(".immigration_condition") %></dt><dd><%= option_label("worker_profiles.immigration_conditions", @profile.immigration_condition) %></dd></div>
+          <div><dt><%= t(".married_to_brazilian") %></dt><dd><%= yes_no(@profile.married_to_brazilian) %></dd></div>
+          <div><dt><%= t(".brazilian_children") %></dt><dd><%= yes_no(@profile.brazilian_children) %></dd></div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section class="card card-body">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="card-title"><%= t(".documents") %></h2>
+        <%= reveal_link(@profile, :documents) %>
+      </div>
+      <dl class="details-list mt-3">
+        <div>
+          <dt><%= t(".rg") %></dt>
+          <dd><span class="font-mono"><%= reveal_confirmed(@profile, :rg_number, as: :text, section: :documents).presence || "—" %></span>
+            <%= [ @profile.rg_issuer, @profile.rg_state, (l(@profile.rg_issued_on) if @profile.rg_issued_on) ].compact.join(" · ") %></dd>
+        </div>
+        <div>
+          <dt><%= t(".ctps") %></dt>
+          <dd><span class="font-mono"><%= reveal_confirmed(@profile, :ctps_number, as: :text, section: :documents).presence || "—" %></span>
+            <%= [ (t(".series", series: @profile.ctps_series) if @profile.ctps_series), @profile.ctps_state ].compact.join(" · ") %></dd>
+        </div>
+        <div><dt><%= t(".pis_nis") %></dt><dd class="font-mono"><%= reveal_confirmed(@profile, :pis_nis, as: :text, section: :documents).presence || "—" %></dd></div>
+        <div><dt><%= t(".voter_id") %></dt><dd class="font-mono"><%= reveal_confirmed(@profile, :voter_id, as: :text, section: :documents).presence || "—" %></dd></div>
+        <div>
+          <dt><%= t(".cnh") %></dt>
+          <dd><span class="font-mono"><%= reveal_confirmed(@profile, :cnh_number, as: :text, section: :documents).presence || "—" %></span>
+            <%= [ (t(".cnh_category", category: @profile.cnh_category) if @profile.cnh_category), (t(".expires_on", date: l(@profile.cnh_expires_on)) if @profile.cnh_expires_on) ].compact.join(" · ") %></dd>
+        </div>
+        <div>
+          <dt><%= t(".class_registration") %></dt>
+          <dd><span class="font-mono"><%= reveal_confirmed(@profile, :class_registration, as: :text, section: :documents).presence || "—" %></span>
+            <%= @profile.class_registration_issuer %></dd>
+        </div>
+        <div><dt><%= t(".foreign_registration") %></dt><dd class="font-mono"><%= reveal_confirmed(@profile, :foreign_registration, as: :text, section: :documents).presence || "—" %></dd></div>
+      </dl>
+    </section>
+  <% end %>
+
+  <% if can?(:read_health, @profile) %>
+    <section class="card card-body">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="card-title"><%= t(".disability") %></h2>
+        <%= reveal_link(@profile, :health) %>
+      </div>
+      <p class="mt-3 text-sm"><%= reveal_confirmed(@profile, :disability, as: :text, section: :health, value: disability_summary(@profile)).presence || t(".no_disability") %></p>
+    </section>
+  <% end %>
+</div>

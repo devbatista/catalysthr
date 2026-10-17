@@ -25,6 +25,21 @@ module Memberships
     raise ActiveRecord::RecordInvalid, membership
   end
 
+  # Someone with an open employment keeps the access (RN-04-055): the employee role ends
+  # with the employment, through its own flows (specs 07 and 12), not by removing the
+  # person here.
+  def ensure_no_open_employment!(membership)
+    return unless membership.organization_type == "Company"
+
+    open = ActsAsTenant.with_tenant(membership.organization) do
+      Employment.open.joins(:worker_profile).exists?(worker_profiles: { membership_id: membership.id })
+    end
+    return unless open
+
+    membership.errors.add(:base, :open_employment)
+    raise ActiveRecord::RecordInvalid, membership
+  end
+
   # What a company's membership is given by role ends with the role or the access: the
   # departments it manages (RN-04-021) and the HR analyst's units (D-142). A suspension is
   # temporary and keeps them. Runs with the company as the tenant, also from views without

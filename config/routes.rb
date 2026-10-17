@@ -93,6 +93,14 @@ Rails.application.routes.draw do
       resources :units, except: :destroy
       resources :departments, except: :destroy
       resources :positions, except: :destroy
+      # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
+      resources :employees, except: :destroy
+      resources :employments, only: %i[edit update] do
+        resources :revisions, controller: "employment_revisions", only: %i[new create edit update destroy]
+      end
+      # The password before sensitive data (RN-02-052).
+      get "confirm-password", to: "sensitive_confirmations#new", as: :new_sensitive_confirmation
+      post "confirm-password", to: "sensitive_confirmations#create", as: :sensitive_confirmation
       # The official CBO, searched by code or title for the position's form (RN-04-031).
       get "cbo-search", to: "cbo_searches#index", as: :cbo_search
       # Address by CEP and the unit's position, for the unit's form (D-215, D-216).

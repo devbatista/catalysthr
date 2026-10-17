@@ -40,6 +40,7 @@ class Unit < ApplicationRecord
   validates :registration_number, presence: true, if: :registration_type
   validate :registration
   validate :headquarters_stays_active
+  validate :empty_before_inactive, if: -> { status_changed? && inactive? }
 
   def audit_company_id
     company_id
@@ -75,6 +76,12 @@ class Unit < ApplicationRecord
       # against the official layout (spec 13); only digits are accepted for now.
       errors.add(:registration_number, :invalid_registration) unless registration_number.match?(/\A\d+\z/)
     end
+  end
+
+  # A unit is inactivated only with no open employment in it, now or later (RN-04-014,
+  # P-04-08).
+  def empty_before_inactive
+    errors.add(:status, :open_employments) if EmploymentRevision.placing_open_employments.exists?(unit_id: id)
   end
 
   # The headquarters is never inactivated (RN-04-010).

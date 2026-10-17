@@ -1,0 +1,12 @@
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", date: l(@revision.effective_on_in_database)) %></p>
+
+<%= render "form", revision: @revision, url: employment_revision_path(@employment, @revision), method: :patch %>
+
+<% unless @revision.reason_admission? %>
+  <%= button_to t(".destroy"), employment_revision_path(@employment, @revision), method: :delete,
+    class: "btn btn-danger mt-6", form: { data: { confirm: t(".destroy_confirm") } } %>
+<% end %>

@@ -1,0 +1,7 @@
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", registration: @employment.registration_number) %></p>
+
+<%= render "form", revision: @revision, url: employment_revisions_path(@employment), method: :post %>

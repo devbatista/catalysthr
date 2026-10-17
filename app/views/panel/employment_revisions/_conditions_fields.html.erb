@@ -1,0 +1,51 @@
+<%# The employment's conditions (RN-04-060): position, unit and department of that unit
+    (RN-04-064), salary and weekly hours, and the justification for a monthly salary out of
+    the position's range (RN-04-032, D-603). The salary value comes already revealed, or
+    as typed. %>
+<% positions = position_options.to_a | [ revision.try(:position) ].compact %>
+<% units = unit_options.to_a | [ revision.try(:unit) ].compact %>
+<% departments = (department_options.to_a | [ revision.try(:department) ].compact).group_by(&:unit) %>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <div class="sm:col-span-2">
+    <%= form.label :position_id, t("panel.employment_revisions.form.position"), class: "field-label" %>
+    <%= form.select :position_id, positions.map { |position| [ "#{position.name} (CBO #{position.cbo_code})", position.id ] },
+      { prompt: t("panel.employment_revisions.form.choose_position") }, required: true, class: "input" %>
+    <% if positions.empty? %><p class="field-hint"><%= t("panel.employment_revisions.form.no_positions") %></p><% end %>
+  </div>
+  <div>
+    <%= form.label :unit_id, t("panel.employment_revisions.form.unit"), class: "field-label" %>
+    <%= form.select :unit_id, units.map { |unit| [ unit.name, unit.id ] }, { prompt: t("panel.employment_revisions.form.choose_unit") },
+      required: true, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :department_id, t("panel.employment_revisions.form.department"), class: "field-label" %>
+    <%= form.select :department_id,
+      grouped_options_for_select(departments.map { |unit, items| [ unit.name, items.map { |department| [ department.name, department.id ] } ] },
+        form.object.department_id),
+      { include_blank: t("panel.employment_revisions.form.no_department") }, class: "input" %>
+    <p class="field-hint"><%= t("panel.employment_revisions.form.department_hint") %></p>
+  </div>
+  <div>
+    <%= form.label :salary, t("panel.employment_revisions.form.salary"), class: "field-label" %>
+    <%= form.text_field :salary, value: salary, inputmode: "decimal", autocomplete: "off", placeholder: "2.500,00", class: "input font-mono" %>
+  </div>
+  <div>
+    <%= form.label :salary_unit, t("panel.employment_revisions.form.salary_unit"), class: "field-label" %>
+    <%= form.select :salary_unit, EmploymentRevision::SALARY_UNITS.map { |unit| [ t("employment_revisions.salary_unit_options.#{unit}"), unit ] },
+      {}, class: "input" %>
+  </div>
+  <div class="sm:col-span-2">
+    <%= form.label :variable_salary_description, t("panel.employment_revisions.form.variable_salary_description"), class: "field-label" %>
+    <%= form.text_area :variable_salary_description, rows: 2, class: "input" %>
+    <p class="field-hint"><%= t("panel.employment_revisions.form.variable_salary_hint") %></p>
+  </div>
+  <div>
+    <%= form.label :weekly_hours, t("panel.employment_revisions.form.weekly_hours"), class: "field-label" %>
+    <%= form.number_field :weekly_hours, step: "0.25", min: 0, max: 99.75, class: "input w-32" %>
+  </div>
+  <div class="sm:col-span-2">
+    <%= form.label :justification, t("panel.employment_revisions.form.justification"), class: "field-label" %>
+    <%= form.text_area :justification, rows: 2, class: "input" %>
+    <p class="field-hint"><%= t("panel.employment_revisions.form.justification_hint") %></p>
+  </div>
+</div>

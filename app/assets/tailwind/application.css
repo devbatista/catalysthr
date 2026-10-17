@@ -171,6 +171,20 @@
   .pill-info { @apply bg-info-bg text-info; }
   .pill-mute { @apply bg-mute-bg text-mute; }
 
+  /* Filters of a list, as the prototype's unit chips. */
+  .chip {
+    @apply inline-flex items-center rounded-full border border-line bg-white px-3 py-1.5 text-[12.5px] font-semibold text-ink hover:border-line-strong;
+  }
+
+  .chip-active {
+    @apply border-brand-secondary bg-brand-secondary text-brand-on-secondary hover:border-brand-secondary;
+  }
+
+  /* The person's initials. */
+  .avatar {
+    @apply inline-flex size-[30px] shrink-0 items-center justify-center rounded-full bg-info-bg text-[11px] font-extrabold text-brand-primary;
+  }
+
   .pill-soon {
     @apply rounded border border-dashed px-1.5 py-0.5 font-mono text-[8.5px] tracking-wider uppercase;
   }
