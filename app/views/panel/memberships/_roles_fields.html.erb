@@ -1,4 +1,4 @@
-<%# Roles given on this screen, the modules of the HR analyst or the consultant (D-191, P-03-06) and, on the partner's team, the consultant's companies (D-052) %>
+<%# Roles given on this screen, the modules of the HR analyst or the consultant (D-191, P-03-06), on the partner's team the consultant's companies (D-052) and, on the company's users, the HR analyst's units (D-142) %>
 <% if invitable_roles.one? %>
   <%= hidden_field_tag "#{scope}[roles][]", invitable_roles.first, id: "#{scope}_role_#{invitable_roles.first}" %>
 <% else %>
@@ -41,5 +41,20 @@
         <%= company.name %>
       </label>
     <% end %>
+  </fieldset>
+<% end %>
+
+<% if assignable_units %>
+  <fieldset>
+    <legend class="field-label"><%= membership_t("roles_fields.units") %></legend>
+    <p class="field-hint"><%= membership_t("roles_fields.units_hint") %></p>
+    <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <% assignable_units.each do |unit| %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= check_box_tag "#{scope}[unit_ids][]", unit.id, local_assigns.fetch(:selected_unit_ids, []).map(&:to_s).include?(unit.id.to_s), id: "#{scope}_unit_#{unit.id}" %>
+          <%= unit.name %>
+        </label>
+      <% end %>
+    </div>
   </fieldset>
 <% end %>

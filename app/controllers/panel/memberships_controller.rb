@@ -13,7 +13,7 @@ module Panel
     before_action { response.headers["Cache-Control"] = "no-store" }
 
     helper_method :membership_organization, :membership_permission, :invitable_roles, :releases_modules?,
-      :assignable_companies, :membership_collection_subject
+      :assignable_companies, :assignable_units, :membership_collection_subject
 
     def index
       authorize! membership_permission(:read), membership_collection_subject
@@ -41,6 +41,7 @@ module Panel
       if assignable_companies
         Memberships::AssignCompanies.call(membership: @invitation.membership, company_ids: @form[:company_ids], by: current_user)
       end
+      Memberships::AssignUnits.call(membership: @invitation.membership, unit_ids: @form[:unit_ids], by: current_user) if assignable_units
       render "panel/memberships/invited"
     rescue ActiveRecord::RecordInvalid => error
       @errors = error.record.errors.full_messages
@@ -58,6 +59,7 @@ module Panel
       modules = releases_modules? ? params.dig(:membership, :enabled_modules) : @membership.enabled_modules
       Memberships::UpdateAccess.call(membership: @membership, roles: roles, enabled_modules: modules, by: current_user,
         company_ids: assignable_companies && Array(params.dig(:membership, :company_ids)))
+      Memberships::AssignUnits.call(membership: @membership, unit_ids: params.dig(:membership, :unit_ids), by: current_user) if assignable_units
       redirect_to membership_return_url(@membership), notice: t("panel.memberships.update.updated")
     rescue ActiveRecord::RecordInvalid => error
       @errors = error.record.errors.full_messages
@@ -144,6 +146,13 @@ module Panel
       nil
     end
 
+    # The units an HR analyst can be given, among the company's own users (D-142).
+    def assignable_units
+      return unless Current.company && membership_organization == Current.company
+
+      @assignable_units ||= Current.company.units.active.ordered
+    end
+
     # Where to go after changing a person's access.
     def membership_return_url(membership)
       url_for(action: :show, id: membership)
@@ -155,8 +164,8 @@ module Panel
 
     def invite_params_or_defaults
       permitted = params.fetch(:invitation, {})
-        .permit(:name, :cpf, :email, :mobile_phone, roles: [], enabled_modules: [], channels: [], company_ids: [])
-      defaults = { roles: invitable_roles.one? ? invitable_roles : [], enabled_modules: [], channels: %w[email], company_ids: [] }
+        .permit(:name, :cpf, :email, :mobile_phone, roles: [], enabled_modules: [], channels: [], company_ids: [], unit_ids: [])
+      defaults = { roles: invitable_roles.one? ? invitable_roles : [], enabled_modules: [], channels: %w[email], company_ids: [], unit_ids: [] }
       defaults.merge(permitted.to_h.symbolize_keys) do |_key, default, given|
         given.is_a?(Array) ? given.compact_blank : given || default
       end

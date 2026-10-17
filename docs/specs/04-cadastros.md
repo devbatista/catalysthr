@@ -1,7 +1,7 @@
 # 04 — Cadastros
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570 ([decisoes.md](decisoes.md))
+> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600 ([decisoes.md](decisoes.md))
 > Os itens **[P-04-01]** a **[P-04-29]** foram todos aprovados sem ajuste (D-214, seção 10). Os itens **[P-04-30]** a **[P-04-36]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -107,7 +107,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
 
 ### Ficha da pessoa (WorkerProfile)
 
-- **RN-04-040** — A ficha é criada junto com a primeira membership de empresa que tenha ou venha a ter vínculo, por exemplo na admissão. Cada empresa tem a própria ficha (D-209). A ficha de uma empresa nunca é lida por outra **[P-04-01]**.
+- **RN-04-040** — A ficha é criada junto com a primeira membership de empresa que tenha ou venha a ter vínculo, por exemplo na admissão. Cada empresa tem a própria ficha (D-209). A ficha de uma empresa nunca é lida por outra **[P-04-01]**. Na fase 1, antes da admissão e da importação, o RH cadastra à mão quem já trabalha na empresa: a tela "Novo colaborador" cria a pessoa, a membership de colaborador sem enviar convite, a ficha e o vínculo (D-600).
 - **RN-04-041** — A ficha segue os grupos de dados do trabalhador do eSocial (D-206) **[P-04-15]**:
 
   | Grupo | Campos |

@@ -66,7 +66,9 @@ module NavigationHelper
     groups.map { |group, items| nav_group(group, items) } + [
       nav_group(:company, [
         (nav_item(t("navigation.users"), memberships_path, controller_path == "panel/memberships") if can?(:read, Membership.new(organization: company))),
-        (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company)))
+        (nav_item(t("navigation.units"), units_path, controller_path == "panel/units") if can?(:read, Unit)),
+        (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
+        (nav_item(t("navigation.settings"), edit_company_settings_path, controller_path == "panel/company_settings") if can?(:update_settings, company))
       ])
     ]
   end

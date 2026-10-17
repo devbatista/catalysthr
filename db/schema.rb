@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_140400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -48,7 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
     t.datetime "updated_at", null: false
     t.index ["accounting_firm_id"], name: "index_accounting_firm_companies_on_accounting_firm_id"
     t.index ["company_id", "status"], name: "index_accounting_firm_companies_on_company_id_and_status"
-    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY ((ARRAY['pending'::character varying, 'active'::character varying])::text[]))"
+    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('active'::character varying)::text]))"
     t.index ["linked_by_id"], name: "index_accounting_firm_companies_on_linked_by_id"
   end
 
@@ -129,11 +129,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
     t.bigint "partner_id"
     t.string "name", null: false
     t.string "legal_name", null: false
-    t.string "cnpj", limit: 14, null: false
+    t.string "cnpj", limit: 14
     t.string "brand_display_mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "employer_type"
+    t.string "document"
+    t.integer "read_only_period_days", default: 365, null: false
     t.index ["cnpj"], name: "index_companies_on_cnpj", unique: true
+    t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
 
@@ -218,6 +222,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
     t.index ["brand_id", "kind", "version"], name: "index_legal_documents_on_brand_kind_and_version", unique: true, nulls_not_distinct: true
     t.index ["brand_id"], name: "index_legal_documents_on_brand_id"
     t.index ["published_by_id"], name: "index_legal_documents_on_published_by_id"
+  end
+
+  create_table "membership_units", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "membership_id", null: false
+    t.bigint "unit_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_membership_units_on_company_id"
+    t.index ["membership_id", "unit_id"], name: "index_membership_units_on_membership_id_and_unit_id", unique: true
+    t.index ["membership_id"], name: "index_membership_units_on_membership_id"
+    t.index ["unit_id"], name: "index_membership_units_on_unit_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -310,6 +326,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
     t.index ["user_id"], name: "index_trusted_devices_on_user_id"
   end
 
+  create_table "units", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "name", null: false
+    t.string "registration_type"
+    t.string "registration_number"
+    t.string "postal_code"
+    t.string "street"
+    t.string "street_number"
+    t.string "complement"
+    t.string "district"
+    t.string "city"
+    t.string "ibge_city_code"
+    t.string "state"
+    t.decimal "latitude", precision: 9, scale: 6
+    t.decimal "longitude", precision: 9, scale: 6
+    t.string "time_zone", default: "America/Sao_Paulo", null: false
+    t.boolean "headquarters", default: false, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_units_on_company_headquarters", unique: true, where: "headquarters"
+    t.index ["company_id"], name: "index_units_on_company_id"
+  end
+
   create_table "user_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "token_digest", null: false
@@ -400,6 +440,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
   add_foreign_key "legal_documents", "brands"
   add_foreign_key "legal_documents", "users", column: "published_by_id"
+  add_foreign_key "membership_units", "companies"
+  add_foreign_key "membership_units", "memberships", on_delete: :cascade
+  add_foreign_key "membership_units", "units"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "partner_membership_companies", "companies"
@@ -408,6 +451,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
   add_foreign_key "support_accesses", "companies"
   add_foreign_key "support_accesses", "users", column: "support_user_id"
   add_foreign_key "trusted_devices", "users"
+  add_foreign_key "units", "companies"
   add_foreign_key "user_sessions", "brands"
   add_foreign_key "user_sessions", "users"
 end

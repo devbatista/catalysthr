@@ -12,10 +12,14 @@ FactoryBot.define do
     cnpj { generate(:cnpj) }
   end
 
+  # The employer's CNPJ root (RN-04-001); the full CNPJ belongs to the headquarters unit.
+  sequence(:cnpj_root) { |n| format("%08d", 20_000_000 + n) }
+
   factory :company do
     name { "Metalúrgica Serra Azul" }
     legal_name { "Metalúrgica Serra Azul Ltda" }
-    cnpj { generate(:cnpj) }
+    employer_type { "company" }
+    document { generate(:cnpj_root) }
 
     trait :with_partner do
       partner

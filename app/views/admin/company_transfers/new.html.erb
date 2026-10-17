@@ -21,7 +21,7 @@
       <h2 class="card-title"><%= company.name %></h2>
       <span class="pill pill-info"><%= company.partner&.name || t(".direct") %></span>
     </div>
-    <p class="mt-0.5 font-mono text-xs text-ink-muted"><%= Cnpj.format(company.cnpj) %></p>
+    <p class="mt-0.5 font-mono text-xs text-ink-muted"><%= company.formatted_document %></p>
 
     <%= form_with url: admin_company_transfers_path, method: :post, multipart: true, class: "mt-5 space-y-4",
       data: { confirm: t(".confirm", company: company.name) } do |form| %>

@@ -1,0 +1,30 @@
+<% content_for :title, @unit.name %>
+
+<p class="text-sm"><%= link_to t(".back"), units_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @unit.name %></h1>
+  <% if @unit.headquarters? %><span class="pill pill-info"><%= t("panel.units.index.headquarters") %></span><% end %>
+  <span class="pill <%= @unit.active? ? "pill-ok" : "pill-mute" %>"><%= t("units.statuses.#{@unit.status}") %></span>
+</div>
+
+<div class="card card-body mt-6 max-w-3xl">
+  <dl class="details-list">
+    <div><dt><%= t(".registration") %></dt><dd class="font-mono"><%= unit_registration(@unit) %></dd></div>
+    <div><dt><%= t(".time_zone") %></dt><dd><%= @unit.time_zone %></dd></div>
+    <div class="sm:col-span-2"><dt><%= t(".address") %></dt><dd><%= unit_address(@unit).presence || "—" %></dd></div>
+    <div class="sm:col-span-2">
+      <dt><%= t(".position") %></dt>
+      <dd>
+        <% if @unit.positioned? %>
+          <span class="font-mono"><%= @unit.latitude %>, <%= @unit.longitude %></span>
+        <% else %>
+          <span class="pill pill-warn"><%= t(".no_position") %></span>
+        <% end %>
+      </dd>
+    </div>
+  </dl>
+
+  <% if can?(:update, @unit) %>
+    <p class="mt-5 border-t border-line-soft pt-4"><%= link_to t(".edit"), edit_unit_path(@unit), class: "btn btn-secondary" %></p>
+  <% end %>
+</div>

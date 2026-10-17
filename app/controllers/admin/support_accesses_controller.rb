@@ -21,10 +21,7 @@ module Admin
     private
 
     def search(query)
-      cnpj = Cnpj.normalize(query)
-      companies = Company.where(partner_id: nil)
-      by_name = companies.where("companies.name ILIKE ?", "%#{Company.sanitize_sql_like(query)}%")
-      (cnpj.length == 14 ? by_name.or(companies.where(cnpj: cnpj)) : by_name).order(:name).limit(20)
+      Company.where(partner_id: nil).merge(Company.matching(query)).order(:name).limit(20)
     end
   end
 end
