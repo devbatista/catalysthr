@@ -1,0 +1,19 @@
+<%# The password before sensitive data (RN-02-052, D-183). %>
+<% content_for :title, t(".title") %>
+
+<div class="card card-body mx-auto mt-6 max-w-md">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <p class="mt-2 text-sm text-ink-soft"><%= t(".explanation") %></p>
+
+  <%= form_with url: sensitive_confirmation_path, method: :post, class: "mt-5 space-y-4" do |form| %>
+    <%= form.hidden_field :return_to, value: @return_to %>
+    <div>
+      <%= form.label :password, t(".password"), class: "field-label" %>
+      <%= form.password_field :password, required: true, autofocus: true, autocomplete: "current-password", class: "input" %>
+    </div>
+    <div class="flex items-center gap-4">
+      <%= form.submit t(".submit"), class: "btn btn-primary" %>
+      <%= link_to t(".cancel"), @return_to.include?("reveal") ? @return_to.sub(/\?.*\z/, "") : employees_path, class: "link-button text-sm" %>
+    </div>
+  <% end %>
+</div>

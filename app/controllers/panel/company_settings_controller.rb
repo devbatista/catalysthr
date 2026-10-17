@@ -13,7 +13,7 @@ module Panel
     def update
       authorize! :update_settings, Current.company
       @company = Current.company
-      if @company.update(params.expect(company: %i[legal_name name read_only_period_days]))
+      if @company.update(params.expect(company: %i[legal_name name read_only_period_days next_registration_number]))
         redirect_to edit_company_settings_path, notice: t(".updated")
       else
         render :edit, status: :unprocessable_content

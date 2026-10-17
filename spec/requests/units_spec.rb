@@ -124,7 +124,7 @@ RSpec.describe "Company settings and units", type: :request do
       expect(response).to have_http_status(:forbidden)
       get "/settings/edit"
       expect(response).to have_http_status(:forbidden)
-      get "/address-lookup/95020000"
+      get "/geocode", params: { city: "Caxias do Sul", state: "RS" }
       expect(response).to have_http_status(:forbidden)
     end
   end

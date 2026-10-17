@@ -56,12 +56,17 @@ module NavigationHelper
     FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)
   end
 
+  EMPLOYEE_CONTROLLERS = %w[panel/employees panel/employments panel/employment_revisions].freeze
+
   def company_navigation
     company = Current.company
     groups = ComingSoon::COMPANY_GROUPS.to_h do |group, features|
       [ group, features.map { |feature| soon_item(feature, coming_soon_path(feature)) } ]
     end
-    groups[:operation].unshift(nav_item(t("navigation.home"), root_path, controller_path == "panel/home"))
+    groups[:operation].unshift(
+      nav_item(t("navigation.home"), root_path, controller_path == "panel/home"),
+      (nav_item(t("navigation.employees"), employees_path, controller_path.in?(EMPLOYEE_CONTROLLERS)) if can?(:read, WorkerProfile))
+    )
 
     groups.map { |group, items| nav_group(group, items) } + [
       nav_group(:company, [

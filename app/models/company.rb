@@ -32,6 +32,7 @@ class Company < ApplicationRecord
   validate :document_format
   validates :brand_display_mode, absence: true, unless: :partner
   validates :read_only_period_days, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 3650 }
+  validates :next_registration_number, numericality: { only_integer: true, greater_than: 0, less_than: 10**15 }
 
   # Companies of the brand where the person operates, the only ones the selector lists
   # and accepts (RN-01-005, RN-01-011): those with a membership of the company; for a
@@ -83,6 +84,26 @@ class Company < ApplicationRecord
   # The brand that owns the subdomain the company is reached through.
   def subdomain_brand
     direct? ? brand : partner.brand
+  end
+
+  # The registration number suggested for a new employment: the next sequential one not
+  # used by any employment of the company, ended ones included (RN-04-052, D-211).
+  def suggested_registration_number
+    ActsAsTenant.with_tenant(self) do
+      numeric = "CASE WHEN registration_number ~ '^[0-9]{1,15}$' THEN registration_number::bigint END"
+      taken = Employment.where("#{numeric} >= ?", next_registration_number).pluck(:registration_number).to_set(&:to_i)
+      number = next_registration_number
+      number += 1 while taken.include?(number)
+      number.to_s
+    end
+  end
+
+  # After a numeric registration number at or past the sequence is used, the sequence
+  # moves on.
+  def advance_registration_number!(used)
+    return unless used.to_s.match?(/\A\d{1,15}\z/) && used.to_i >= next_registration_number
+
+    update!(next_registration_number: used.to_i + 1)
   end
 
   private

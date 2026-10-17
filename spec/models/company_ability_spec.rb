@@ -55,4 +55,51 @@ RSpec.describe CompanyAbility do
     read_only = create(:membership, organization: company, roles: %w[hr_admin], status: "read_only").user
     expect(Ability.new(read_only, area: :panel, company: company)).not_to be_able_to(:invite, Membership)
   end
+
+  describe "the company's people (spec 03, section 4.3)" do
+    let(:position) { create_position(company) }
+    let(:branch) { ActsAsTenant.with_tenant(company) { Unit.create!(name: "Filial Bento") } }
+    let!(:at_headquarters) { register_employee(company, by: hr_admin, position: position, name: "Ana Lima") }
+    let!(:at_branch) { register_employee(company, by: hr_admin, position: position, name: "Bruno Reis", unit: branch) }
+
+    def ability_for(membership) = Ability.new(membership.user, area: :panel, company: company)
+
+    def people(ability) = ActsAsTenant.with_tenant(company) { WorkerProfile.accessible_by(ability).to_a }
+
+    it "gives the HR administrator every person, with pay, and the registration (T)" do
+      expect(ability).to be_able_to(:create, WorkerProfile)
+      expect(ability).to be_able_to(:read_pay, at_branch)
+      expect(people(ability)).to contain_exactly(at_headquarters, at_branch)
+    end
+
+    it "gives the HR analyst the people of their units, with pay only with the payroll module (U, P-03-16)" do
+      analyst = create(:membership, organization: company, roles: %w[hr_analyst], status: "active")
+      Memberships::AssignUnits.call(membership: analyst, unit_ids: [ branch.id ], by: hr_admin)
+
+      analyst_ability = ability_for(analyst)
+      expect(people(analyst_ability)).to contain_exactly(at_branch)
+      expect(analyst_ability).to be_able_to(:update, at_branch)
+      expect(analyst_ability).to be_able_to(:read_health, at_branch)
+      expect(analyst_ability).not_to be_able_to(:read_pay, at_branch)
+      expect(analyst_ability).not_to be_able_to(:create, WorkerProfile)
+
+      analyst.update!(enabled_modules: %w[folha])
+      expect(ability_for(analyst)).to be_able_to(:read_pay, at_branch)
+    end
+
+    it "gives the manager the basic data of the team only (E)" do
+      manager = create(:membership, organization: company, roles: %w[manager], status: "active")
+      ActsAsTenant.with_tenant(company) do
+        department = Department.create!(unit: branch, name: "Logística")
+        department.department_managers.create!(membership: manager)
+        at_branch.employments.sole.revisions.sole.update_columns(department_id: department.id)
+      end
+
+      manager_ability = ability_for(manager)
+      expect(people(manager_ability)).to contain_exactly(at_branch)
+      expect(manager_ability).not_to be_able_to(:read_personal, at_branch)
+      expect(manager_ability).not_to be_able_to(:read_pay, at_branch)
+      expect(manager_ability).not_to be_able_to(:update, at_branch)
+    end
+  end
 end

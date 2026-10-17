@@ -1,0 +1,53 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, WorkerProfile) %>
+    <%= link_to t(".new"), new_employee_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".filters") %>">
+  <% total = @unit_counts.values.sum %>
+  <%= link_to t(".all", count: total), employees_path, class: "chip #{"chip-active" if params[:unit_id].blank?}" %>
+  <% @units.each do |unit| %>
+    <% next unless @unit_counts[unit.id] %>
+    <%= link_to "#{unit.name} · #{@unit_counts[unit.id]}", employees_path(unit_id: unit.id),
+      class: "chip #{"chip-active" if params[:unit_id] == unit.id.to_s}" %>
+  <% end %>
+</nav>
+
+<% if @rows.empty? %>
+  <p class="card card-body mt-5 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-5 overflow-x-auto">
+    <table class="data-table min-w-[720px]">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th><%= t(".position") %></th>
+          <th><%= t(".unit") %></th>
+          <th><%= t(".manager") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr>
+            <td>
+              <span class="flex items-center gap-2.5">
+                <span class="avatar" aria-hidden="true"><%= initials(row.profile.display_name) %></span>
+                <%= link_to row.profile.display_name, employee_path(row.profile), class: "link-button font-bold" %>
+              </span>
+            </td>
+            <td><%= row.position&.name || "—" %></td>
+            <td><%= row.unit&.name || "—" %></td>
+            <td class="text-ink-soft"><%= row.managers.map(&:name).sort.join(", ").presence || "—" %></td>
+            <td><%= employment_status_pill(row.employment) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -1,0 +1,80 @@
+module EmployeesHelper
+  STATUS_PILLS = { "pending" => "pill-info", "active" => "pill-ok", "on_leave" => "pill-warn",
+                   "terminated" => "pill-mute", "cancelled" => "pill-mute" }.freeze
+
+  def employment_status_pill(employment)
+    return "—" if employment.nil?
+
+    tag.span(t("employments.statuses.#{employment.status}"), class: "pill #{STATUS_PILLS.fetch(employment.status)}")
+  end
+
+  # "CLT · Empregado", "Estágio".
+  def employment_kind(employment)
+    [ t("employments.kinds.#{employment.kind}"), (t("employments.categories.#{employment.category}") if employment.category) ]
+      .compact.join(" · ")
+  end
+
+  # "R$ 2.500,00 por mês", hidden until the pay section is revealed (RN-02-052).
+  def revision_salary(revision)
+    return t("employment_revisions.variable_only", description: revision.variable_salary_description) if revision.paid_by_variable_only?
+
+    amount = reveal_confirmed(revision, :salary_cents, as: :money, section: :pay)
+    "#{amount} #{t("employment_revisions.salary_units.#{revision.salary_unit}")}"
+  end
+
+  def revision_place(revision)
+    [ revision.unit.name, revision.department&.name ].compact.join(" › ")
+  end
+
+  # A link that keeps the sections already shown and adds this one.
+  def reveal_link(profile, section)
+    return if impersonating? || revealed_sections.include?(section.to_s)
+
+    link_to t("panel.employees.show.reveal"), employee_path(profile, reveal: revealed_sections + [ section.to_s ]),
+      class: "link-button text-sm", rel: "nofollow"
+  end
+
+  def option_label(group, value)
+    value.nil? ? "—" : t("#{group}.#{value}")
+  end
+
+  def yes_no(value)
+    value.nil? ? "—" : t(value ? "panel.employees.show.yes" : "panel.employees.show.no")
+  end
+
+  # The CPF formatted, or partly masked during an impersonate (RN-02-086).
+  def employee_cpf(user)
+    impersonating? ? reveal_sensitive(user, :cpf, as: :cpf) : Cpf.format(reveal_sensitive(user, :cpf, as: :cpf))
+  end
+
+  def worker_address(profile)
+    if profile.lives_abroad?
+      return [ profile.foreign_address, profile.foreign_country ].compact_blank.join(" · ")
+    end
+
+    street = [ profile.street, profile.street_number ].compact_blank.join(", ")
+    city = [ profile.city, profile.state ].compact_blank.join(" / ")
+    [ street, profile.complement, profile.district, city, profile.postal_code&.sub(/\A(\d{5})(\d{3})\z/, '\1-\2') ].compact_blank.join(" · ")
+  end
+
+  # The disability in one sentence, shown only through reveal_confirmed (D-086).
+  def disability_summary(profile)
+    return "" unless profile.disability? || profile.disability_notes
+
+    parts = profile.disability_types.map { |type| t("worker_profiles.disability_types.#{type}") }
+    parts << t("panel.employees.show.rehabilitated") if profile.disability_rehabilitated
+    [ parts.join(", "), profile.disability_notes ].compact_blank.join(". ")
+  end
+
+  def employment_detail_value(key, value)
+    case key
+    when *Employment::OPTIONS.keys then t("employments.options.#{key}.#{value}")
+    when *Employment::DATE_DETAILS then l(Date.iso8601(value))
+    when *Employment::CNPJ_DETAILS then Cnpj.format(value)
+    when "supervisor_cpf" then Cpf.format(value)
+    when "assurance_clause" then yes_no(value)
+    when "union_base_month" then t("date.month_names")[value]
+    else value
+    end
+  end
+end

@@ -7,6 +7,8 @@ module Panel
   # The partner's team and the HR of the partner's client companies reuse these actions
   # and views, with their own organization, roles and permissions (spec 03, section 4.1).
   class MembershipsController < BaseController
+    NON_PANEL_ROLES = %w[employee client_manager].freeze
+
     before_action :require_current_company
     before_action :load_membership, except: %i[index new create]
     # Pages with an invitation link must not stay in any cache.
@@ -117,8 +119,11 @@ module Panel
       Membership.new(organization: membership_organization)
     end
 
+    # People who are only employees or client managers are not users of this screen: they
+    # are on the people list (spec 04) and get their invitations elsewhere (D-600).
     def membership_scope
       Membership.where(organization: membership_organization).where.not(status: "revoked")
+        .where.not("memberships.roles <@ ARRAY[?]::varchar[]", NON_PANEL_ROLES)
     end
 
     def memberships_listing

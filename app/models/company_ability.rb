@@ -16,12 +16,17 @@ class CompanyAbility
   def initialize(user, company, support_access: nil)
     membership = Membership.with_access.find_by(user: user, organization: company)
     roles = membership.nil? || membership.read_only? ? [] : membership.roles
-    # The HR analyst's rules come with the modules (spec 04 onwards, RN-03-005); the
-    # consultant and the support get them through this role.
-    roles += [ "hr_analyst" ] if consultant_of?(user, company) || support_at?(user, company, support_access)
 
     hr_admin(user, company) if roles.include?("hr_admin")
-    hr_analyst(company) if roles.include?("hr_analyst")
+    if roles.include?("hr_analyst")
+      hr_analyst(company, units: membership, modules: membership.enabled_modules)
+    end
+    # The consultant and the support act as an HR analyst of all units (D-192, D-581).
+    if (consultant = consultant_membership(user, company))
+      hr_analyst(company, units: :all, modules: consultant.enabled_modules)
+    elsif support_at?(user, company, support_access)
+      hr_analyst(company, units: :all, modules: Membership::RELEASABLE_MODULES)
+    end
     manager(company, membership) if roles.include?("manager")
   end
 
@@ -31,22 +36,37 @@ class CompanyAbility
     support_access&.running? && support_access.company_id == company.id && support_access.support_user_id == user.id
   end
 
-  def consultant_of?(user, company)
-    return false if company.direct?
+  def consultant_membership(user, company)
+    return if company.direct?
 
     Membership.active.with_role("consultant").where(user: user, organization_type: "Partner", organization_id: company.partner_id)
-      .joins(:partner_membership_companies).exists?(partner_membership_companies: { company_id: company.id })
+      .joins(:partner_membership_companies).find_by(partner_membership_companies: { company_id: company.id })
   end
 
-  # The HR analyst reads the units (spec 03, section 4.2); the U scope applies to the
-  # people, from spec 04's block 4c.
-  def hr_analyst(company)
+  # The HR analyst reads the units, departments and positions (spec 03, section 4.2), and
+  # reads and edits the people of their units, the U scope (spec 03, section 4.3, D-142):
+  # personal data, documents and health data (P-03-17), and salary and bank data only with
+  # the payroll module (P-03-16). A past employment counts by its last unit.
+  # units: the analyst's membership, whose units count, or :all.
+  def hr_analyst(company, units:, modules:)
     can :read, [ Unit, Department, Position ], company_id: company.id
+    # The CEP for the person's address; the unit's position on the map is the HR
+    # administrator's (D-216).
+    can :lookup, :address
+
+    people = { company_id: company.id }
+    unless units == :all
+      people[:id] = ActsAsTenant.with_tenant(company) do
+        WorkerProfile.in_units(MembershipUnit.where(membership: units).select(:unit_id)).pluck(:id)
+      end
+    end
+    can %i[read read_personal read_health update], WorkerProfile, people
+    can :read_pay, WorkerProfile, people if modules.include?("folha")
   end
 
   # The manager reads their own departments, with the subdepartments (the E scope, D-190),
-  # and those departments' units (spec 03, section 4.2). The positions come with the
-  # team's people, in spec 04's block 4c.
+  # and those departments' units (spec 03, section 4.2), and the basic data of the people
+  # with an open employment there.
   def manager(company, membership)
     department_ids, unit_ids = ActsAsTenant.with_tenant(company) do
       ids = Department.team_ids_for(membership)
@@ -54,6 +74,9 @@ class CompanyAbility
     end
     can :read, Department, company_id: company.id, id: department_ids
     can :read, Unit, company_id: company.id, id: unit_ids
+    # The team's basic data only (spec 03, section 4.3).
+    team = ActsAsTenant.with_tenant(company) { WorkerProfile.in_departments(department_ids).pluck(:id) }
+    can :read, WorkerProfile, company_id: company.id, id: team
   end
 
   def hr_admin(user, company)
@@ -61,8 +84,11 @@ class CompanyAbility
     # document is corrected only by the superadmin.
     can :update_settings, Company, id: company.id
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
-    can :lookup, :address
+    can %i[lookup geocode], :address
     can :lookup, :cbo
+    # Every person of the company (spec 03, section 4.3). Only the HR administrator
+    # registers someone by hand for now (D-600); the admission comes with spec 07.
+    can %i[read read_personal read_health read_pay update create], WorkerProfile, company_id: company.id
 
     can %i[read invite], Membership, organization_type: "Company", organization_id: company.id
     # The company's accounting firm: register or link it, resend the first invitation,
