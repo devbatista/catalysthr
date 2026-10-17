@@ -108,6 +108,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
 
 ### Pronto quando
+- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] O superadmin cria um parceiro e uma empresa direta em teste
 - [ ] Eles configuram a marca e convidam o RH, que entra com MFA
 - [ ] Contratam um plano e pagam por cartão e por PIX
@@ -141,6 +142,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 05 (resto):** anonimização, retenção por processo, direitos do titular, encerramento de contrato
 
 ### Pronto quando
+- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] O piloto é implantado pela planilha
 - [ ] Admissões reais com documentos lidos pela IA e revisados pelo RH
 - [ ] Os colaboradores usam o portal no celular
@@ -167,6 +169,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 20:** teste de carga com 2.000 marcações por minuto
 
 ### Pronto quando
+- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] O AFD e o AEJ gerados passam na validação contra o leiaute oficial
 - [ ] O teste de carga cumpre as metas da spec 20
 - [ ] O piloto usa o ponto por um período completo e fecha o espelho
@@ -194,6 +197,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 17:** bloco de folha e relatório de custo de pessoal
 
 ### Pronto quando
+- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] Uma competência real do piloto, calculada em paralelo com o sistema atual dele, bate nos casos conferidos
 - [ ] Os eventos são aceitos na produção restrita
 - [ ] A empresa passa para produção (D-374)
@@ -213,6 +217,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 17 (resto):** foto diária, relatórios gerenciais, diversidade, comparação entre empresas, agendamento
 
 ### Pronto quando
+- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] Os critérios de aceite das specs 14, 17, 21 e 22 passam
 
 ---
