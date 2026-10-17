@@ -22,6 +22,8 @@ class PlatformAbility
       can :update_brand_display_mode, Company
     end
     can :change_slug, Brand if user.superadmin?
+    # Moving a company between partners or to and from the direct modality (RN-01-050).
+    can :create, CompanyTransfer if user.superadmin?
     # The e-mail domain of the brands that own a subdomain (spec 01, section 6, D-596).
     can :manage_email_domain, Brand, &:email_domain_configurable? if user.superadmin? || user.support?
     # Contact and MFA of the clients' users who also reach another organization (D-582).

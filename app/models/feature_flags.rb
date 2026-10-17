@@ -5,8 +5,10 @@ module FeatureFlags
   SIGN_IN = :sign_in
   # The brand's e-mail domain in SES (spec 01, RN-01-040, D-596).
   BRAND_EMAIL_DOMAIN = :brand_email_domain
+  # Company transfer by the superadmin (spec 01, RN-01-050 to RN-01-053, D-599).
+  COMPANY_TRANSFER = :company_transfer
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN ].freeze
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER ].freeze
 
   module_function
 

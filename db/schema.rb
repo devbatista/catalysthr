@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_120200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -135,6 +135,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_120200) do
     t.datetime "updated_at", null: false
     t.index ["cnpj"], name: "index_companies_on_cnpj", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
+  end
+
+  create_table "company_transfers", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "from_partner_id"
+    t.bigint "to_partner_id"
+    t.bigint "performed_by_id", null: false
+    t.text "authorized_by_text", null: false
+    t.datetime "performed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_company_transfers_on_company_id"
+    t.index ["from_partner_id"], name: "index_company_transfers_on_from_partner_id"
+    t.index ["performed_by_id"], name: "index_company_transfers_on_performed_by_id"
+    t.index ["to_partner_id"], name: "index_company_transfers_on_to_partner_id"
   end
 
   create_table "consents", force: :cascade do |t|
@@ -374,6 +389,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_120200) do
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
+  add_foreign_key "company_transfers", "companies"
+  add_foreign_key "company_transfers", "partners", column: "from_partner_id"
+  add_foreign_key "company_transfers", "partners", column: "to_partner_id"
+  add_foreign_key "company_transfers", "users", column: "performed_by_id"
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"
   add_foreign_key "impersonation_sessions", "brands"

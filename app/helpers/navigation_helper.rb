@@ -32,7 +32,8 @@ module NavigationHelper
       nav_group(:platform, [
         nav_item(t("navigation.home"), admin_root_path, controller_path == "admin/home"),
         (nav_item(t("navigation.brands"), admin_brands_path, controller_path.in?(%w[admin/brands admin/company_brands admin/brand_email_domains])) if can?(:read, Brand)),
-        (nav_item(t("navigation.admin_users"), admin_users_path, controller_path == "admin/users") if can?(:read, User.new))
+        (nav_item(t("navigation.admin_users"), admin_users_path, controller_path == "admin/users") if can?(:read, User.new)),
+        (nav_item(t("navigation.company_transfer"), new_admin_company_transfer_path, controller_path == "admin/company_transfers") if company_transfer_allowed?)
       ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),
@@ -50,6 +51,10 @@ module NavigationHelper
   end
 
   private
+
+  def company_transfer_allowed?
+    FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)
+  end
 
   def company_navigation
     company = Current.company
