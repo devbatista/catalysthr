@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_140400) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -129,14 +129,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_140400) do
     t.bigint "partner_id"
     t.string "name", null: false
     t.string "legal_name", null: false
-    t.string "cnpj", limit: 14
     t.string "brand_display_mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "employer_type"
     t.string "document"
     t.integer "read_only_period_days", default: 365, null: false
-    t.index ["cnpj"], name: "index_companies_on_cnpj", unique: true
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end

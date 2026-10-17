@@ -102,11 +102,11 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
   - Em 4 PRs (D-600):
-    - [ ] 4a. Empresa (tipo de empregador e documento, endereço, configurações) e unidades (matriz, raiz do CNPJ, fuso, CEP, posição no mapa), com as unidades do RH analista (escopo U) (RN-04-001 a RN-04-014, CA-04-001)
+    - [x] 4a. Empresa (tipo de empregador e documento, endereço, configurações) e unidades (matriz, raiz do CNPJ, fuso, CEP, posição no mapa), com as unidades do RH analista (escopo U) (RN-04-001 a RN-04-014, CA-04-001) (PR #33)
     - [ ] 4b. Departamentos em árvore com gestores e "gestor acima" (escopo E), cargos e tabela da CBO (RN-04-020 a RN-04-032, CA-04-002, CA-04-003)
     - [ ] 4c. Ficha, contatos de emergência, dependentes, contas, vínculos, revisões com vigência, efetivação de estagiário, job das revisões, cadastro manual "Novo colaborador" e confirmação de senha para dado sensível (RN-04-040 a RN-04-064, CA-04-004 a CA-04-007, CA-04-010, RN-02-052, D-592)
     - [ ] 4d. Campos personalizados e clientes de alocação (escopo K) (RN-04-080, RN-04-081, RN-04-090 a RN-04-096, CA-04-011 a CA-04-013)
-    - [ ] Depois do deploy do 4a: migração que remove `companies.cnpj`
+    - [x] Depois do deploy do 4a: migração que remove `companies.cnpj`
   - Ficam para depois: atualização pelo colaborador (specs 09 e 16), pendências de eSocial (spec 13), convite do colaborador (spec 16) e do gestor do cliente (spec 07)
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
   - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04

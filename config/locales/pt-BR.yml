@@ -857,7 +857,6 @@ pt-BR:
       company:
         name: "Nome fantasia"
         legal_name: "Razão social"
-        cnpj: "CNPJ"
         employer_type: "Tipo de empregador"
         document: "Documento do empregador"
         read_only_period_days: "Período de leitura do desligado"

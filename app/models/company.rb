@@ -19,10 +19,6 @@ class Company < ApplicationRecord
 
   has_many :units, dependent: :restrict_with_error
 
-  # The full CNPJ now lives in the headquarters unit (D-600); the column goes away in a
-  # later release.
-  self.ignored_columns += [ "cnpj" ]
-
   encrypts :document, deterministic: true
   enum :employer_type, EMPLOYER_TYPES.index_by(&:itself), validate: true
 
