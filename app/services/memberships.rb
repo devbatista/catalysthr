@@ -24,4 +24,18 @@ module Memberships
     membership.errors.add(:base, :"last_#{role}")
     raise ActiveRecord::RecordInvalid, membership
   end
+
+  # What a company's membership is given by role ends with the role or the access: the
+  # departments it manages (RN-04-021) and the HR analyst's units (D-142). A suspension is
+  # temporary and keeps them. Runs with the company as the tenant, also from views without
+  # one (the partner's panel).
+  def release_company_assignments!(membership)
+    return unless membership.organization_type == "Company"
+
+    ActsAsTenant.with_tenant(membership.organization) do
+      kept = !membership.revoked?
+      DepartmentManager.where(membership: membership).destroy_all unless kept && membership.roles.include?("manager")
+      MembershipUnit.where(membership: membership).destroy_all unless kept && membership.roles.include?("hr_analyst")
+    end
+  end
 end

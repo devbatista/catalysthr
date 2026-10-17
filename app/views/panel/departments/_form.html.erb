@@ -1,0 +1,65 @@
+<%# The department's form (RN-04-020, RN-04-021): the unit is chosen at creation only, and
+    the parent is a department of the same unit. %>
+<%= form_with model: department, url: url, method: method, class: "card card-body mt-6 max-w-2xl space-y-5" do |form| %>
+  <% if department.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% department.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, t("panel.departments.form.name"), class: "field-label" %>
+    <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+  </div>
+
+  <% if department.persisted? %>
+    <p class="text-sm"><span class="field-label inline"><%= t("panel.departments.form.unit") %>:</span> <%= department.unit.name %></p>
+  <% else %>
+    <div>
+      <%= form.label :unit_id, t("panel.departments.form.unit"), class: "field-label" %>
+      <%= form.select :unit_id, Unit.active.ordered.map { |unit| [ unit.name, unit.id ] }, { prompt: t("panel.departments.form.choose_unit") },
+        required: true, class: "input" %>
+      <p class="field-hint"><%= t("panel.departments.form.unit_hint") %></p>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :parent_id, t("panel.departments.form.parent"), class: "field-label" %>
+    <%= form.select :parent_id, parent_options(department).map { |parent| [ "#{parent.name} (#{parent.unit.name})", parent.id ] },
+      { include_blank: t("panel.departments.form.no_parent") }, class: "input" %>
+    <p class="field-hint"><%= t("panel.departments.form.parent_hint") %></p>
+  </div>
+
+  <fieldset>
+    <legend class="field-label"><%= t("panel.departments.form.managers") %></legend>
+    <p class="field-hint"><%= t("panel.departments.form.managers_hint") %></p>
+    <%= hidden_field_tag "department[manager_ids][]", "", id: nil %>
+    <% if manager_options.empty? %>
+      <p class="mt-2 text-sm text-ink-soft"><%= t("panel.departments.form.no_managers") %></p>
+    <% end %>
+    <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <% selected = department.persisted? ? department.department_managers.map(&:membership_id) : Array(params.dig(:department, :manager_ids)).map(&:to_i) %>
+      <% manager_options.each do |membership| %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= check_box_tag "department[manager_ids][]", membership.id, selected.include?(membership.id), id: "department_manager_#{membership.id}" %>
+          <%= membership.user.name %>
+        </label>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <% if department.persisted? %>
+    <div>
+      <%= form.label :status, t("panel.departments.form.status"), class: "field-label" %>
+      <%= form.select :status, Department::STATUSES.map { |status| [ t("departments.statuses.#{status}"), status ] }, {}, class: "input w-auto" %>
+      <p class="field-hint"><%= t("panel.departments.form.status_hint") %></p>
+    </div>
+  <% end %>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("panel.departments.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.departments.form.cancel"), department.persisted? ? department_path(department) : departments_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

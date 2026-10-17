@@ -1,0 +1,14 @@
+<%# One department of the tree, with its subdepartments below (RN-04-020) %>
+<li class="py-1.5" style="padding-left: <%= depth * 20 %>px">
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+    <% if depth.positive? %><span class="text-ink-muted" aria-hidden="true">└</span><% end %>
+    <%= link_to department.name, department_path(department), class: "link-button text-sm" %>
+    <% if department.inactive? %><span class="pill pill-mute"><%= t("departments.statuses.inactive") %></span><% end %>
+    <span class="text-xs text-ink-muted">
+      <%= department.managers.map { |membership| membership.user.name }.sort.join(", ").presence || t("panel.departments.index.no_manager") %>
+    </span>
+  </div>
+</li>
+<% Array(by_parent[department.id]).each do |child| %>
+  <%= render partial: "panel/departments/branch", locals: { department: child, by_parent: by_parent, depth: depth + 1 } %>
+<% end %>

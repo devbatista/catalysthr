@@ -1,0 +1,34 @@
+<% content_for :title, @department.name %>
+
+<p class="text-sm"><%= link_to t(".back"), departments_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @department.name %></h1>
+  <span class="pill <%= @department.active? ? "pill-ok" : "pill-mute" %>"><%= t("departments.statuses.#{@department.status}") %></span>
+</div>
+
+<div class="card card-body mt-6 max-w-3xl">
+  <dl class="details-list">
+    <div><dt><%= t(".unit") %></dt><dd><%= @department.unit.name %></dd></div>
+    <div><dt><%= t(".parent") %></dt><dd><%= @department.ancestors.reverse.map(&:name).join(" › ").presence || "—" %></dd></div>
+    <div class="sm:col-span-2">
+      <dt><%= t(".managers") %></dt>
+      <dd><%= @department.managers.includes(:user).map { |membership| membership.user.name }.sort.join(", ").presence || t(".no_manager") %></dd>
+    </div>
+    <% if @department.managers.empty? %>
+      <div class="sm:col-span-2">
+        <dt><%= t(".approvals") %></dt>
+        <dd>
+          <% above = @department.managers_above %>
+          <%= above.any? ? t(".approvals_above", names: above.map { |membership| membership.user.name }.sort.join(", ")) : t(".approvals_hr") %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <% if can?(:update, @department) %>
+    <div class="mt-5 flex flex-wrap gap-3 border-t border-line-soft pt-4">
+      <%= link_to t(".edit"), edit_department_path(@department), class: "btn btn-secondary" %>
+      <%= link_to t(".new_child"), new_department_path(unit_id: @department.unit_id, parent_id: @department.id), class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,30 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Department) %>
+    <%= link_to t(".new"), new_department_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @departments.empty? %>
+  <p class="card card-body mt-6 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% end %>
+
+<% by_parent = @departments.group_by(&:parent_id) %>
+<% visible_ids = @departments.map(&:id) %>
+<% @units.each do |unit| %>
+  <section class="card mt-6 max-w-4xl">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line-soft px-5 py-3">
+      <h2 class="card-title"><%= unit.name %></h2>
+      <% if can?(:create, Department) %>
+        <%= link_to t(".new_in_unit"), new_department_path(unit_id: unit.id), class: "link-button text-sm" %>
+      <% end %>
+    </div>
+    <ul class="px-5 py-3">
+      <% roots = @departments.select { |department| department.unit_id == unit.id && !visible_ids.include?(department.parent_id) } %>
+      <%= render partial: "branch", collection: roots, as: :department, locals: { by_parent: by_parent, depth: 0 } %>
+    </ul>
+  </section>
+<% end %>

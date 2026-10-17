@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_130300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -125,6 +125,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
     t.index ["owner_type", "owner_id"], name: "index_brands_on_owner", unique: true
   end
 
+  create_table "cbo_occupations", force: :cascade do |t|
+    t.string "code", limit: 6, null: false
+    t.string "title", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_cbo_occupations_on_code", unique: true
+  end
+
   create_table "companies", force: :cascade do |t|
     t.bigint "partner_id"
     t.string "name", null: false
@@ -171,6 +180,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
     t.index ["legal_document_id"], name: "index_consents_on_legal_document_id"
     t.index ["scope_type", "scope_id"], name: "index_consents_on_scope"
     t.index ["user_id"], name: "index_consents_on_user_id"
+  end
+
+  create_table "department_managers", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "department_id", null: false
+    t.bigint "membership_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_department_managers_on_company_id"
+    t.index ["department_id", "membership_id"], name: "index_department_managers_on_department_id_and_membership_id", unique: true
+    t.index ["department_id"], name: "index_department_managers_on_department_id"
+    t.index ["membership_id"], name: "index_department_managers_on_membership_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "unit_id", null: false
+    t.bigint "parent_id"
+    t.string "name", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_departments_on_company_id"
+    t.index ["parent_id"], name: "index_departments_on_parent_id"
+    t.index ["unit_id"], name: "index_departments_on_unit_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -272,6 +306,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["cnpj"], name: "index_partners_on_cnpj", unique: true
+  end
+
+  create_table "positions", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "name", null: false
+    t.string "cbo_code", limit: 6, null: false
+    t.integer "salary_min_cents"
+    t.integer "salary_max_cents"
+    t.text "description"
+    t.text "requirements"
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_positions_on_company_id"
   end
 
   create_table "reserved_slugs", force: :cascade do |t|
@@ -433,6 +481,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
   add_foreign_key "company_transfers", "users", column: "performed_by_id"
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"
+  add_foreign_key "department_managers", "companies"
+  add_foreign_key "department_managers", "departments", on_delete: :cascade
+  add_foreign_key "department_managers", "memberships", on_delete: :cascade
+  add_foreign_key "departments", "companies"
+  add_foreign_key "departments", "departments", column: "parent_id"
+  add_foreign_key "departments", "units"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
@@ -445,6 +499,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_120000) do
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "partner_membership_companies", "companies"
   add_foreign_key "partner_membership_companies", "memberships"
+  add_foreign_key "positions", "companies"
   add_foreign_key "support_accesses", "brands"
   add_foreign_key "support_accesses", "companies"
   add_foreign_key "support_accesses", "users", column: "support_user_id"

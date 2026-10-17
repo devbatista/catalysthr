@@ -19,6 +19,7 @@ module Memberships
         @membership.update!(status: "revoked", invitation_token_digest: nil)
         # A consultant invited again starts without companies (D-052).
         @membership.partner_membership_companies.destroy_all
+        Memberships.release_company_assignments!(@membership)
         user = @membership.user
         if user.platform_role.nil? && !user.memberships.where.not(status: "revoked").exists?
           user.update!(status: "deactivated")

@@ -1,0 +1,20 @@
+<% content_for :title, @position.name %>
+
+<p class="text-sm"><%= link_to t(".back"), positions_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @position.name %></h1>
+  <span class="pill <%= @position.active? ? "pill-ok" : "pill-mute" %>"><%= t("positions.statuses.#{@position.status}") %></span>
+</div>
+
+<div class="card card-body mt-6 max-w-3xl">
+  <dl class="details-list">
+    <div class="sm:col-span-2"><dt><%= t(".cbo") %></dt><dd><%= @position.cbo_occupation&.label || @position.cbo_code %></dd></div>
+    <div><dt><%= t(".salary_range") %></dt><dd><%= salary_range(@position) %></dd></div>
+    <div class="sm:col-span-2"><dt><%= t(".description") %></dt><dd><%= simple_format(@position.description.presence || "—", class: "mb-1") %></dd></div>
+    <div class="sm:col-span-2"><dt><%= t(".requirements") %></dt><dd><%= simple_format(@position.requirements.presence || "—", class: "mb-1") %></dd></div>
+  </dl>
+
+  <% if can?(:update, @position) %>
+    <p class="mt-5 border-t border-line-soft pt-4"><%= link_to t(".edit"), edit_position_path(@position), class: "btn btn-secondary" %></p>
+  <% end %>
+</div>

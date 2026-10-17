@@ -91,6 +91,10 @@ Rails.application.routes.draw do
       # The company's settings and units (spec 04, RN-04-002 to RN-04-014, D-601).
       resource :company_settings, path: "settings", only: %i[edit update]
       resources :units, except: :destroy
+      resources :departments, except: :destroy
+      resources :positions, except: :destroy
+      # The official CBO, searched by code or title for the position's form (RN-04-031).
+      get "cbo-search", to: "cbo_searches#index", as: :cbo_search
       # Address by CEP and the unit's position, for the unit's form (D-215, D-216).
       get "address-lookup/:postal_code", to: "address_lookups#show", as: :address_lookup
       get "geocode", to: "address_lookups#geocode", as: :geocode

@@ -22,6 +22,7 @@ class CompanyAbility
 
     hr_admin(user, company) if roles.include?("hr_admin")
     hr_analyst(company) if roles.include?("hr_analyst")
+    manager(company, membership) if roles.include?("manager")
   end
 
   private
@@ -40,15 +41,28 @@ class CompanyAbility
   # The HR analyst reads the units (spec 03, section 4.2); the U scope applies to the
   # people, from spec 04's block 4c.
   def hr_analyst(company)
-    can :read, Unit, company_id: company.id
+    can :read, [ Unit, Department, Position ], company_id: company.id
+  end
+
+  # The manager reads their own departments, with the subdepartments (the E scope, D-190),
+  # and those departments' units (spec 03, section 4.2). The positions come with the
+  # team's people, in spec 04's block 4c.
+  def manager(company, membership)
+    department_ids, unit_ids = ActsAsTenant.with_tenant(company) do
+      ids = Department.team_ids_for(membership)
+      [ ids, Department.where(id: ids).distinct.pluck(:unit_id) ]
+    end
+    can :read, Department, company_id: company.id, id: department_ids
+    can :read, Unit, company_id: company.id, id: unit_ids
   end
 
   def hr_admin(user, company)
     # The company's settings and units (spec 03, section 4.2, D-601). The employer's
     # document is corrected only by the superadmin.
     can :update_settings, Company, id: company.id
-    can %i[read create update], Unit, company_id: company.id
+    can %i[read create update], [ Unit, Department, Position ], company_id: company.id
     can :lookup, :address
+    can :lookup, :cbo
 
     can %i[read invite], Membership, organization_type: "Company", organization_id: company.id
     # The company's accounting firm: register or link it, resend the first invitation,

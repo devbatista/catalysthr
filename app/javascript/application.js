@@ -95,3 +95,49 @@ if (unitForm) {
     })
   }
 }
+
+// The position's CBO, searched in the official table by code or title (RN-04-031).
+// Choosing an occupation fills the code; without JavaScript, the code is typed.
+document.querySelectorAll("[data-cbo-picker]").forEach((picker) => {
+  const query = picker.querySelector("[data-cbo-query]")
+  const results = picker.querySelector("[data-cbo-results]")
+  const code = picker.querySelector("[data-cbo-code]")
+  let timer = null
+
+  const close = () => results.classList.add("hidden")
+  const show = (occupations) => {
+    results.replaceChildren()
+    if (occupations.length === 0) {
+      const empty = document.createElement("li")
+      empty.className = "px-3 py-2 text-ink-muted"
+      empty.textContent = picker.dataset.empty
+      results.append(empty)
+    }
+    occupations.forEach((occupation) => {
+      const item = document.createElement("li")
+      const button = document.createElement("button")
+      button.type = "button"
+      button.className = "w-full cursor-pointer px-3 py-2 text-left hover:bg-canvas"
+      button.textContent = `${occupation.code} · ${occupation.title}`
+      button.addEventListener("click", () => {
+        code.value = occupation.code
+        query.value = button.textContent
+        close()
+      })
+      item.append(button)
+      results.append(item)
+    })
+    results.classList.remove("hidden")
+  }
+
+  query.addEventListener("input", () => {
+    clearTimeout(timer)
+    if (query.value.trim().length < 2) return close()
+
+    timer = setTimeout(async () => {
+      const response = await fetch(`${picker.dataset.url}?q=${encodeURIComponent(query.value.trim())}`, { headers: { Accept: "application/json" } })
+      if (response.ok) show(await response.json())
+    }, 250)
+  })
+  query.addEventListener("keydown", (event) => { if (event.key === "Escape") close() })
+})
