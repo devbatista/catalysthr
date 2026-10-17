@@ -21,6 +21,7 @@ class CompanyAbility
     roles += [ "hr_analyst" ] if consultant_of?(user, company) || support_at?(user, company, support_access)
 
     hr_admin(user, company) if roles.include?("hr_admin")
+    hr_analyst(company) if roles.include?("hr_analyst")
   end
 
   private
@@ -36,7 +37,19 @@ class CompanyAbility
       .joins(:partner_membership_companies).exists?(partner_membership_companies: { company_id: company.id })
   end
 
+  # The HR analyst reads the units (spec 03, section 4.2); the U scope applies to the
+  # people, from spec 04's block 4c.
+  def hr_analyst(company)
+    can :read, Unit, company_id: company.id
+  end
+
   def hr_admin(user, company)
+    # The company's settings and units (spec 03, section 4.2, D-601). The employer's
+    # document is corrected only by the superadmin.
+    can :update_settings, Company, id: company.id
+    can %i[read create update], Unit, company_id: company.id
+    can :lookup, :address
+
     can %i[read invite], Membership, organization_type: "Company", organization_id: company.id
     # The company's accounting firm: register or link it, resend the first invitation,
     # end the link (RN-02-070 to RN-02-073, D-588 to D-590).

@@ -13,6 +13,9 @@
     <% if @membership.enabled_modules.any? %>
       <div><dt><%= membership_t("show.modules") %></dt><dd><%= @membership.enabled_modules.map { |mod| t("modules.#{mod}") }.join(", ") %></dd></div>
     <% end %>
+    <% if assignable_units && @membership.roles.include?("hr_analyst") %>
+      <div><dt><%= membership_t("show.units") %></dt><dd><%= Unit.joins(:membership_units).merge(MembershipUnit.where(membership: @membership)).ordered.map(&:name).join(", ").presence || "—" %></dd></div>
+    <% end %>
     <% if @membership.roles.include?("consultant") %>
       <div><dt><%= membership_t("show.companies") %></dt><dd><%= @membership.assigned_companies.where(partner_id: @membership.organization_id).order(:name).map(&:name).join(", ").presence || "—" %></dd></div>
     <% end %>

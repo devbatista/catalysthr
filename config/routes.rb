@@ -88,6 +88,13 @@ Rails.application.routes.draw do
         end
       end
 
+      # The company's settings and units (spec 04, RN-04-002 to RN-04-014, D-601).
+      resource :company_settings, path: "settings", only: %i[edit update]
+      resources :units, except: :destroy
+      # Address by CEP and the unit's position, for the unit's form (D-215, D-216).
+      get "address-lookup/:postal_code", to: "address_lookups#show", as: :address_lookup
+      get "geocode", to: "address_lookups#geocode", as: :geocode
+
       # The prototype's modules not built yet (D-597).
       get "soon/:feature", to: "coming_soon#show", as: :coming_soon,
         constraints: { feature: Regexp.union(ComingSoon::COMPANY_FEATURES) }

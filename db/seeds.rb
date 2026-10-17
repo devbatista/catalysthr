@@ -16,22 +16,26 @@ aurora_brand = Brand.find_or_create_by!(owner: aurora) do |brand|
 end
 aurora_brand.subdomains.find_or_create_by!(slug: "aurora")
 
+# The employer is found by the CNPJ root, and the full CNPJ goes to the headquarters
+# (RN-04-001, RN-04-010, D-600).
+def seed_company(cnpj, **attributes)
+  company = Company.find_or_create_by!(document: cnpj[0, 8]) do |new_company|
+    new_company.assign_attributes(employer_type: "company", **attributes)
+  end
+  headquarters = company.headquarters
+  ActsAsTenant.with_tenant(company) { headquarters.update!(registration_type: "cnpj", registration_number: cnpj) } if headquarters.registration_number.blank?
+  company
+end
+
 [
   [ "Padaria Pão Quente", "Padaria Pão Quente Ltda", "12ABC34501DE35" ],
   [ "Transportes Rápidos", "Transportes Rápidos S.A.", "13579246000101" ]
 ].each do |name, legal_name, cnpj|
-  Company.find_or_create_by!(cnpj: cnpj) do |company|
-    company.partner = aurora
-    company.name = name
-    company.legal_name = legal_name
-  end
+  seed_company(cnpj, name: name, legal_name: legal_name, partner: aurora)
 end
 
 # A direct company without a configured brand: http://serraazul.painel.localhost:3000
-serra_azul = Company.find_or_create_by!(cnpj: "24681357000140") do |company|
-  company.name = "Metalúrgica Serra Azul"
-  company.legal_name = "Metalúrgica Serra Azul Ltda"
-end
+serra_azul = seed_company("24681357000140", name: "Metalúrgica Serra Azul", legal_name: "Metalúrgica Serra Azul Ltda")
 serra_azul_brand = Brand.find_or_create_by!(owner: serra_azul) do |brand|
   brand.commercial_name = serra_azul.name
 end
@@ -39,7 +43,7 @@ serra_azul_brand.subdomains.find_or_create_by!(slug: "serraazul")
 
 # An accounting firm serving the Padaria (D-170, D-171).
 exata = AccountingFirm.find_or_create_by!(cnpj: "11222333000181") { |firm| firm.name = "Contábil Exata" }
-AccountingFirmCompany.find_or_create_by!(accounting_firm: exata, company: Company.find_by!(cnpj: "12ABC34501DE35")) do |link|
+AccountingFirmCompany.find_or_create_by!(accounting_firm: exata, company: Company.find_by!(document: "12ABC345")) do |link|
   link.status = "active"
   link.accepted_at = Time.current
 end
@@ -54,7 +58,7 @@ Flipper.enable(FeatureFlags::SIGN_IN)
   # Partner's administrator and consultant, and a client company's HR, at http://aurora.painel.localhost:3000
   [ "Beatriz Nunes", "39053344705", "beatriz@aurora.example", {}, aurora, %w[partner_admin] ],
   [ "Ana Ribeiro", "11144477735", "ana@aurora.example", {}, aurora, %w[consultant] ],
-  [ "Maria Souza", "12345678909", "maria@padaria.example", {}, Company.find_by!(cnpj: "12ABC34501DE35"), %w[hr_admin] ],
+  [ "Maria Souza", "12345678909", "maria@padaria.example", {}, Company.find_by!(document: "12ABC345"), %w[hr_admin] ],
   # The accounting firm's administrator, at http://aurora.painel.localhost:3000 (MFA optional)
   [ "Eva Martins", "71460238001", "eva@exata.example", {}, exata, %w[firm_admin] ],
   # Direct company's HR, at http://serraazul.painel.localhost:3000
@@ -71,7 +75,7 @@ end
 
 # The consultant serves the Padaria (D-052).
 Membership.find_by!(user: User.find_by!(cpf: "11144477735"), organization: aurora).partner_membership_companies
-  .find_or_create_by!(company: Company.find_by!(cnpj: "12ABC34501DE35"))
+  .find_or_create_by!(company: Company.find_by!(document: "12ABC345"))
 
 # Fictional CatalystHR legal texts, so the first access can be completed (D-578, D-579).
 author = User.find_by!(cpf: "52998224725")

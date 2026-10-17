@@ -76,13 +76,13 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Entregas
 - [ ] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Faltam os usuários do backup e da restauração, com o pg_dump diário
-- [ ] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
+- [x] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
   - [x] Parte 1: base do tenant (`acts_as_tenant` com `require_tenant`, jobs com a empresa), parceiros, empresas, marcas, subdomínios com reservados e redirecionamento de 90 dias, resolução pelo host com cache, tema por variáveis CSS com contraste mínimo, manifest do PWA, CNPJ numérico e alfanumérico, Flipper instalado
-  - [ ] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3. Em 4 PRs (D-594):
+  - [x] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3. Em 4 PRs (D-594):
     - [x] 2a. Ponto único de consulta entre empresas (RN-01-011), edição da marca sem imagens no painel do parceiro e no admin, com os modos `alongside` e `replace` (RN-01-034, RN-01-035), e a troca de slug pelo superadmin (PR #28)
     - [x] 2b. AWS de arquivos (D-595, passo a passo em `aws-arquivos.md`), Active Storage no S3 com prefixo por empresa (RN-01-014) e as imagens da marca, servidas só pela aplicação (PR #29)
     - [x] 2c. Domínio de e-mail da marca no SES, com o job de verificação (RN-01-040, CA-01-008, CA-01-009) (PR #30)
-    - [ ] 2d. Transferência de empresa (RN-01-050 a RN-01-053)
+    - [x] 2d. Transferência de empresa (RN-01-050 a RN-01-053, D-599) (PR #32)
 - [x] **Spec 02:** login por CPF ou e-mail, convites por e-mail e link (por WhatsApp quando a Twilio estiver aprovada), senha, bloqueio, MFA, sessões, impersonate em simulação. Feita nos 5 blocos abaixo; WhatsApp e passkeys ficam para depois
 - [x] **Spec 03:** perfis, escopos, módulos liberados e contratados, `Ability`. Feita nos 5 blocos abaixo; os escopos U, E e K e as regras de cada módulo entram com a spec 04 em diante, e os módulos contratados com a spec 19
   - Specs 02 e 03 no mesmo ciclo, em 5 PRs (2026-10-15):
@@ -101,6 +101,13 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
+  - Em 4 PRs (D-600):
+    - [ ] 4a. Empresa (tipo de empregador e documento, endereço, configurações) e unidades (matriz, raiz do CNPJ, fuso, CEP, posição no mapa), com as unidades do RH analista (escopo U) (RN-04-001 a RN-04-014, CA-04-001)
+    - [ ] 4b. Departamentos em árvore com gestores e "gestor acima" (escopo E), cargos e tabela da CBO (RN-04-020 a RN-04-032, CA-04-002, CA-04-003)
+    - [ ] 4c. Ficha, contatos de emergência, dependentes, contas, vínculos, revisões com vigência, efetivação de estagiário, job das revisões, cadastro manual "Novo colaborador" e confirmação de senha para dado sensível (RN-04-040 a RN-04-064, CA-04-004 a CA-04-007, CA-04-010, RN-02-052, D-592)
+    - [ ] 4d. Campos personalizados e clientes de alocação (escopo K) (RN-04-080, RN-04-081, RN-04-090 a RN-04-096, CA-04-011 a CA-04-013)
+    - [ ] Depois do deploy do 4a: migração que remove `companies.cnpj`
+  - Ficam para depois: atualização pelo colaborador (specs 09 e 16), pendências de eSocial (spec 13), convite do colaborador (spec 16) e do gestor do cliente (spec 07)
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
   - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências

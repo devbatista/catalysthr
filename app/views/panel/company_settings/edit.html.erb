@@ -1,0 +1,51 @@
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with model: @company, url: company_settings_path, method: :patch, scope: :company, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+  <% if @company.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% @company.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".company") %></h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= form.label :legal_name, t(".legal_name"), class: "field-label" %>
+        <%= form.text_field :legal_name, required: true, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :name, t(".name"), class: "field-label" %>
+        <%= form.text_field :name, required: true, class: "input" %>
+      </div>
+    </div>
+    <dl class="details-list rounded-lg bg-canvas p-4">
+      <div><dt><%= t(".employer_type") %></dt><dd><%= @company.employer_type ? t("companies.employer_types.#{@company.employer_type}") : "—" %></dd></div>
+      <div><dt><%= t(".document") %></dt><dd class="font-mono"><%= @company.formatted_document.presence || "—" %></dd></div>
+    </dl>
+    <p class="field-hint"><%= t(".document_hint") %></p>
+    <% if (headquarters = @company.headquarters) %>
+      <p class="text-sm">
+        <%= t(".headquarters_address") %>
+        <span class="text-ink-soft"><%= unit_address(headquarters).presence || t(".no_address") %></span>
+        · <%= link_to t(".edit_headquarters"), edit_unit_path(headquarters), class: "link-button" %>
+      </p>
+    <% end %>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".rules") %></h2>
+    <div>
+      <%= form.label :read_only_period_days, t(".read_only_period_days"), class: "field-label" %>
+      <%= form.number_field :read_only_period_days, min: 0, max: 3650, required: true, class: "input w-32" %>
+      <p class="field-hint"><%= t(".read_only_period_hint") %></p>
+    </div>
+  </section>
+
+  <div><%= form.submit t(".submit"), class: "btn btn-primary" %></div>
+<% end %>

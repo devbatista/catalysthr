@@ -1,18 +1,33 @@
 require "rails_helper"
 
 RSpec.describe Company do
-  it "stores the CNPJ normalized and rejects an invalid one" do
-    company = create(:company, cnpj: "12.abc.345/01de-35")
-    expect(company.cnpj).to eq("12ABC34501DE35")
+  describe "the employer's document (RN-04-001, P-04-04)" do
+    it "keeps the CNPJ root normalized, alphanumeric included, and refuses a full CNPJ" do
+      company = create(:company, document: "12.abc.345")
+      expect(company.document).to eq("12ABC345")
 
-    invalid = build(:company, cnpj: "11.222.333/0001-82")
-    expect(invalid).not_to be_valid
-    expect(invalid.errors[:cnpj]).to include("não é um CNPJ válido")
+      invalid = build(:company, document: "11.222.333/0001-81")
+      expect(invalid).not_to be_valid
+      expect(invalid.errors[:document]).to include("precisa ser a raiz do CNPJ, com 8 caracteres")
+    end
+
+    it "takes a valid CPF for a person employer (D-200)" do
+      expect(create(:company, employer_type: "person", document: "123.456.789-09").formatted_document).to eq("123.456.789-09")
+      expect(build(:company, employer_type: "person", document: "12345678900")).not_to be_valid
+    end
+
+    it "is unique on the platform, and searchable though encrypted" do
+      create(:company, document: "11222333")
+      expect(build(:company, document: "11.222.333")).not_to be_valid
+      expect(described_class.matching("11.222.333/0001-81").count).to eq(1)
+    end
   end
 
-  it "does not repeat a CNPJ" do
-    create(:company, cnpj: "11222333000181")
-    expect(build(:company, cnpj: "11.222.333/0001-81")).not_to be_valid
+  it "is born with its headquarters unit (RN-04-010, P-04-05)" do
+    company = create(:company)
+
+    expect(company.headquarters).to have_attributes(name: "Matriz", headquarters: true, status: "active",
+      time_zone: "America/Sao_Paulo")
   end
 
   describe "brand display mode (RN-01-034)" do

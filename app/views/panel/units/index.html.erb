@@ -1,0 +1,35 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Unit) %>
+    <%= link_to t(".new"), new_unit_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<div class="card mt-6 overflow-x-auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= t(".name") %></th>
+        <th><%= t(".registration") %></th>
+        <th><%= t(".city") %></th>
+        <th><%= t(".status") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @units.each do |unit| %>
+        <tr>
+          <td>
+            <%= link_to unit.name, unit_path(unit), class: "link-button" %>
+            <% if unit.headquarters? %><span class="pill pill-info ml-2"><%= t(".headquarters") %></span><% end %>
+          </td>
+          <td class="font-mono text-xs text-ink-soft"><%= unit_registration(unit) %></td>
+          <td class="text-ink-soft"><%= [ unit.city, unit.state ].compact_blank.join(" / ").presence || "—" %></td>
+          <td><span class="pill <%= unit.active? ? "pill-ok" : "pill-mute" %>"><%= t("units.statuses.#{unit.status}") %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -3,7 +3,8 @@
 
 <%= form_with url: url_for(action: :update, id: @membership), method: :patch, class: "card card-body mt-6 max-w-xl space-y-5" do |form| %>
   <%= render "panel/memberships/roles_fields", scope: "membership", selected_roles: @membership.roles,
-    selected_modules: @membership.enabled_modules, selected_company_ids: @membership.partner_membership_companies.map(&:company_id) %>
+    selected_modules: @membership.enabled_modules, selected_company_ids: @membership.partner_membership_companies.map(&:company_id),
+    selected_unit_ids: assignable_units ? MembershipUnit.where(membership: @membership).pluck(:unit_id) : [] %>
   <div class="flex items-center gap-4 border-t border-line-soft pt-5">
     <%= form.submit membership_t("edit.submit"), class: "btn btn-primary" %>
     <%= link_to membership_t("edit.cancel"), url_for(action: :show, id: @membership), class: "link-button text-sm" %>

@@ -41,9 +41,7 @@ module Admin
     end
 
     def search(query)
-      cnpj = Cnpj.normalize(query)
-      by_name = Company.where("companies.name ILIKE ?", "%#{Company.sanitize_sql_like(query)}%")
-      (cnpj.length == 14 ? by_name.or(Company.where(cnpj: cnpj)) : by_name).includes(:partner).order(:name).limit(20)
+      Company.matching(query).includes(:partner).order(:name).limit(20)
     end
   end
 end

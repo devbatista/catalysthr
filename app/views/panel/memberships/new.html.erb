@@ -12,7 +12,7 @@
   <% end %>
 
   <%= render "panel/memberships/roles_fields", scope: "invitation", selected_roles: @form[:roles],
-    selected_modules: @form[:enabled_modules], selected_company_ids: @form[:company_ids] %>
+    selected_modules: @form[:enabled_modules], selected_company_ids: @form[:company_ids], selected_unit_ids: @form[:unit_ids] %>
 
   <fieldset>
     <legend class="field-label"><%= membership_t("new.channels") %></legend>
