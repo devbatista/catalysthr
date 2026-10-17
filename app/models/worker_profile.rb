@@ -30,6 +30,9 @@ class WorkerProfile < ApplicationRecord
   belongs_to :membership
   has_one :user, through: :membership
   has_many :employments, dependent: :restrict_with_error
+  has_many :emergency_contacts, dependent: :restrict_with_error
+  has_many :dependents, dependent: :restrict_with_error
+  has_many :bank_accounts, dependent: :restrict_with_error
 
   encrypts(*DOCUMENT_FIELDS)
   serialize :disability, coder: JSON

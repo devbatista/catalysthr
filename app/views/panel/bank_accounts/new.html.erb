@@ -1,0 +1,73 @@
+<%# A bank account or a PIX key (RN-04-044). The ownership is declared by the HR until the
+    proof comes with the documents folder (P-04-17, D-604). %>
+<% content_for :title, t(".title") %>
+<% method = params.dig(:bank_account, :method) || (@account.pix? ? "pix" : "account") %>
+<p class="text-sm"><%= link_to t("panel.employees.records.back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with model: @account, url: employee_bank_accounts_path(@profile), method: :post, class: "card card-body mt-6 max-w-2xl space-y-5" do |form| %>
+  <%= render "panel/employees/errors", record: @account %>
+  <fieldset>
+    <legend class="field-label"><%= t(".method") %></legend>
+    <div class="mt-1 flex flex-wrap gap-4">
+      <label class="flex items-center gap-2 text-sm"><%= radio_button_tag "bank_account[method]", "account", method == "account" %> <%= t(".account") %></label>
+      <label class="flex items-center gap-2 text-sm"><%= radio_button_tag "bank_account[method]", "pix", method == "pix" %> <%= t(".pix") %></label>
+    </div>
+  </fieldset>
+
+  <div class="grid grid-cols-1 gap-4 rounded-lg border border-line-soft p-4 sm:grid-cols-2">
+    <p class="text-sm font-semibold sm:col-span-2"><%= t(".account") %></p>
+    <div>
+      <%= form.label :bank_code, t(".bank_code"), class: "field-label" %>
+      <%= form.text_field :bank_code, inputmode: "numeric", maxlength: 3, class: "input w-28 font-mono" %>
+      <p class="field-hint"><%= t(".bank_code_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :account_type, t(".account_type"), class: "field-label" %>
+      <%= form.select :account_type, BankAccount::ACCOUNT_TYPES.map { |type| [ t("bank_accounts.account_types.#{type}"), type ] },
+        { include_blank: true }, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :branch, t(".branch"), class: "field-label" %>
+      <%= form.text_field :branch, inputmode: "numeric", maxlength: 5, class: "input w-32 font-mono" %>
+    </div>
+    <div>
+      <%= form.label :account_number, t(".account_number"), class: "field-label" %>
+      <%# Accounts are never edited: the field only takes what is being typed (D-604). %>
+      <%= text_field_tag "bank_account[account_number]", params.dig(:bank_account, :account_number), id: "bank_account_account_number",
+        autocomplete: "off", class: "input font-mono" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 rounded-lg border border-line-soft p-4 sm:grid-cols-2">
+    <p class="text-sm font-semibold sm:col-span-2"><%= t(".pix") %></p>
+    <div>
+      <%= form.label :pix_key_type, t(".pix_key_type"), class: "field-label" %>
+      <%= form.select :pix_key_type, BankAccount::PIX_KEY_TYPES.map { |type| [ t("bank_accounts.pix_key_types.#{type}"), type ] },
+        { include_blank: true }, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :pix_key, t(".pix_key"), class: "field-label" %>
+      <%= text_field_tag "bank_account[pix_key]", params.dig(:bank_account, :pix_key), id: "bank_account_pix_key",
+        autocomplete: "off", class: "input font-mono" %>
+    </div>
+  </div>
+
+  <label class="flex items-center gap-2 text-sm">
+    <%= hidden_field_tag "bank_account[primary]", "0", id: nil %>
+    <%= check_box_tag "bank_account[primary]", "1", @account.primary, id: "bank_account_primary" %>
+    <%= t(".primary") %>
+  </label>
+  <p class="field-hint"><%= t(".primary_hint") %></p>
+
+  <label class="flex items-start gap-2 text-sm">
+    <%= check_box_tag "declaration", "1", false, required: true, class: "mt-0.5" %>
+    <span><%= t(".declaration") %></span>
+  </label>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.employees.records.cancel"), employee_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

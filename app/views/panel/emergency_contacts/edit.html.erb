@@ -1,0 +1,3 @@
+<%= render "form", title: t(".title"), url: employee_emergency_contact_path(@profile, @contact), method: :patch %>
+<%= button_to t(".destroy"), employee_emergency_contact_path(@profile, @contact), method: :delete,
+  class: "btn btn-danger mt-6", form: { data: { confirm: t(".destroy_confirm") } } %>

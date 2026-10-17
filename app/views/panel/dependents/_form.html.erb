@@ -1,0 +1,45 @@
+<%# A dependent (RN-04-043). The CPF goes through reveal_confirmed (RN-05-001); the
+    certificate comes with the documents folder (spec 08, D-604). %>
+<% content_for :title, title %>
+<p class="text-sm"><%= link_to t("panel.employees.records.back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= title %></h1>
+
+<%= form_with model: @dependent, url: url, method: method, class: "card card-body mt-6 max-w-2xl space-y-5" do |form| %>
+  <%= render "panel/employees/errors", record: @dependent %>
+  <div>
+    <%= form.label :name, t("panel.dependents.form.name"), class: "field-label" %>
+    <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :relationship_type, t("panel.dependents.form.relationship_type"), class: "field-label" %>
+      <%= form.select :relationship_type, Dependent::RELATIONSHIP_TYPES.map { |type| [ t("dependents.relationship_types.#{type}"), type ] },
+        { prompt: t("panel.dependents.form.choose") }, required: true, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :birth_date, t("panel.dependents.form.birth_date"), class: "field-label" %>
+      <%= form.date_field :birth_date, required: true, max: Date.current, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :cpf, t("panel.dependents.form.cpf"), class: "field-label" %>
+      <%= form.text_field :cpf, value: (@dependent.persisted? ? reveal_confirmed(@dependent, :cpf, as: :text, section: :documents) : @dependent.cpf),
+        inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
+      <p class="field-hint"><%= t("panel.dependents.form.cpf_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :sex, t("panel.dependents.form.sex"), class: "field-label" %>
+      <%= form.select :sex, WorkerProfile::SEXES.map { |sex| [ t("worker_profiles.sexes.#{sex}"), sex ] }, { include_blank: true }, class: "input" %>
+    </div>
+  </div>
+  <fieldset class="space-y-2">
+    <legend class="field-label"><%= t("panel.dependents.form.uses") %></legend>
+    <label class="flex items-center gap-2 text-sm"><%= form.check_box :irrf %> <%= t("panel.dependents.form.irrf") %></label>
+    <label class="flex items-center gap-2 text-sm"><%= form.check_box :family_allowance %> <%= t("panel.dependents.form.family_allowance") %></label>
+    <label class="flex items-center gap-2 text-sm"><%= form.check_box :incapable %> <%= t("panel.dependents.form.incapable") %></label>
+  </fieldset>
+  <p class="field-hint"><%= t("panel.dependents.form.certificate_hint") %></p>
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("panel.employees.records.submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.employees.records.cancel"), employee_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

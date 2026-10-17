@@ -1,7 +1,7 @@
 # 04 — Cadastros
 
 > Status: aprovado · Última atualização: 2026-10-17
-> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600, D-602, D-603 ([decisoes.md](decisoes.md))
+> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600, D-602 a D-604 ([decisoes.md](decisoes.md))
 > Os itens **[P-04-01]** a **[P-04-29]** foram todos aprovados sem ajuste (D-214, seção 10). Os itens **[P-04-30]** a **[P-04-36]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -123,8 +123,8 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   | Campos personalizados | Os definidos pela empresa (D-213) |
 
 - **RN-04-042** — Dados sensíveis da ficha (D-086) ficam criptografados no banco: RG e demais documentos, dados bancários, deficiência e dados de saúde. CPF e RG usam criptografia determinística quando precisam de busca **[P-04-16]**.
-- **RN-04-043** — **Dependentes** (D-208): nome, CPF, data de nascimento, sexo, parentesco (tipos do eSocial), se é dependente para IRRF, se é para salário-família, se é incapaz para o trabalho, e a certidão anexa (spec 08).
-- **RN-04-044** — **Dados bancários** (D-208): banco, agência, conta, tipo (corrente, poupança, salário) ou chave PIX com o tipo da chave. Uma conta é marcada como principal para o pagamento. A conta precisa ter o CPF do titular igual ao do colaborador, o que é verificado por declaração e comprovante, não por consulta ao banco **[P-04-17]**.
+- **RN-04-043** — **Dependentes** (D-208): nome, CPF, data de nascimento, sexo, parentesco (tipos do eSocial), se é dependente para IRRF, se é para salário-família, se é incapaz para o trabalho, e a certidão anexa (spec 08). O dependente que sai é encerrado, com data, e fica no histórico (D-604).
+- **RN-04-044** — **Dados bancários** (D-208): banco, agência, conta, tipo (corrente, poupança, salário) ou chave PIX com o tipo da chave. Uma conta é marcada como principal para o pagamento. A conta precisa ter o CPF do titular igual ao do colaborador, o que é verificado por declaração e comprovante, não por consulta ao banco **[P-04-17]**. O comprovante entra com a pasta de documentos (spec 08); até lá vale a declaração registrada pelo RH. Contas não são apagadas: trocar a principal encerra a anterior, que fica no histórico (D-604).
 
 ### Vínculos (Employment)
 
@@ -157,7 +157,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - `on_leave`: afastado;
   - `terminated`: desligado, com data e motivo.
 
-  Efetivar um estagiário encerra o vínculo de estágio e cria um vínculo CLT novo. Os dois ficam no histórico.
+  Efetivar um estagiário encerra o vínculo de estágio e cria um vínculo CLT novo. Os dois ficam no histórico. O estágio termina na véspera da admissão CLT, com o motivo "Efetivação" (D-604).
 - **RN-04-055** — O perfil `employee` da membership existe enquanto houver ao menos um vínculo `pending`, `active` ou `on_leave`, ou enquanto durar o período de leitura depois do último desligamento (P-02-03, D-090).
 
 ### Revisões com vigência (EmploymentRevision)
