@@ -3,7 +3,7 @@ require "rails_helper"
 # Spec 05, RN-05-001 (P-05-06): a sensitive field shown outside the single point breaks
 # this test. Every view line naming one of them must go through reveal_confirmed.
 RSpec.describe "Sensitive fields in the views" do
-  fields = WorkerProfile::DOCUMENT_FIELDS + WorkerProfile::HEALTH_FIELDS + %i[salary_cents]
+  fields = WorkerProfile::DOCUMENT_FIELDS + WorkerProfile::HEALTH_FIELDS + %i[salary_cents account_number pix_key]
 
   it "reach the page only through reveal_confirmed" do
     offending = Rails.root.glob("app/views/**/*.erb").flat_map do |file|

@@ -1,0 +1,6 @@
+<% content_for :title, t(".title") %>
+<p class="text-sm"><%= link_to t("panel.employees.records.back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= render "registration_form", url: employee_employments_path(@profile), conversion: false, submit: t(".submit") %>

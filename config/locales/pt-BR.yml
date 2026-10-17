@@ -205,6 +205,8 @@ pt-BR:
       apprentice: "Aprendiz"
       temporary: "Temporário"
       intermittent: "Intermitente"
+    termination_reasons:
+      conversion: "Efetivação"
     statuses:
       pending: "Em admissão"
       active: "Ativo"
@@ -277,6 +279,31 @@ pt-BR:
       contractor_cnpj: "CNPJ do prestador"
       contractor_legal_name: "Razão social do prestador"
       payment_method: "Forma de pagamento"
+  dependents:
+    relationship_types:
+      spouse: "Cônjuge"
+      partner: "Companheiro(a)"
+      child: "Filho(a)"
+      stepchild: "Enteado(a)"
+      student_child: "Filho(a) ou enteado(a) universitário(a)"
+      sibling: "Irmão(ã)"
+      grandchild: "Neto(a)"
+      parent: "Pai ou mãe"
+      grandparent: "Avô ou avó"
+      ward: "Menor sob guarda ou tutela"
+      incapable_person: "Pessoa incapaz sob curatela"
+      alimony_recipient: "Quem recebe pensão alimentícia"
+      other: "Outro"
+  bank_accounts:
+    account_types:
+      checking: "conta corrente"
+      savings: "conta poupança"
+      salary: "conta salário"
+    pix_key_types:
+      cpf: "CPF"
+      email: "e-mail"
+      phone: "celular"
+      random: "chave aleatória"
   employment_revisions:
     salary_units:
       hour: "por hora"
@@ -596,6 +623,38 @@ pt-BR:
         rehabilitated: "reabilitado(a) ou readaptado(a)"
         "yes": "Sim"
         "no": "Não"
+        new_employment: "Novo vínculo"
+        convert: "Efetivar como CLT"
+        emergency_contacts: "Contatos de emergência"
+        new_emergency_contact: "Adicionar contato"
+        no_emergency_contacts: "Nenhum contato de emergência."
+        edit_item: "Editar"
+        dependents: "Dependentes"
+        new_dependent: "Adicionar dependente"
+        no_dependents: "Nenhum dependente."
+        dependent_name: "Nome"
+        relationship: "Parentesco"
+        dependent_uses: "Vale para"
+        ended_since: "encerrado em %{date}"
+        bank_accounts: "Contas para pagamento"
+        new_bank_account: "Adicionar conta ou PIX"
+        no_bank_accounts: "Nenhuma conta cadastrada."
+        primary: "Principal"
+        declared: "Titularidade declarada por %{name} em %{date}"
+        make_primary: "Tornar principal"
+        make_primary_confirm: "Tornar esta a conta principal? A principal atual será encerrada."
+        end_account: "Encerrar"
+        end_account_confirm: "Encerrar esta conta? Ela fica no histórico."
+        pix_summary: "PIX (%{type}): %{key}"
+        account_summary: "Banco %{bank} · agência %{branch} · %{type} %{number}"
+        uses:
+          irrf: "IRRF"
+          family_allowance: "salário-família"
+          incapable: "incapaz para o trabalho"
+      records:
+        back: "Voltar para %{name}"
+        submit: "Salvar"
+        cancel: "Cancelar"
       new:
         title: "Novo colaborador"
         subtitle: "Para quem já trabalha na empresa. A pessoa não recebe convite agora: o acesso dela vem com o portal do colaborador."
@@ -682,6 +741,77 @@ pt-BR:
         cancel: "Cancelar"
       update:
         updated: "Ficha salva."
+    emergency_contacts:
+      form:
+        name: "Nome"
+        relationship: "Parentesco"
+        phone: "Telefone"
+      new:
+        title: "Novo contato de emergência"
+      edit:
+        title: "Editar contato de emergência"
+        destroy: "Excluir o contato"
+        destroy_confirm: "Excluir este contato de emergência?"
+      create:
+        created: "Contato de emergência adicionado."
+      update:
+        updated: "Contato de emergência salvo."
+      destroy:
+        destroyed: "Contato de emergência excluído."
+    dependents:
+      form:
+        name: "Nome"
+        relationship_type: "Parentesco"
+        choose: "Escolha o parentesco"
+        birth_date: "Data de nascimento"
+        cpf: "CPF"
+        cpf_hint: "A obrigatoriedade do CPF do dependente será conferida com o eSocial."
+        sex: "Sexo"
+        uses: "Vale para"
+        irrf: "Dedução no IRRF"
+        family_allowance: "Salário-família"
+        incapable: "Incapaz para o trabalho"
+        certificate_hint: "A certidão do dependente será anexada pela pasta de documentos, quando ela estiver disponível."
+      new:
+        title: "Novo dependente"
+      edit:
+        title: "Editar dependente"
+        end_title: "Encerrar o dependente"
+        end_hint: "O dependente deixa de valer a partir da data e fica no histórico da ficha."
+        ended_on: "Encerrado em"
+        end: "Encerrar"
+        end_confirm: "Encerrar este dependente?"
+      create:
+        created: "Dependente adicionado."
+      update:
+        updated: "Dependente salvo."
+      close:
+        closed: "Dependente encerrado."
+        invalid_date: "Informe uma data válida para o encerramento."
+    bank_accounts:
+      new:
+        title: "Nova conta para pagamento"
+        subtitle: "Uma conta bancária ou uma chave PIX. A conta precisa estar no CPF da pessoa."
+        method: "Forma"
+        account: "Conta bancária"
+        pix: "Chave PIX"
+        bank_code: "Código do banco"
+        bank_code_hint: "Os 3 dígitos, como 001 ou 341."
+        account_type: "Tipo de conta"
+        branch: "Agência"
+        account_number: "Conta, com o dígito"
+        pix_key_type: "Tipo da chave"
+        pix_key: "Chave"
+        primary: "Usar como conta principal para o pagamento"
+        primary_hint: "A principal atual, se houver, é encerrada e fica no histórico."
+        declaration: "Declaro que a conta ou a chave está no CPF da pessoa, conforme o comprovante apresentado."
+        submit: "Adicionar"
+      create:
+        created: "Conta adicionada."
+      make_primary:
+        made_primary: "Conta principal alterada."
+      close:
+        closed: "Conta encerrada."
     employments:
       edit:
         title: "Dados do vínculo"
@@ -692,6 +822,29 @@ pt-BR:
         esocial_hint: "A lista final dos campos será conferida com o leiaute do eSocial."
         submit: "Salvar"
         cancel: "Cancelar"
+      registration:
+        employment: "Vínculo"
+        kind: "Tipo de vínculo"
+        category: "Categoria"
+        category_hint: "Só vale para CLT."
+        registration_number: "Matrícula"
+        registration_number_hint: "Sugerimos o próximo número da empresa. Cada vínculo tem a própria matrícula."
+        started_on: "Data de admissão ou de início"
+        clt_started_on: "Data de admissão como CLT"
+        clt_started_on_hint: "O estágio termina no dia anterior, com o motivo Efetivação."
+        conditions: "Condições"
+      new:
+        title: "Novo vínculo"
+        subtitle: "Um contrato a mais para esta pessoa na empresa, com a própria matrícula."
+        submit: "Cadastrar"
+      conversion:
+        title: "Efetivar como CLT"
+        subtitle: "O estágio de matrícula %{registration}, desde %{date}, é encerrado e um vínculo CLT novo é criado. Os dois ficam no histórico."
+        submit: "Efetivar"
+      create:
+        created: "Vínculo cadastrado."
+      convert:
+        converted: "Estagiário efetivado. O estágio foi encerrado e o vínculo CLT foi criado."
       update:
         updated: "Dados do vínculo salvos."
     employment_revisions:
@@ -1282,6 +1435,9 @@ pt-BR:
       worker_profile: "Ficha"
       employment: "Vínculo"
       employment_revision: "Revisão do vínculo"
+      emergency_contact: "Contato de emergência"
+      dependent: "Dependente"
+      bank_account: "Conta para pagamento"
     attributes:
       worker_profile:
         social_name: "Nome social"
@@ -1350,6 +1506,24 @@ pt-BR:
         details_supervisor_cpf: "CPF do supervisor"
         details_contractor_cnpj: "CNPJ do prestador"
         details_payment_method: "Forma de pagamento"
+      emergency_contact:
+        name: "Nome"
+        relationship: "Parentesco"
+        phone: "Telefone"
+      dependent:
+        name: "Nome"
+        cpf: "CPF"
+        birth_date: "Data de nascimento"
+        sex: "Sexo"
+        relationship_type: "Parentesco"
+        ended_on: "Data de encerramento"
+      bank_account:
+        bank_code: "Código do banco"
+        branch: "Agência"
+        account_number: "Conta"
+        account_type: "Tipo de conta"
+        pix_key_type: "Tipo da chave"
+        pix_key: "Chave PIX"
       employment_revision:
         effective_on: "Vigente a partir de"
         position: "Cargo"
@@ -1531,6 +1705,24 @@ pt-BR:
               invalid_cnpj: "não é um CNPJ válido"
             details_supervisor_cpf:
               invalid_cpf: "não é um CPF válido"
+        dependent:
+          attributes:
+            birth_date:
+              future: "não pode ser futura"
+        bank_account:
+          attributes:
+            base:
+              incomplete: "Informe o banco, a agência, a conta e o tipo, ou uma chave PIX"
+              account_and_pix: "Informe a conta bancária ou a chave PIX, não as duas"
+              declaration_missing: "Confirme a declaração de que a conta está no CPF da pessoa"
+            bank_code:
+              invalid: "deve ter 3 dígitos"
+            branch:
+              invalid: "deve ter até 5 dígitos, sem o dígito verificador"
+            account_number:
+              invalid: "deve ter só números e o dígito, que pode ser X"
+            pix_key:
+              invalid: "não combina com o tipo da chave"
         employment_revision:
           attributes:
             base:
@@ -1614,7 +1806,21 @@ pt-BR:
   activemodel:
     models:
       employee: "Colaborador"
+      employment_form: "Vínculo"
     attributes:
+      employment_form:
+        kind: "Tipo de vínculo"
+        category: "Categoria"
+        registration_number: "Matrícula"
+        started_on: "Data de início"
+        position_id: "Cargo"
+        unit_id: "Unidade"
+        department_id: "Departamento"
+        salary: "Salário"
+        salary_unit: "Unidade do salário"
+        variable_salary_description: "Descrição do salário variável"
+        weekly_hours: "Horas semanais"
+        justification: "Justificativa"
       employee:
         name: "Nome civil"
         cpf: "CPF"
@@ -1636,6 +1842,19 @@ pt-BR:
         justification: "Justificativa"
     errors:
       models:
+        employment_form:
+          attributes:
+            base:
+              not_internship: "Só um estágio em andamento pode ser efetivado"
+            kind:
+              clt_only: "da efetivação é sempre CLT"
+            started_on:
+              future: "não pode ser futura: quem ainda vai começar entra pela admissão"
+              before_internship: "precisa ser depois do início do estágio"
+            salary:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            registration_number:
+              taken: "já foi usada por outro vínculo desta empresa, inclusive encerrado"
         employee:
           attributes:
             cpf:

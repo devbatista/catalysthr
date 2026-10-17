@@ -77,4 +77,32 @@ module EmployeesHelper
     else value
     end
   end
+
+  # A known reason ("conversion") or the text typed (RN-04-054).
+  def termination_reason(employment)
+    t("employments.termination_reasons.#{employment.termination_reason}", default: employment.termination_reason)
+  end
+
+  def dependent_cpf(dependent)
+    value = reveal_confirmed(dependent, :cpf, as: :text, section: :documents)
+    value.presence && value != SensitiveData::HIDDEN && !impersonating? ? Cpf.format(value) : value.presence || "—"
+  end
+
+  def dependent_uses(dependent)
+    uses = %i[irrf family_allowance incapable].select { |use| dependent.public_send(use) }
+    uses.map { |use| t("panel.employees.show.uses.#{use}") }.join(", ").presence || "—"
+  end
+
+  # "PIX (e-mail): ana@…" or "Banco 001 · agência 1234 · conta corrente 12345-6", the
+  # number and the key shown only after the password (RN-02-052).
+  def bank_account_summary(account)
+    if account.pix?
+      key = reveal_confirmed(account, :pix_key, as: :text, section: :pay)
+      t("panel.employees.show.pix_summary", type: t("bank_accounts.pix_key_types.#{account.pix_key_type}"), key: key)
+    else
+      number = reveal_confirmed(account, :account_number, as: :bank_account, section: :pay)
+      t("panel.employees.show.account_summary", bank: account.bank_code, branch: account.branch,
+        type: t("bank_accounts.account_types.#{account.account_type}"), number: number)
+    end
+  end
 end

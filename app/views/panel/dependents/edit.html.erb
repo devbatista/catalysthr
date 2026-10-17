@@ -1,0 +1,14 @@
+<%= render "form", title: t(".title"), url: employee_dependent_path(@profile, @dependent), method: :patch %>
+
+<%= form_with url: end_employee_dependent_path(@profile, @dependent), method: :patch, class: "card card-body mt-6 max-w-2xl space-y-3",
+  data: { confirm: t(".end_confirm") } do |form| %>
+  <h2 class="card-title"><%= t(".end_title") %></h2>
+  <p class="text-sm text-ink-soft"><%= t(".end_hint") %></p>
+  <div class="flex flex-wrap items-end gap-3">
+    <div>
+      <%= form.label :ended_on, t(".ended_on"), class: "field-label" %>
+      <%= form.date_field :ended_on, value: Date.current, required: true, class: "input" %>
+    </div>
+    <%= form.submit t(".end"), class: "btn btn-danger" %>
+  </div>
+<% end %>

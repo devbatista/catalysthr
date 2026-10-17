@@ -1,0 +1,26 @@
+<%# An emergency contact (RN-04-041). %>
+<% content_for :title, title %>
+<p class="text-sm"><%= link_to t("panel.employees.records.back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= title %></h1>
+
+<%= form_with model: @contact, url: url, method: method, class: "card card-body mt-6 max-w-2xl space-y-5" do |form| %>
+  <%= render "panel/employees/errors", record: @contact %>
+  <div>
+    <%= form.label :name, t("panel.emergency_contacts.form.name"), class: "field-label" %>
+    <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :relationship, t("panel.emergency_contacts.form.relationship"), class: "field-label" %>
+      <%= form.text_field :relationship, maxlength: 60, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :phone, t("panel.emergency_contacts.form.phone"), class: "field-label" %>
+      <%= form.telephone_field :phone, required: true, class: "input" %>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("panel.employees.records.submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.employees.records.cancel"), employee_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

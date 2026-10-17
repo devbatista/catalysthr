@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -48,7 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
     t.datetime "updated_at", null: false
     t.index ["accounting_firm_id"], name: "index_accounting_firm_companies_on_accounting_firm_id"
     t.index ["company_id", "status"], name: "index_accounting_firm_companies_on_company_id_and_status"
-    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('active'::character varying)::text]))"
+    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY ((ARRAY['pending'::character varying, 'active'::character varying])::text[]))"
     t.index ["linked_by_id"], name: "index_accounting_firm_companies_on_linked_by_id"
   end
 
@@ -87,6 +87,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "bank_accounts", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "worker_profile_id", null: false
+    t.string "bank_code"
+    t.string "branch"
+    t.text "account_number"
+    t.string "account_type"
+    t.string "pix_key_type"
+    t.text "pix_key"
+    t.boolean "primary", default: false, null: false
+    t.string "status", default: "active", null: false
+    t.date "ended_on"
+    t.bigint "declared_by_id", null: false
+    t.datetime "declared_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_bank_accounts_on_company_id"
+    t.index ["declared_by_id"], name: "index_bank_accounts_on_declared_by_id"
+    t.index ["worker_profile_id"], name: "index_bank_accounts_on_worker_profile_id"
+    t.index ["worker_profile_id"], name: "index_bank_accounts_one_primary_per_profile", unique: true, where: "(\"primary\" AND ((status)::text = 'active'::text))"
   end
 
   create_table "brand_subdomains", force: :cascade do |t|
@@ -206,6 +228,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
     t.index ["company_id"], name: "index_departments_on_company_id"
     t.index ["parent_id"], name: "index_departments_on_parent_id"
     t.index ["unit_id"], name: "index_departments_on_unit_id"
+  end
+
+  create_table "dependents", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "worker_profile_id", null: false
+    t.string "name", null: false
+    t.text "cpf"
+    t.date "birth_date", null: false
+    t.string "sex"
+    t.string "relationship_type", null: false
+    t.boolean "irrf", default: false, null: false
+    t.boolean "family_allowance", default: false, null: false
+    t.boolean "incapable", default: false, null: false
+    t.string "status", default: "active", null: false
+    t.date "ended_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_dependents_on_company_id"
+    t.index ["worker_profile_id"], name: "index_dependents_on_worker_profile_id"
+  end
+
+  create_table "emergency_contacts", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "worker_profile_id", null: false
+    t.string "name", null: false
+    t.string "relationship"
+    t.string "phone", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_emergency_contacts_on_company_id"
+    t.index ["worker_profile_id"], name: "index_emergency_contacts_on_worker_profile_id"
   end
 
   create_table "employment_revisions", force: :cascade do |t|
@@ -568,6 +621,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
   add_foreign_key "accounting_firm_companies", "users", column: "linked_by_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "bank_accounts", "companies"
+  add_foreign_key "bank_accounts", "users", column: "declared_by_id"
+  add_foreign_key "bank_accounts", "worker_profiles"
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
@@ -583,6 +639,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_140300) do
   add_foreign_key "departments", "companies"
   add_foreign_key "departments", "departments", column: "parent_id"
   add_foreign_key "departments", "units"
+  add_foreign_key "dependents", "companies"
+  add_foreign_key "dependents", "worker_profiles"
+  add_foreign_key "emergency_contacts", "companies"
+  add_foreign_key "emergency_contacts", "worker_profiles"
   add_foreign_key "employment_revisions", "companies"
   add_foreign_key "employment_revisions", "departments"
   add_foreign_key "employment_revisions", "employments"

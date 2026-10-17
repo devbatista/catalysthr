@@ -94,8 +94,24 @@ Rails.application.routes.draw do
       resources :departments, except: :destroy
       resources :positions, except: :destroy
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
-      resources :employees, except: :destroy
+      resources :employees, except: :destroy do
+        resources :employments, only: %i[new create]
+        resources :emergency_contacts, path: "emergency-contacts", except: %i[index show]
+        resources :dependents, except: %i[index show destroy] do
+          patch "end", action: :close, on: :member, as: :end
+        end
+        resources :bank_accounts, path: "bank-accounts", only: %i[new create] do
+          member do
+            patch :primary, action: :make_primary
+            patch "end", action: :close, as: :end
+          end
+        end
+      end
       resources :employments, only: %i[edit update] do
+        member do
+          get :conversion
+          post :conversion, action: :convert
+        end
         resources :revisions, controller: "employment_revisions", only: %i[new create edit update destroy]
       end
       # The password before sensitive data (RN-02-052).
