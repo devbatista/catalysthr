@@ -99,7 +99,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - O cadastro de empresa cliente pelo parceiro (P-03-14) entra com a spec 19, junto com o plano e os módulos (RN-19-081)
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
-- [ ] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16
+- [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
 - [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
 - [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
   - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04
@@ -130,10 +130,10 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Railway: rever o plano Hobby antes do primeiro cliente (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508, que a documentação do Railway não cita em nenhum plano; limite de 2 domínios próprios por serviço, já usados por `*.painel` e `admin`) e decidir sobre um workspace separado para o CatalystHR antes do upgrade, porque o Pro vale para o workspace inteiro
 
 ### Entregas
-- [ ] **Spec 06:** motor de modelos de processo
+- [ ] **Spec 06:** motor de modelos de processo. Incluir a cópia dos modelos usados pela empresa no serviço de transferência, com teste (RN-01-053, D-599)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
 - [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável
-- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
+- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Quando entrarem os materiais do assistente e as perguntas e respostas, incluir a cópia deles no serviço de transferência, com teste (RN-01-053, D-599). Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
 - [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4)
 - [ ] **Spec 15 (resto):** WhatsApp, push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe"

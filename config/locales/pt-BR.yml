@@ -1,5 +1,28 @@
 pt-BR:
   admin:
+    company_transfers:
+      new:
+        title: "Transferir empresa"
+        instructions: "Mude a empresa para outro parceiro ou entre a modalidade direta e a de parceiro. Os dados da empresa não mudam, só o dono do endereço."
+        query: "Nome ou CNPJ da empresa"
+        search: "Buscar"
+        not_found: "Nenhuma empresa encontrada."
+        direct: "Empresa direta"
+        destination: "Novo dono"
+        choose: "Escolha o novo dono"
+        to_direct: "Empresa direta (endereço próprio)"
+        slug: "Endereço da empresa direta"
+        slug_hint: "Só para transferir para empresa direta. Letras minúsculas sem acento, números e hífen, de 3 a 40 caracteres."
+        authorization: "Autorização da empresa"
+        authorization_hint: "Quem autorizou, quando e como, por exemplo: aceite por e-mail da RH administradora Juliana Ribeiro em 15/10/2026."
+        document: "Documento da autorização (opcional)"
+        document_hint: "PDF ou imagem, até 10 MB."
+        effects: "Depois da transferência, a equipe do parceiro atual deixa de acessar a empresa, e os usuários da empresa recebem um e-mail com o endereço novo. O endereço atual não redireciona."
+        effects_from_direct: "Depois da transferência, o endereço próprio da empresa deixa de funcionar e fica reservado por 90 dias, e o domínio de e-mail da marca é removido. Os usuários recebem um e-mail com o endereço novo."
+        confirm: "Transferir %{company}? Essa ação muda o endereço de acesso de todos os usuários da empresa."
+        submit: "Transferir"
+      create:
+        done: "%{company} transferida. Novo dono: %{owner}. Os usuários da empresa vão receber o endereço novo por e-mail."
     home:
       coming_soon:
         title: "CatalystHR"
@@ -104,6 +127,24 @@ pt-BR:
         cancel: "Cancelar"
       create:
         published: "Versão %{version} publicada."
+  companies:
+    transfer:
+      errors:
+        same_owner: "A empresa já pertence a esse dono."
+        partner_without_subdomain: "O parceiro escolhido ainda não tem marca com endereço."
+        authorization_missing: "Registre a autorização da empresa."
+        slug_missing: "Informe o endereço da empresa direta."
+        document_type: "O documento precisa ser um PDF ou uma imagem PNG, JPEG ou WebP."
+        document_size: "O documento precisa ter no máximo 10 MB."
+        email_unavailable: "Não foi possível remover o domínio de e-mail da marca agora. Tente de novo em alguns minutos."
+        changed: "A empresa mudou de dono enquanto a transferência era feita. Confira e tente de novo."
+  company_mailer:
+    transferred:
+      subject: "%{company} tem um novo endereço de acesso"
+      greeting: "Olá, %{name}."
+      body: "O acesso à %{company} agora é feito em %{brand}, neste endereço:"
+      same_login: "Você entra com o mesmo CPF ou e-mail e a mesma senha."
+      old_address: "O endereço antigo deixou de funcionar. Se tiver um atalho salvo, troque pelo novo."
   # The sidebar's menus (D-597)
   navigation:
     menu: "Menu"
@@ -136,6 +177,7 @@ pt-BR:
     impersonate: "Ver como um usuário"
     support_access: "Entrar numa empresa direta"
     legal_documents: "Termos e política"
+    company_transfer: "Transferir empresa"
     features:
       employees: "Colaboradores"
       admissions: "Admissões"

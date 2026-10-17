@@ -43,6 +43,8 @@ Rails.application.routes.draw do
         resource :brand, only: %i[edit update], controller: "company_brands"
       end
       resources :support_accesses, only: %i[new create], path: "support-accesses"
+      # Company transfer (RN-01-050 to RN-01-053, D-599).
+      resources :company_transfers, only: %i[new create], path: "company-transfers"
       resources :users, only: :index do
         member do
           patch :contact
