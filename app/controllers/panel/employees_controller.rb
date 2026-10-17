@@ -14,16 +14,21 @@ module Panel
     before_action :require_current_company
     before_action :load_profile, only: %i[show edit update]
 
-    helper_method :unit_options, :department_options, :position_options
+    helper_method :unit_options, :department_options, :position_options, :allocation_client_options
 
     def index
       authorize! :read, WorkerProfile
       profiles = WorkerProfile.accessible_by(current_ability)
-        .includes(:user, employments: { revisions: [ :position, :unit, { department: { managers: :user } } ] })
+        .includes(:user, employments: { revisions: [ :position, :unit, :allocation_client, { department: { managers: :user } } ] })
       @units = Unit.ordered.to_a
       @rows = EmployeeRow.build(profiles)
       @unit_counts = @rows.group_by { |row| row.unit&.id }.transform_values(&:size)
       @rows = @rows.select { |row| row.unit&.id.to_s == params[:unit_id] } if params[:unit_id].present?
+      # By client, when the company uses them (story 8, D-570).
+      if Current.company.uses_allocation_clients
+        @client_counts = @rows.group_by { |row| row.revision&.allocation_client }.transform_values(&:size)
+        @rows = @rows.select { |row| row.revision&.allocation_client_id.to_s == params[:client_id] } if params[:client_id].present?
+      end
     end
 
     def show
@@ -58,7 +63,11 @@ module Panel
       reveal_all_sections(%w[documents health])
       return if performed?
 
-      if @profile.update(profile_params)
+      @profile.assign_attributes(profile_params)
+      custom = params.dig(:worker_profile, :custom_fields)
+      @profile.custom_field_values = custom.permit(*CustomFieldDefinition.active.pluck(:key)).to_h if custom
+      # The required custom fields are checked when the HR saves the record (D-605).
+      if @profile.save(context: :record_edit)
         redirect_to employee_path(@profile), notice: t(".updated")
       else
         render :edit, status: :unprocessable_content
@@ -70,7 +79,7 @@ module Panel
     def load_profile
       # Out of the person's scope answers 404; inside it, an action not allowed answers 403
       # (RN-03-006).
-      @profile = WorkerProfile.accessible_by(current_ability, :read).includes(:user, employments: { revisions: %i[position unit department] })
+      @profile = WorkerProfile.accessible_by(current_ability, :read).includes(:user, employments: { revisions: %i[position unit department allocation_client] })
         .find(params[:id])
     end
 
@@ -80,7 +89,7 @@ module Panel
 
     def registration_params
       params.expect(employee: %i[name cpf birth_date email mobile_phone social_name kind category registration_number
-        started_on position_id unit_id department_id salary salary_unit variable_salary_description weekly_hours justification])
+        started_on position_id unit_id department_id allocation_client_id salary salary_unit variable_salary_description weekly_hours justification])
     end
 
     def profile_params
@@ -106,6 +115,10 @@ module Panel
 
     def position_options
       Position.active.ordered
+    end
+
+    def allocation_client_options
+      Current.company.uses_allocation_clients ? AllocationClient.active.ordered : AllocationClient.none
     end
   end
 end

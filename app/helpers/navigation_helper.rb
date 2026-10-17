@@ -56,13 +56,21 @@ module NavigationHelper
     FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)
   end
 
-  EMPLOYEE_CONTROLLERS = %w[panel/employees panel/employments panel/employment_revisions].freeze
+  def client_manager_only?
+    Membership.with_access.find_by(user: current_user, organization: Current.company)&.roles == %w[client_manager]
+  end
+
+  EMPLOYEE_CONTROLLERS = %w[panel/employees panel/employments panel/employment_revisions panel/emergency_contacts
+    panel/dependents panel/bank_accounts].freeze
 
   def company_navigation
     company = Current.company
-    groups = ComingSoon::COMPANY_GROUPS.to_h do |group, features|
+    # The client manager sees only what is theirs, without the modules to come (P-03-39).
+    soon = client_manager_only? ? {} : ComingSoon::COMPANY_GROUPS
+    groups = soon.to_h do |group, features|
       [ group, features.map { |feature| soon_item(feature, coming_soon_path(feature)) } ]
     end
+    groups[:operation] ||= []
     groups[:operation].unshift(
       nav_item(t("navigation.home"), root_path, controller_path == "panel/home"),
       (nav_item(t("navigation.employees"), employees_path, controller_path.in?(EMPLOYEE_CONTROLLERS)) if can?(:read, WorkerProfile))
@@ -74,6 +82,8 @@ module NavigationHelper
         (nav_item(t("navigation.units"), units_path, controller_path == "panel/units") if can?(:read, Unit)),
         (nav_item(t("navigation.departments"), departments_path, controller_path == "panel/departments") if can?(:read, Department)),
         (nav_item(t("navigation.positions"), positions_path, controller_path == "panel/positions") if can?(:read, Position)),
+        (nav_item(t("navigation.allocation_clients"), allocation_clients_path, controller_path == "panel/allocation_clients") if company.uses_allocation_clients && can?(:read, AllocationClient)),
+        (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.settings"), edit_company_settings_path, controller_path == "panel/company_settings") if can?(:update_settings, company))
       ])

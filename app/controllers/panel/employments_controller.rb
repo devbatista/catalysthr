@@ -12,7 +12,7 @@ module Panel
     before_action :load_profile, only: %i[new create]
     before_action :load_employment, except: %i[new create]
 
-    helper_method :unit_options, :department_options, :position_options
+    helper_method :unit_options, :department_options, :position_options, :allocation_client_options
 
     def new
       authorize! :create, WorkerProfile
@@ -77,7 +77,7 @@ module Panel
     end
 
     def registration_params
-      params.expect(employment_form: %i[kind category registration_number started_on position_id unit_id department_id salary
+      params.expect(employment_form: %i[kind category registration_number started_on position_id unit_id department_id allocation_client_id salary
         salary_unit variable_salary_description weekly_hours justification])
     end
 
@@ -91,6 +91,10 @@ module Panel
 
     def position_options
       Position.active.ordered
+    end
+
+    def allocation_client_options
+      Current.company.uses_allocation_clients ? AllocationClient.active.ordered : AllocationClient.none
     end
   end
 end

@@ -1,0 +1,4 @@
+<% content_for :title, t(".title") %>
+<p class="text-sm"><%= link_to t(".back"), custom_fields_path, class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<%= render "form", field: @field, url: custom_fields_path, method: :post %>

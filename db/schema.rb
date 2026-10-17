@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_160500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -87,6 +87,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "allocation_client_managers", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "allocation_client_id", null: false
+    t.bigint "membership_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["allocation_client_id", "membership_id"], name: "idx_on_allocation_client_id_membership_id_74ea9def8f", unique: true
+    t.index ["allocation_client_id"], name: "index_allocation_client_managers_on_allocation_client_id"
+    t.index ["company_id"], name: "index_allocation_client_managers_on_company_id"
+    t.index ["membership_id"], name: "index_allocation_client_managers_on_membership_id"
+  end
+
+  create_table "allocation_clients", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "name", null: false
+    t.string "document_type"
+    t.string "document"
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "document"], name: "index_allocation_clients_on_company_id_and_document", unique: true, where: "(document IS NOT NULL)"
+    t.index ["company_id"], name: "index_allocation_clients_on_company_id"
   end
 
   create_table "bank_accounts", force: :cascade do |t|
@@ -167,6 +191,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
     t.string "document"
     t.integer "read_only_period_days", default: 365, null: false
     t.integer "next_registration_number", default: 1, null: false
+    t.boolean "uses_allocation_clients", default: false, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
@@ -203,6 +228,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
     t.index ["legal_document_id"], name: "index_consents_on_legal_document_id"
     t.index ["scope_type", "scope_id"], name: "index_consents_on_scope"
     t.index ["user_id"], name: "index_consents_on_user_id"
+  end
+
+  create_table "custom_field_definitions", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "key", null: false
+    t.string "label", null: false
+    t.string "field_type", null: false
+    t.jsonb "options", default: [], null: false
+    t.boolean "required", default: false, null: false
+    t.boolean "visible_to_employee", default: false, null: false
+    t.boolean "editable_by_employee", default: false, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "key"], name: "index_custom_field_definitions_on_company_id_and_key", unique: true
+    t.index ["company_id"], name: "index_custom_field_definitions_on_company_id"
   end
 
   create_table "department_managers", force: :cascade do |t|
@@ -278,6 +319,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
     t.bigint "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "allocation_client_id"
+    t.index ["allocation_client_id"], name: "index_employment_revisions_on_allocation_client_id"
     t.index ["company_id"], name: "index_employment_revisions_on_company_id"
     t.index ["created_by_id"], name: "index_employment_revisions_on_created_by_id"
     t.index ["department_id"], name: "index_employment_revisions_on_department_id"
@@ -609,6 +652,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
     t.string "personal_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "custom_fields", default: {}, null: false
     t.index ["company_id"], name: "index_worker_profiles_on_company_id"
     t.index ["membership_id"], name: "index_worker_profiles_on_membership_id", unique: true
   end
@@ -621,6 +665,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
   add_foreign_key "accounting_firm_companies", "users", column: "linked_by_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "allocation_client_managers", "allocation_clients", on_delete: :cascade
+  add_foreign_key "allocation_client_managers", "companies"
+  add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
+  add_foreign_key "allocation_clients", "companies"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"
@@ -633,6 +681,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
   add_foreign_key "company_transfers", "users", column: "performed_by_id"
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"
+  add_foreign_key "custom_field_definitions", "companies"
   add_foreign_key "department_managers", "companies"
   add_foreign_key "department_managers", "departments", on_delete: :cascade
   add_foreign_key "department_managers", "memberships", on_delete: :cascade
@@ -643,6 +692,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_150200) do
   add_foreign_key "dependents", "worker_profiles"
   add_foreign_key "emergency_contacts", "companies"
   add_foreign_key "emergency_contacts", "worker_profiles"
+  add_foreign_key "employment_revisions", "allocation_clients"
   add_foreign_key "employment_revisions", "companies"
   add_foreign_key "employment_revisions", "departments"
   add_foreign_key "employment_revisions", "employments"

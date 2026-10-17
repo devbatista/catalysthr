@@ -32,6 +32,7 @@ class Company < ApplicationRecord
   validate :document_format
   validates :brand_display_mode, absence: true, unless: :partner
   validates :read_only_period_days, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 3650 }
+  validate :allocation_clients_off_when_unused, if: -> { uses_allocation_clients_changed? && !uses_allocation_clients }
   validates :next_registration_number, numericality: { only_integer: true, greater_than: 0, less_than: 10**15 }
 
   # Companies of the brand where the person operates, the only ones the selector lists
@@ -117,6 +118,13 @@ class Company < ApplicationRecord
 
     valid = person? ? Cpf.valid?(document) : document.match?(CNPJ_ROOT_FORMAT)
     errors.add(:document, person? ? :invalid_cpf : :invalid_cnpj_root) unless valid
+  end
+
+  # Allocation clients are turned off only with no open employment allocated, now or
+  # from a future date (RN-04-090, P-04-30).
+  def allocation_clients_off_when_unused
+    allocated = ActsAsTenant.with_tenant(self) { EmploymentRevision.placing_open_employments.where.not(allocation_client_id: nil).exists? }
+    errors.add(:uses_allocation_clients, :in_use) if allocated
   end
 
   # Every company has its headquarters, created with it (RN-04-010, P-04-05).

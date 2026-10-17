@@ -1,0 +1,4 @@
+<% content_for :title, @client.name %>
+<p class="text-sm"><%= link_to t(".back"), allocation_client_path(@client), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= @client.name %></h1>
+<%= render "form", client: @client, url: allocation_client_path(@client), method: :patch %>

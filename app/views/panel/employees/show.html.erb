@@ -306,6 +306,22 @@
     </section>
   <% end %>
 
+  <% definitions = personal ? CustomFieldDefinition.active.ordered.to_a : [] %>
+  <% if definitions.any? %>
+    <section class="card card-body">
+      <h2 class="card-title"><%= t(".custom_fields") %></h2>
+      <% missing = @profile.missing_custom_fields %>
+      <% if missing.any? %>
+        <p class="alert-info mt-3"><%= t(".missing_custom_fields", labels: missing.map(&:label).to_sentence) %></p>
+      <% end %>
+      <dl class="details-list mt-3">
+        <% definitions.each do |definition| %>
+          <div><dt><%= definition.label %></dt><dd><%= custom_field_display(definition, @profile.custom_field_value(definition)) %></dd></div>
+        <% end %>
+      </dl>
+    </section>
+  <% end %>
+
   <% if can?(:read_health, @profile) %>
     <section class="card card-body">
       <div class="flex flex-wrap items-center justify-between gap-3">

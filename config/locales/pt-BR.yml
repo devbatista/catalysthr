@@ -304,6 +304,20 @@ pt-BR:
       email: "e-mail"
       phone: "celular"
       random: "chave aleatória"
+  custom_fields:
+    field_types:
+      text: "Texto"
+      number: "Número"
+      date: "Data"
+      select: "Seleção"
+      boolean: "Sim ou não"
+    statuses:
+      active: "Ativo"
+      inactive: "Removido"
+  allocation_clients:
+    statuses:
+      active: "Ativo"
+      inactive: "Inativo"
   employment_revisions:
     salary_units:
       hour: "por hora"
@@ -389,6 +403,8 @@ pt-BR:
     departments: "Departamentos"
     positions: "Cargos"
     settings: "Configurações"
+    allocation_clients: "Clientes"
+    custom_fields: "Campos da ficha"
     employees: "Colaboradores"
     features:
       admissions: "Admissões"
@@ -557,6 +573,8 @@ pt-BR:
         subtitle: "As pessoas da empresa, com o cargo e a unidade de hoje."
         new: "Novo colaborador"
         filters: "Filtrar por unidade"
+        client_filters: "Filtrar por cliente"
+        client: "Cliente"
         all: "Todos · %{count}"
         empty: "Nenhum colaborador cadastrado ainda."
         name: "Nome"
@@ -624,6 +642,9 @@ pt-BR:
         "yes": "Sim"
         "no": "Não"
         new_employment: "Novo vínculo"
+        custom_fields: "Outras informações"
+        missing_custom_fields: "Campo obrigatório sem valor: %{labels}. Preencha na próxima edição da ficha."
+        at_client: "%{place} · cliente %{client}"
         convert: "Efetivar como CLT"
         emergency_contacts: "Contatos de emergência"
         new_emergency_contact: "Adicionar contato"
@@ -670,6 +691,7 @@ pt-BR:
         mobile_phone: "Celular"
         contact_hint: "Informe o e-mail ou o celular: é por eles que a pessoa vai receber o acesso."
         employment: "Vínculo"
+        allocation_client: "Cliente de alocação"
         kind: "Tipo de vínculo"
         category: "Categoria"
         category_hint: "Só vale para CLT."
@@ -733,6 +755,10 @@ pt-BR:
         disability: "Deficiência"
         rehabilitated: "Reabilitado(a) ou readaptado(a)"
         disability_notes: "Observação"
+        custom_fields: "Outras informações"
+        required_label: "%{label} (obrigatório)"
+        "yes": "Sim"
+        "no": "Não"
         contact: "Contato pessoal"
         personal_email: "E-mail pessoal"
         personal_phone: "Telefone pessoal"
@@ -741,6 +767,96 @@ pt-BR:
         cancel: "Cancelar"
       update:
         updated: "Ficha salva."
+    custom_fields:
+      index:
+        title: "Campos da ficha"
+        subtitle: "Informações extras que a empresa quer guardar na ficha de cada pessoa."
+        new: "Novo campo"
+        empty: "Nenhum campo criado."
+        label: "Nome"
+        type: "Tipo"
+        rules: "Regras"
+        status: "Situação"
+      rules:
+        required: "obrigatório"
+        visible_to_employee: "visível ao colaborador"
+        editable_by_employee: "editável pelo colaborador"
+      form:
+        sensitive_warning: "Não use estes campos para dados sensíveis, como saúde, documentos ou dados bancários. Eles têm lugar próprio e protegido na ficha."
+        label: "Nome do campo"
+        field_type: "Tipo"
+        type_fixed: "O tipo não muda depois de criado."
+        options: "Opções"
+        options_hint: "Para o tipo Seleção: uma opção por linha."
+        required: "Obrigatório"
+        visible_to_employee: "Visível ao colaborador"
+        editable_by_employee: "Editável pelo colaborador"
+        employee_hint: "A visibilidade e a edição pelo colaborador passam a valer com o portal. A edição pelo colaborador sempre passa pela aprovação do RH."
+        status: "Situação"
+        status_hint: "Um campo removido some da ficha, mas os valores já preenchidos ficam guardados."
+        submit: "Salvar"
+        cancel: "Cancelar"
+      new:
+        title: "Novo campo"
+        back: "Campos da ficha"
+      edit:
+        back: "Campos da ficha"
+      create:
+        created: "Campo criado."
+      update:
+        updated: "Campo salvo."
+    allocation_clients:
+      index:
+        title: "Clientes"
+        subtitle: "Os clientes onde os colaboradores da empresa trabalham alocados."
+        new: "Novo cliente"
+        empty: "Nenhum cliente cadastrado."
+        name: "Nome"
+        document: "Documento"
+        managers: "Gestores"
+        status: "Situação"
+      form:
+        name: "Nome"
+        document_type: "Documento"
+        no_document: "Sem documento"
+        document: "Número"
+        status: "Situação"
+        status_hint: "Só inativa sem colaboradores alocados. Inativar tira o acesso dos gestores que ficarem sem cliente ativo."
+        submit: "Salvar"
+        cancel: "Cancelar"
+      new:
+        title: "Novo cliente"
+        back: "Clientes"
+      edit:
+        back: "Voltar ao cliente"
+      show:
+        back: "Clientes"
+        edit: "Editar"
+        allocated:
+          one: "1 colaborador alocado"
+          other: "%{count} colaboradores alocados"
+        no_allocated: "Ninguém alocado neste cliente hoje."
+        managers: "Gestores do cliente"
+        managers_hint: "Pessoas do cliente que veem os colaboradores alocados e participam das admissões deles. Quem fica sem nenhum cliente perde o acesso."
+        no_managers: "Nenhum gestor do cliente ainda. Convide abaixo."
+        invited: "Convidado"
+        save_managers: "Salvar gestores"
+        invite_title: "Convidar gestor do cliente"
+        invite_hint: "A pessoa entra com o CPF e precisa ativar a verificação em duas etapas."
+        name: "Nome"
+        cpf: "CPF"
+        email: "E-mail"
+        mobile_phone: "Celular"
+        channels: "Enviar por"
+        invite: "Convidar"
+      create:
+        created: "Cliente cadastrado."
+      update:
+        updated: "Cliente salvo."
+      managers:
+        assigned: "Gestores do cliente salvos."
+      invite_manager:
+        inactive: "O cliente está inativo."
     emergency_contacts:
       form:
         name: "Nome"
@@ -862,6 +978,9 @@ pt-BR:
         choose_unit: "Escolha a unidade"
         department: "Departamento"
         no_department: "Sem departamento"
+        allocation_client: "Cliente de alocação"
+        no_allocation_client: "Sem cliente (equipe da empresa)"
+        allocation_client_hint: "Trocar de cliente é uma revisão nova, com a data em que a troca vale."
         department_hint: "Precisa ser da unidade escolhida."
         salary: "Salário (R$)"
         salary_unit: "Unidade do salário"
@@ -916,6 +1035,8 @@ pt-BR:
         read_only_period_days: "Período de leitura do desligado (dias)"
         read_only_period_hint: "Depois do último desligamento, a pessoa ainda consulta holerites e documentos por este período."
         next_registration_number: "Próxima matrícula"
+        uses_allocation_clients: "Usar clientes de alocação"
+        uses_allocation_clients_hint: "Para quem aloca colaboradores em clientes. Ligado, o vínculo indica o cliente e o RH convida os gestores de cada cliente. Só desliga sem colaboradores alocados; desligar tira o acesso dos gestores dos clientes."
         next_registration_number_hint: "O número sugerido no cadastro de um vínculo novo. Matrículas já usadas são puladas."
         submit: "Salvar"
       update:
@@ -1435,6 +1556,9 @@ pt-BR:
       worker_profile: "Ficha"
       employment: "Vínculo"
       employment_revision: "Revisão do vínculo"
+      custom_field_definition: "Campo da ficha"
+      allocation_client: "Cliente de alocação"
+      allocation_client_manager: "Gestor do cliente"
       emergency_contact: "Contato de emergência"
       dependent: "Dependente"
       bank_account: "Conta para pagamento"
@@ -1506,6 +1630,19 @@ pt-BR:
         details_supervisor_cpf: "CPF do supervisor"
         details_contractor_cnpj: "CNPJ do prestador"
         details_payment_method: "Forma de pagamento"
+      custom_field_definition:
+        label: "Nome do campo"
+        key: "Chave"
+        field_type: "Tipo"
+        options: "Opções"
+        editable_by_employee: "Editável pelo colaborador"
+      allocation_client:
+        name: "Nome"
+        document_type: "Tipo de documento"
+        document: "Documento"
+        status: "Situação"
+      allocation_client_manager:
+        membership: "Gestor"
       emergency_contact:
         name: "Nome"
         relationship: "Parentesco"
@@ -1610,6 +1747,7 @@ pt-BR:
         employer_type: "Tipo de empregador"
         document: "Documento do empregador"
         read_only_period_days: "Período de leitura do desligado"
+        uses_allocation_clients: "Clientes de alocação"
         next_registration_number: "Próxima matrícula"
         brand_display_mode: "Exibição da marca"
       brand:
@@ -1637,6 +1775,8 @@ pt-BR:
       models:
         company:
           attributes:
+            uses_allocation_clients:
+              in_use: "só são desligados sem colaboradores alocados em clientes, hoje ou agendados"
             document:
               invalid_cnpj_root: "precisa ser a raiz do CNPJ, com 8 caracteres"
               invalid_cpf: "não é um CPF válido"
@@ -1680,6 +1820,9 @@ pt-BR:
           attributes:
             membership:
               other_company: "precisa ser desta empresa"
+            base:
+              custom_field_invalid: "O valor de %{label} não combina com o tipo do campo"
+              custom_field_required: "%{label} é obrigatório"
             disability_types:
               inclusion: "incluem um tipo que não existe"
         employment:
@@ -1705,6 +1848,22 @@ pt-BR:
               invalid_cnpj: "não é um CNPJ válido"
             details_supervisor_cpf:
               invalid_cpf: "não é um CPF válido"
+        custom_field_definition:
+          attributes:
+            key:
+              fixed: "não muda depois de criada"
+            field_type:
+              fixed: "não muda depois de criado"
+            editable_by_employee:
+              not_visible: "só vale para campo visível ao colaborador"
+        allocation_client:
+          attributes:
+            status:
+              open_employments: "inativo só sem colaboradores alocados, hoje ou agendados"
+        allocation_client_manager:
+          attributes:
+            membership:
+              not_client_manager: "precisa ter o perfil de gestor do cliente nesta empresa"
         dependent:
           attributes:
             birth_date:
@@ -1737,6 +1896,9 @@ pt-BR:
             department:
               inactive: "está inativo"
               other_unit: "precisa ser da unidade escolhida"
+            allocation_client:
+              not_in_use: "só vale quando a empresa usa clientes de alocação"
+              inactive: "está inativo"
             salary_cents:
               invalid_amount: "precisa ser um valor em reais, como 2.500,00"
             justification:
@@ -1816,6 +1978,7 @@ pt-BR:
         position_id: "Cargo"
         unit_id: "Unidade"
         department_id: "Departamento"
+        allocation_client_id: "Cliente de alocação"
         salary: "Salário"
         salary_unit: "Unidade do salário"
         variable_salary_description: "Descrição do salário variável"
@@ -1835,6 +1998,7 @@ pt-BR:
         position_id: "Cargo"
         unit_id: "Unidade"
         department_id: "Departamento"
+        allocation_client_id: "Cliente de alocação"
         salary: "Salário"
         salary_unit: "Unidade do salário"
         variable_salary_description: "Descrição do salário variável"

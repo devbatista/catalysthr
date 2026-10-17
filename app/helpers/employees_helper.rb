@@ -22,8 +22,10 @@ module EmployeesHelper
     "#{amount} #{t("employment_revisions.salary_units.#{revision.salary_unit}")}"
   end
 
+  # "Matriz › Produção", with the allocation client when there is one (RN-04-092).
   def revision_place(revision)
-    [ revision.unit.name, revision.department&.name ].compact.join(" › ")
+    place = [ revision.unit.name, revision.department&.name ].compact.join(" › ")
+    revision.allocation_client ? t("panel.employees.show.at_client", place: place, client: revision.allocation_client.name) : place
   end
 
   # A link that keeps the sections already shown and adds this one.
@@ -103,6 +105,17 @@ module EmployeesHelper
       number = reveal_confirmed(account, :account_number, as: :bank_account, section: :pay)
       t("panel.employees.show.account_summary", bank: account.bank_code, branch: account.branch,
         type: t("bank_accounts.account_types.#{account.account_type}"), number: number)
+    end
+  end
+
+  def custom_field_display(definition, value)
+    return "—" if value.nil?
+
+    case definition.field_type
+    when "date" then l(Date.iso8601(value))
+    when "boolean" then yes_no(value)
+    when "number" then value.to_s.tr(".", ",")
+    else value
     end
   end
 end

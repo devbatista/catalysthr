@@ -7,8 +7,9 @@
 # date and then prevails (RN-04-061, D-603). The salary is sensitive (D-086): encrypted,
 # in cents, out of the versions.
 #
-# Dates are compared with today in Brasília. The work schedule comes with spec 11, the
-# allocation client with block 4d and the eSocial pending item (RN-04-063) with spec 13.
+# Dates are compared with today in Brasília. The allocation client is optional, and
+# changing it is a new revision (RN-04-092, RN-04-093). The work schedule comes with spec
+# 11 and the eSocial pending item (RN-04-063) with spec 13.
 class EmploymentRevision < ApplicationRecord
   SALARY_UNITS = %w[hour day week fortnight month task variable_only].freeze
   REASONS = %w[admission promotion salary_change transfer schedule_change collective_agreement correction other].freeze
@@ -23,6 +24,7 @@ class EmploymentRevision < ApplicationRecord
   belongs_to :position
   belongs_to :unit
   belongs_to :department, optional: true
+  belongs_to :allocation_client, optional: true
   belongs_to :created_by, class_name: "User"
 
   attribute :salary_cents, :integer
@@ -47,6 +49,7 @@ class EmploymentRevision < ApplicationRecord
   validate :within_employment
   validate :assignable_records
   validate :department_of_unit
+  validate :allocation_client_allowed
   validate :same_company
 
   def audit_company_id
@@ -133,6 +136,15 @@ class EmploymentRevision < ApplicationRecord
     errors.add(:position, :inactive) if position&.inactive? && (new_record? || position_id_changed?)
     errors.add(:unit, :inactive) if unit&.inactive? && (new_record? || unit_id_changed?)
     errors.add(:department, :inactive) if department&.inactive? && (new_record? || department_id_changed?)
+  end
+
+  # Only a company that uses allocation clients points to one, and a new choice must be
+  # active (RN-04-090, RN-04-092).
+  def allocation_client_allowed
+    return if allocation_client.nil?
+
+    errors.add(:allocation_client, :not_in_use) unless employment&.company&.uses_allocation_clients
+    errors.add(:allocation_client, :inactive) if allocation_client.inactive? && (new_record? || allocation_client_id_changed?)
   end
 
   # RN-04-064.

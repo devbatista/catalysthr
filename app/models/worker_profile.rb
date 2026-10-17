@@ -64,6 +64,8 @@ class WorkerProfile < ApplicationRecord
   validates :foreign_country, presence: true, if: :lives_abroad?
   validate :membership_of_company
   validate :disability_types_known
+  validate :custom_fields_valid
+  validate :required_custom_fields, on: :record_edit
 
   def audit_company_id
     company_id
@@ -81,6 +83,44 @@ class WorkerProfile < ApplicationRecord
   def self.in_departments(department_ids)
     employment_ids = EmploymentRevision.counting.where(department_id: department_ids).select(:employment_id)
     where(id: Employment.open.where(id: employment_ids).select(:worker_profile_id))
+  end
+
+  # The K scope (RN-04-095, D-570): people with an open employment whose current revision,
+  # or the first one before the start, points to one of the clients.
+  def self.in_allocation_clients(client_ids)
+    employment_ids = EmploymentRevision.counting.where(allocation_client_id: client_ids).select(:employment_id)
+    where(id: Employment.open.where(id: employment_ids).select(:worker_profile_id))
+  end
+
+  # The values typed for the company's active custom fields (RN-04-080, RN-04-081). A
+  # field left out keeps its value; the values of inactive fields stay as they are.
+  def custom_field_values=(values)
+    values = values.to_h.stringify_keys
+    @invalid_custom_fields = []
+    data = custom_fields.to_h.dup
+    CustomFieldDefinition.active.each do |definition|
+      next unless values.key?(definition.key)
+
+      value = definition.cast(values[definition.key])
+      if value == :invalid
+        @invalid_custom_fields << definition
+      elsif value.nil?
+        data.delete(definition.key)
+      else
+        data[definition.key] = value
+      end
+    end
+    self.custom_fields = data
+  end
+
+  def custom_field_value(definition)
+    custom_fields.to_h[definition.key]
+  end
+
+  # Required fields still empty, shown as a warning; the record saved by the HR must fill
+  # them (D-605).
+  def missing_custom_fields
+    CustomFieldDefinition.active.where(required: true).ordered.reject { |definition| !custom_field_value(definition).nil? }
   end
 
   # The name used with the person: the social name, when there is one.
@@ -131,6 +171,14 @@ class WorkerProfile < ApplicationRecord
     return if membership.nil?
 
     errors.add(:membership, :other_company) unless membership.organization_type == "Company" && membership.organization_id == company_id
+  end
+
+  def custom_fields_valid
+    Array(@invalid_custom_fields).each { |definition| errors.add(:base, :custom_field_invalid, label: definition.label) }
+  end
+
+  def required_custom_fields
+    missing_custom_fields.each { |definition| errors.add(:base, :custom_field_required, label: definition.label) }
   end
 
   def disability_types_known
