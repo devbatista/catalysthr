@@ -23,6 +23,27 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && shell) setSidebarOpen(shell, false)
 })
 
+// The bell's unread count, fetched every 60 seconds without WebSocket (RN-15-001). A failed
+// fetch keeps the last count.
+const bell = document.querySelector("[data-bell]")
+
+if (bell) {
+  const badge = bell.querySelector("[data-bell-count]")
+  const refresh = async () => {
+    try {
+      const response = await fetch(bell.dataset.bell, { headers: { Accept: "application/json" } })
+      if (!response.ok) return
+      const { count } = await response.json()
+      badge.textContent = count
+      badge.classList.toggle("hidden", count === 0)
+      bell.setAttribute("aria-label", count === 0 ? bell.dataset.label : bell.dataset.labelUnread.replace("COUNT", count))
+    } catch {
+      // Offline or signed out: try again on the next round.
+    }
+  }
+  setInterval(refresh, 60_000)
+}
+
 // The unit's form: the address by CEP (D-215) and the position on the map, which the HR
 // confirms or moves (RN-04-012, D-216). The person's record reuses the CEP lookup, with
 // its own field names (data-address-scope). Without JavaScript, the fields are filled by

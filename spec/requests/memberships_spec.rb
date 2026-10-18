@@ -119,9 +119,9 @@ RSpec.describe "Company users", type: :request do
       perform_enqueued_jobs { patch "/users/#{analyst.id}/contact", params: { email: "ana.nova@example.com", mobile_phone: "" } }
 
       expect(analyst.user.reload.email).to eq("ana.nova@example.com")
-      mail = ActionMailer::Base.deliveries.last
-      expect(mail.to).to eq([ "ana@example.com" ])
+      mail = ActionMailer::Base.deliveries.find { |delivery| delivery.to == [ "ana@example.com" ] }
       expect(mail.text_part.body.to_s).not_to include("ana.nova@example.com")
+      expect(ActionMailer::Base.deliveries.map(&:to)).to contain_exactly([ "ana@example.com" ], [ "ana.nova@example.com" ])
       event = AccessEvent.find_by!(action: "contact_corrected")
       expect(event.metadata).to eq("fields" => [ "email" ])
       expect(analyst.user.versions.last.object_changes["email"]).to eq([ "ana@example.com", "ana.nova@example.com" ])

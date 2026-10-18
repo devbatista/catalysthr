@@ -11,6 +11,8 @@ class Ability
     # Everyone manages the security of their own account (RN-02-042, RN-02-043, RN-02-053).
     can :manage, :own_security
     can :destroy, [ UserSession, TrustedDevice ], user_id: user.id
+    # Everyone reads their own notices (spec 15, section 6).
+    can :read, Notification, recipient_user_id: user.id
 
     case area
     when :admin

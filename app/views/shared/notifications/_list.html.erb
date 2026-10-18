@@ -1,0 +1,28 @@
+<%# The person's notices of the last 90 days (RN-15-001, RN-15-090). Opening one marks it
+    read and goes to its page. %>
+<% content_for :title, t("notifications.index.title") %>
+
+<h1 class="page-title"><%= t("notifications.index.title") %></h1>
+<p class="page-subtitle"><%= t("notifications.index.subtitle") %></p>
+
+<% if notifications.empty? %>
+  <p class="card card-body mt-6 max-w-3xl text-sm text-ink-soft"><%= t("notifications.index.empty") %></p>
+<% else %>
+  <ul class="card mt-6 max-w-3xl divide-y divide-line-soft">
+    <% notifications.each do |notification| %>
+      <li>
+        <%= link_to open_notification_path(notification), class: "flex gap-3 px-5 py-4 text-ink no-underline hover:bg-line-soft hover:no-underline" do %>
+          <span class="<%= class_names("mt-1.5 size-2 shrink-0 rounded-full", "bg-brand-primary" => !notification.read?, "bg-transparent" => notification.read?) %>" aria-hidden="true"></span>
+          <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span class="<%= class_names("text-sm text-ink-strong", "font-bold" => !notification.read?, "font-semibold" => notification.read?) %>">
+              <%= notification.title %>
+              <% unless notification.read? %><span class="sr-only"><%= t("notifications.index.unread") %></span><% end %>
+            </span>
+            <% if notification.body.present? %><span class="text-sm text-ink-soft"><%= notification.body %></span><% end %>
+            <time class="text-xs text-ink-muted" datetime="<%= notification.created_at.iso8601 %>"><%= l(notification.created_at, format: :short) %></time>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

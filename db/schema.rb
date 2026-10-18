@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_17_160500) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -431,6 +431,52 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_160500) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "notification_deliveries", force: :cascade do |t|
+    t.bigint "notification_id", null: false
+    t.string "channel", null: false
+    t.string "status", default: "queued", null: false
+    t.integer "attempts", default: 0, null: false
+    t.string "destination_masked"
+    t.string "provider_message_id"
+    t.string "failed_reason"
+    t.datetime "sent_at"
+    t.datetime "delivered_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_id"], name: "index_notification_deliveries_on_notification_id"
+    t.index ["provider_message_id"], name: "index_notification_deliveries_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "company_id"
+    t.bigint "recipient_user_id", null: false
+    t.bigint "recipient_membership_id"
+    t.bigint "brand_id"
+    t.string "area"
+    t.string "notification_type", null: false
+    t.string "title", null: false
+    t.text "body"
+    t.string "path", null: false
+    t.string "subject_type"
+    t.bigint "subject_id"
+    t.boolean "mandatory", default: false, null: false
+    t.boolean "urgent", default: false, null: false
+    t.boolean "in_bell", default: true, null: false
+    t.string "dedup_key"
+    t.datetime "read_at"
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_notifications_on_brand_id"
+    t.index ["company_id"], name: "index_notifications_on_company_id"
+    t.index ["created_at"], name: "index_notifications_on_created_at"
+    t.index ["dedup_key", "created_at"], name: "index_notifications_on_dedup_key_and_created_at", where: "(dedup_key IS NOT NULL)"
+    t.index ["recipient_membership_id"], name: "index_notifications_on_recipient_membership_id"
+    t.index ["recipient_user_id", "created_at"], name: "index_notifications_bell", where: "(in_bell AND (archived_at IS NULL))"
+    t.index ["recipient_user_id"], name: "index_notifications_on_recipient_user_id"
+    t.index ["subject_type", "subject_id"], name: "index_notifications_on_subject"
+  end
+
   create_table "partner_membership_companies", force: :cascade do |t|
     t.bigint "membership_id", null: false
     t.bigint "company_id", null: false
@@ -711,6 +757,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_17_160500) do
   add_foreign_key "membership_units", "units"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
+  add_foreign_key "notification_deliveries", "notifications"
+  add_foreign_key "notifications", "brands"
+  add_foreign_key "notifications", "companies"
+  add_foreign_key "notifications", "memberships", column: "recipient_membership_id"
+  add_foreign_key "notifications", "users", column: "recipient_user_id"
   add_foreign_key "partner_membership_companies", "companies"
   add_foreign_key "partner_membership_companies", "memberships"
   add_foreign_key "positions", "companies"

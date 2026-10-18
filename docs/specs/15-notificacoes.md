@@ -1,7 +1,7 @@
 # 15 — Notificações
 
-> Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-10-18
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607, D-608 ([decisoes.md](decisoes.md))
 > Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -24,7 +24,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 | Conceito | Código | Descrição |
 |---|---|---|
 | Tipo de aviso | `NotificationType` | Item do catálogo (seção 4.2): para quem vai, se é obrigatório ou urgente, canais padrão |
-| Notificação | `Notification` | Um aviso para uma pessoa. Sempre aparece no sino |
+| Notificação | `Notification` | Um aviso para uma pessoa. Aparece no sino quando o tipo tem o canal S no catálogo (D-608) |
 | Entrega | `NotificationDelivery` | O envio da notificação por um canal externo (e-mail, WhatsApp, push), com status |
 | Preferência | `NotificationPreference` | Canais escolhidos pela empresa (padrão) ou pela pessoa (ajuste) para um tipo |
 | Inscrição de push | `PushSubscription` | Um navegador ou PWA autorizado a receber push |
@@ -73,7 +73,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
   | Código | Quando | Obr. | Canais padrão |
   |---|---|---|---|
-  | `security.account_locked` | Conta bloqueada por tentativas (D-181) | Sim | S E W |
+  | `security.account_locked` | Conta bloqueada por tentativas (D-181). Na fase 1, só no sino: o e-mail de desbloqueio já é um aviso de acesso (D-607) | Sim | S E W |
   | `security.mfa_reset` | MFA redefinido por quem administra o perfil | Sim | S E |
   | `security.contact_changed` | E-mail ou celular alterado pelo RH (aviso ao contato antigo e ao novo) | Sim | E W |
   | `payroll.payslip_published` | Holerite publicado (D-360) | Sim | S E W P |
@@ -124,7 +124,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | `admission.aso_unfit` | ASO inapto (RN-07-061) | Sim | Sim | S E P |
   | `admission.activated_with_pending` | Vínculo ativado sem eSocial aceito ou com pendências (RN-07-085) | Sim | Sim | S E P |
   | `employments.probation_ending` | Fim de experiência | Sim | Não | S E |
-  | `employments.revisions_effective` | Revisões entrando em vigor no dia (P-04-29) | Não | Não | S E |
+  | `employments.revisions_effective` | Revisões entrando em vigor no dia (P-04-29): um aviso por dia para cada pessoa, com as revisões do escopo dela, sem a de admissão (D-608) | Não | Não | S E |
   | `vacations.concessive_period` | Período concessivo vencendo em 60 dias (P-09-09) | Sim | Não | S E |
   | `terminations.deadline` | Prazos de rescisão, eSocial e exame demissional | Sim | Sim | S E P |
   | `esocial.rejected` | Evento rejeitado (D-376) | Sim | Sim | S E P |
@@ -155,7 +155,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
   **Equipe CatalystHR:** `platform.ai_circuit_open` (disjuntor da IA, RN-14-123), `platform.ai_daily_cap` (RN-14-114), `platform.holidays_task` (RN-11-021), em S E.
 
-- **RN-15-013** — Novas specs (16 a 22) acrescentam tipos ao catálogo seguindo o mesmo formato.
+- **RN-15-013** — Novas specs (16 a 22) acrescentam tipos ao catálogo seguindo o mesmo formato. O catálogo no código e as telas de preferências têm só os tipos que o sistema já gera; cada spec acrescenta os seus quando é construída (D-607).
 
 ### 4.3 Preferências (D-401)
 
@@ -180,7 +180,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
 ### 4.5 Resumo diário por e-mail (D-404)
 
-- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso.
+- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso. Até o resumo existir (fase 2), esses avisos vão por e-mail um a um (D-607).
 - **RN-15-041** — O resumo sai às **7h30**, no fuso da unidade principal da pessoa, de segunda a sexta. Ele traz os avisos das últimas 24 horas (ou desde sexta, na segunda) que **ainda não foram lidos** no sistema, agrupados por assunto, com links. Sem nada pendente, não sai e-mail **[P-15-15]**.
 - **RN-15-042** — Os **urgentes** saem por e-mail na hora.
 - **RN-15-043** — O resumo diário é uma lista dos avisos, gerada sem IA. Ele não substitui o resumo operacional, que fica só na tela inicial (D-386).
@@ -234,7 +234,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
 ### 4.10 Retenção
 
-- **RN-15-090** — Notificações ficam no sino por **90 dias**. Os registros de entrega ficam **1 ano**, sem o texto da mensagem, só o tipo, o canal, o destino mascarado e os status **[P-15-29]**.
+- **RN-15-090** — Notificações ficam no sino por **90 dias** e são apagadas com **1 ano**, junto com as entregas (D-608). Os registros de entrega ficam **1 ano**, sem o texto da mensagem, só o tipo, o canal, o destino mascarado e os status **[P-15-29]**.
 - **RN-15-091** — Os comunicados ficam no histórico do mural por **2 anos** depois da validade **[P-15-30]**.
 
 ## 5. Estados

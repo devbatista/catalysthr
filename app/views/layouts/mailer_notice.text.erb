@@ -1,0 +1,6 @@
+<%= @sender_name %>
+
+<%= yield %>
+
+--
+<%= t(@notification.in_bell? ? "notification_mailer.footer_bell" : "notification_mailer.footer", brand: @sender_name) %>

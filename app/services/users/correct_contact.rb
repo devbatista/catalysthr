@@ -2,8 +2,9 @@ module Users
   # Corrects the e-mail or the mobile phone of a person who lost both, so the person
   # recovers the access alone (RN-02-033, P-02-17): by who administers the profile,
   # through the membership, or by the CatalystHR support, with the reason (D-582). The old
-  # e-mail is told about the change. The change stays in the trail, and an access event
-  # records who made it, without the values.
+  # e-mail is told about the change directly, since it belongs to no one now, and the new one
+  # through the notices (spec 15, D-607). The change stays in the trail, and an access
+  # event records who made it, without the values.
   class CorrectContact
     def self.call(**)
       new(**).call
@@ -31,6 +32,8 @@ module Users
         metadata: { fields: changed, reason: @reason }.compact)
       if old_email.present? && changed.include?("email")
         AccountMailer.contact_changed(@user, old_email, @membership, @brand).deliver_later
+        Notifications.notify!("security.contact_changed", user: @user, membership: @membership, brand: @brand, path: "/security",
+          brand_name: @membership&.sender_name(@brand) || @brand&.commercial_name || BrandSender::PLATFORM_NAME)
       end
       @user
     end

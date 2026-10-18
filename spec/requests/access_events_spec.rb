@@ -43,6 +43,9 @@ RSpec.describe "Access events of sign-in and security", type: :request do
     get unlock_link
 
     expect(actions).to eq(Array.new(4, "sign_in_failed") + %w[locked sign_in_failed unlocked])
+    # The lockout is a notice in the bell only; the unlock e-mail is the access notice (D-607).
+    expect(Notification.sole).to have_attributes(notification_type: "security.account_locked", in_bell: true)
+    expect(NotificationDelivery.count).to eq(0)
   end
 
   it "does not record attempts with an unknown CPF" do

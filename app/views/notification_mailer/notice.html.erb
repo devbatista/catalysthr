@@ -1,0 +1,8 @@
+<p style="margin:0 0 12px;"><%= t(".greeting", name: @user.first_name) %></p>
+<h1 style="margin:0 0 12px;font-size:19px;line-height:1.35;color:#0A2A4A;"><%= @notification.title %></h1>
+<% if @notification.body.present? %>
+  <p style="margin:0 0 20px;"><%= @notification.body %></p>
+<% end %>
+<% if @url %>
+  <a href="<%= @url %>" style="display:inline-block;padding:11px 20px;border-radius:8px;background:<%= @color %>;color:#FFFFFF;font-weight:bold;text-decoration:none;"><%= t(".open") %></a>
+<% end %>
