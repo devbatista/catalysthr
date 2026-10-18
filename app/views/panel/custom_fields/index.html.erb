@@ -1,0 +1,36 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, CustomFieldDefinition) %>
+    <%= link_to t(".new"), new_custom_field_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @fields.empty? %>
+  <p class="card card-body mt-6 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table min-w-[640px]">
+      <thead>
+        <tr>
+          <th><%= t(".label") %></th>
+          <th><%= t(".type") %></th>
+          <th><%= t(".rules") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @fields.each do |field| %>
+          <tr>
+            <td><%= link_to field.label, edit_custom_field_path(field), class: "link-button" %></td>
+            <td><%= t("custom_fields.field_types.#{field.field_type}") %><% if field.type_select? %> <span class="text-ink-muted">(<%= field.options.join(", ") %>)</span><% end %></td>
+            <td class="text-ink-soft"><%= custom_field_rules(field) %></td>
+            <td><span class="pill <%= field.active? ? "pill-ok" : "pill-mute" %>"><%= t("custom_fields.statuses.#{field.status}") %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

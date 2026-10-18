@@ -1,10 +1,11 @@
 <%# The employment's conditions (RN-04-060): position, unit and department of that unit
-    (RN-04-064), salary and weekly hours, and the justification for a monthly salary out of
+    (RN-04-064), the allocation client when the company uses them (RN-04-092, CA-04-011), salary and weekly hours, and the justification for a monthly salary out of
     the position's range (RN-04-032, D-603). The salary value comes already revealed, or
     as typed. %>
 <% positions = position_options.to_a | [ revision.try(:position) ].compact %>
 <% units = unit_options.to_a | [ revision.try(:unit) ].compact %>
 <% departments = (department_options.to_a | [ revision.try(:department) ].compact).group_by(&:unit) %>
+<% clients = Current.company.uses_allocation_clients ? allocation_client_options.to_a | [ revision.try(:allocation_client) ].compact : [] %>
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
   <div class="sm:col-span-2">
     <%= form.label :position_id, t("panel.employment_revisions.form.position"), class: "field-label" %>
@@ -25,6 +26,14 @@
       { include_blank: t("panel.employment_revisions.form.no_department") }, class: "input" %>
     <p class="field-hint"><%= t("panel.employment_revisions.form.department_hint") %></p>
   </div>
+  <% if Current.company.uses_allocation_clients %>
+    <div class="sm:col-span-2">
+      <%= form.label :allocation_client_id, t("panel.employment_revisions.form.allocation_client"), class: "field-label" %>
+      <%= form.select :allocation_client_id, clients.map { |client| [ client.name, client.id ] },
+        { include_blank: t("panel.employment_revisions.form.no_allocation_client") }, class: "input" %>
+      <p class="field-hint"><%= t("panel.employment_revisions.form.allocation_client_hint") %></p>
+    </div>
+  <% end %>
   <div>
     <%= form.label :salary, t("panel.employment_revisions.form.salary"), class: "field-label" %>
     <%= form.text_field :salary, value: salary, inputmode: "decimal", autocomplete: "off", placeholder: "2.500,00", class: "input font-mono" %>

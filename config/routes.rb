@@ -93,6 +93,14 @@ Rails.application.routes.draw do
       resources :units, except: :destroy
       resources :departments, except: :destroy
       resources :positions, except: :destroy
+      # Custom fields and allocation clients (spec 04, RN-04-080 to RN-04-096, D-605).
+      resources :custom_fields, path: "custom-fields", only: %i[index new create edit update]
+      resources :allocation_clients, path: "clients", except: :destroy do
+        member do
+          patch :managers
+          post :invite_manager, path: "invite-manager"
+        end
+      end
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       resources :employees, except: :destroy do
         resources :employments, only: %i[new create]

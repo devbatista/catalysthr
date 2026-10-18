@@ -17,6 +17,14 @@
       class: "chip #{"chip-active" if params[:unit_id] == unit.id.to_s}" %>
   <% end %>
 </nav>
+<% if @client_counts&.keys&.compact&.any? %>
+  <nav class="mt-2 flex flex-wrap gap-2" aria-label="<%= t(".client_filters") %>">
+    <% @client_counts.keys.compact.sort_by(&:name).each do |client| %>
+      <%= link_to "#{client.name} · #{@client_counts[client]}", employees_path(params.permit(:unit_id).merge(client_id: client.id)),
+        class: "chip #{"chip-active" if params[:client_id] == client.id.to_s}" %>
+    <% end %>
+  </nav>
+<% end %>
 
 <% if @rows.empty? %>
   <p class="card card-body mt-5 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
@@ -28,6 +36,7 @@
           <th><%= t(".name") %></th>
           <th><%= t(".position") %></th>
           <th><%= t(".unit") %></th>
+          <% if Current.company.uses_allocation_clients %><th><%= t(".client") %></th><% end %>
           <th><%= t(".manager") %></th>
           <th><%= t(".status") %></th>
         </tr>
@@ -43,6 +52,7 @@
             </td>
             <td><%= row.position&.name || "—" %></td>
             <td><%= row.unit&.name || "—" %></td>
+            <% if Current.company.uses_allocation_clients %><td><%= row.revision&.allocation_client&.name || "—" %></td><% end %>
             <td class="text-ink-soft"><%= row.managers.map(&:name).sort.join(", ").presence || "—" %></td>
             <td><%= employment_status_pill(row.employment) %></td>
           </tr>

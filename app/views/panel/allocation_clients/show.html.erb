@@ -1,0 +1,97 @@
+<%# The client with its managers (RN-04-094, RN-02-064, D-605) and the people allocated in
+    it today (RN-04-095). %>
+<% content_for :title, @client.name %>
+
+<p class="text-sm"><%= link_to t(".back"), allocation_clients_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @client.name %></h1>
+  <span class="pill <%= @client.active? ? "pill-ok" : "pill-mute" %>"><%= t("allocation_clients.statuses.#{@client.status}") %></span>
+  <% if can?(:update, @client) %>
+    <%= link_to t(".edit"), edit_allocation_client_path(@client), class: "btn btn-secondary sm:ml-auto" %>
+  <% end %>
+</div>
+<% if @client.formatted_document %>
+  <p class="page-subtitle font-mono"><%= @client.formatted_document %></p>
+<% end %>
+
+<div class="mt-6 max-w-3xl space-y-6">
+  <section class="card card-body">
+    <h2 class="card-title"><%= t(".allocated", count: @allocated.size) %></h2>
+    <% if @allocated.empty? %>
+      <p class="mt-2 text-sm text-ink-soft"><%= t(".no_allocated") %></p>
+    <% else %>
+      <ul class="mt-3 divide-y divide-line-soft text-sm">
+        <% @allocated.each do |profile| %>
+          <li class="py-2"><%= link_to profile.display_name, employee_path(profile), class: "link-button" %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
+
+  <section class="card card-body">
+    <h2 class="card-title"><%= t(".managers") %></h2>
+    <p class="field-hint"><%= t(".managers_hint") %></p>
+    <% if can?(:manage_managers, @client) %>
+      <%= form_with url: managers_allocation_client_path(@client), method: :patch, class: "mt-3 space-y-3" do |form| %>
+        <%= hidden_field_tag "membership_ids[]", "", id: nil %>
+        <% if manager_options.empty? %>
+          <p class="text-sm text-ink-soft"><%= t(".no_managers") %></p>
+        <% else %>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <% selected = @client.allocation_client_managers.map(&:membership_id) %>
+            <% manager_options.each do |membership| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= check_box_tag "membership_ids[]", membership.id, selected.include?(membership.id), id: "client_manager_#{membership.id}" %>
+                <%= membership.user.name %>
+                <% if membership.invited? %><span class="pill pill-info"><%= t(".invited") %></span><% end %>
+              </label>
+            <% end %>
+          </div>
+          <%= form.submit t(".save_managers"), class: "btn btn-secondary" %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <p class="mt-2 text-sm"><%= @client.managers.map { |membership| membership.user.name }.sort.join(", ").presence || "—" %></p>
+    <% end %>
+  </section>
+
+  <% if can?(:manage_managers, @client) && @client.active? %>
+    <section class="card card-body">
+      <h2 class="card-title"><%= t(".invite_title") %></h2>
+      <p class="field-hint"><%= t(".invite_hint") %></p>
+      <%= form_with url: invite_manager_allocation_client_path(@client), method: :post, scope: :invitation, class: "mt-3 space-y-4" do |form| %>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <%= form.label :name, t(".name"), class: "field-label" %>
+            <%= form.text_field :name, required: true, maxlength: 120, autocomplete: "off", class: "input" %>
+          </div>
+          <div>
+            <%= form.label :cpf, t(".cpf"), class: "field-label" %>
+            <%= form.text_field :cpf, required: true, inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
+          </div>
+          <div>
+            <%= form.label :email, t(".email"), class: "field-label" %>
+            <%= form.email_field :email, autocomplete: "off", class: "input" %>
+          </div>
+          <div>
+            <%= form.label :mobile_phone, t(".mobile_phone"), class: "field-label" %>
+            <%= form.telephone_field :mobile_phone, autocomplete: "off", class: "input" %>
+          </div>
+        </div>
+        <fieldset>
+          <legend class="field-label"><%= t(".channels") %></legend>
+          <%= hidden_field_tag "invitation[channels][]", "", id: nil %>
+          <div class="mt-1 flex flex-wrap gap-4">
+            <% Membership::INVITATION_CHANNELS.each do |channel| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= check_box_tag "invitation[channels][]", channel, channel == "email", id: "invitation_channel_#{channel}" %>
+                <%= t("invitation_channels.#{channel}") %>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+        <%= form.submit t(".invite"), class: "btn btn-primary" %>
+      <% end %>
+    </section>
+  <% end %>
+</div>

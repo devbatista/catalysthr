@@ -28,6 +28,7 @@ class CompanyAbility
       hr_analyst(company, units: :all, modules: Membership::RELEASABLE_MODULES)
     end
     manager(company, membership) if roles.include?("manager")
+    client_manager(company, membership) if roles.include?("client_manager")
   end
 
   private
@@ -49,7 +50,7 @@ class CompanyAbility
   # the payroll module (P-03-16). A past employment counts by its last unit.
   # units: the analyst's membership, whose units count, or :all.
   def hr_analyst(company, units:, modules:)
-    can :read, [ Unit, Department, Position ], company_id: company.id
+    can :read, [ Unit, Department, Position, AllocationClient ], company_id: company.id
     # The CEP for the person's address; the unit's position on the map is the HR
     # administrator's (D-216).
     can :lookup, :address
@@ -79,6 +80,20 @@ class CompanyAbility
     can :read, WorkerProfile, company_id: company.id, id: team
   end
 
+  # The client manager reads the basic data of the people allocated in their active
+  # clients, the K scope (spec 03, section 4.12, RN-04-095, P-03-38 to P-03-40). Nothing
+  # while the company does not use allocation clients.
+  def client_manager(company, membership)
+    return unless company.uses_allocation_clients
+
+    people = ActsAsTenant.with_tenant(company) do
+      clients = AllocationClientManager.joins(:allocation_client)
+        .where(membership: membership, allocation_clients: { status: "active" }).select(:allocation_client_id)
+      WorkerProfile.in_allocation_clients(clients).pluck(:id)
+    end
+    can :read, WorkerProfile, company_id: company.id, id: people
+  end
+
   def hr_admin(user, company)
     # The company's settings and units (spec 03, section 4.2, D-601). The employer's
     # document is corrected only by the superadmin.
@@ -89,6 +104,11 @@ class CompanyAbility
     # Every person of the company (spec 03, section 4.3). Only the HR administrator
     # registers someone by hand for now (D-600); the admission comes with spec 07.
     can %i[read read_personal read_health read_pay update create], WorkerProfile, company_id: company.id
+    # Custom fields and allocation clients, with their managers (RN-04-080, RN-04-090,
+    # RN-04-094, RN-02-064, D-605).
+    can %i[read create update], CustomFieldDefinition, company_id: company.id
+    can %i[read create update], AllocationClient, company_id: company.id
+    can :manage_managers, AllocationClient, company_id: company.id
 
     can %i[read invite], Membership, organization_type: "Company", organization_id: company.id
     # The company's accounting firm: register or link it, resend the first invitation,

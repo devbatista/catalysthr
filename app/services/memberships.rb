@@ -41,7 +41,8 @@ module Memberships
   end
 
   # What a company's membership is given by role ends with the role or the access: the
-  # departments it manages (RN-04-021) and the HR analyst's units (D-142). A suspension is
+  # departments it manages (RN-04-021), the HR analyst's units (D-142) and the client
+  # manager's clients (RN-04-094). A suspension is
   # temporary and keeps them. Runs with the company as the tenant, also from views without
   # one (the partner's panel).
   def release_company_assignments!(membership)
@@ -51,6 +52,7 @@ module Memberships
       kept = !membership.revoked?
       DepartmentManager.where(membership: membership).destroy_all unless kept && membership.roles.include?("manager")
       MembershipUnit.where(membership: membership).destroy_all unless kept && membership.roles.include?("hr_analyst")
+      AllocationClientManager.where(membership: membership).destroy_all unless kept && membership.roles.include?("client_manager")
     end
   end
 end

@@ -50,6 +50,13 @@
       <%= form.number_field :next_registration_number, min: 1, required: true, class: "input w-40 font-mono" %>
       <p class="field-hint"><%= t(".next_registration_number_hint") %></p>
     </div>
+    <div>
+      <label class="flex items-center gap-2 text-sm font-semibold">
+        <%= form.check_box :uses_allocation_clients %>
+        <%= t(".uses_allocation_clients") %>
+      </label>
+      <p class="field-hint"><%= t(".uses_allocation_clients_hint") %></p>
+    </div>
   </section>
 
   <div><%= form.submit t(".submit"), class: "btn btn-primary" %></div>

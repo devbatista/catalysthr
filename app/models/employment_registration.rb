@@ -1,7 +1,8 @@
 # A new employment with its first revision, for someone who already has a record in the
 # company (RN-04-051): a second contract, or the intern's conversion to CLT (RN-04-054,
 # CA-04-006). The conversion ends the internship the day before the CLT admission, with
-# the reason "conversion" (D-604). The "Novo colaborador" form builds on this one.
+# the reason "conversion", and keeps the internship's unit, department, client and hours
+# (D-604). The "Novo colaborador" form builds on this one.
 #
 # As in the manual registration (D-600), the start is not in the future: who has not
 # started yet comes through the admission (spec 07).
@@ -16,6 +17,7 @@ class EmploymentRegistration
   attribute :position_id, :integer
   attribute :unit_id, :integer
   attribute :department_id, :integer
+  attribute :allocation_client_id, :integer
   attribute :salary, :string
   attribute :salary_unit, :string, default: "month"
   attribute :variable_salary_description, :string
@@ -29,7 +31,7 @@ class EmploymentRegistration
     [ "Employment", :kind ] => :kind, [ "Employment", :category ] => :category,
     [ "Employment", :registration_number ] => :registration_number, [ "Employment", :started_on ] => :started_on,
     [ "EmploymentRevision", :position ] => :position_id, [ "EmploymentRevision", :unit ] => :unit_id,
-    [ "EmploymentRevision", :department ] => :department_id, [ "EmploymentRevision", :salary_cents ] => :salary,
+    [ "EmploymentRevision", :department ] => :department_id, [ "EmploymentRevision", :allocation_client ] => :allocation_client_id, [ "EmploymentRevision", :salary_cents ] => :salary,
     [ "EmploymentRevision", :salary_unit ] => :salary_unit,
     [ "EmploymentRevision", :variable_salary_description ] => :variable_salary_description,
     [ "EmploymentRevision", :weekly_hours ] => :weekly_hours, [ "EmploymentRevision", :justification ] => :justification
@@ -47,7 +49,7 @@ class EmploymentRegistration
   def self.conversion_of(internship, company:)
     revision = internship.current_revision || internship.effective_revision
     new(kind: "clt", registration_number: company.suggested_registration_number, unit_id: revision&.unit_id,
-      department_id: revision&.department_id, weekly_hours: revision&.weekly_hours)
+      department_id: revision&.department_id, allocation_client_id: revision&.allocation_client_id, weekly_hours: revision&.weekly_hours)
   end
 
   def save(profile:, by:, converting: nil)
@@ -85,7 +87,7 @@ class EmploymentRegistration
       started_on: started_on, status: "active")
     @employment.revisions.create!(
       effective_on: started_on, position_id: position_id, unit_id: unit_id, department_id: department_id,
-      salary_cents: salary_cents, salary_unit: salary_unit, variable_salary_description: variable_salary_description,
+      allocation_client_id: allocation_client_id, salary_cents: salary_cents, salary_unit: salary_unit, variable_salary_description: variable_salary_description,
       weekly_hours: weekly_hours, reason: "admission", justification: justification, created_by: by
     )
     profile.company.advance_registration_number!(@employment.registration_number)

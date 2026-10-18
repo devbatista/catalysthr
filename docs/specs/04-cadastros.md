@@ -1,7 +1,7 @@
 # 04 — Cadastros
 
 > Status: aprovado · Última atualização: 2026-10-17
-> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600, D-602 a D-604 ([decisoes.md](decisoes.md))
+> Decisões: D-053, D-086, D-090, D-151, D-176, D-190, D-200 a D-216, D-570, D-600, D-602 a D-605 ([decisoes.md](decisoes.md))
 > Os itens **[P-04-01]** a **[P-04-29]** foram todos aprovados sem ajuste (D-214, seção 10). Os itens **[P-04-30]** a **[P-04-36]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -206,6 +206,8 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
   - obrigatório ou não;
   - visível ao colaborador;
   - editável pelo colaborador. Se for, a edição passa pela validação do RH (RN-04-071) **[P-04-25]**.
+
+  O obrigatório vale quando o RH salva a ficha. Campos personalizados não guardam dado sensível (D-086): saúde, documentos e dados bancários têm lugar próprio na ficha (D-605).
 - **RN-04-081** — Os valores ficam em uma coluna JSONB na ficha. Remover um campo esconde o valor, mas não apaga os dados já gravados **[P-04-26]**.
 
 ### Clientes de alocação (D-570)
@@ -214,7 +216,7 @@ User ──< Membership (empresa) ──1 WorkerProfile ──< Employment ─�
 - **RN-04-091** — O cliente tem nome, documento (CNPJ ou CPF, opcional, único na empresa quando informado) e status. Ele pertence à empresa e fica no tenant dela **[P-04-31]**.
 - **RN-04-092** — A revisão do vínculo indica o cliente de alocação. O campo é **opcional**: "sem cliente" representa quem trabalha na própria empresa, como a equipe interna **[P-04-32]**.
 - **RN-04-093** — Trocar de cliente é uma revisão nova, com vigência, como trocar de unidade. A troca sozinha não gera pendência de eSocial (RN-04-063). A conferência de efeitos no eSocial está em aberto (seção 11) **[P-04-33]**.
-- **RN-04-094** — O cliente tem zero ou mais **gestores do cliente**: pessoas com membership na empresa e o perfil `client_manager` (spec 02). Uma mesma pessoa pode gerir vários clientes **[P-04-34]**.
+- **RN-04-094** — O cliente tem zero ou mais **gestores do cliente**: pessoas com membership na empresa e o perfil `client_manager` (spec 02). Uma mesma pessoa pode gerir vários clientes **[P-04-34]**. O RH administrador convida o gestor do cliente pela tela do cliente (D-605).
 - **RN-04-095** — A **equipe** de um gestor do cliente são os vínculos `pending`, `active` ou `on_leave` cuja revisão vigente aponta para um dos clientes dele. No vínculo `pending`, vale a primeira revisão, para que o gestor participe da admissão. Quando o colaborador muda de cliente, ele sai da equipe na data da vigência **[P-04-35]**.
 - **RN-04-096** — Um cliente com vínculos `pending`, `active` ou `on_leave` não pode ser inativado. Inativar tira o acesso dos gestores daquele cliente (RN-02-064) **[P-04-36]**.
 

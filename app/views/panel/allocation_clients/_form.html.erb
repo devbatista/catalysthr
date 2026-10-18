@@ -1,0 +1,30 @@
+<%# An allocation client (RN-04-091, RN-04-096). %>
+<%= form_with model: client, url: url, method: method, class: "card card-body mt-6 max-w-2xl space-y-5" do |form| %>
+  <%= render "panel/employees/errors", record: client %>
+  <div>
+    <%= form.label :name, t("panel.allocation_clients.form.name"), class: "field-label" %>
+    <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div>
+      <%= form.label :document_type, t("panel.allocation_clients.form.document_type"), class: "field-label" %>
+      <%= form.select :document_type, AllocationClient::DOCUMENT_TYPES.map { |type| [ type.upcase, type ] },
+        { include_blank: t("panel.allocation_clients.form.no_document") }, class: "input" %>
+    </div>
+    <div class="sm:col-span-2">
+      <%= form.label :document, t("panel.allocation_clients.form.document"), class: "field-label" %>
+      <%= form.text_field :document, autocomplete: "off", class: "input font-mono" %>
+    </div>
+  </div>
+  <% if client.persisted? %>
+    <div>
+      <%= form.label :status, t("panel.allocation_clients.form.status"), class: "field-label" %>
+      <%= form.select :status, AllocationClient::STATUSES.map { |status| [ t("allocation_clients.statuses.#{status}"), status ] }, {}, class: "input w-auto" %>
+      <p class="field-hint"><%= t("panel.allocation_clients.form.status_hint") %></p>
+    </div>
+  <% end %>
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("panel.allocation_clients.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("panel.allocation_clients.form.cancel"), client.persisted? ? allocation_client_path(client) : allocation_clients_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

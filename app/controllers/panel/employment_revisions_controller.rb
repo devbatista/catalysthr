@@ -11,7 +11,7 @@ module Panel
     before_action :load_employment
     before_action :load_revision, only: %i[edit update destroy]
 
-    helper_method :unit_options, :department_options, :position_options
+    helper_method :unit_options, :department_options, :position_options, :allocation_client_options
 
     def new
       authorize! :update, @profile
@@ -19,7 +19,7 @@ module Panel
       reveal_all_sections(%w[pay])
       @base_revision = @employment.current_revision || @employment.effective_revision
       @revision = @employment.revisions.new(
-        @base_revision&.slice(:position_id, :unit_id, :department_id, :salary_unit, :variable_salary_description, :weekly_hours) || {}
+        @base_revision&.slice(:position_id, :unit_id, :department_id, :allocation_client_id, :salary_unit, :variable_salary_description, :weekly_hours) || {}
       )
     end
 
@@ -68,7 +68,7 @@ module Panel
     private
 
     def save(template, notice)
-      attributes = params.expect(employment_revision: %i[effective_on position_id unit_id department_id salary salary_unit
+      attributes = params.expect(employment_revision: %i[effective_on position_id unit_id department_id allocation_client_id salary salary_unit
         variable_salary_description weekly_hours reason justification])
       @salary_typed = attributes.delete(:salary)
       cents = MoneyCents.parse(@salary_typed)
@@ -111,6 +111,10 @@ module Panel
 
     def position_options
       Position.active.ordered
+    end
+
+    def allocation_client_options
+      Current.company.uses_allocation_clients ? AllocationClient.active.ordered : AllocationClient.none
     end
   end
 end

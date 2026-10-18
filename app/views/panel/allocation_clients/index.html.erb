@@ -1,0 +1,36 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, AllocationClient) %>
+    <%= link_to t(".new"), new_allocation_client_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @clients.empty? %>
+  <p class="card card-body mt-6 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table min-w-[600px]">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th><%= t(".document") %></th>
+          <th><%= t(".managers") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @clients.each do |client| %>
+          <tr>
+            <td><%= link_to client.name, allocation_client_path(client), class: "link-button" %></td>
+            <td class="font-mono text-xs text-ink-soft"><%= client.formatted_document || "—" %></td>
+            <td class="text-ink-soft"><%= client.managers.map { |membership| membership.user.name }.sort.join(", ").presence || "—" %></td>
+            <td><span class="pill <%= client.active? ? "pill-ok" : "pill-mute" %>"><%= t("allocation_clients.statuses.#{client.status}") %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
