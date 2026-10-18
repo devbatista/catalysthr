@@ -26,12 +26,15 @@
   <legend class="field-label"><%= t("brands.fields.colors") %></legend>
   <p class="field-hint"><%= t("brands.fields.colors_hint") %></p>
   <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-    <%# The swatch shows the saved color only, never what was just typed %>
+    <%# The swatch shows the saved color only, never what was just typed. It is an SVG fill,
+        because the CSP blocks style attributes (P-05-29) %>
     <% %i[primary secondary accent].each do |name| %>
       <div>
         <%= form.label :"#{name}_color", t("brands.fields.#{name}_color"), class: "block text-xs font-semibold text-ink-soft" %>
         <div class="mt-1 flex items-center gap-2">
-          <span class="inline-block size-8 shrink-0 rounded-lg border border-line" style="background: <%= brand.attribute_in_database(:"#{name}_color").presence || Brand::DEFAULT_COLORS[name] %>"></span>
+          <span class="inline-block size-8 shrink-0 overflow-hidden rounded-lg border border-line">
+            <svg class="block size-full" viewBox="0 0 1 1" aria-hidden="true"><rect width="1" height="1" fill="<%= brand.attribute_in_database(:"#{name}_color").presence || Brand::DEFAULT_COLORS[name] %>"/></svg>
+          </span>
           <%= form.text_field :"#{name}_color", placeholder: Brand::DEFAULT_COLORS[name], maxlength: 7, pattern: "#[0-9A-Fa-f]{6}",
             class: "input mt-0 font-mono" %>
         </div>

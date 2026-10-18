@@ -1,6 +1,6 @@
 # Plano de fases — CatalystHR (checklist)
 
-> Última atualização: 2026-10-16
+> Última atualização: 2026-10-18
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
@@ -46,7 +46,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Exigir uma revisão aprovada na proteção da `main` quando entrar a segunda pessoa
 - [x] GitHub Actions: RuboCop, brakeman, bundler-audit, `importmap audit`, RSpec com Postgres e Redis, SimpleCov
 - [x] Dependabot (gems, Docker, Actions)
-- [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `clamav` e `backup` ficam para a fase 1
+- [x] Railway US East: projeto `catalyst_hr` com `web`, `worker`, `worker-time`, `Postgres` (18 com pgvector) e `Redis` (AOF e `noeviction`), só na rede privada. `backup` fica para a fase 1, e o `clamav` para a spec 08, na fase 2 (D-606)
 - [x] AWS: conta própria `catalysthr` (464986173446) no AWS Organizations, separada dos outros sistemas; IAM Identity Center em São Paulo com MFA em todo login; CLI por SSO, sem chaves gravadas; alerta de orçamento de US$ 10 por mês (D-574, 2026-10-14)
 - [x] AWS em São Paulo: SES (domínio `catalysthr.com.br` verificado, DKIM, MAIL FROM `bounce.catalysthr.com.br` com SPF, DMARC `p=quarantine` na Cloudflare, *configuration set* `catalysthr-padrao`) e SNS (tópico `catalysthr-ses-eventos` com entrega, devolução e reclamação). Pedido de saída do sandbox enviado, em análise (2026-10-14). KMS, S3 e usuários IAM ficam para a fase 1, e a chave do A1 para a fase 3, para não pagar antes de usar
 - [x] Cloudflare DNS: `*.painel`, `_acme-challenge`, `admin` e os registros do SES (DKIM, MAIL FROM e DMARC)
@@ -100,17 +100,19 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
-- [ ] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
+- [x] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
   - Em 5 PRs (D-600, D-602):
     - [x] 4a. Empresa (tipo de empregador e documento, endereço, configurações) e unidades (matriz, raiz do CNPJ, fuso, CEP, posição no mapa), com as unidades do RH analista (escopo U) (RN-04-001 a RN-04-014, CA-04-001) (PR #33)
     - [x] 4b. Departamentos em árvore com gestores e "gestor acima" (escopo E), cargos e tabela da CBO (RN-04-020 a RN-04-032, CA-04-002, CA-04-003) (PR #35)
     - [x] 4c-1. Ficha, vínculos com matrícula, revisões com vigência, lista de colaboradores (escopos T, U e E), cadastro manual "Novo colaborador" (reaproveitando o CPF que já tem conta) e confirmação de senha para dado sensível com o evento de leitura (RN-04-040 a RN-04-042, RN-04-050 a RN-04-064, CA-04-004, CA-04-005, CA-04-007, CA-04-010, RN-02-052, D-592, D-602, D-603) (PR #36)
     - [x] 4c-2. Contatos de emergência, dependentes, contas bancárias, efetivação de estagiário e vínculo novo numa ficha que já existe (RN-04-043, RN-04-044, RN-04-051, RN-04-054, CA-04-006, D-602, D-604). A certidão e o comprovante da conta entram com a spec 08 (PR #37)
-    - [ ] 4d. Campos personalizados e clientes de alocação (escopo K), com o convite do gestor do cliente (RN-04-080, RN-04-081, RN-04-090 a RN-04-096, CA-04-011 a CA-04-013, RN-02-064, D-605)
+    - [x] 4d. Campos personalizados e clientes de alocação (escopo K), com o convite do gestor do cliente (RN-04-080, RN-04-081, RN-04-090 a RN-04-096, CA-04-011 a CA-04-013, RN-02-064, D-605) (PR #38)
     - [x] Depois do deploy do 4a: migração que remove `companies.cnpj`
   - Ficam para depois: atualização pelo colaborador (specs 09 e 16), pendências de eSocial e correspondência dos campos de lista com os códigos do eSocial (spec 13), convite do colaborador (spec 16), itens de admissão do gestor do cliente (spec 07), job diário das revisões `Employments::ApplyScheduledRevisionsJob` (spec 15, D-602), o desligamento e o afastamento (specs 11, 12 e 13), a jornada da revisão (spec 11) e a consulta dos colaboradores pelo escritório contábil (escopo F, com a spec 12)
-- [ ] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento
-  - Já feitos: criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1). O ponto único com a máscara do impersonate entrou no bloco 5a (D-592). Falta a confirmação de senha para ver dado sensível (RN-02-052), com o evento de leitura, que entram com a spec 04
+- [x] **Spec 05:** criptografia de campos, PaperTrail sem campos sensíveis, `access_events`, confirmação de senha, mascaramento, CSP e cabeçalhos de segurança
+  - Criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1), o ponto único com a máscara do impersonate (bloco 5a, D-592) e a confirmação de senha com o evento de leitura (bloco 4c-1)
+  - CSP com nonce e cabeçalhos de segurança (P-05-29, D-606) (PR #39)
+  - A varredura de vírus dos uploads (P-05-30) entra com a spec 08 (D-606)
 - [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências
 - [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
@@ -140,7 +142,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ### Entregas
 - [ ] **Spec 06:** motor de modelos de processo. Incluir a cópia dos modelos usados pela empresa no serviço de transferência, com teste (RN-01-053, D-599)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
-- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável
+- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável, varredura de vírus dos uploads com o serviço `clamav` no Railway (P-05-30, D-606)
 - [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Quando entrarem os materiais do assistente e as perguntas e respostas, incluir a cópia deles no serviço de transferência, com teste (RN-01-053, D-599). Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
 - [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4)
 - [ ] **Spec 15 (resto):** WhatsApp, push, horário de silêncio, resumo diário por e-mail, mural
