@@ -22,7 +22,7 @@
 
     <%# Brand colors as CSS variables used by the Tailwind theme (RN-01-031), and the
         sidebar's text color (D-597) %>
-    <style>
+    <style nonce="<%= content_security_policy_nonce %>">
       :root {
         --brand-primary: <%= theme_colors[:primary] %>;
         --brand-secondary: <%= theme_colors[:secondary] %>;
