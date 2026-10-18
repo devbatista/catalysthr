@@ -31,6 +31,10 @@ Rails.application.routes.draw do
   constraints ->(request) { request.env[HostResolver::AREA] == :admin } do
     scope module: :admin, as: :admin do
       root "home#index"
+      # The bell (spec 15, RN-15-001).
+      resources :notifications, only: %i[index show] do
+        get "unread-count", on: :collection, action: :unread_count, as: :unread_count
+      end
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
       resources :impersonations, only: %i[new create]
       # Brands (spec 01, section 6): partners' and direct companies', and the client
@@ -58,6 +62,10 @@ Rails.application.routes.draw do
     scope module: :panel do
       root "home#index"
       get "manifest.webmanifest", to: "manifests#show", as: :manifest
+      # The bell (spec 15, RN-15-001).
+      resources :notifications, only: %i[index show] do
+        get "unread-count", on: :collection, action: :unread_count, as: :unread_count
+      end
       # The brand's images (RN-01-014, RN-01-030).
       get "brand-assets/company/:kind", to: "brand_assets#company", as: :company_brand_asset
       get "brand-assets/:kind", to: "brand_assets#show", as: :brand_asset

@@ -32,9 +32,11 @@ RSpec.describe "Admin: users' contact and MFA", type: :request do
     expect(person.reload.email).to eq("rita@novo.example")
     expect(AccessEvent.find_by!(action: "contact_corrected")).to have_attributes(user: support, subject: person,
       metadata: { "fields" => [ "email" ], "reason" => "Chamado 900" })
-    mail = ActionMailer::Base.deliveries.last
-    expect(mail.to).to eq([ "rita@antigo.example" ])
-    expect(mail[:from].display_names).to eq([ "CatalystHR" ])
+    mails = ActionMailer::Base.deliveries.index_by { |mail| mail.to.sole }
+    expect(mails.keys).to contain_exactly("rita@antigo.example", "rita@novo.example")
+    expect(mails["rita@antigo.example"][:from].display_names).to eq([ "CatalystHR" ])
+    # The new address gets the notice (spec 15, D-607).
+    expect(mails["rita@novo.example"].subject).to eq("Este é o novo e-mail da sua conta em CatalystHR")
   end
 
   it "resets the MFA with a reason, ending the sessions" do

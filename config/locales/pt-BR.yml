@@ -1403,13 +1403,52 @@ pt-BR:
   invitation_channels:
     email: "E-mail"
     link: "Link ou QR code para entregar em mãos"
-  account_mailer:
-    mfa_reset:
-      subject: "Verificação em duas etapas redefinida em %{brand}"
+  # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
+  # (RN-15-005).
+  notification_types:
+    security:
+      account_locked:
+        title: "Sua conta foi bloqueada por tentativas de acesso"
+        body: "A conta ficou bloqueada depois de várias tentativas de entrar com a senha errada. Se não foi você, troque a sua senha."
+      mfa_reset:
+        title: "Verificação em duas etapas redefinida em %{brand_name}"
+        body: "Quem administra o seu acesso redefiniu a verificação em duas etapas. No próximo acesso, entre com a sua senha e ative de novo o app autenticador. Se você não pediu isso, fale com o RH da empresa ou com o suporte."
+      contact_changed:
+        title: "Este é o novo e-mail da sua conta em %{brand_name}"
+        body: "Quem administra o seu acesso alterou o e-mail da sua conta para este endereço, que passa a receber os avisos. Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
+    brand:
+      email_domain_status:
+        verified:
+          title: "Domínio de e-mail verificado: %{domain}"
+          body: "O domínio %{domain} foi verificado. A partir de agora, os e-mails de %{brand_name} saem de no-reply@%{domain}."
+        failed:
+          title: "A verificação do domínio %{domain} falhou"
+          body: "O SES não conseguiu verificar o domínio %{domain} de %{brand_name}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
+    employments:
+      revisions_effective:
+        title:
+          one: "1 revisão entra em vigor hoje"
+          other: "%{count} revisões entram em vigor hoje"
+        body: "%{list}."
+        more:
+          one: "mais 1"
+          other: "mais %{count}"
+  notification_mailer:
+    footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
+    footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
+    notice:
       greeting: "Olá, %{name}."
-      body: "A verificação em duas etapas da sua conta em %{brand} foi redefinida por quem administra o seu acesso."
-      next_step: "No próximo acesso, entre com a sua senha e ative de novo o app autenticador."
-      not_you: "Se você não pediu isso, fale com o RH da empresa ou com o suporte."
+      open: "Abrir no sistema"
+  notifications:
+    bell:
+      label: "Avisos"
+      label_unread: "Avisos, %{count} não lidos"
+    index:
+      title: "Avisos"
+      subtitle: "Os avisos dos últimos 90 dias. Abrir um aviso o marca como lido."
+      empty: "Nenhum aviso nos últimos 90 dias."
+      unread: "(não lido)"
+  account_mailer:
     contact_changed:
       subject: "Contato da sua conta alterado em %{brand}"
       greeting: "Olá, %{name}."
@@ -1495,14 +1534,6 @@ pt-BR:
       title: "Suporte CatalystHR em %{company}"
       real: "O que você salvar vale de verdade."
       stop: "Sair da empresa"
-  brand_mailer:
-    email_domain_status:
-      verified_subject: "Domínio de e-mail verificado: %{domain}"
-      failed_subject: "A verificação do domínio %{domain} falhou"
-      greeting: "Olá, %{name}."
-      verified: "O domínio %{domain} foi verificado. A partir de agora, os e-mails de %{brand} saem de no-reply@%{domain}."
-      failed: "O SES não conseguiu verificar o domínio %{domain} de %{brand}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
-      action: "Abrir a marca"
   accounting_firm_mailer:
     link_requested:
       subject: "%{company} pediu para ligar o seu escritório contábil"

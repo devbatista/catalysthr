@@ -34,7 +34,9 @@ Rails.application.config.after_initialize do
     end
 
     Current.user_session = session
-    session.touch_activity!
+    # The bell's count, fetched every 60 seconds, is not the person's activity: an open tab
+    # would never expire (RN-02-050, RN-15-001).
+    session.touch_activity! unless auth.env["PATH_INFO"] == "/notifications/unread-count"
   end
 
   # A session that ended by itself is not a sign-out.

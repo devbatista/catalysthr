@@ -143,9 +143,13 @@ class User < ApplicationRecord
     codes
   end
 
-  # Lockout and unlock become access events (RN-05-020).
+  # Lockout and unlock become access events (RN-05-020). The lockout is also a notice in
+  # the bell; the unlock e-mail is the access notice (RN-15-011, D-607).
   def lock_access!(options = {})
-    super.tap { record_auth_event("locked") }
+    super.tap do
+      record_auth_event("locked")
+      Notifications.notify!("security.account_locked", user: self, path: "/security")
+    end
   end
 
   def unlock_access!

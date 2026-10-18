@@ -29,3 +29,15 @@ user_sessions_purge_expired:
   cron: "20 6 * * *"           # 03:20 in Brasília
   class: "UserSessions::PurgeExpiredJob"
   queue: "default"
+
+# Tells the HR about the revisions that come into force on the day (spec 04, P-04-29, D-608)
+employments_apply_scheduled_revisions:
+  cron: "30 10 * * *"          # 07:30 in Brasília
+  class: "Employments::ApplyScheduledRevisionsJob"
+  queue: "default"
+
+# Takes old notices out of the bell and deletes them after 1 year (spec 15, RN-15-090, D-608)
+notifications_purge:
+  cron: "30 6 * * *"           # 03:30 in Brasília
+  class: "Notifications::PurgeJob"
+  queue: "default"
