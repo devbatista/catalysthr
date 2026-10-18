@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   # Health check used by Railway and the uptime monitors (spec 20). Answers on any host (D-573).
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # SES events through SNS (spec 15, P-15-24, D-609). Answers on any host, without sign-in;
+  # the controller accepts only messages signed by SNS for the app's topic.
+  post "webhooks/ses-events", to: "ses_events#create", as: :ses_events
+
   # Sign-in, recovery and unlock (spec 02), on the admin host and on every brand's
   # subdomain. Who may sign in depends on the host (RN-02-004, RN-01-002).
   devise_for :users, path: "", controllers: { sessions: "users/sessions" },
@@ -53,6 +57,7 @@ Rails.application.routes.draw do
         member do
           patch :contact
           post :reset_mfa, path: "reset-mfa"
+          post :release_email, path: "release-email"
         end
       end
     end
@@ -98,6 +103,9 @@ Rails.application.routes.draw do
 
       # The company's settings and units (spec 04, RN-04-002 to RN-04-014, D-601).
       resource :company_settings, path: "settings", only: %i[edit update]
+      # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
+      resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
+      resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
       resources :units, except: :destroy
       resources :departments, except: :destroy
       resources :positions, except: :destroy

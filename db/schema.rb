@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -194,6 +194,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
     t.boolean "uses_allocation_clients", default: false, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
+  end
+
+  create_table "company_notification_settings", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "notification_type", null: false
+    t.string "channels", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "notification_type"], name: "index_company_notification_settings_unique", unique: true
   end
 
   create_table "company_transfers", force: :cascade do |t|
@@ -447,6 +456,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
     t.index ["provider_message_id"], name: "index_notification_deliveries_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
   end
 
+  create_table "notification_preferences", force: :cascade do |t|
+    t.bigint "membership_id", null: false
+    t.string "notification_type", null: false
+    t.string "channels", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id", "notification_type"], name: "index_notification_preferences_unique", unique: true
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "company_id"
     t.bigint "recipient_user_id", null: false
@@ -627,6 +645,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
     t.integer "consumed_timestep"
     t.boolean "otp_required_for_login", default: false, null: false
     t.string "otp_backup_codes", array: true
+    t.string "email_status", default: "valid", null: false
+    t.datetime "email_status_at"
     t.index ["cpf"], name: "index_users_on_cpf", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(email IS NOT NULL)"
     t.index ["platform_role"], name: "index_users_on_platform_role", where: "(platform_role IS NOT NULL)"
@@ -721,6 +741,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
+  add_foreign_key "company_notification_settings", "companies"
   add_foreign_key "company_transfers", "companies"
   add_foreign_key "company_transfers", "partners", column: "from_partner_id"
   add_foreign_key "company_transfers", "partners", column: "to_partner_id"
@@ -758,6 +779,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120100) do
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "notification_deliveries", "notifications"
+  add_foreign_key "notification_preferences", "memberships"
   add_foreign_key "notifications", "brands"
   add_foreign_key "notifications", "companies"
   add_foreign_key "notifications", "memberships", column: "recipient_membership_id"

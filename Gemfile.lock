@@ -108,6 +108,9 @@ GEM
     aws-sdk-sesv2 (1.112.0)
       aws-sdk-core (~> 3, >= 3.256.0)
       aws-sigv4 (~> 1.5)
+    aws-sdk-sns (1.121.0)
+      aws-sdk-core (~> 3, >= 3.256.0)
+      aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
@@ -484,6 +487,7 @@ DEPENDENCIES
   aws-actionmailer-ses (~> 1.2)
   aws-sdk-s3 (~> 1.0)
   aws-sdk-sesv2 (~> 1.112)
+  aws-sdk-sns (~> 1.0)
   bootsnap
   brakeman
   bundler-audit
@@ -546,6 +550,7 @@ CHECKSUMS
   aws-sdk-s3 (1.233.2) sha256=b138737a0de8b02f163ae47a9fc184ac98fc9b90926237c7d7af716a14ea1221
   aws-sdk-ses (1.104.0) sha256=7c9a57bc8f6576938f815cf15c70403a6ebe70776327a347b05fc750dd30b9bd
   aws-sdk-sesv2 (1.112.0) sha256=a6943120e8ca704b1381e5fd09b225f8544a65e17ab299032a30e8f56a8dd52c
+  aws-sdk-sns (1.121.0) sha256=68124e4deab8335797826d777cd9cbc6ba23c8b293fe71360bafac6123c4688d
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bcrypt (3.1.22) sha256=1f0072e88c2d705d94aff7f2c5cb02eb3f1ec4b8368671e19112527489f29032

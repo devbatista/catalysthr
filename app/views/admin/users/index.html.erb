@@ -19,7 +19,7 @@
     <div>
       <h2 class="card-title"><%= @user.name %></h2>
       <dl class="details-list mt-4">
-        <div><dt><%= t(".email") %></dt><dd><%= @user.email.presence || "—" %></dd></div>
+        <div><dt><%= t(".email") %></dt><dd><%= @user.email.presence || "—" %> <%= email_status_pill(@user) %></dd></div>
         <div><dt><%= t(".mobile_phone") %></dt><dd><%= @user.mobile_phone.presence || "—" %></dd></div>
         <div><dt><%= t(".mfa") %></dt><dd><%= t(@user.mfa_enabled? ? ".mfa_on" : ".mfa_off") %></dd></div>
         <div><dt><%= t(".status") %></dt><dd><%= t(".statuses.#{@user.status}") %></dd></div>
@@ -45,6 +45,16 @@
         <%= text_field_tag :reason, nil, id: "contact_reason", required: true, maxlength: 500, placeholder: t(".reason"),
           class: "input", "aria-label": t(".reason") %>
         <%= form.submit t(".contact_submit"), class: "btn btn-secondary" %>
+      <% end %>
+    <% end %>
+
+    <% if @user.email_bounced? && can?(:release_email, @user) %>
+      <%= form_with url: release_email_admin_user_path(@user), method: :post, class: "space-y-2" do |form| %>
+        <h3 class="card-title"><%= t(".release_email") %></h3>
+        <p class="field-hint"><%= t(".release_email_hint") %></p>
+        <%= text_field_tag :reason, nil, id: "release_reason", required: true, maxlength: 500, placeholder: t(".reason"),
+          class: "input", "aria-label": t(".reason") %>
+        <%= form.submit t(".release_email_submit"), class: "btn btn-secondary" %>
       <% end %>
     <% end %>
 

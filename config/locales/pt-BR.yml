@@ -102,6 +102,13 @@ pt-BR:
         reset_mfa: "Redefinir a verificação em duas etapas"
         reset_mfa_confirm: "Redefinir a verificação em duas etapas desta pessoa? As sessões dela serão encerradas."
         reset_mfa_submit: "Redefinir"
+        release_email: "Liberar o e-mail"
+        release_email_hint: "O e-mail voltou e está bloqueado. Libere só depois que a pessoa confirmar que a caixa de entrada foi corrigida: o endereço sai da lista de supressão do SES e volta a receber."
+        release_email_submit: "Liberar"
+      release_email:
+        reason_required: "Informe o motivo ou o número do chamado."
+        not_bounced: "Este e-mail não está bloqueado."
+        released: "E-mail liberado. O endereço volta a receber os e-mails do sistema."
       contact:
         reason_required: "Informe o motivo ou o número do chamado."
         corrected: "Contato corrigido. A pessoa já pode recuperar o acesso."
@@ -1018,10 +1025,31 @@ pt-BR:
         cancel: "Cancelar"
       create:
         invalid_password: "Senha incorreta."
+    company_notification_settings:
+      edit:
+        title: "Canais dos avisos"
+        subtitle: "Como os avisos chegam às pessoas da empresa. O sino vale sempre. Cada pessoa pode ajustar os próprios canais em Minhas notificações, e os avisos obrigatórios mantêm o e-mail."
+        back: "Voltar para Configurações"
+        save: "Salvar os canais"
+        cancel: "Cancelar"
+      update:
+        updated: "Canais dos avisos salvos."
+    notification_preferences:
+      edit:
+        title: "Minhas notificações"
+        subtitle: "Como você recebe os avisos. O sino vale sempre; os avisos obrigatórios mantêm o e-mail."
+        email_missing: "Você não tem um e-mail cadastrado e recebe os avisos só no sino. Peça ao RH para cadastrar o seu e-mail."
+        email_bounced: "O seu e-mail voltou e foi marcado como inválido: os avisos chegam só no sino. Peça ao RH para corrigir o contato."
+        empty: "Não há avisos para configurar no seu perfil."
+        save: "Salvar"
+        cancel: "Cancelar"
+      update:
+        updated: "Preferências salvas."
     company_settings:
       edit:
         title: "Configurações"
         subtitle: "Dados e regras da empresa."
+        notifications: "Canais dos avisos da empresa"
         company: "Dados da empresa"
         legal_name: "Razão social"
         name: "Nome fantasia"
@@ -1408,16 +1436,24 @@ pt-BR:
   notification_types:
     security:
       account_locked:
+        name: "Conta bloqueada"
+        hint: "Quando a conta é bloqueada por tentativas de acesso."
         title: "Sua conta foi bloqueada por tentativas de acesso"
         body: "A conta ficou bloqueada depois de várias tentativas de entrar com a senha errada. Se não foi você, troque a sua senha."
       mfa_reset:
+        name: "Verificação em duas etapas redefinida"
+        hint: "Quando quem administra o seu acesso redefine a verificação."
         title: "Verificação em duas etapas redefinida em %{brand_name}"
         body: "Quem administra o seu acesso redefiniu a verificação em duas etapas. No próximo acesso, entre com a sua senha e ative de novo o app autenticador. Se você não pediu isso, fale com o RH da empresa ou com o suporte."
       contact_changed:
+        name: "E-mail da conta alterado"
+        hint: "Vai para o e-mail novo, quando o RH ou o suporte corrige o contato."
         title: "Este é o novo e-mail da sua conta em %{brand_name}"
         body: "Quem administra o seu acesso alterou o e-mail da sua conta para este endereço, que passa a receber os avisos. Se você não reconhece esta mudança, fale com o RH da empresa ou com o suporte."
     brand:
       email_domain_status:
+        name: "Domínio de e-mail da marca"
+        hint: "Quando o domínio de e-mail da marca é verificado ou falha."
         verified:
           title: "Domínio de e-mail verificado: %{domain}"
           body: "O domínio %{domain} foi verificado. A partir de agora, os e-mails de %{brand_name} saem de no-reply@%{domain}."
@@ -1426,6 +1462,8 @@ pt-BR:
           body: "O SES não conseguiu verificar o domínio %{domain} de %{brand_name}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
     employments:
       revisions_effective:
+        name: "Revisões que entram em vigor"
+        hint: "Um aviso por dia, com as revisões das pessoas que você acompanha."
         title:
           one: "1 revisão entra em vigor hoje"
           other: "%{count} revisões entram em vigor hoje"
@@ -1433,13 +1471,32 @@ pt-BR:
         more:
           one: "mais 1"
           other: "mais %{count}"
+    contacts:
+      email_invalid:
+        name: "E-mail de alguém voltou"
+        hint: "Quando o e-mail de uma pessoa que você acompanha volta e é marcado como inválido."
+        title: "O e-mail de %{name} voltou"
+        body: "O endereço foi marcado como inválido e deixa de receber os e-mails do sistema. Corrija o contato no cadastro da pessoa ou entregue os links em mãos."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
+    preferences: "Para escolher como receber os avisos, acesse Minhas notificações: %{url}"
+    preferences_html: "Para escolher como receber os avisos, acesse %{url}."
     notice:
       greeting: "Olá, %{name}."
       open: "Abrir no sistema"
   notifications:
+    preferences_link: "Minhas notificações"
+    channels:
+      type: "Aviso"
+      system: "Sino"
+      email: "E-mail"
+      always: "Sempre"
+      mandatory: "Obrigatório"
+      email_for: "E-mail: %{type}"
+    email_status:
+      bounced: "Voltou em %{date}"
+      complained: "Marcado como spam em %{date}"
     bell:
       label: "Avisos"
       label_unread: "Avisos, %{count} não lidos"
@@ -1594,6 +1651,10 @@ pt-BR:
       dependent: "Dependente"
       bank_account: "Conta para pagamento"
     attributes:
+      company_notification_setting:
+        channels: "Canais"
+      notification_preference:
+        channels: "Canais"
       worker_profile:
         social_name: "Nome social"
         sex: "Sexo"
@@ -1804,6 +1865,16 @@ pt-BR:
         slug: "Subdomínio"
     errors:
       models:
+        company_notification_setting:
+          attributes:
+            channels:
+              unavailable: "têm um canal que este aviso não usa"
+              mandatory_external: "de \"%{type}\" precisam incluir o e-mail, porque o aviso é obrigatório"
+        notification_preference:
+          attributes:
+            channels:
+              unavailable: "têm um canal que este aviso não usa"
+              mandatory_external: "de \"%{type}\" precisam incluir o e-mail, porque o aviso é obrigatório"
         company:
           attributes:
             uses_allocation_clients:
@@ -1953,6 +2024,7 @@ pt-BR:
             invitation_channels:
               unavailable: "incluem um canal que ainda não está disponível"
               email_missing: "incluem o e-mail, mas a pessoa não tem e-mail cadastrado"
+              email_bounced: "incluem o e-mail, mas o e-mail da pessoa voltou e está marcado como inválido. Corrija o contato ou entregue o link"
             base:
               already_member: "A pessoa já tem acesso a esta organização"
               not_invited: "O convite já foi aceito ou cancelado"

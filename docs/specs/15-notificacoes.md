@@ -1,7 +1,7 @@
 # 15 — Notificações
 
 > Status: aprovado · Última atualização: 2026-10-18
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607, D-608 ([decisoes.md](decisoes.md))
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609 ([decisoes.md](decisoes.md))
 > Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -228,7 +228,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   - Web Push: resposta 404 ou 410 apaga a inscrição.
 - **RN-15-081** — **Obrigatórios:** se a entrega falha, o sistema tenta o **próximo canal disponível**, na ordem **WhatsApp → e-mail → push**, pulando os já usados. O sino sempre tem o aviso **[P-15-25]**.
 - **RN-15-082** — **Opcionais:** sem reserva. O aviso fica no sino.
-- **RN-15-083** — **E-mail que volta** (bounce permanente): o endereço é marcado como **inválido**, deixa de receber e-mails, aparece em destaque no cadastro e gera `contacts.email_invalid` ao RH do escopo. A marca sai quando o e-mail é alterado. **Reclamação de spam** suspende os e-mails opcionais daquele endereço **[P-15-26]**.
+- **RN-15-083** — **E-mail que volta** (bounce permanente): o endereço é marcado como **inválido**, deixa de receber e-mails, aparece em destaque no cadastro e gera `contacts.email_invalid` ao RH do escopo. A marca sai quando o e-mail é alterado. **Reclamação de spam** suspende os e-mails opcionais daquele endereço **[P-15-26]**. O e-mail inválido não recebe nenhum e-mail do sistema, nem convite nem recuperação de senha, e a tela que tentaria enviar avisa na hora. O mesmo endereço volta a receber quando o suporte o libera pelo admin, o que também o tira da lista de supressão do SES (D-609).
 - **RN-15-084** — Falhas temporárias do provedor têm até 3 novas tentativas, com 1, 5 e 15 minutos de intervalo, antes de contar como falha (como RN-14-120) **[P-15-27]**.
 - **RN-15-085** — **Duplicidade:** o mesmo tipo, para a mesma pessoa e o mesmo objeto de origem, não gera outra notificação em menos de 12 horas. Por exemplo, um alerta diário de prazo do eSocial gera uma notificação por dia, e não uma por execução do job **[P-15-28]**.
 

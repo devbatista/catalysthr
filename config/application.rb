@@ -56,6 +56,8 @@ module CatalystHr
     config.x.panel_protocol = ENV.fetch("PANEL_PROTOCOL", Rails.env.production? ? "https" : "http")
     # Port of the links, only when it is not the protocol's default (development).
     config.x.public_port = ENV["PUBLIC_PORT"].presence
+    # The SNS topic of the SES events (spec 15, P-15-24, D-609); the app accepts no other.
+    config.x.ses_events_topic_arn = ENV.fetch("SES_EVENTS_TOPIC_ARN", "arn:aws:sns:sa-east-1:464986173446:catalysthr-ses-eventos")
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

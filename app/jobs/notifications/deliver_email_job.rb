@@ -18,7 +18,10 @@ module Notifications
       return unless delivery.queued? || delivery.sending?
 
       notification = delivery.notification
-      return delivery.update!(status: "failed", failed_reason: "no_email") if notification.recipient_user.email.blank?
+      # The e-mail may have bounced since the notice was created (RN-15-083, D-609).
+      unless notification.recipient_user.email_deliverable?(mandatory: notification.mandatory)
+        return delivery.update!(status: "failed", failed_reason: "email_unavailable")
+      end
 
       delivery.update!(status: "sending", attempts: delivery.attempts + 1)
       message = NotificationMailer.notice(notification).deliver_now

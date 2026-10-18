@@ -1,9 +1,10 @@
 module Admin
   # The support corrects the contact or resets the MFA of a client's user who also
   # reaches another organization, which the organization's administrators cannot do
-  # (D-582, RN-02-044, P-02-17). Always with the reason, which goes to the access event.
+  # (D-582, RN-02-044, P-02-17), and releases an e-mail that bounced (D-609). Always with
+  # the reason, which goes to the access event.
   class UsersController < BaseController
-    before_action :load_user, only: %i[contact reset_mfa]
+    before_action :load_user, only: %i[contact reset_mfa release_email]
 
     def index
       authorize! :read, User.new
@@ -28,6 +29,16 @@ module Admin
 
       Users::ResetMfa.call(user: @user, by: current_user, reason: reason)
       redirect_back_to_user(notice: t(".reset"))
+    end
+
+    # D-609: the address bounced and the person says the mailbox is fixed.
+    def release_email
+      authorize! :release_email, @user
+      return redirect_back_to_user(alert: t(".reason_required")) if reason.blank?
+      return redirect_back_to_user(alert: t(".not_bounced")) unless @user.email_bounced?
+
+      Users::ReleaseEmail.call(user: @user, by: current_user, reason: reason)
+      redirect_back_to_user(notice: t(".released"))
     end
 
     private

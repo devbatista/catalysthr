@@ -21,6 +21,8 @@ class Ability
       # Sign-in only accepts a membership in the brand (RN-01-002).
       can :read, :panel_home
       can :accept, :legal_documents
+      # Each person chooses the channels of their own notices (spec 15, RN-15-021).
+      can :update, :own_notification_preferences
       merge(PartnerAbility.new(user, brand.owner)) if brand&.owner.is_a?(Partner)
       merge(AccountingFirmAbility.new(user, brand)) if brand
       merge(CompanyAbility.new(user, company, support_access: support_access)) if company

@@ -82,6 +82,9 @@ gem "aws-sdk-s3", "~> 1.0", require: false
 gem "aws-actionmailer-ses", "~> 1.2"
 gem "aws-sdk-sesv2", "~> 1.112"
 
+# The signature of the SES events that SNS posts to the app (spec 15, P-15-24, D-609)
+gem "aws-sdk-sns", "~> 1.0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

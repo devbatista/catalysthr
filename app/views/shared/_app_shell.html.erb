@@ -33,6 +33,9 @@
       <% unless impersonating? %>
         <div class="mt-2 flex flex-col gap-0.5">
           <%= link_to t("account.security_link"), account_root_path, class: "nav-link" %>
+          <% if Current.area == :panel %>
+            <%= link_to t("notifications.preferences_link"), edit_notification_preferences_path, class: "nav-link" %>
+          <% end %>
           <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "nav-link cursor-pointer" %>
         </div>
       <% end %>
