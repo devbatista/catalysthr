@@ -4,3 +4,6 @@
 
 --
 <%= t(@notification.in_bell? ? "notification_mailer.footer_bell" : "notification_mailer.footer", brand: @sender_name) %>
+<% if @preferences_url %>
+<%= t("notification_mailer.preferences", url: @preferences_url) %>
+<% end %>

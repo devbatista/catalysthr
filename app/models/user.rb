@@ -30,6 +30,9 @@ class User < ApplicationRecord
 
   enum :status, { active: "active", deactivated: "deactivated" }, validate: true
   enum :platform_role, PLATFORM_ROLES.index_by(&:itself), validate: { allow_nil: true }
+  # Whether the e-mail still receives (RN-15-083, D-609): a permanent bounce stops every
+  # e-mail; a spam complaint stops the optional notices.
+  enum :email_status, { valid: "valid", bounced: "bounced", complained: "complained" }, prefix: :email, validate: true
 
   normalizes :cpf, with: ->(cpf) { Cpf.normalize(cpf) }
   normalizes :email, with: ->(email) { email.strip.downcase.presence }
@@ -43,6 +46,9 @@ class User < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, allow_nil: true
   validates :password, password_policy: true, confirmation: true
   validate :email_or_mobile_phone
+
+  # A new e-mail starts valid (RN-15-083).
+  before_save :reset_email_status, if: -> { will_save_change_to_email? && !email_valid? }
 
   # A new password ends the other sessions and forgets the remembered devices
   # (RN-02-043, RN-02-053). The current session, if any, stays open.
@@ -143,6 +149,12 @@ class User < ApplicationRecord
     codes
   end
 
+  # Whether an e-mail may go out: none to a bounced address, and only mandatory notices to
+  # an address that complained of spam (RN-15-083, D-609).
+  def email_deliverable?(mandatory: true)
+    email.present? && !email_bounced? && (mandatory || !email_complained?)
+  end
+
   # Lockout and unlock become access events (RN-05-020). The lockout is also a notice in
   # the bell; the unlock e-mail is the access notice (RN-15-011, D-607).
   def lock_access!(options = {})
@@ -180,6 +192,11 @@ class User < ApplicationRecord
     record_auth_event(encrypted_password_before_last_save.blank? ? "password_created" : "password_changed")
   end
 
+  def reset_email_status
+    self.email_status = "valid"
+    self.email_status_at = Time.current
+  end
+
   # RN-02-002, P-02-04: without e-mail or mobile phone there is no way to recover access.
   def email_or_mobile_phone
     errors.add(:base, :email_or_mobile_phone) if email.blank? && mobile_phone.blank?
@@ -187,9 +204,10 @@ class User < ApplicationRecord
 
   # E-mails go out after the request, with the brand and address it came from, so the
   # links open the same subdomain (RN-01-003) and the sender is the brand (RN-01-040).
-  # Without an e-mail nothing is sent; the WhatsApp code comes with Twilio (RN-02-033).
+  # Without an e-mail, or to a bounced one, nothing is sent (D-609); the WhatsApp code comes
+  # with Twilio (RN-02-033).
   def send_devise_notification(notification, *args)
-    return if email.blank?
+    return unless email_deliverable?
 
     options = args.extract_options!
     options[:brand_id] = Current.brand&.id

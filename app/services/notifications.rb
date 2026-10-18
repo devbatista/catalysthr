@@ -1,8 +1,9 @@
 # Creates the notices of the catalog (spec 15). The other specs say when a notice is born;
 # this module says how it reaches the person (section 1):
 # - the bell, when the type has the "system" channel (D-608);
-# - an e-mail delivery, when the type has it and the person has an e-mail (RN-15-023).
-#   The preferences come in block 15b, and WhatsApp and push in phase 2 (D-607).
+# - an e-mail delivery, when the person's channels have it (their own choice, then the
+#   company's default, then the catalog's, RN-15-020 to RN-15-022) and the e-mail can
+#   receive it (RN-15-023, RN-15-083, D-609). WhatsApp and push come in phase 2 (D-607).
 # Nothing is created during an impersonate (RN-15-007), and the same type, person and
 # origin make one notice in 12 hours (RN-15-085).
 module Notifications
@@ -18,7 +19,8 @@ module Notifications
     return if Simulation.active?
 
     type = NotificationType.find(code)
-    email = type.external_channels.include?("email") && user.email.present?
+    company ||= membership.organization if membership&.organization.is_a?(Company)
+    email = channels_for(type, membership:, company:).include?("email") && user.email_deliverable?(mandatory: type.mandatory)
     return unless type.in_bell? || email
 
     key = dedup_key || (subject && "#{code}/#{subject.class.name}/#{subject.id}")
@@ -38,12 +40,21 @@ module Notifications
     end
 
     notification = Notification.create!(notification_type: type.code, recipient_user: user, recipient_membership: membership,
-      company: company || (membership.organization if membership&.organization.is_a?(Company)),
+      company: company,
       brand: brand || membership&.subdomain_brand, area: area || ("panel" if membership), subject: subject, dedup_key: key,
       path: path, mandatory: type.mandatory, urgent: type.urgent, in_bell: type.in_bell?,
       title: I18n.t("#{texts}.title", **params), body: I18n.t("#{texts}.body", **params, default: nil))
     notification.deliveries.create!(channel: "email", destination_masked: NotificationDelivery.mask_email(user.email)) if email
     notification
+  end
+
+  # The person's choice for the membership, then the company's default, then the catalog's.
+  # A mandatory type never ends without an external channel (RN-15-022).
+  def channels_for(type, membership:, company:)
+    chosen = membership && NotificationPreference.find_by(membership: membership, notification_type: type.code)&.channels
+    chosen ||= company && ActsAsTenant.with_tenant(company) { CompanyNotificationSetting.find_by(notification_type: type.code)&.channels }
+    channels = (chosen || type.configurable_channels) & type.configurable_channels
+    channels.empty? && type.mandatory ? type.configurable_channels : channels
   end
 
   # The deliveries leave after the commit, so the job finds them (RN-15-084).

@@ -15,6 +15,8 @@ module Invitations
     brand ||= membership.subdomain_brand
     membership.invitation_channels = channels
     refuse(membership, :invitation_channels, :email_missing) if channels.include?("email") && membership.user.email.blank?
+    # The e-mail bounced: the inviter corrects the contact or hands over the link (D-609).
+    refuse(membership, :invitation_channels, :email_bounced) if channels.include?("email") && membership.user.email_bounced?
     refuse(membership, :base, :without_subdomain) if brand&.active_subdomain.nil?
 
     Invitation.new(membership, membership.issue_invitation!(channels: channels, invited_by: invited_by), brand)

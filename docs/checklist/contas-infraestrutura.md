@@ -57,6 +57,12 @@
 - [ ] **[você]** Acompanhar a resposta da AWS no e-mail e me avisar. Se pedirem mais informações, eu escrevo a resposta
 - [ ] **[você]** Decidir o plano do SES antes do primeiro cliente: Essentials (padrão, US$ 0,16 a cada 1.000) ou avulso (US$ 0,10)
 
+*Fase 1, depois do deploy do bloco 15b (D-609). Custo: 100 mil entregas HTTP do SNS por mês gratuitas, depois US$ 0,06 a cada 100 mil:*
+
+- [ ] **[Claude]** SNS: assinatura HTTPS do tópico `catalysthr-ses-eventos` em `https://admin.catalysthr.com.br/webhooks/ses-events`. O app confirma sozinho a assinatura, conferindo a mensagem do SNS. Depois, conferir que a assinatura ficou `Confirmed`
+- [ ] **[Claude]** IAM: permissão `ses:DeleteSuppressedDestination` no usuário `catalysthr-app`, para o suporte liberar pelo admin um e-mail que voltou (D-609)
+- [ ] **[você]** `aws sso login` antes dos dois passos acima, que eu rodo pela CLI com a sua confirmação
+
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 
 - [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)

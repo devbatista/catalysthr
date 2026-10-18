@@ -113,10 +113,10 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Criptografia de campos (bloco 1 das specs 02 e 03), PaperTrail sem campos sensíveis e `access_events` com os eventos `auth` (bloco 4a-1), o ponto único com a máscara do impersonate (bloco 5a, D-592) e a confirmação de senha com o evento de leitura (bloco 4c-1)
   - CSP com nonce e cabeçalhos de segurança (P-05-29, D-606) (PR #39)
   - A varredura de vírus dos uploads (P-05-30) entra com a spec 08 (D-606)
-- [ ] **Spec 15 (base):** sino, e-mail, catálogo e preferências
+- [x] **Spec 15 (base):** sino, e-mail, catálogo e preferências
   - Em 2 PRs (D-607):
     - [x] 15a. Catálogo no código (só os tipos que o sistema já gera), notificações e entregas, e-mail com a marca, sino nos painéis, duplicidade, novas tentativas, retenção, job diário das revisões (P-04-29, D-602) e a migração dos avisos de MFA redefinido, contato alterado e domínio de e-mail da marca (RN-15-001, RN-15-002, RN-15-005 a RN-15-013, RN-15-084, RN-15-085, RN-15-090, D-608) (PR #40)
-    - [ ] 15b. Preferências da empresa e da pessoa e eventos do SES pelo SNS, com o e-mail inválido (RN-15-020 a RN-15-023, RN-15-080, RN-15-083, CA-15-007, CA-15-009)
+    - [x] 15b. Preferências da empresa e da pessoa e eventos do SES pelo SNS, com o e-mail inválido (RN-15-020 a RN-15-023, RN-15-080, RN-15-083, CA-15-007, CA-15-009, D-609) (PR #41). Depois do deploy: assinatura do SNS e permissão no IAM (`contas-infraestrutura.md`)
   - Até o resumo diário (fase 2), os avisos não urgentes do RH vão por e-mail um a um (D-607)
 - [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio

@@ -124,7 +124,7 @@
   <section class="card card-body">
     <h2 class="card-title"><%= t(".contact") %></h2>
     <dl class="details-list mt-3">
-      <div><dt><%= t(".email") %></dt><dd><%= user.email || "—" %></dd></div>
+      <div><dt><%= t(".email") %></dt><dd><%= user.email || "—" %> <%= email_status_pill(user) %></dd></div>
       <div><dt><%= t(".mobile_phone") %></dt><dd><%= user.mobile_phone || "—" %></dd></div>
       <% if personal %>
         <div><dt><%= t(".personal_email") %></dt><dd><%= @profile.personal_email || "—" %></dd></div>

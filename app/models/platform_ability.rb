@@ -28,6 +28,6 @@ class PlatformAbility
     can :manage_email_domain, Brand, &:email_domain_configurable? if user.superadmin? || user.support?
     # Contact and MFA of the clients' users who also reach another organization (D-582).
     # Never of the CatalystHR team.
-    can %i[read correct_contact reset_mfa], User, platform_role: nil if user.superadmin? || user.support?
+    can %i[read correct_contact reset_mfa release_email], User, platform_role: nil if user.superadmin? || user.support?
   end
 end
