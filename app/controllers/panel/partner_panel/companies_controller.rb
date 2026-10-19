@@ -4,6 +4,8 @@ module Panel
     # contracted modules it uses and its first HR administrator (P-03-14, RN-19-012,
     # D-616).
     class CompaniesController < BaseController
+      before_action :require_billing_feature
+
       def new
         authorize! :create, Company.new(partner: partner)
         @registration = Billing::PortfolioCompanyRegistration.new(partner: partner)

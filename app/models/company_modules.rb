@@ -4,7 +4,8 @@
 # contract, time tracking and eSocial do not work (RN-19-031): time tracking shows as
 # available after the contract (CA-19-003), and payroll works without closing a
 # period, which its spec enforces. A closed contract has no modules. The releasable
-# modules outside the contract are part of the core (RN-19-011).
+# modules outside the contract are part of the core (RN-19-011). While billing is off
+# (D-610), every module stays as it was before the contracts.
 class CompanyModules
   # The releasable modules each contracted module brings.
   RELEASABLE = { "ponto" => %w[ponto], "folha" => %w[folha esocial] }.freeze
@@ -26,13 +27,21 @@ class CompanyModules
     @subscription = owner&.billing_account&.subscription
   end
 
+  def billing?
+    return @billing if defined?(@billing)
+
+    @billing = FeatureFlags.enabled?(FeatureFlags::BILLING)
+  end
+
   def trial?
-    subscription.present? && subscription.status.in?(TRIAL_STATUSES)
+    billing? && subscription.present? && subscription.status.in?(TRIAL_STATUSES)
   end
 
   # The contracted modules the company uses, by code (PlanModule::MODULES).
   def contracted
-    @contracted ||= if subscription.nil? || subscription.closed?
+    @contracted ||= if !billing?
+      PlanModule::MODULES
+    elsif subscription.nil? || subscription.closed?
       []
     elsif company.direct?
       subscription.modules

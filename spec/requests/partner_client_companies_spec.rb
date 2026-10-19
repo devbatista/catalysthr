@@ -22,6 +22,7 @@ RSpec.describe "Partner's client companies", type: :request do
     create(:membership, user: admin, organization: partner, roles: %w[partner_admin])
     brand.subdomains.create!(slug: "aurora")
     Flipper.enable(FeatureFlags::SIGN_IN)
+    Flipper.enable(FeatureFlags::BILLING)
     publish_platform_legal_documents
     host! "aurora.painel.catalysthr.com.br"
   end
@@ -122,6 +123,20 @@ RSpec.describe "Partner's client companies", type: :request do
 
       expect(response).to have_http_status(:not_found)
     end
+  end
+
+  it "hides the registration and the modules while billing is off (D-610)" do
+    Flipper.disable(FeatureFlags::BILLING)
+    contract_for(partner)
+    sign_in_as(admin, "98765432100")
+
+    get "/partner"
+    expect(response.body).to include("Padaria Pão Quente")
+    expect(response.body).not_to include("Cadastrar empresa", "Módulos")
+    get "/partner/companies/new"
+    expect(response).to have_http_status(:not_found)
+    patch "/partner/companies/#{padaria.id}/modules", params: { company: { modules: %w[ponto] } }
+    expect(response).to have_http_status(:not_found)
   end
 
   it "does not register a company without the partner's contract" do

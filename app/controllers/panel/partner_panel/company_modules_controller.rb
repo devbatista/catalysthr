@@ -4,6 +4,7 @@ module Panel
     # the portfolio (RN-19-012, D-616). The module's price does not change with the
     # number of companies that use it (P-19-03).
     class CompanyModulesController < BaseController
+      before_action :require_billing_feature
       before_action :set_company
 
       def edit

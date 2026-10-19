@@ -17,6 +17,8 @@ RSpec.describe Billing::TrialJob do
 
   around { |example| travel_to(Time.zone.local(2026, 10, 20, 6)) { example.run } }
 
+  before { Flipper.enable(FeatureFlags::BILLING) }
+
   def notices(code)
     Notification.where(notification_type: code)
   end
@@ -57,6 +59,16 @@ RSpec.describe Billing::TrialJob do
     described_class.perform_now(Date.new(2026, 10, 25))
 
     expect(subscription.reload).to be_trial_expired
+  end
+
+  it "does nothing while billing is off (D-610)" do
+    Flipper.disable(FeatureFlags::BILLING)
+    subscription
+
+    described_class.perform_now(Date.new(2026, 10, 25))
+
+    expect(subscription.reload).to be_trialing
+    expect(Notification.count).to eq(0)
   end
 
   it "leaves a contract alone" do

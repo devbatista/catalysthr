@@ -5,6 +5,8 @@ require "rails_helper"
 RSpec.describe CompanyModules do
   let(:core) { %w[admissao documentos solicitacoes recrutamento avaliacao] }
 
+  before { Flipper.enable(FeatureFlags::BILLING) }
+
   it "gives a direct company the contracted modules, payroll with eSocial" do
     company = create(:company)
     contract_for(company, modules: %w[folha])
@@ -39,6 +41,16 @@ RSpec.describe CompanyModules do
     turn_on_modules(company, %w[ponto folha])
     expect(company.module_settings.pluck(:module)).to eq(%w[ponto])
     expect(described_class.new(company).contracted).to eq(%w[ponto])
+  end
+
+  it "keeps every module, as before the contracts, while billing is off (D-610)" do
+    Flipper.disable(FeatureFlags::BILLING)
+    company = create(:company)
+    contract_for(company, modules: [], status: "trialing")
+
+    modules = described_class.new(company)
+    expect(modules.state("ponto")).to eq(:usable)
+    expect(modules.releasable).to match_array(Membership::RELEASABLE_MODULES)
   end
 
   it "gives no modules without a contract or with a closed one" do

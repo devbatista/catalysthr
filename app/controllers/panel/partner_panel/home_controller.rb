@@ -7,7 +7,8 @@ module Panel
       def index
         authorize! :read, :partner_panel
         @companies = partner_membership.portfolio_companies.includes(:module_settings).order(:name)
-        @contracted = partner.contracted_modules
+        @billing = FeatureFlags.enabled?(FeatureFlags::BILLING)
+        @contracted = @billing ? partner.contracted_modules : []
       end
     end
   end

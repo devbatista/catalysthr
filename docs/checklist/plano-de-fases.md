@@ -102,7 +102,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
 - [x] **Chaves UUID (D-614):** toda tabela com chave primária UUIDv7 e toda referência em UUID, como regra inalterável, conferida por teste do schema e pelo `strong_migrations`. As migrações das fases 0 e 1 viraram uma migração base, e o banco de produção foi recriado (PR #45)
 - [x] **Telas na largura inteira (D-615):** sem limite de largura nas telas logadas, com os campos em colunas (`form-grid`, `field-wide`, `field-full`). Login, telas do MFA, confirmação de senha e "Em breve" continuam centralizados (PR #47)
-- [ ] **Tela das feature flags (D-617):** no admin, só do superadmin, ligar e desligar cada flag para todos ou por empresa, com o registro de quem mudou. PR próprio, depois do 19b-2
+- [ ] **Tela das feature flags (D-617):** no admin, só do superadmin, ver as flags do código e ligar e desligar cada uma para todos, com o registro de quem mudou. PR próprio, depois do 19b-2
 - [x] **Envio duplicado de formulário:** cada formulário é enviado uma vez, e a ativação repetida do MFA leva à página de segurança, em vez de "código inválido" (PR #46)
 - [x] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
   - Em 5 PRs (D-600, D-602):

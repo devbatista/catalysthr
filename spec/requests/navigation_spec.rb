@@ -25,6 +25,7 @@ RSpec.describe "Navigation", type: :request do
     let!(:subscription) { contract_for(partner) }
 
     before do
+      Flipper.enable(FeatureFlags::BILLING)
       turn_on_modules(padaria)
       create(:membership, user: user, organization: padaria, roles: %w[manager])
       sign_in
@@ -61,6 +62,15 @@ RSpec.describe "Navigation", type: :request do
 
       get "/soon/time-tracking"
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "lists the modules as before the contracts while billing is off (D-610)" do
+      Flipper.disable(FeatureFlags::BILLING)
+      turn_on_modules(padaria, [])
+
+      get "/"
+      expect(response.body).to include("Folha de pagamento", "Ponto eletrônico")
+      expect(response.body.scan(">Em breve<").size).to eq(ComingSoon::COMPANY_FEATURES.size)
     end
 
     it "hides the modules out of the contract (P-03-12, D-616)" do
