@@ -4,13 +4,15 @@
 <h1 class="mt-3 page-title"><%= t(".title.#{@plan.kind}") %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
-<%= form_with model: @plan, url: admin_plans_path, method: :post, class: "card card-body mt-6 max-w-3xl space-y-5" do |form| %>
+<%= form_with model: @plan, url: admin_plans_path, method: :post, class: "card card-body mt-6 space-y-5" do |form| %>
   <%= render "errors", records: [ @plan, @version ] %>
   <%= form.hidden_field :kind %>
 
-  <div>
-    <%= form.label :name, t(".name"), class: "field-label" %>
-    <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :name, t(".name"), class: "field-label" %>
+      <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+    </div>
   </div>
 
   <%= render "version_fields", version: @version %>

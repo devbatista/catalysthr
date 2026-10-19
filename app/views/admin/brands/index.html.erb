@@ -2,7 +2,7 @@
 
 <h1 class="page-title"><%= t(".title") %></h1>
 
-<%= form_with url: admin_brands_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
+<%= form_with url: admin_brands_path, method: :get, class: "mt-6 flex flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
     <%= form.label :q, t(".query"), class: "field-label" %>
     <%= form.text_field :q, value: @query, class: "input" %>

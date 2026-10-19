@@ -1,7 +1,7 @@
 <% issuer = Current.brand&.commercial_name || "CatalystHR" %>
 <% uri = current_user.otp_provisioning_uri(current_user.email.presence || current_user.first_name, issuer: issuer, otp_secret: @secret) %>
 
-<div class="card card-body max-w-xl">
+<div class="card card-body mx-auto max-w-3xl">
   <h1 class="page-title"><%= t(".title") %></h1>
   <% if current_user.mfa_required? %>
     <p class="alert-info mt-3"><%= t(".required") %></p>
@@ -32,5 +32,5 @@
 </div>
 
 <% unless current_user.mfa_required? %>
-  <p class="mt-6 text-sm"><%= link_to t("account.back_to_security"), account_root_path, class: "link-button" %></p>
+  <p class="mx-auto mt-6 max-w-3xl text-sm"><%= link_to t("account.back_to_security"), account_root_path, class: "link-button" %></p>
 <% end %>

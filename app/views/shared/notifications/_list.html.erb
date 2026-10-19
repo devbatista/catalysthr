@@ -6,9 +6,9 @@
 <p class="page-subtitle"><%= t("notifications.index.subtitle") %></p>
 
 <% if notifications.empty? %>
-  <p class="card card-body mt-6 max-w-3xl text-sm text-ink-soft"><%= t("notifications.index.empty") %></p>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t("notifications.index.empty") %></p>
 <% else %>
-  <ul class="card mt-6 max-w-3xl divide-y divide-line-soft">
+  <ul class="card mt-6 divide-y divide-line-soft">
     <% notifications.each do |notification| %>
       <li>
         <%= link_to open_notification_path(notification), class: "flex gap-3 px-5 py-4 text-ink no-underline hover:bg-line-soft hover:no-underline" do %>

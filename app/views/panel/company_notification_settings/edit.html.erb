@@ -4,7 +4,7 @@
 <h1 class="page-title mt-2"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
-<%= form_with url: company_notification_settings_path, method: :patch, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with url: company_notification_settings_path, method: :patch, class: "mt-6 space-y-6" do |form| %>
   <section class="card overflow-hidden">
     <%= render "shared/notifications/channels", types: @settings.map(&:type), name: "settings",
       channels: @settings.to_h { |setting| [ setting.notification_type, setting.channels ] },

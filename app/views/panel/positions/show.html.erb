@@ -6,7 +6,7 @@
   <span class="pill <%= @position.active? ? "pill-ok" : "pill-mute" %>"><%= t("positions.statuses.#{@position.status}") %></span>
 </div>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <dl class="details-list">
     <div class="sm:col-span-2"><dt><%= t(".cbo") %></dt><dd><%= @position.cbo_occupation&.label || @position.cbo_code %></dd></div>
     <div><dt><%= t(".salary_range") %></dt><dd><%= salary_range(@position) %></dd></div>

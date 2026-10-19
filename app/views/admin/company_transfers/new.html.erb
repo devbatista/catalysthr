@@ -3,7 +3,7 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".instructions") %></p>
 
-<%= form_with url: new_admin_company_transfer_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
+<%= form_with url: new_admin_company_transfer_path, method: :get, class: "mt-6 flex flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
     <%= form.label :q, t(".query"), class: "field-label" %>
     <%= form.text_field :q, value: @query, autocomplete: "off", required: true, minlength: 3, class: "input" %>
@@ -12,11 +12,11 @@
 <% end %>
 
 <% if @query.length >= 3 && @companies.empty? %>
-  <p class="alert-info mt-6 max-w-xl"><%= t(".not_found") %></p>
+  <p class="alert-info mt-6"><%= t(".not_found") %></p>
 <% end %>
 
 <% @companies.each do |company| %>
-  <section class="card card-body mt-6 max-w-2xl">
+  <section class="card card-body mt-6">
     <div class="flex flex-wrap items-center gap-3">
       <h2 class="card-title"><%= company.name %></h2>
       <span class="pill pill-info"><%= company.partner&.name || t(".direct") %></span>
@@ -27,39 +27,41 @@
       data: { confirm: t(".confirm", company: company.name) } do |form| %>
       <%= hidden_field_tag :company_id, company.id, id: "company_#{company.id}" %>
 
-      <div>
-        <%= label_tag "to_partner_#{company.id}", t(".destination"), class: "field-label" %>
-        <%= select_tag :to_partner_id,
-          options_for_select(
-            (company.direct? ? [] : [ [ t(".to_direct"), Admin::CompanyTransfersController::DIRECT ] ]) +
-            @partners.reject { |partner| partner.id == company.partner_id }.map { |partner| [ partner.name, partner.id ] }
-          ),
-          prompt: t(".choose"), id: "to_partner_#{company.id}", required: true, class: "input w-auto max-w-full" %>
-      </div>
-
-      <% unless company.direct? %>
+      <div class="form-grid">
         <div>
-          <%= label_tag "slug_#{company.id}", t(".slug"), class: "field-label" %>
-          <%= text_field_tag :slug, nil, id: "slug_#{company.id}", pattern: "[a-z0-9-]{3,40}", autocomplete: "off",
-            class: "input w-64 max-w-full font-mono" %>
-          <p class="field-hint"><%= t(".slug_hint") %></p>
+          <%= label_tag "to_partner_#{company.id}", t(".destination"), class: "field-label" %>
+          <%= select_tag :to_partner_id,
+            options_for_select(
+              (company.direct? ? [] : [ [ t(".to_direct"), Admin::CompanyTransfersController::DIRECT ] ]) +
+              @partners.reject { |partner| partner.id == company.partner_id }.map { |partner| [ partner.name, partner.id ] }
+            ),
+            prompt: t(".choose"), id: "to_partner_#{company.id}", required: true, class: "input w-auto max-w-full" %>
         </div>
-      <% end %>
 
-      <div>
-        <%= label_tag "authorized_by_text_#{company.id}", t(".authorization"), class: "field-label" %>
-        <%= text_area_tag :authorized_by_text, nil, id: "authorized_by_text_#{company.id}", required: true, maxlength: 2000, rows: 3, class: "input" %>
-        <p class="field-hint"><%= t(".authorization_hint") %></p>
+        <% unless company.direct? %>
+          <div>
+            <%= label_tag "slug_#{company.id}", t(".slug"), class: "field-label" %>
+            <%= text_field_tag :slug, nil, id: "slug_#{company.id}", pattern: "[a-z0-9-]{3,40}", autocomplete: "off",
+              class: "input w-64 max-w-full font-mono" %>
+            <p class="field-hint"><%= t(".slug_hint") %></p>
+          </div>
+        <% end %>
+
+        <div class="field-full">
+          <%= label_tag "authorized_by_text_#{company.id}", t(".authorization"), class: "field-label" %>
+          <%= text_area_tag :authorized_by_text, nil, id: "authorized_by_text_#{company.id}", required: true, maxlength: 2000, rows: 3, class: "input" %>
+          <p class="field-hint"><%= t(".authorization_hint") %></p>
+        </div>
+
+        <div>
+          <%= label_tag "authorization_document_#{company.id}", t(".document"), class: "field-label" %>
+          <%= file_field_tag :authorization_document, id: "authorization_document_#{company.id}", accept: CompanyTransfer::DOCUMENT_TYPES.join(","),
+            class: "mt-1 block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border file:border-line-strong file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-ink-strong" %>
+          <p class="field-hint"><%= t(".document_hint") %></p>
+        </div>
+
+        <p class="alert-info field-full"><%= t(company.direct? ? ".effects_from_direct" : ".effects") %></p>
       </div>
-
-      <div>
-        <%= label_tag "authorization_document_#{company.id}", t(".document"), class: "field-label" %>
-        <%= file_field_tag :authorization_document, id: "authorization_document_#{company.id}", accept: CompanyTransfer::DOCUMENT_TYPES.join(","),
-          class: "mt-1 block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border file:border-line-strong file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-ink-strong" %>
-        <p class="field-hint"><%= t(".document_hint") %></p>
-      </div>
-
-      <p class="alert-info"><%= t(company.direct? ? ".effects_from_direct" : ".effects") %></p>
 
       <div class="border-t border-line-soft pt-4"><%= form.submit t(".submit"), class: "btn btn-primary" %></div>
     <% end %>

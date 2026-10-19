@@ -3,7 +3,7 @@
 <h1 class="page-title"><%= t(".greeting", name: current_user.first_name) %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
-<div class="mt-6 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2">
+<div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
   <% [
     ([ t(".brands"), admin_brands_path ] if can?(:read, Brand)),
     ([ t(".impersonate"), new_admin_impersonation_path ] if can?(:create, ImpersonationSession)),

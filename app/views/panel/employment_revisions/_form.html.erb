@@ -1,5 +1,5 @@
 <%# A revision of the employment (RN-04-060 to RN-04-064, D-603). %>
-<%= form_with model: revision, url: url, method: method, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with model: revision, url: url, method: method, class: "mt-6 space-y-6" do |form| %>
   <% if revision.errors.any? %>
     <div class="alert-bad" role="alert">
       <ul class="list-disc space-y-1 pl-5">
@@ -9,7 +9,7 @@
   <% end %>
 
   <section class="card card-body space-y-4">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <div>
         <%= form.label :effective_on, t("panel.employment_revisions.form.effective_on"), class: "field-label" %>
         <%= form.date_field :effective_on, required: true, min: @employment.started_on, class: "input" %>

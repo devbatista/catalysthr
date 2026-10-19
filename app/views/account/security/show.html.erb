@@ -1,4 +1,4 @@
-<div class="max-w-2xl">
+<div>
   <h1 class="page-title"><%= t(".title") %></h1>
 
   <section class="mt-6 card card-body">
@@ -12,17 +12,25 @@
       <p class="mt-2 text-sm"><%= t(".mfa.enabled", count: current_user.otp_backup_codes.to_a.size) %></p>
 
       <%= form_with url: account_recovery_codes_path, method: :post, class: "mt-4 space-y-2" do |form| %>
-        <%= form.label :current_password, t(".current_password"), class: "field-label" %>
-        <%= form.password_field :current_password, required: true, autocomplete: "current-password",
-          class: "input" %>
+        <div class="form-grid">
+          <div>
+            <%= form.label :current_password, t(".current_password"), class: "field-label" %>
+            <%= form.password_field :current_password, required: true, autocomplete: "current-password",
+              class: "input" %>
+          </div>
+        </div>
         <%= form.submit t(".mfa.regenerate"), class: "btn btn-primary" %>
       <% end %>
 
       <% unless current_user.mfa_required? %>
         <%= form_with url: account_mfa_path, method: :delete, class: "mt-4 space-y-2" do |form| %>
-          <%= form.label :current_password, t(".current_password"), class: "field-label" %>
-          <%= form.password_field :current_password, required: true, autocomplete: "current-password",
-            class: "input" %>
+          <div class="form-grid">
+            <div>
+              <%= form.label :current_password, t(".current_password"), class: "field-label" %>
+              <%= form.password_field :current_password, required: true, autocomplete: "current-password",
+                class: "input" %>
+            </div>
+          </div>
           <%= form.submit t(".mfa.disable"), class: "btn btn-danger" %>
         <% end %>
       <% end %>

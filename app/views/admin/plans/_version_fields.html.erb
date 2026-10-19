@@ -4,7 +4,7 @@
 <%= fields_for :plan_version, version do |fields| %>
   <fieldset class="space-y-4">
     <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.price") %></legend>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <% if kind == "partner" %>
         <div>
           <%= fields.label :monthly_price, t("admin.plans.version_fields.monthly_price"), class: "field-label" %>
@@ -34,7 +34,7 @@
   <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
     <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.modules") %></legend>
     <p class="field-hint"><%= t("admin.plans.version_fields.modules_hint.#{kind}") %></p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <% PlanModule::MODULES.each do |code| %>
         <div>
           <%= label_tag "plan_version_module_prices_#{code}", t("modules.#{code}"), class: "field-label" %>
@@ -48,7 +48,7 @@
   <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
     <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.quotas") %></legend>
     <p class="field-hint"><%= t("admin.plans.version_fields.quotas_hint.#{kind}") %></p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <% quotas = kind == "partner" ? %i[ai_credits whatsapp_messages] : %i[ai_credits_per_employee whatsapp_messages_per_employee] %>
       <% quotas.each do |field| %>
         <div>
@@ -68,8 +68,12 @@
   </fieldset></div>
 
   <div class="border-t border-line-soft pt-5"><fieldset class="space-y-2">
-    <%= fields.label :valid_from, t("admin.plans.version_fields.valid_from"), class: "field-label" %>
-    <%= fields.date_field :valid_from, min: Date.current, required: true, class: "input w-auto" %>
-    <p class="field-hint"><%= t("admin.plans.version_fields.valid_from_hint") %></p>
+    <div class="form-grid">
+      <div>
+        <%= fields.label :valid_from, t("admin.plans.version_fields.valid_from"), class: "field-label" %>
+        <%= fields.date_field :valid_from, min: Date.current, required: true, class: "input w-auto" %>
+        <p class="field-hint"><%= t("admin.plans.version_fields.valid_from_hint") %></p>
+      </div>
+    </div>
   </fieldset></div>
 <% end %>

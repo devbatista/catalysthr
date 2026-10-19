@@ -3,11 +3,11 @@
 <p class="page-subtitle"><%= membership_t("invited.validity", date: l(membership.invitation_expires_at, format: :long)) %></p>
 
 <% if membership.invitation_channels.include?("email") %>
-  <p class="alert-ok mt-6 max-w-2xl"><%= membership_t("invited.email_sent", email: membership.user.email) %></p>
+  <p class="alert-ok mt-6"><%= membership_t("invited.email_sent", email: membership.user.email) %></p>
 <% end %>
 
 <% if membership.invitation_channels.include?("link") %>
-  <section class="card card-body mt-6 max-w-2xl">
+  <section class="card card-body mt-6">
     <h2 class="card-title"><%= membership_t("invited.link_title") %></h2>
     <p class="mt-2 text-sm"><%= membership_t("invited.link_instructions") %></p>
     <p class="mt-3 rounded-lg bg-canvas px-3 py-2 font-mono text-xs break-all"><%= @invitation.link %></p>

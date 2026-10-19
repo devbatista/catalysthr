@@ -2,37 +2,41 @@
 <p class="page-subtitle"><%= t(".instructions") %></p>
 <%= render "panel/memberships/errors" %>
 
-<%= form_with url: accounting_firm_path, method: :post, class: "card card-body mt-6 max-w-xl space-y-6" do |form| %>
+<%= form_with url: accounting_firm_path, method: :post, class: "card card-body mt-6 space-y-6" do |form| %>
   <fieldset class="space-y-4">
     <legend class="card-title"><%= t(".firm") %></legend>
-    <% [ [ :name, :text_field, "organization" ], [ :cnpj, :text_field, "off" ] ].each do |field, type, autocomplete| %>
-      <div>
-        <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "field-label" %>
-        <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
-          autocomplete: autocomplete, required: true, class: "input") %>
-      </div>
-    <% end %>
+    <div class="form-grid">
+      <% [ [ :name, :text_field, "organization" ], [ :cnpj, :text_field, "off" ] ].each do |field, type, autocomplete| %>
+        <div class="<%= "field-wide" if field == :name %>">
+          <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "field-label" %>
+          <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
+            autocomplete: autocomplete, required: true, class: "input") %>
+        </div>
+      <% end %>
+    </div>
   </fieldset>
 
   <fieldset class="space-y-4">
     <legend class="card-title"><%= t(".admin") %></legend>
     <p class="field-hint"><%= t(".admin_hint") %></p>
-    <% [ [ :admin_name, :text_field, "name" ], [ :admin_cpf, :text_field, "off" ], [ :admin_email, :email_field, "email" ],
-         [ :admin_mobile_phone, :telephone_field, "tel" ] ].each do |field, type, autocomplete| %>
-      <div>
-        <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "field-label" %>
-        <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
-          autocomplete: autocomplete, class: "input") %>
-      </div>
-    <% end %>
-    <div>
-      <p class="field-label"><%= t(".channels") %></p>
-      <% Membership::INVITATION_CHANNELS.each do |channel| %>
-        <label class="mt-2 flex items-center gap-2 text-sm">
-          <%= check_box_tag "accounting_firm[channels][]", channel, @form[:channels].include?(channel), id: "accounting_firm_channel_#{channel}" %>
-          <%= t("invitation_channels.#{channel}") %>
-        </label>
+    <div class="form-grid">
+      <% [ [ :admin_name, :text_field, "name" ], [ :admin_cpf, :text_field, "off" ], [ :admin_email, :email_field, "email" ],
+           [ :admin_mobile_phone, :telephone_field, "tel" ] ].each do |field, type, autocomplete| %>
+        <div class="<%= "field-wide" if field == :admin_name %>">
+          <%= label_tag "accounting_firm_#{field}", t(".#{field}"), class: "field-label" %>
+          <%= public_send("#{type}_tag", "accounting_firm[#{field}]", @form[field], id: "accounting_firm_#{field}",
+            autocomplete: autocomplete, class: "input") %>
+        </div>
       <% end %>
+      <div>
+        <p class="field-label"><%= t(".channels") %></p>
+        <% Membership::INVITATION_CHANNELS.each do |channel| %>
+          <label class="mt-2 flex items-center gap-2 text-sm">
+            <%= check_box_tag "accounting_firm[channels][]", channel, @form[:channels].include?(channel), id: "accounting_firm_channel_#{channel}" %>
+            <%= t("invitation_channels.#{channel}") %>
+          </label>
+        <% end %>
+      </div>
     </div>
   </fieldset>
 

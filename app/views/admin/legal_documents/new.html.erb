@@ -13,16 +13,18 @@
   </div>
 <% end %>
 
-<%= form_with model: @document, url: admin_legal_documents_path, class: "card card-body mt-6 max-w-3xl space-y-5" do |form| %>
-  <div>
-    <%= form.label :kind, class: "field-label" %>
-    <%= form.select :kind, LegalDocument::KINDS.map { |kind| [ t("admin.legal_documents.kinds.#{kind}"), kind ] }, {},
-      class: "input w-auto" %>
-  </div>
+<%= form_with model: @document, url: admin_legal_documents_path, class: "card card-body mt-6 space-y-5" do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :kind, class: "field-label" %>
+      <%= form.select :kind, LegalDocument::KINDS.map { |kind| [ t("admin.legal_documents.kinds.#{kind}"), kind ] }, {},
+        class: "input w-auto" %>
+    </div>
 
-  <div>
-    <%= form.label :body, class: "field-label" %>
-    <%= form.text_area :body, rows: 20, required: true, class: "input" %>
+    <div class="field-full">
+      <%= form.label :body, class: "field-label" %>
+      <%= form.text_area :body, rows: 20, required: true, class: "input" %>
+    </div>
   </div>
 
   <div class="flex items-center gap-4 border-t border-line-soft pt-5">

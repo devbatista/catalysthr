@@ -12,7 +12,7 @@
 <% if @documents.empty? %>
   <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
 <% else %>
-  <ul class="mt-6 max-w-4xl space-y-3">
+  <ul class="mt-6 space-y-3">
     <% @documents.each do |document| %>
       <li class="card px-5 py-4">
         <details>

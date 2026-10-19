@@ -18,7 +18,7 @@
   <% end %>
 </div>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <h2 class="text-base font-bold text-ink-strong">
     <%= current ? t(".current", version: current.version, date: l(current.valid_from)) : t(".not_started", date: l(shown.valid_from)) %>
   </h2>

@@ -6,7 +6,7 @@
 </div>
 <%= render "panel/memberships/errors" %>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <dl class="details-list">
     <div><dt><%= membership_t("show.roles") %></dt><dd><%= @membership.roles.map { |role| t("roles.#{role}") }.join(", ") %></dd></div>
     <div><dt><%= membership_t("show.status") %></dt><dd><%= t("membership_statuses.#{@membership.status}") %></dd></div>
@@ -29,7 +29,7 @@
   <% end %>
 </div>
 
-<div class="mt-6 max-w-3xl space-y-6">
+<div class="mt-6 space-y-6">
   <% if @membership.invited? && may_manage_membership?(:resend_invitation, @membership) %>
     <%= form_with url: url_for(action: :resend_invitation, id: @membership), method: :post, class: "card card-body space-y-2" do |form| %>
       <p class="card-title"><%= membership_t("show.resend") %></p>
@@ -47,8 +47,10 @@
     <%= form_with url: url_for(action: :contact, id: @membership), method: :patch, class: "card card-body space-y-2" do |form| %>
       <p class="card-title"><%= membership_t("show.contact") %></p>
       <p class="field-hint"><%= membership_t("show.contact_hint") %></p>
-      <%= email_field_tag :email, user.email, class: "input", "aria-label": membership_t("show.email") %>
-      <%= telephone_field_tag :mobile_phone, user.mobile_phone, class: "input", "aria-label": membership_t("show.mobile_phone") %>
+      <div class="form-grid">
+        <%= email_field_tag :email, user.email, class: "input", "aria-label": membership_t("show.email") %>
+        <%= telephone_field_tag :mobile_phone, user.mobile_phone, class: "input", "aria-label": membership_t("show.mobile_phone") %>
+      </div>
       <div class="pt-2"><%= form.submit membership_t("show.contact_submit"), class: "btn btn-secondary" %></div>
     <% end %>
   <% elsif membership_permission(:correct_contact) && may_manage_membership?(:update, @membership) %>

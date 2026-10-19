@@ -68,8 +68,14 @@
 - [x] **[Claude]** Conferir o que havia em produção: nenhum usuário, parceiro, empresa, marca, arquivo, flag ou texto legal (2026-10-19)
 - [x] **[você]** Dispensar o backup, porque não havia dado (2026-10-19)
 - [x] **[Claude]** Apagar e recriar o schema `public` do banco de produção, pelo `railway ssh` no `web`, e limpar as filas do Sidekiq no Redis (2026-10-19)
-- [ ] **[você]** Mergear o PR da D-614 logo em seguida. O deploy automático sobe o `web`, que roda o `db:prepare`, cria o banco pela migração base e carrega a CBO. Se o `web` antigo reiniciar antes do deploy, ele recria o schema antigo: aí é preciso apagar o schema de novo e rodar o deploy à mão
-- [ ] **[Claude]** Conferir no banco novo as tabelas com UUID e a CBO, e criar o superadmin
+- [x] **[você]** Mergear o PR da D-614 logo em seguida (PR #45). O deploy automático subiu o `web`, o `worker` e o `worker-time` às 13h13, e o `db:prepare` criou o banco pela migração base (2026-10-19)
+- [x] **[Claude]** Conferir o banco novo: 55 tabelas, nenhuma fora da regra da D-614 (2026-10-19)
+- [x] **[Claude]** Carregar a CBO com `bin/rails cbo:import` pelo `railway ssh` no `web`: 2.725 ocupações. Num banco vazio, o `db:prepare` carrega o `schema.rb` e marca as migrações como feitas sem rodá-las, então a migração de carga da CBO não carregou nada (2026-10-19)
+- [x] **[Claude]** Declarar as flags (`FeatureFlags.declare`) e ligar a `sign_in`. As demais (`billing`, `brand_email_domain`, `company_transfer`) continuam desligadas (2026-10-19)
+- [x] **[Claude]** Criar o superadmin (Rafael Batista) com um link de criar senha, e **[você]** definir a senha e ativar o MFA (2026-10-19)
+- [ ] **[você]** Publicar os termos de uso e a política de privacidade da CatalystHR no admin. Sem eles, ninguém conclui o primeiro acesso nas marcas sem textos próprios (D-578)
+
+> **Banco novo, em qualquer ambiente:** dados de referência (hoje, a CBO) ficam em tarefas idempotentes, e não em migrações, porque o `db:prepare` de um banco vazio não roda as migrações. Depois de criar um banco do zero, rode `bin/rails cbo:import`, e acrescente aqui cada tarefa nova de carga (tabelas legais da folha, feriados).
 
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 

@@ -3,7 +3,7 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".instructions") %></p>
 
-<%= form_with url: new_admin_support_access_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
+<%= form_with url: new_admin_support_access_path, method: :get, class: "mt-6 flex flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
     <%= form.label :q, t(".query"), class: "field-label" %>
     <%= form.text_field :q, value: @query, autocomplete: "off", required: true, minlength: 3,
@@ -13,19 +13,23 @@
 <% end %>
 
 <% if @query.length >= 3 && @companies.empty? %>
-  <p class="alert-info mt-6 max-w-xl"><%= t(".not_found") %></p>
+  <p class="alert-info mt-6"><%= t(".not_found") %></p>
 <% end %>
 
 <% @companies.each do |company| %>
-  <section class="card card-body mt-6 max-w-xl">
+  <section class="card card-body mt-6">
     <h2 class="card-title"><%= company.name %></h2>
     <p class="mt-0.5 font-mono text-xs text-ink-muted"><%= company.formatted_document %></p>
     <%= form_with url: admin_support_accesses_path, method: :post, class: "mt-4 space-y-3" do |form| %>
       <%= hidden_field_tag :company_id, company.id, id: "company_#{company.id}" %>
-      <%= label_tag "reason_#{company.id}", t(".reason"), class: "field-label" %>
-      <%= text_area_tag :reason, nil, id: "reason_#{company.id}", required: true, maxlength: 500, rows: 2,
-        class: "input" %>
-      <p class="field-hint"><%= t(".rules") %></p>
+      <div class="form-grid">
+        <div class="field-full">
+          <%= label_tag "reason_#{company.id}", t(".reason"), class: "field-label" %>
+          <%= text_area_tag :reason, nil, id: "reason_#{company.id}", required: true, maxlength: 500, rows: 2,
+            class: "input" %>
+        </div>
+        <p class="field-hint field-full"><%= t(".rules") %></p>
+      </div>
       <%= form.submit t(".submit"), class: "btn btn-primary" %>
     <% end %>
   </section>

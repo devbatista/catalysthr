@@ -14,7 +14,7 @@
 
 <h2 class="mt-8 text-base font-bold text-ink-strong"><%= t(".plans") %></h2>
 <% if @plans.empty? %>
-  <p class="card card-body mt-3 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+  <p class="card card-body mt-3 text-sm text-ink-soft"><%= t(".empty") %></p>
 <% else %>
   <div class="card mt-3 overflow-x-auto">
     <table class="data-table">
@@ -94,7 +94,7 @@
 <p class="mt-1 text-sm text-ink-soft"><%= t(".pre_activation_hint") %></p>
 <% pre_current = PreActivationPrice.on %>
 <% pre_latest = PreActivationPrice.latest %>
-<div class="card card-body mt-3 flex max-w-3xl flex-wrap items-center justify-between gap-3">
+<div class="card card-body mt-3 flex flex-wrap items-center justify-between gap-3">
   <div class="text-sm">
     <% if pre_current %>
       <strong><%= reais(pre_current.monthly_price_cents) %></strong>

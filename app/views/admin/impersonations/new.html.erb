@@ -3,7 +3,7 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".instructions") %></p>
 
-<%= form_with url: new_admin_impersonation_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
+<%= form_with url: new_admin_impersonation_path, method: :get, class: "mt-6 flex flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
     <%= form.label :cpf, t(".cpf"), class: "field-label" %>
     <%= form.text_field :cpf, value: @cpf, autocomplete: "off", required: true,
@@ -13,30 +13,32 @@
 <% end %>
 
 <% if @cpf.present? && @user.nil? %>
-  <p class="alert-info mt-6 max-w-xl"><%= t(".not_found") %></p>
+  <p class="alert-info mt-6"><%= t(".not_found") %></p>
 <% elsif @user %>
-  <section class="card card-body mt-6 max-w-xl">
+  <section class="card card-body mt-6">
     <h2 class="card-title"><%= @user.name %></h2>
     <% if @brands.empty? %>
       <p class="mt-2 text-sm text-ink-soft"><%= t(".no_access") %></p>
     <% else %>
       <%= form_with url: admin_impersonations_path, method: :post, class: "mt-4 space-y-4" do |form| %>
         <%= hidden_field_tag :user_id, @user.id %>
-        <fieldset>
-          <legend class="field-label"><%= t(".brand") %></legend>
-          <% @brands.each_with_index do |brand, index| %>
-            <label class="mt-2 flex items-center gap-2 text-sm">
-              <%= radio_button_tag :brand_id, brand.id, index.zero? %>
-              <%= brand.commercial_name %> (<%= brand.active_subdomain.slug %>)
-            </label>
-          <% end %>
-        </fieldset>
-        <div>
-          <%= label_tag :reason, t(".reason"), class: "field-label" %>
-          <%= text_area_tag :reason, nil, required: true, maxlength: 500, rows: 3,
-            class: "input" %>
+        <div class="form-grid">
+          <fieldset class="field-full">
+            <legend class="field-label"><%= t(".brand") %></legend>
+            <% @brands.each_with_index do |brand, index| %>
+              <label class="mt-2 flex items-center gap-2 text-sm">
+                <%= radio_button_tag :brand_id, brand.id, index.zero? %>
+                <%= brand.commercial_name %> (<%= brand.active_subdomain.slug %>)
+              </label>
+            <% end %>
+          </fieldset>
+          <div class="field-full">
+            <%= label_tag :reason, t(".reason"), class: "field-label" %>
+            <%= text_area_tag :reason, nil, required: true, maxlength: 500, rows: 3,
+              class: "input" %>
+          </div>
+          <p class="field-hint field-full"><%= t(".rules") %></p>
         </div>
-        <p class="field-hint"><%= t(".rules") %></p>
         <%= form.submit t(".submit"), class: "btn btn-primary" %>
       <% end %>
     <% end %>

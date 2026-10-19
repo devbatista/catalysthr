@@ -213,8 +213,23 @@
     @apply border-t border-line-soft px-4 py-3 align-middle;
   }
 
+  /* The screens use the whole width (D-615). Fields and details spread in columns: one on
+     phones, two from tablets, three on wide screens and four on very wide ones. A field
+     that needs room takes two columns (field-wide) or the whole row (field-full). */
+  .form-grid {
+    @apply grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4;
+  }
+
+  .field-wide {
+    @apply sm:col-span-2;
+  }
+
+  .field-full {
+    @apply col-span-full;
+  }
+
   .details-list {
-    @apply grid grid-cols-1 gap-x-6 gap-y-4 text-[13px] sm:grid-cols-2;
+    @apply grid grid-cols-1 gap-x-6 gap-y-4 text-[13px] sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4;
   }
 
   .details-list dt {

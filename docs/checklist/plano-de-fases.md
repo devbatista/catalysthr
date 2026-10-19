@@ -100,6 +100,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam para a spec 04: o convite de `employee` e de `client_manager` e os escopos U, E e K, que dependem de vínculos, unidades, departamentos e clientes de alocação
   - Ficam para depois: WhatsApp, inclusive o consentimento no primeiro acesso (quando a Twilio for aprovada), e passkeys (fase 2, spec 16)
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
+- [x] **Chaves UUID (D-614):** toda tabela com chave primária UUIDv7 e toda referência em UUID, como regra inalterável, conferida por teste do schema e pelo `strong_migrations`. As migrações das fases 0 e 1 viraram uma migração base, e o banco de produção foi recriado (PR #45)
+- [x] **Telas na largura inteira (D-615):** sem limite de largura nas telas logadas, com os campos em colunas (`form-grid`, `field-wide`, `field-full`). Login, telas do MFA, confirmação de senha e "Em breve" continuam centralizados (PR #47)
+- [x] **Envio duplicado de formulário:** cada formulário é enviado uma vez, e a ativação repetida do MFA leva à página de segurança, em vez de "código inválido" (PR #46)
 - [x] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
   - Em 5 PRs (D-600, D-602):
     - [x] 4a. Empresa (tipo de empregador e documento, endereço, configurações) e unidades (matriz, raiz do CNPJ, fuso, CEP, posição no mapa), com as unidades do RH analista (escopo U) (RN-04-001 a RN-04-014, CA-04-001) (PR #33)
