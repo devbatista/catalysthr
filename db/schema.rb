@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -399,6 +399,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_200000) do
     t.index ["company_id", "registration_number"], name: "index_employments_on_company_id_and_registration_number", unique: true
     t.index ["company_id"], name: "index_employments_on_company_id"
     t.index ["worker_profile_id"], name: "index_employments_on_worker_profile_id"
+  end
+
+  create_table "feature_flag_changes", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.string "flag", null: false
+    t.string "action", null: false
+    t.uuid "changed_by_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["changed_by_id"], name: "index_feature_flag_changes_on_changed_by_id"
+    t.index ["flag", "created_at"], name: "index_feature_flag_changes_on_flag_and_created_at"
   end
 
   create_table "flipper_features", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -898,6 +907,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_200000) do
   add_foreign_key "employment_revisions", "users", column: "created_by_id"
   add_foreign_key "employments", "companies"
   add_foreign_key "employments", "worker_profiles"
+  add_foreign_key "feature_flag_changes", "users", column: "changed_by_id"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"

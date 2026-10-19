@@ -40,6 +40,10 @@ Rails.application.routes.draw do
         get "unread-count", on: :collection, action: :unread_count, as: :unread_count
       end
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
+      # The feature flags (RN-20-030, D-617).
+      resources :feature_flags, path: "feature-flags", param: :name, only: %i[index update destroy] do
+        post :declare, on: :collection
+      end
       resources :impersonations, only: %i[new create]
       # Brands (spec 01, section 6): partners' and direct companies', and the client
       # companies' own brands with their display mode.
