@@ -3,7 +3,7 @@
 # built yet are listed with "Em breve" (ComingSoon).
 module NavigationHelper
   NavGroup = Data.define(:label, :items)
-  NavItem = Data.define(:label, :path, :active, :soon)
+  NavItem = Data.define(:label, :path, :active, :tag)
 
   # Where the person is in the brand's panel: the partner's or the accounting firm's area,
   # a company, or none yet (the company chooser).
@@ -76,8 +76,13 @@ module NavigationHelper
     company = Current.company
     # The client manager sees only what is theirs, without the modules to come (P-03-39).
     soon = client_manager_only? ? {} : ComingSoon::COMPANY_GROUPS
+    # A contracted module shows only when the company has it (D-616).
     groups = soon.to_h do |group, features|
-      [ group, features.map { |feature| soon_item(feature, coming_soon_path(feature)) } ]
+      items = features.filter_map do |feature|
+        state = ComingSoon.state(feature, company)
+        soon_item(feature, coming_soon_path(feature), state) if state
+      end
+      [ group, items ]
     end
     groups[:operation] ||= []
     groups[:operation].unshift(
@@ -138,13 +143,14 @@ module NavigationHelper
     ])
   end
 
-  def soon_item(feature, path)
+  # state: :soon, or :after_contract for a module that waits for the contract (D-616).
+  def soon_item(feature, path, state = :soon)
     active = controller_name == "coming_soon" && params[:feature] == feature
-    NavItem.new(label: t(ComingSoon.translation_key(feature)), path: path, active: active, soon: true)
+    NavItem.new(label: t(ComingSoon.translation_key(feature)), path: path, active: active, tag: t("navigation.tags.#{state}"))
   end
 
   def nav_item(label, path, active)
-    NavItem.new(label: label, path: path, active: active, soon: false)
+    NavItem.new(label: label, path: path, active: active, tag: nil)
   end
 
   def nav_group(key, items)

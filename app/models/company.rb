@@ -10,6 +10,8 @@ class Company < ApplicationRecord
   has_one :brand, as: :owner, dependent: :destroy
   # The contract, for partners and direct companies (RN-19-001).
   has_one :billing_account, as: :owner, dependent: :restrict_with_exception
+  # The modules the partner turned on for the company (RN-19-012, D-616).
+  has_many :module_settings, class_name: "CompanyModuleSetting", dependent: :restrict_with_exception
 
   enum :brand_display_mode, { alongside: "alongside", replace: "replace" },
     prefix: :brand, validate: { allow_nil: true }
@@ -65,8 +67,27 @@ class Company < ApplicationRecord
     document.length.in?([ 8, 11 ]) ? by_name.or(where(document: document)) : by_name
   end
 
+  # A company registered by its CNPJ: the employer is identified by the CNPJ root, and
+  # the full CNPJ goes to the headquarters (RN-04-001, RN-04-010, D-600).
+  def self.create_with_cnpj!(cnpj:, **attributes)
+    number = Cnpj.normalize(cnpj)
+    company = create!(employer_type: "company", document: number[0, 8], **attributes)
+    ActsAsTenant.with_tenant(company) { company.headquarters.update!(registration_type: "cnpj", registration_number: number) }
+    company
+  end
+
   def direct?
     partner_id.nil?
+  end
+
+  # The modules the contract allows (P-03-12, D-616).
+  def contract_modules
+    @contract_modules ||= CompanyModules.new(self)
+  end
+
+  def reload(*)
+    @contract_modules = nil
+    super
   end
 
   def headquarters

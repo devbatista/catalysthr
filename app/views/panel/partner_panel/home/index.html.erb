@@ -1,5 +1,13 @@
-<h1 class="page-title"><%= t(".title") %></h1>
-<p class="page-subtitle"><%= t(".subtitle", partner: partner_membership.organization.name) %></p>
+<% partner = partner_membership.organization %>
+<div class="flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <h1 class="page-title"><%= t(".title") %></h1>
+    <p class="page-subtitle"><%= t(".subtitle", partner: partner.name) %></p>
+  </div>
+  <% if can?(:create, Company.new(partner: partner)) %>
+    <%= link_to t(".new_company"), new_partner_company_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
 
 <% if @companies.empty? %>
   <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
@@ -9,6 +17,7 @@
       <thead>
         <tr>
           <th><%= t(".company") %></th>
+          <% if @contracted.any? %><th class="hidden sm:table-cell"><%= t(".modules") %></th><% end %>
           <th class="text-right"><span class="sr-only"><%= t(".actions") %></span></th>
         </tr>
       </thead>
@@ -16,8 +25,15 @@
         <% @companies.each do |company| %>
           <tr>
             <td class="font-bold text-ink-strong"><%= company.name %></td>
+            <% if @contracted.any? %>
+              <% enabled = company.module_settings.select(&:enabled).map(&:module) & @contracted %>
+              <td class="hidden text-sm sm:table-cell"><%= enabled.any? ? enabled.map { |code| t("modules.#{code}") }.to_sentence : t(".no_modules") %></td>
+            <% end %>
             <td>
               <span class="flex flex-wrap items-center justify-end gap-4">
+                <% if @contracted.any? && can?(:manage_modules, company) %>
+                  <%= link_to t(".modules"), edit_partner_company_modules_path(company), class: "link-button" %>
+                <% end %>
                 <% if can?(:update_brand_display_mode, company) %>
                   <%= link_to t(".company_brand"), edit_partner_company_brand_path(company), class: "link-button" %>
                 <% end %>

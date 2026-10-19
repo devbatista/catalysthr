@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_180100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -226,6 +226,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_180100) do
     t.boolean "uses_allocation_clients", default: false, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
+  end
+
+  create_table "company_module_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "module", null: false
+    t.boolean "enabled", default: true, null: false
+    t.uuid "changed_by_id", null: false
+    t.datetime "changed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["changed_by_id"], name: "index_company_module_settings_on_changed_by_id"
+    t.index ["company_id", "module"], name: "index_company_module_settings_on_company_id_and_module", unique: true
   end
 
   create_table "company_notification_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -857,6 +869,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_180100) do
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
+  add_foreign_key "company_module_settings", "companies"
+  add_foreign_key "company_module_settings", "users", column: "changed_by_id"
   add_foreign_key "company_notification_settings", "companies"
   add_foreign_key "company_transfers", "companies"
   add_foreign_key "company_transfers", "partners", column: "from_partner_id"

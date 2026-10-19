@@ -41,3 +41,9 @@ notifications_purge:
   cron: "30 6 * * *"           # 03:30 in Brasília
   class: "Notifications::PurgeJob"
   queue: "default"
+
+# The free trial: notices 3 days and 1 day before the end, and the end (spec 19, RN-19-032, RN-19-034, D-616)
+billing_trial:
+  cron: "0 9 * * *"            # 06:00 in Brasília, before the time-tracking peak
+  class: "Billing::TrialJob"
+  queue: "default"
