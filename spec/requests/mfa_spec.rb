@@ -55,6 +55,22 @@ RSpec.describe "MFA", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "takes the same form sent twice to the security page, not to an invalid code" do
+      membership = create(:membership, user: user, organization: company, roles: %w[hr_analyst])
+      sign_in_with
+      get "/security/mfa/new"
+      code = ROTP::TOTP.new(session[Account::MfaController::SECRET_KEY]).now
+
+      post "/security/mfa", params: { otp_code: code }
+      expect(response.body).to include("Códigos de recuperação")
+      post "/security/mfa", params: { otp_code: code }
+
+      expect(response).to redirect_to("/security")
+      follow_redirect!
+      expect(response.body).to include("já está ativa", "gere novos abaixo")
+      expect(membership.user.reload).to be_mfa_enabled
+    end
+
     it "requires it from the client's manager too (CA-02-017, P-02-39)" do
       create(:membership, user: user, organization: company, roles: %w[client_manager])
       accept_legal_documents(user, brand)

@@ -1578,6 +1578,7 @@ pt-BR:
         submit: "Ativar"
       create:
         invalid_code: "Código inválido. Confira se a hora do celular está certa e tente de novo."
+        already_enabled: "A verificação em duas etapas já está ativa. Se você não guardou os códigos de recuperação, gere novos abaixo."
       destroy:
         required: "O seu perfil exige a verificação em duas etapas."
         disabled: "Verificação em duas etapas desativada."
