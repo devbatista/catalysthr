@@ -115,6 +115,47 @@ pt-BR:
       reset_mfa:
         reason_required: "Informe o motivo ou o número do chamado."
         reset: "Verificação em duas etapas redefinida. A pessoa foi avisada e ativa de novo no próximo acesso."
+    feature_flags:
+      index:
+        title: "Flags"
+        subtitle: "Funções novas entram desligadas e são ligadas aqui, para todos. Cada flag nasce com a função, no deploy."
+        flag: "Flag"
+        state: "Situação"
+        last_change: "Última mudança nesta tela"
+        actions: "Ações"
+        states:
+          "on": "Ligada"
+          "off": "Desligada"
+          conditional: "Ligada para alguns"
+          missing: "Fora do banco"
+        actions_done:
+          enabled: "Ligada"
+          disabled: "Desligada"
+          declared: "Criada"
+          removed: "Removida"
+        change: "%{action} por %{name} em %{date}"
+        no_change: "Nenhuma"
+        enable: "Ligar"
+        disable: "Desligar"
+        console_only: "Desliga só pelo console: sem ela, nenhuma tela abre"
+        enable_confirm: "Ligar \"%{flag}\" para todos os clientes?"
+        disable_confirm: "Desligar \"%{flag}\" para todos os clientes? A função deixa de aparecer na hora."
+        missing: "O código tem flags que ainda não estão no banco: %{flags}. Até serem criadas, elas ficam desligadas."
+        declare: "Criar desligadas"
+        undeclared_title: "Flags que o código não usa mais"
+        undeclared_hint: "Estão no banco, mas nenhuma função as consulta. Podem ser removidas."
+        remove: "Remover"
+        remove_confirm: "Remover a flag %{flag}?"
+      update:
+        enabled: "Flag \"%{flag}\" ligada para todos."
+        disabled: "Flag \"%{flag}\" desligada para todos."
+      declare:
+        declared:
+          zero: "Todas as flags do código já estavam no banco."
+          one: "1 flag criada, desligada."
+          other: "%{count} flags criadas, desligadas."
+      destroy:
+        removed: "Flag %{flag} removida."
     legal_documents:
       kinds:
         terms: "Termos de uso"
@@ -563,6 +604,20 @@ pt-BR:
       same_login: "Você entra com o mesmo CPF ou e-mail e a mesma senha."
       old_address: "O endereço antigo deixou de funcionar. Se tiver um atalho salvo, troque pelo novo."
   # The sidebar's menus (D-597)
+  # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
+  feature_flags:
+    sign_in:
+      name: "Acesso ao sistema"
+      description: "Entrar, recuperar a senha e desbloquear a conta (spec 02)."
+    brand_email_domain:
+      name: "Domínio de e-mail da marca"
+      description: "A marca envia e-mails do próprio domínio, verificado no SES (spec 01, D-596)."
+    company_transfer:
+      name: "Transferência de empresa"
+      description: "O superadmin move uma empresa entre parceiros ou para a modalidade direta (spec 01, D-599)."
+    billing:
+      name: "Cobrança"
+      description: "Planos, contratos, módulos contratados, carteira do parceiro e teste grátis (spec 19, D-610)."
   navigation:
     menu: "Menu"
     close_menu: "Fechar o menu"
@@ -598,6 +653,7 @@ pt-BR:
     support_access: "Entrar numa empresa direta"
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
+    feature_flags: "Flags"
     clients: "Clientes"
     plans: "Planos e preços"
     units: "Unidades"

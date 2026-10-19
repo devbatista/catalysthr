@@ -24,6 +24,8 @@ class PlatformAbility
     can :change_slug, Brand if user.superadmin?
     # Moving a company between partners or to and from the direct modality (RN-01-050).
     can :create, CompanyTransfer if user.superadmin?
+    # The feature flags, for everyone (RN-20-030, D-617).
+    can %i[read update], :feature_flags if user.superadmin?
     # The e-mail domain of the brands that own a subdomain (spec 01, section 6, D-596).
     can :manage_email_domain, Brand, &:email_domain_configurable? if user.superadmin? || user.support?
     # Contact and MFA of the clients' users who also reach another organization (D-582).
