@@ -6,6 +6,25 @@ document.addEventListener("submit", (event) => {
   if (message && !window.confirm(message)) event.preventDefault()
 })
 
+// A form is sent once. A double click, or Enter and then a click, would send it twice, and
+// the second request can fail where the first one worked, as with the single-use MFA code.
+// The mark clears when the page comes back from the history, and after a while for forms
+// that do not leave the page.
+document.addEventListener("submit", (event) => {
+  const form = event.target
+  if (event.defaultPrevented) return
+  if (form.dataset.submitting) {
+    event.preventDefault()
+    return
+  }
+  form.dataset.submitting = "true"
+  setTimeout(() => delete form.dataset.submitting, 10000)
+})
+
+window.addEventListener("pageshow", () => {
+  document.querySelectorAll("form[data-submitting]").forEach((form) => delete form.dataset.submitting)
+})
+
 // On small screens the sidebar opens as a drawer (D-597).
 const setSidebarOpen = (shell, open) => {
   shell.dataset.sidebarOpen = open

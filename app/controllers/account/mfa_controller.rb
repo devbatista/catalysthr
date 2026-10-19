@@ -12,12 +12,23 @@ module Account
       @secret = session[SECRET_KEY]
     end
 
+    # A second send of the same form waits for the first one. When the first one already
+    # turned MFA on, the code was used there, so the person goes to the security page,
+    # where new recovery codes can be made, instead of reading "invalid code".
     def create
       authorize! :manage, :own_security
       @secret = session[SECRET_KEY]
-      return redirect_to(new_account_mfa_path) if @secret.blank? || current_user.mfa_enabled?
+      return redirect_to(account_root_path, notice: t(".already_enabled")) if current_user.mfa_enabled?
+      return redirect_to(new_account_mfa_path) if @secret.blank?
 
-      @codes = current_user.enable_mfa!(secret: @secret, code: params[:otp_code].to_s)
+      already_enabled = current_user.with_lock do
+        next true if current_user.mfa_enabled?
+
+        @codes = current_user.enable_mfa!(secret: @secret, code: params[:otp_code].to_s)
+        false
+      end
+      return redirect_to(account_root_path, notice: t(".already_enabled")) if already_enabled
+
       if @codes
         session.delete(SECRET_KEY)
         render "account/recovery_codes/show"
