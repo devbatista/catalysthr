@@ -4,6 +4,8 @@ class Partner < ApplicationRecord
   audited
 
   has_one :brand, as: :owner, dependent: :destroy
+  # The contract, for partners and direct companies (RN-19-001).
+  has_one :billing_account, as: :owner, dependent: :restrict_with_exception
   has_many :companies, dependent: :restrict_with_error
   has_many :memberships, as: :organization, dependent: :restrict_with_error
 

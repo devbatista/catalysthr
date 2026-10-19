@@ -60,6 +60,10 @@ Rails.application.routes.draw do
       resources :add_ons, only: [], path: "add-ons", param: :code do
         resources :prices, only: %i[new create], controller: "add_on_prices"
       end
+      # The partner's pre-activation fee (RN-19-035, D-612).
+      resources :pre_activation_prices, only: %i[new create], path: "pre-activation-prices"
+      # Partners and direct companies with their contracts (RN-19-080, RN-19-081, D-613).
+      resources :clients, only: %i[index new create show], controller: "billing_accounts"
       resources :users, only: :index do
         member do
           patch :contact

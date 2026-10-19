@@ -36,7 +36,9 @@ module NavigationHelper
         (nav_item(t("navigation.company_transfer"), new_admin_company_transfer_path, controller_path == "admin/company_transfers") if company_transfer_allowed?)
       ]),
       nav_group(:billing, [
-        (nav_item(t("navigation.plans"), admin_plans_path, controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices])) if billing_allowed?(Plan))
+        (nav_item(t("navigation.clients"), admin_clients_path, controller_path == "admin/billing_accounts") if billing_allowed?(BillingAccount)),
+        (nav_item(t("navigation.plans"), admin_plans_path,
+          controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan))
       ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),

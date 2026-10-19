@@ -1,0 +1,49 @@
+<% content_for :title, @account.name %>
+<% subscription = @account.subscription %>
+<% kind = @account.partner? ? "partner" : "direct" %>
+
+<p class="text-sm"><%= link_to t(".back"), admin_clients_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @account.name %></h1>
+  <%= subscription_status_pill(subscription) if subscription %>
+</div>
+<p class="page-subtitle"><%= t("billing.kinds.#{kind}") %> · <%= @account.owner.legal_name %></p>
+
+<div class="card card-body mt-6 max-w-3xl">
+  <h2 class="text-base font-bold text-ink-strong"><%= t(".contract") %></h2>
+  <dl class="details-list mt-4">
+    <div><dt><%= t(".address") %></dt><dd class="font-mono text-sm"><% slug = @account.brand&.active_subdomain&.slug %><%= slug ? "#{slug}.#{Rails.configuration.x.panel_domain}" : "—" %></dd></div>
+    <div><dt><%= t(".responsible") %></dt><dd><%= @account.responsible_user&.name || "—" %></dd></div>
+    <% if subscription %>
+      <div>
+        <dt><%= t(".plan") %></dt>
+        <dd>
+          <%= link_to subscription.plan.name, admin_plan_path(subscription.plan), class: "link-button" %>
+          <span class="text-ink-soft">· <%= t(".plan_version", version: subscription.plan_version.version) %></span>
+        </dd>
+      </div>
+      <div><dt><%= t(".price") %></dt><dd><%= plan_price_summary(subscription.plan_version) %></dd></div>
+      <div><dt><%= t(".started_on") %></dt><dd><%= l(subscription.started_on) %></dd></div>
+      <div><dt><%= t(".cycle_day") %></dt><dd><%= t(".cycle_day_value", day: @account.cycle_day) %></dd></div>
+      <% if subscription.trialing? %>
+        <div><dt><%= t(".trial_ends_on") %></dt><dd><%= l(subscription.trial_ends_on) %></dd></div>
+      <% end %>
+      <% if subscription.pre_activation? %>
+        <div class="sm:col-span-2">
+          <dt><%= t(".pre_activation") %></dt>
+          <dd><%= t(".pre_activation_value", price: reais(subscription.pre_activation_price.monthly_price_cents)) %></dd>
+        </div>
+      <% end %>
+      <div>
+        <dt><%= t(".modules") %></dt>
+        <dd><%= subscription.modules.map { |code| t("modules.#{code}") }.to_sentence.presence || t(".none") %></dd>
+      </div>
+      <div>
+        <dt><%= t(".add_ons") %></dt>
+        <dd>
+          <%= subscription.add_on_prices.map { |price| "#{t("add_ons.names.#{price.add_on.code}")} (#{reais(price.monthly_price_cents)})" }.to_sentence.presence || t(".none") %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+</div>

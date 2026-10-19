@@ -121,11 +121,12 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
   - Em 9 PRs (D-610):
     - [x] 19a. Planos, módulos e adicionais, com as versões de preço (RN-19-010, RN-19-011, RN-19-013, RN-19-014, D-611)
-    - [ ] 19b. Contratos e assinaturas, cadastro de parceiro e de empresa direta pelo admin, empresa cliente pelo parceiro (P-03-14), módulos contratados na `Ability`, módulo por empresa da carteira, planos privados e teste grátis (RN-19-001, RN-19-002, RN-19-012, RN-19-015, RN-19-030 a RN-19-034, RN-19-081, CA-19-003)
+    - [x] 19b-1. Contrato e assinatura com os status, cadastro de parceiro e de empresa direta pelo admin e valor de pré-ativação do parceiro (RN-19-001, RN-19-002, RN-19-035, RN-19-081, D-612, D-613)
+    - [ ] 19b-2. Empresa cliente pelo parceiro (P-03-14), módulo por empresa da carteira, módulos contratados na `Ability` e no menu, job do teste com os avisos e o status de teste vencido (RN-19-012, RN-19-030 a RN-19-032, RN-19-034, CA-19-003, D-613). A virada da pré-ativação para a faixa entra com o job diário do 19c
     - [ ] 19c. Consumo, cotas com avisos de 80% e 100% e relatório do parceiro (RN-19-020 a RN-19-024, CA-19-002, CA-19-010)
-    - [ ] 19d. Faturas, proporcional e ajustes, sem pagamento (RN-19-040, RN-19-041, RN-19-060, RN-19-061, RN-19-070, RN-19-071, CA-19-001, CA-19-005, CA-19-009)
-    - [ ] 19e. PIX pelo Mercado Pago, webhook e conferência diária (RN-19-042, RN-19-046, CA-19-007, CA-19-008)
-    - [ ] 19f. Régua de inadimplência, somente leitura e cancelamento (RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006)
+    - [ ] 19d. Faturas, proporcional, troca de plano, planos privados e ajustes, sem pagamento (RN-19-014, RN-19-015, RN-19-040, RN-19-041, RN-19-060, RN-19-061, RN-19-070, RN-19-071, CA-19-001, CA-19-005, CA-19-009, D-613)
+    - [ ] 19e. PIX pelo Mercado Pago, webhook e conferência diária, e a contratação pelo cliente durante o teste (RN-19-033, RN-19-042, RN-19-046, CA-19-007, CA-19-008, D-613)
+    - [ ] 19f. Régua de inadimplência, somente leitura (também do teste vencido) e cancelamento (RN-19-034, RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006, D-613)
     - [ ] 19g. Painel da equipe CatalystHR: Receita e Clientes (RN-19-090 a RN-19-092)
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
     - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015). Trava: conta no Asaas e respostas do contador

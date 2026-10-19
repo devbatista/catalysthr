@@ -1,0 +1,115 @@
+<% content_for :title, t(".title.#{@registration.kind}") %>
+<% plans = Plan.active.where(kind: @registration.kind).includes(plan_versions: :plan_modules).ordered.select(&:version_on) %>
+<% add_ons = AddOn.active.includes(:prices).select(&:price_on) %>
+
+<p class="text-sm"><%= link_to t("admin.billing_accounts.show.back"), admin_clients_path, class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= t(".title.#{@registration.kind}") %></h1>
+<p class="page-subtitle"><%= t(".subtitle.#{@registration.kind}") %></p>
+
+<%= form_with model: @registration, scope: :client, url: admin_clients_path, method: :post,
+  class: "card card-body mt-6 max-w-3xl space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ @registration ] %>
+  <%= form.hidden_field :kind %>
+
+  <fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t(".organization") %></legend>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <%= form.label :legal_name, t(".legal_name"), class: "field-label" %>
+        <%= form.text_field :legal_name, required: true, maxlength: 200, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :commercial_name, t(".commercial_name"), class: "field-label" %>
+        <%= form.text_field :commercial_name, required: true, maxlength: 120, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :cnpj, t(".cnpj"), class: "field-label" %>
+        <%= form.text_field :cnpj, required: true, maxlength: 18, class: "input font-mono" %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :slug, t(".slug"), class: "field-label" %>
+        <div class="flex items-center gap-2">
+          <%= form.text_field :slug, required: true, maxlength: 40, pattern: "[a-z0-9][a-z0-9\\-]{1,38}[a-z0-9]", class: "input mt-0 font-mono" %>
+          <span class="shrink-0 text-sm text-ink-soft">.<%= Rails.configuration.x.panel_domain %></span>
+        </div>
+        <p class="field-hint"><%= t(".slug_hint") %></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t(".offer") %></legend>
+    <% if plans.empty? %>
+      <p class="alert-info"><%= t(".no_plans") %></p>
+    <% else %>
+      <div>
+        <%= form.label :plan_id, t(".plan"), class: "field-label" %>
+        <%= form.select :plan_id, plans.map { |plan| [ "#{plan.name} · #{plan_price_summary(plan.version_on)}", plan.id ] },
+          { include_blank: t(".choose") }, required: true, class: "input" %>
+      </div>
+    <% end %>
+
+    <div>
+      <span class="field-label"><%= t(".modules") %></span>
+      <div class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+        <% PlanModule::MODULES.each do |code| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "client[modules][]", code, Array(@registration.modules).include?(code), id: "client_modules_#{code}" %>
+            <%= t("modules.#{code}") %>
+          </label>
+        <% end %>
+      </div>
+      <p class="field-hint"><%= t(".modules_hint") %></p>
+    </div>
+
+    <% if add_ons.any? %>
+      <div>
+        <span class="field-label"><%= t(".add_ons") %></span>
+        <div class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+          <% add_ons.each do |add_on| %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag "client[add_on_codes][]", add_on.code, Array(@registration.add_on_codes).include?(add_on.code), id: "client_add_on_#{add_on.code}" %>
+              <%= t("add_ons.names.#{add_on.code}") %> · <%= reais(add_on.price_on.monthly_price_cents) %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div>
+      <span class="field-label"><%= t(".mode") %></span>
+      <div class="mt-2 space-y-2">
+        <% Billing::ClientRegistration::MODES.each do |mode| %>
+          <label class="flex items-start gap-2 text-sm">
+            <%= form.radio_button :mode, mode, class: "mt-1" %>
+            <span><strong><%= t(".modes.#{mode}") %></strong><br><span class="text-ink-soft"><%= t(".mode_hints.#{@registration.kind}.#{mode}") %></span></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  </fieldset></div>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t(".admin.#{@registration.kind}") %></legend>
+    <p class="field-hint"><%= t(".admin_hint") %></p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <%= form.label :admin_name, t(".admin_name"), class: "field-label" %>
+        <%= form.text_field :admin_name, required: true, maxlength: 120, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :admin_cpf, t(".admin_cpf"), class: "field-label" %>
+        <%= form.text_field :admin_cpf, required: true, inputmode: "numeric", maxlength: 14, autocomplete: "off", class: "input font-mono" %>
+      </div>
+      <div>
+        <%= form.label :admin_email, t(".admin_email"), class: "field-label" %>
+        <%= form.email_field :admin_email, required: true, class: "input" %>
+      </div>
+    </div>
+  </fieldset></div>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t(".submit"), class: "btn btn-primary", disabled: plans.empty? %>
+    <%= link_to t(".cancel"), admin_clients_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

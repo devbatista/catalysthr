@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -153,6 +153,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.index ["declared_by_id"], name: "index_bank_accounts_on_declared_by_id"
     t.index ["worker_profile_id"], name: "index_bank_accounts_on_worker_profile_id"
     t.index ["worker_profile_id"], name: "index_bank_accounts_one_primary_per_profile", unique: true, where: "(\"primary\" AND ((status)::text = 'active'::text))"
+  end
+
+  create_table "billing_accounts", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.bigint "responsible_user_id"
+    t.string "billing_email"
+    t.integer "cycle_day", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_type", "owner_id"], name: "index_billing_accounts_on_owner", unique: true
+    t.index ["responsible_user_id"], name: "index_billing_accounts_on_responsible_user_id"
   end
 
   create_table "brand_subdomains", force: :cascade do |t|
@@ -587,6 +599,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.index ["company_id"], name: "index_positions_on_company_id"
   end
 
+  create_table "pre_activation_prices", force: :cascade do |t|
+    t.integer "version", null: false
+    t.date "valid_from", null: false
+    t.integer "monthly_price_cents", null: false
+    t.bigint "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_pre_activation_prices_on_created_by_id"
+    t.index ["version"], name: "index_pre_activation_prices_on_version", unique: true
+  end
+
   create_table "reserved_slugs", force: :cascade do |t|
     t.string "slug", limit: 40, null: false
     t.datetime "created_at", null: false
@@ -603,6 +626,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
+  end
+
+  create_table "subscription_items", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.string "kind", null: false
+    t.string "module"
+    t.bigint "add_on_price_id"
+    t.date "starts_on", null: false
+    t.date "ends_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["add_on_price_id"], name: "index_subscription_items_on_add_on_price_id"
+    t.index ["subscription_id"], name: "index_subscription_items_on_subscription_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "billing_account_id", null: false
+    t.bigint "plan_version_id", null: false
+    t.bigint "pre_activation_price_id"
+    t.string "status", null: false
+    t.date "started_on", null: false
+    t.date "trial_ends_on"
+    t.date "activated_on"
+    t.bigint "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_account_id"], name: "index_subscriptions_on_billing_account_id", unique: true
+    t.index ["created_by_id"], name: "index_subscriptions_on_created_by_id"
+    t.index ["plan_version_id"], name: "index_subscriptions_on_plan_version_id"
+    t.index ["pre_activation_price_id"], name: "index_subscriptions_on_pre_activation_price_id"
   end
 
   create_table "support_accesses", force: :cascade do |t|
@@ -800,6 +853,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"
+  add_foreign_key "billing_accounts", "users", column: "responsible_user_id"
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
@@ -852,6 +906,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
   add_foreign_key "plan_versions", "plans"
   add_foreign_key "plan_versions", "users", column: "created_by_id"
   add_foreign_key "positions", "companies"
+  add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
+  add_foreign_key "subscription_items", "add_on_prices"
+  add_foreign_key "subscription_items", "subscriptions"
+  add_foreign_key "subscriptions", "billing_accounts"
+  add_foreign_key "subscriptions", "plan_versions"
+  add_foreign_key "subscriptions", "pre_activation_prices"
+  add_foreign_key "subscriptions", "users", column: "created_by_id"
   add_foreign_key "support_accesses", "brands"
   add_foreign_key "support_accesses", "companies"
   add_foreign_key "support_accesses", "users", column: "support_user_id"

@@ -27,6 +27,20 @@ module BillingHelper
 
   VERSION_STATE_PILLS = { current: "pill-ok", future: "pill-info", replaced: "pill-mute" }.freeze
 
+  STATUS_PILLS = {
+    "trialing" => "pill-info", "active" => "pill-ok", "past_due" => "pill-warn", "read_only" => "pill-bad",
+    "closing" => "pill-bad", "closed" => "pill-mute", "trial_expired" => "pill-warn", "cancel_scheduled" => "pill-warn"
+  }.freeze
+
+  # The subscription's status, and "Pré-ativação" for a partner before the first active
+  # employee (RN-19-035).
+  def subscription_status_pill(subscription)
+    status = tag.span(t("billing.subscription_statuses.#{subscription.status}"), class: "pill #{STATUS_PILLS.fetch(subscription.status)}")
+    return status unless subscription.pre_activation?
+
+    safe_join([ status, tag.span(t("billing.pre_activation"), class: "pill pill-mute") ], " ")
+  end
+
   def plan_version_pill(state)
     tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
   end

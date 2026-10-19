@@ -158,6 +158,9 @@ pt-BR:
         actions: "Ações"
         first_price: "Definir preço"
         new_price: "Novo preço"
+        pre_activation: "Mensalidade de pré-ativação do parceiro"
+        pre_activation_hint: "Valor simbólico que o parceiro contratado paga enquanto a carteira não tem nenhum colaborador ativo. É único para todos os planos de parceiro. No primeiro colaborador ativo, a faixa e os módulos passam a valer."
+        since_date: "desde %{date}"
       new:
         title:
           partner: "Novo plano de parceiro"
@@ -237,6 +240,89 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Preço de %{add_on} registrado, a partir de %{date}."
+    pre_activation_prices:
+      new:
+        title: "Mensalidade de pré-ativação"
+        subtitle: "Vale para todos os planos de parceiro, em contratos novos a partir da data. Os contratos existentes continuam no valor antigo até serem migrados, com aviso de 30 dias."
+        monthly_price: "Mensalidade (R$)"
+        valid_from_hint: "Hoje ou uma data futura."
+        submit: "Registrar valor"
+        cancel: "Cancelar"
+      create:
+        created: "Mensalidade de pré-ativação registrada, a partir de %{date}."
+    billing_accounts:
+      index:
+        title: "Clientes"
+        subtitle: "Parceiros e empresas diretas, com o contrato de cada um. As empresas de um parceiro são cobradas pelo contrato dele."
+        new:
+          partner: "Novo parceiro"
+          direct: "Nova empresa direta"
+        empty: "Nenhum cliente cadastrado."
+        name: "Cliente"
+        kind: "Tipo"
+        plan: "Plano"
+        status: "Situação"
+        since: "Desde"
+      new:
+        title:
+          partner: "Novo parceiro"
+          direct: "Nova empresa direta"
+        subtitle:
+          partner: "Cria o parceiro, a marca, o endereço de acesso e o contrato, e convida o administrador do parceiro."
+          direct: "Cria a empresa, a marca, o endereço de acesso e o contrato, e convida o RH administrador."
+        organization: "Dados da organização"
+        legal_name: "Razão social"
+        commercial_name: "Nome comercial"
+        cnpj: "CNPJ"
+        slug: "Endereço de acesso"
+        slug_hint: "Letras minúsculas, números e hífen. Pode ser trocado depois só pelo superadmin."
+        offer: "Plano e contratação"
+        no_plans: "Não há plano ativo deste tipo com preço vigente. Cadastre um em Planos e preços."
+        plan: "Plano"
+        choose: "Escolha um plano"
+        modules: "Módulos"
+        modules_hint: "Ponto e folha (com eSocial). No teste grátis, ponto e eSocial não funcionam."
+        add_ons: "Adicionais"
+        mode: "Começa com"
+        modes:
+          trial: "Teste grátis de 14 dias"
+          contract: "Contrato"
+        mode_hints:
+          partner:
+            trial: "Sem cobrança. As empresas que o parceiro cadastrar também ficam em teste."
+            contract: "Começa hoje, com a mensalidade de pré-ativação até o primeiro colaborador ativo na carteira."
+          direct:
+            trial: "Sem cobrança. Ponto e eSocial não funcionam no teste."
+            contract: "Começa hoje, com o plano escolhido."
+        admin:
+          partner: "Administrador do parceiro"
+          direct: "RH administrador"
+        admin_hint: "Recebe o convite por e-mail e é o responsável financeiro do contrato."
+        admin_name: "Nome"
+        admin_cpf: "CPF"
+        admin_email: "E-mail"
+        submit: "Cadastrar"
+        cancel: "Cancelar"
+      create:
+        created: "Cliente cadastrado. O convite foi enviado para %{email}."
+        created_existing_person: "Cliente cadastrado. O CPF do administrador já tinha conta na plataforma: o convite foi para o e-mail já cadastrado dessa pessoa, e os dados dela não mudaram."
+      show:
+        back: "Voltar para clientes"
+        contract: "Contrato"
+        address: "Endereço de acesso"
+        responsible: "Responsável financeiro"
+        plan: "Plano"
+        plan_version: "versão %{version}"
+        price: "Preço do plano"
+        started_on: "Início"
+        cycle_day: "Ciclo"
+        cycle_day_value: "Todo dia %{day}"
+        trial_ends_on: "Fim do teste"
+        pre_activation: "Pré-ativação"
+        pre_activation_value: "%{price} por mês até o primeiro colaborador ativo na carteira"
+        modules: "Módulos"
+        add_ons: "Adicionais"
+        none: "Nenhum"
   departments:
     statuses:
       active: "Ativo"
@@ -510,6 +596,7 @@ pt-BR:
     support_access: "Entrar numa empresa direta"
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
+    clients: "Clientes"
     plans: "Planos e preços"
     units: "Unidades"
     departments: "Departamentos"
@@ -1737,6 +1824,16 @@ pt-BR:
       current: "Vigente"
       future: "Futura"
       replaced: "Substituída"
+    subscription_statuses:
+      trialing: "Em teste"
+      active: "Ativo"
+      past_due: "Em atraso"
+      read_only: "Somente leitura"
+      closing: "Em encerramento"
+      closed: "Encerrado"
+      trial_expired: "Teste vencido"
+      cancel_scheduled: "Cancelamento agendado"
+    pre_activation: "Pré-ativação"
     summary:
       partner: "%{price} por mês, até %{limit} colaboradores"
       direct: "%{price} por colaborador, mínimo de %{minimum}"
@@ -1777,7 +1874,21 @@ pt-BR:
       plan_module: "Módulo do plano"
       add_on: "Adicional"
       add_on_price: "Preço do adicional"
+      billing_account: "Contrato"
+      subscription: "Assinatura"
+      subscription_item: "Item da assinatura"
+      pre_activation_price: "Mensalidade de pré-ativação"
     attributes:
+      billing_account:
+        owner: "Cliente"
+        billing_email: "E-mail de cobrança"
+        cycle_day: "Dia do ciclo"
+      subscription:
+        plan_version: "Plano"
+        pre_activation_price: "Mensalidade de pré-ativação"
+      pre_activation_price:
+        monthly_price_cents: "Mensalidade"
+        valid_from: "Data de início"
       plan:
         name: "Nome do plano"
         kind: "Tipo"
@@ -2015,6 +2126,20 @@ pt-BR:
         slug: "Subdomínio"
     errors:
       models:
+        billing_account:
+          attributes:
+            owner:
+              partner_company: "é uma empresa de parceiro, que é cobrada pelo contrato do parceiro"
+        subscription:
+          attributes:
+            plan_version:
+              other_kind: "precisa ser do mesmo tipo do cliente"
+        pre_activation_price:
+          attributes:
+            valid_from:
+              past: "não pode ser uma data passada"
+            monthly_price_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
         plan_version:
           attributes:
             valid_from:
@@ -2253,6 +2378,19 @@ pt-BR:
       employee: "Colaborador"
       employment_form: "Vínculo"
     attributes:
+      billing/client_registration:
+        kind: "Tipo"
+        mode: "Começa com"
+        legal_name: "Razão social"
+        commercial_name: "Nome comercial"
+        cnpj: "CNPJ"
+        slug: "Endereço de acesso"
+        plan_id: "Plano"
+        modules: "Módulos"
+        add_on_codes: "Adicionais"
+        admin_name: "Nome do administrador"
+        admin_cpf: "CPF do administrador"
+        admin_email: "E-mail do administrador"
       employment_form:
         kind: "Tipo de vínculo"
         category: "Categoria"
@@ -2289,6 +2427,15 @@ pt-BR:
         justification: "Justificativa"
     errors:
       models:
+        billing/client_registration:
+          attributes:
+            plan_id:
+              not_on_sale: "precisa ser um plano ativo deste tipo"
+              not_started: "ainda não tem preço vigente"
+            add_on_codes:
+              without_price: "têm um adicional sem preço vigente"
+            base:
+              without_pre_activation_price: "Para começar com contrato, cadastre antes a mensalidade de pré-ativação em Planos e preços."
         employment_form:
           attributes:
             base:

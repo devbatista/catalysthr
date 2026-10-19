@@ -46,4 +46,18 @@ RSpec.describe PlatformAbility do
     expect(support).not_to be_able_to(:read, Plan)
     expect(support).not_to be_able_to(:create, PlanVersion)
   end
+
+  it "lets the superadmin and finance register clients and the support only read them (spec 19, section 6)" do
+    %w[superadmin finance].each do |role|
+      ability = described_class.new(create(:user, platform_role: role))
+
+      expect(ability).to be_able_to(:create, BillingAccount)
+      expect(ability).to be_able_to(:create, PreActivationPrice)
+    end
+
+    support = described_class.new(create(:user, platform_role: "support"))
+    expect(support).to be_able_to(:read, BillingAccount)
+    expect(support).not_to be_able_to(:create, BillingAccount)
+    expect(support).not_to be_able_to(:create, PreActivationPrice)
+  end
 end
