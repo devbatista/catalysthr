@@ -35,6 +35,9 @@ module NavigationHelper
         (nav_item(t("navigation.admin_users"), admin_users_path, controller_path == "admin/users") if can?(:read, User.new)),
         (nav_item(t("navigation.company_transfer"), new_admin_company_transfer_path, controller_path == "admin/company_transfers") if company_transfer_allowed?)
       ]),
+      nav_group(:billing, [
+        (nav_item(t("navigation.plans"), admin_plans_path, controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices])) if billing_allowed?(Plan))
+      ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),
         (nav_item(t("navigation.support_access"), new_admin_support_access_path, controller_path == "admin/support_accesses") if can?(:create, SupportAccess))
@@ -54,6 +57,10 @@ module NavigationHelper
 
   def company_transfer_allowed?
     FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)
+  end
+
+  def billing_allowed?(subject)
+    FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(:read, subject)
   end
 
   def client_manager_only?

@@ -1,0 +1,66 @@
+<% content_for :title, @plan.name %>
+<% current = @plan.version_on %>
+<% shown = current || @plan.latest_version %>
+
+<p class="text-sm"><%= link_to t(".back"), admin_plans_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @plan.name %></h1>
+  <span class="pill <%= @plan.active? ? "pill-ok" : "pill-mute" %>"><%= t("billing.plan_statuses.#{@plan.status}") %></span>
+</div>
+<p class="page-subtitle"><%= t("billing.kinds.#{@plan.kind}") %></p>
+
+<div class="mt-6 flex flex-wrap gap-3">
+  <% if can?(:create, PlanVersion) %>
+    <%= link_to t(".new_version"), new_admin_plan_version_path(@plan), class: "btn btn-primary" %>
+  <% end %>
+  <% if can?(:update, @plan) %>
+    <%= link_to t(".edit"), edit_admin_plan_path(@plan), class: "btn btn-secondary" %>
+  <% end %>
+</div>
+
+<div class="card card-body mt-6 max-w-3xl">
+  <h2 class="text-base font-bold text-ink-strong">
+    <%= current ? t(".current", version: current.version, date: l(current.valid_from)) : t(".not_started", date: l(shown.valid_from)) %>
+  </h2>
+  <dl class="details-list mt-4">
+    <% shown.amounts.each do |field| %>
+      <div><dt><%= PlanVersion.human_attribute_name(:"#{field}_cents") %></dt><dd><%= reais(shown.public_send(:"#{field}_cents")) %></dd></div>
+    <% end %>
+    <% shown.quantities.each do |field| %>
+      <div><dt><%= PlanVersion.human_attribute_name(field) %></dt><dd><%= number_with_delimiter(shown.public_send(field)) %></dd></div>
+    <% end %>
+    <% shown.plan_modules.each do |plan_module| %>
+      <div>
+        <dt><%= t(".module", module: t("modules.#{plan_module.module}")) %></dt>
+        <dd><%= t("admin.plans.show.module_price.#{@plan.kind}", price: reais(plan_module.price_cents)) %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<h2 class="mt-8 text-base font-bold text-ink-strong"><%= t(".versions") %></h2>
+<p class="mt-1 text-sm text-ink-soft"><%= t(".versions_hint") %></p>
+<div class="card mt-3 overflow-x-auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= t(".version") %></th>
+        <th><%= t(".valid_from") %></th>
+        <th><%= t(".price") %></th>
+        <th class="hidden sm:table-cell"><%= t(".registered") %></th>
+        <th><%= t(".state") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @plan.plan_versions.reverse_each do |version| %>
+        <tr>
+          <td><%= version.version %></td>
+          <td class="whitespace-nowrap"><%= l(version.valid_from) %></td>
+          <td class="text-ink-soft"><%= plan_price_summary(version) %></td>
+          <td class="hidden text-ink-soft sm:table-cell"><%= t(".registered_by", name: version.created_by.name, date: l(version.created_at, format: :short)) %></td>
+          <td><%= plan_version_pill(plan_version_state(version)) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

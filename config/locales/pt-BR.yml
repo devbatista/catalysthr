@@ -134,6 +134,109 @@ pt-BR:
         cancel: "Cancelar"
       create:
         published: "Versão %{version} publicada."
+    plans:
+      index:
+        title: "Planos e preços"
+        subtitle: "Planos de parceiro e de empresa direta, com os módulos, as cotas e os adicionais. Um preço nunca é alterado: o preço novo é uma versão, que vale para contratos novos a partir da data dela. Os contratos existentes continuam no preço antigo até serem migrados, com aviso de 30 dias."
+        new:
+          partner: "Novo plano de parceiro"
+          direct: "Novo plano de empresa direta"
+        plans: "Planos"
+        empty: "Nenhum plano cadastrado."
+        name: "Plano"
+        kind: "Tipo"
+        price: "Preço vigente"
+        since: "Desde"
+        starts: "Começa em %{date}"
+        status: "Situação"
+        add_ons: "Adicionais"
+        add_ons_hint: "Itens com mensalidade fixa, contratados à parte. O preço segue a mesma regra das versões dos planos."
+        add_on: "Adicional"
+        monthly_price: "Mensalidade"
+        no_price: "Sem preço definido"
+        next_price: "Próximo preço: %{price} a partir de %{date}"
+        actions: "Ações"
+        first_price: "Definir preço"
+        new_price: "Novo preço"
+      new:
+        title:
+          partner: "Novo plano de parceiro"
+          direct: "Novo plano de empresa direta"
+        subtitle: "O plano já nasce com a primeira versão de preço. Depois, um preço novo é sempre uma nova versão."
+        name: "Nome do plano"
+        submit: "Cadastrar plano"
+        cancel: "Cancelar"
+      create:
+        created: "Plano cadastrado."
+      show:
+        back: "Voltar para planos e preços"
+        new_version: "Novo preço"
+        edit: "Editar nome e situação"
+        current: "Versão %{version}, vigente desde %{date}"
+        not_started: "Primeira versão, a partir de %{date}"
+        module: "Módulo %{module}"
+        module_price:
+          partner: "%{price} por mês"
+          direct: "%{price} por colaborador"
+        versions: "Versões de preço"
+        versions_hint: "Uma versão nunca é alterada. Para corrigir uma versão futura, registre outra com a mesma data: entre versões da mesma data, vale a registrada por último."
+        version: "Versão"
+        valid_from: "Vale a partir de"
+        price: "Preço"
+        registered: "Registrada"
+        registered_by: "por %{name} em %{date}"
+        state: "Situação"
+      edit:
+        title: "Editar plano"
+        subtitle: "Para mudar preços, limites ou cotas, registre um novo preço na página do plano."
+        back: "Voltar para o plano"
+        status: "Situação"
+        status_hint: "Um plano arquivado não é oferecido a contratos novos. Os contratos que já usam o plano continuam com ele."
+        submit: "Salvar"
+        cancel: "Cancelar"
+      update:
+        updated: "Plano atualizado."
+      version_fields:
+        price: "Mensalidade"
+        monthly_price: "Mensalidade da faixa (R$)"
+        employee_limit: "Limite de colaboradores da faixa"
+        overage_per_employee: "Excedente por colaborador acima da faixa (R$)"
+        price_per_employee: "Valor por colaborador ativo (R$)"
+        minimum_monthly: "Mínimo mensal (R$)"
+        modules: "Módulos"
+        modules_hint:
+          partner: "Valor fixo por mês, somado à mensalidade. Não muda com o número de empresas da carteira que usam o módulo."
+          direct: "Valor por colaborador ativo, somado à mensalidade. A folha inclui o eSocial."
+        quotas: "Cotas do mês e excedentes"
+        quotas_hint:
+          partner: "Cotas da carteira inteira no mês. A cota não acumula para o mês seguinte, e o excedente vai para a fatura seguinte."
+          direct: "Cotas por colaborador ativo no mês. A cota não acumula para o mês seguinte, e o excedente vai para a fatura seguinte."
+        ai_credits: "Créditos de IA no mês"
+        whatsapp_messages: "Mensagens de WhatsApp no mês"
+        ai_credits_per_employee: "Créditos de IA por colaborador"
+        whatsapp_messages_per_employee: "Mensagens de WhatsApp por colaborador"
+        ai_credit_overage: "Preço do crédito de IA excedente (R$)"
+        whatsapp_overage: "Preço da mensagem de WhatsApp excedente (R$)"
+        valid_from: "Vale a partir de"
+        valid_from_hint: "Hoje ou uma data futura. O preço vale para contratos novos a partir dessa data."
+    plan_versions:
+      new:
+        title: "Novo preço"
+        subtitle: "Os valores abaixo vêm da última versão de %{plan}. Altere o que mudou."
+        back: "Voltar para %{plan}"
+        submit: "Registrar versão"
+        cancel: "Cancelar"
+      create:
+        created: "Versão %{version} registrada, a partir de %{date}."
+    add_on_prices:
+      new:
+        title: "Preço do adicional %{add_on}"
+        subtitle: "O preço novo vale para contratações novas a partir da data. Os contratos existentes continuam no preço antigo até serem migrados, com aviso de 30 dias."
+        monthly_price: "Mensalidade (R$)"
+        submit: "Registrar preço"
+        cancel: "Cancelar"
+      create:
+        created: "Preço de %{add_on} registrado, a partir de %{date}."
   departments:
     statuses:
       active: "Ativo"
@@ -388,6 +491,7 @@ pt-BR:
       firm: "Escritório contábil"
       areas: "Outras áreas"
       platform: "Plataforma"
+      billing: "Cobrança"
       support: "Suporte"
       legal: "Jurídico"
     home: "Painel"
@@ -406,6 +510,7 @@ pt-BR:
     support_access: "Entrar numa empresa direta"
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
+    plans: "Planos e preços"
     units: "Unidades"
     departments: "Departamentos"
     positions: "Cargos"
@@ -1621,6 +1726,23 @@ pt-BR:
     forbidden: "Você não tem permissão para esta ação"
   rack_attack:
     throttled: "Muitas tentativas a partir deste endereço. Aguarde alguns minutos e tente de novo."
+  billing:
+    kinds:
+      partner: "Parceiro"
+      direct: "Empresa direta"
+    plan_statuses:
+      active: "Ativo"
+      archived: "Arquivado"
+    version_states:
+      current: "Vigente"
+      future: "Futura"
+      replaced: "Substituída"
+    summary:
+      partner: "%{price} por mês, até %{limit} colaboradores"
+      direct: "%{price} por colaborador, mínimo de %{minimum}"
+  add_ons:
+    names:
+      whatsapp_sender: "Número próprio de WhatsApp"
   activerecord:
     models:
       partner: "Parceiro"
@@ -1650,7 +1772,35 @@ pt-BR:
       emergency_contact: "Contato de emergência"
       dependent: "Dependente"
       bank_account: "Conta para pagamento"
+      plan: "Plano"
+      plan_version: "Versão do plano"
+      plan_module: "Módulo do plano"
+      add_on: "Adicional"
+      add_on_price: "Preço do adicional"
     attributes:
+      plan:
+        name: "Nome do plano"
+        kind: "Tipo"
+        status: "Situação"
+      plan_version:
+        valid_from: "Data de início"
+        monthly_price_cents: "Mensalidade da faixa"
+        employee_limit: "Limite de colaboradores"
+        overage_per_employee_cents: "Excedente por colaborador"
+        price_per_employee_cents: "Valor por colaborador"
+        minimum_monthly_cents: "Mínimo mensal"
+        ai_credits: "Créditos de IA no mês"
+        whatsapp_messages: "Mensagens de WhatsApp no mês"
+        ai_credits_per_employee: "Créditos de IA por colaborador"
+        whatsapp_messages_per_employee: "Mensagens de WhatsApp por colaborador"
+        ai_credit_overage_cents: "Preço do crédito de IA excedente"
+        whatsapp_overage_cents: "Preço da mensagem excedente"
+        plan_modules: "Módulos"
+      plan_module:
+        price_cents: "Preço"
+      add_on_price:
+        monthly_price_cents: "Mensalidade"
+        valid_from: "Data de início"
       company_notification_setting:
         channels: "Canais"
       notification_preference:
@@ -1865,6 +2015,36 @@ pt-BR:
         slug: "Subdomínio"
     errors:
       models:
+        plan_version:
+          attributes:
+            valid_from:
+              past: "não pode ser uma data passada"
+            plan_modules:
+              incomplete: "precisam ter o preço do ponto e da folha"
+            base:
+              module_price: "O preço do módulo %{module} %{problem}"
+            monthly_price_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            overage_per_employee_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            price_per_employee_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            minimum_monthly_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            ai_credit_overage_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+            whatsapp_overage_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+        plan_module:
+          attributes:
+            price_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+        add_on_price:
+          attributes:
+            valid_from:
+              past: "não pode ser uma data passada"
+            monthly_price_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
         company_notification_setting:
           attributes:
             channels:

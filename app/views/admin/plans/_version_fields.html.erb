@@ -1,0 +1,75 @@
+<%# The price version's fields, by the plan's kind (RN-19-010, D-480, D-122, D-611).
+    Amounts are typed in reais. %>
+<% kind = version.plan.partner? ? "partner" : "direct" %>
+<%= fields_for :plan_version, version do |fields| %>
+  <fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.price") %></legend>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <% if kind == "partner" %>
+        <div>
+          <%= fields.label :monthly_price, t("admin.plans.version_fields.monthly_price"), class: "field-label" %>
+          <%= fields.text_field :monthly_price, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+        </div>
+        <div>
+          <%= fields.label :employee_limit, t("admin.plans.version_fields.employee_limit"), class: "field-label" %>
+          <%= fields.number_field :employee_limit, min: 1, step: 1, required: true, class: "input" %>
+        </div>
+        <div>
+          <%= fields.label :overage_per_employee, t("admin.plans.version_fields.overage_per_employee"), class: "field-label" %>
+          <%= fields.text_field :overage_per_employee, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+        </div>
+      <% else %>
+        <div>
+          <%= fields.label :price_per_employee, t("admin.plans.version_fields.price_per_employee"), class: "field-label" %>
+          <%= fields.text_field :price_per_employee, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+        </div>
+        <div>
+          <%= fields.label :minimum_monthly, t("admin.plans.version_fields.minimum_monthly"), class: "field-label" %>
+          <%= fields.text_field :minimum_monthly, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.modules") %></legend>
+    <p class="field-hint"><%= t("admin.plans.version_fields.modules_hint.#{kind}") %></p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <% PlanModule::MODULES.each do |code| %>
+        <div>
+          <%= label_tag "plan_version_module_prices_#{code}", t("modules.#{code}"), class: "field-label" %>
+          <%= text_field_tag "plan_version[module_prices][#{code}]", version.plan_module(code)&.price, id: "plan_version_module_prices_#{code}",
+            inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+        </div>
+      <% end %>
+    </div>
+  </fieldset></div>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t("admin.plans.version_fields.quotas") %></legend>
+    <p class="field-hint"><%= t("admin.plans.version_fields.quotas_hint.#{kind}") %></p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <% quotas = kind == "partner" ? %i[ai_credits whatsapp_messages] : %i[ai_credits_per_employee whatsapp_messages_per_employee] %>
+      <% quotas.each do |field| %>
+        <div>
+          <%= fields.label field, t("admin.plans.version_fields.#{field}"), class: "field-label" %>
+          <%= fields.number_field field, min: 0, step: 1, required: true, class: "input" %>
+        </div>
+      <% end %>
+      <div>
+        <%= fields.label :ai_credit_overage, t("admin.plans.version_fields.ai_credit_overage"), class: "field-label" %>
+        <%= fields.text_field :ai_credit_overage, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+      </div>
+      <div>
+        <%= fields.label :whatsapp_overage, t("admin.plans.version_fields.whatsapp_overage"), class: "field-label" %>
+        <%= fields.text_field :whatsapp_overage, inputmode: "decimal", placeholder: "0,00", required: true, class: "input" %>
+      </div>
+    </div>
+  </fieldset></div>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-2">
+    <%= fields.label :valid_from, t("admin.plans.version_fields.valid_from"), class: "field-label" %>
+    <%= fields.date_field :valid_from, min: Date.current, required: true, class: "input w-auto" %>
+    <p class="field-hint"><%= t("admin.plans.version_fields.valid_from_hint") %></p>
+  </fieldset></div>
+<% end %>

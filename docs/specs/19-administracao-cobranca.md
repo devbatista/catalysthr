@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610, D-611 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -77,7 +77,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-011** — O núcleo está sempre incluído: cadastros, admissão, documentos, solicitações, processos, IA, portal, mural, painéis e relatórios. Ponto e folha (com eSocial) são módulos (D-111, D-122).
 - **RN-19-012** — O parceiro com o módulo contratado liga e desliga o módulo **por empresa da carteira**. O preço do módulo não muda com o número de empresas que usam **[P-19-03]**.
 - **RN-19-013** — **Adicionais:** número próprio de WhatsApp (D-161) e, quando existir, reconhecimento facial (D-312). Cada um tem preço mensal fixo.
-- **RN-19-014** — **Versões de preço:** mudar o preço de um plano vale para contratos novos. Os contratos existentes continuam com o preço antigo até o financeiro migrá-los, com aviso de **30 dias** ao cliente **[P-19-04]**.
+- **RN-19-014** — **Versões de preço:** mudar o preço de um plano vale para contratos novos. Os contratos existentes continuam com o preço antigo até o financeiro migrá-los, com aviso de **30 dias** ao cliente **[P-19-04]**. Os preços ficam em versões do plano, que nunca são alteradas; o preço dos adicionais segue a mesma regra (D-611).
 - **RN-19-015** — Planos podem ser **privados**, criados para um cliente específico, com condições negociadas **[P-19-05]**.
 
 ### 4.3 Consumo, cotas e excedente (D-092, D-101, D-407, D-483)
@@ -94,7 +94,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-031** — No teste, os módulos **ponto e eSocial não funcionam** (D-486). A folha pode ser configurada e calculada, mas não fecha competência. As cotas de IA e WhatsApp do teste são reduzidas: **100 créditos** e **100 mensagens** **[P-19-09]**.
 - **RN-19-032** — Avisos ao responsável 3 dias e 1 dia antes do fim, com o botão **Contratar**.
 - **RN-19-033** — Contratar durante o teste: escolhe o plano e os módulos, cadastra o pagamento, e a primeira mensalidade é cobrada na hora. O ciclo começa nesse dia **[P-19-10]**.
-- **RN-19-034** — Fim do teste sem contratação (D-487): `trial_expired`, em somente leitura por 30 dias, com a exportação completa (spec 18). Contratando, tudo volta. Depois, exclusão total, como no encerramento.
+- **RN-19-034** — Fim do teste sem contratação (D-487): `trial_expired`, em somente leitura por 30 dias, com a exportação completa (spec 18). Contratando, tudo volta. Depois, exclusão total, como no encerramento. Na fase 1, só os status e a somente leitura; a exportação e a exclusão entram na fase 2 (D-610).
 
 ### 4.5 Fatura e pagamento (D-112, D-113, D-481, D-488)
 
@@ -177,6 +177,8 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
   | **Operação** | Filas do Sidekiq (tamanho e atraso), falhas de IA e disjuntor, entregas com falha por canal, rejeições do eSocial fora do comum, certificados vencendo, tarefas de feriados |
   | **Clientes** | Plano, colaboradores, uso das cotas, adoção (spec 17), última atividade e **risco de cancelamento** |
 
+  Na fase 1, só os blocos Receita e Clientes, sem a adoção. Custos contra o cobrado e Operação entram quando as fontes existirem (D-610).
+
 - **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**.
 - **RN-19-092** — O custo da IA em dólares (spec 14) é convertido pela cotação do dia, guardada junto do custo **[P-19-27]**.
 
@@ -236,16 +238,23 @@ Spec 03, seção 4.1, com o detalhe:
 ```
 plans
   id, kind ('partner'|'direct'), name, private (bool), billing_account_id (se privado),
+  status
+
+plan_versions                                        -- preços e cotas (D-611)
+  id, plan_id, version, valid_from, created_by_id,
   monthly_price_cents, price_per_employee_cents, minimum_monthly_cents,
   employee_limit, overage_per_employee_cents,
   ai_credits (ou ai_credits_per_employee), whatsapp_messages (ou por colaborador),
-  ai_credit_overage_cents, whatsapp_overage_cents, version, valid_from, status
+  ai_credit_overage_cents, whatsapp_overage_cents
 
 plan_modules
-  id, plan_id, module ('time'|'payroll'), price_cents (ou por colaborador)
+  id, plan_version_id, module ('ponto'|'folha'), price_cents (ou por colaborador)
 
 add_ons
-  id, code ('whatsapp_sender'|'face_recognition'), name, monthly_price_cents, status
+  id, code ('whatsapp_sender'|'face_recognition'), status
+
+add_on_prices                                        -- versões do preço (D-611)
+  id, add_on_id, version, valid_from, monthly_price_cents, created_by_id
 
 billing_accounts
   id, owner_type ('Partner'|'Company'), owner_id, billing_email, responsible_user_id,
@@ -253,7 +262,7 @@ billing_accounts
   card_brand, card_last4, card_expires_on, cycle_day, asaas_customer_id
 
 subscriptions
-  id, billing_account_id, plan_id, plan_version, status, trial_ends_at,
+  id, billing_account_id, plan_version_id, status, trial_ends_at,
   started_at, current_period_start, current_period_end, cancel_at, cancel_reason,
   read_only_at, closing_at
 

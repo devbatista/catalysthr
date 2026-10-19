@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -87,6 +87,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "add_on_prices", force: :cascade do |t|
+    t.bigint "add_on_id", null: false
+    t.integer "version", null: false
+    t.date "valid_from", null: false
+    t.integer "monthly_price_cents", null: false
+    t.bigint "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["add_on_id", "version"], name: "index_add_on_prices_on_add_on_id_and_version", unique: true
+    t.index ["created_by_id"], name: "index_add_on_prices_on_created_by_id"
+  end
+
+  create_table "add_ons", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_add_ons_on_code", unique: true
   end
 
   create_table "allocation_client_managers", force: :cascade do |t|
@@ -513,6 +533,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
     t.index ["cnpj"], name: "index_partners_on_cnpj", unique: true
   end
 
+  create_table "plan_modules", force: :cascade do |t|
+    t.bigint "plan_version_id", null: false
+    t.string "module", null: false
+    t.integer "price_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plan_version_id", "module"], name: "index_plan_modules_on_plan_version_id_and_module", unique: true
+  end
+
+  create_table "plan_versions", force: :cascade do |t|
+    t.bigint "plan_id", null: false
+    t.integer "version", null: false
+    t.date "valid_from", null: false
+    t.bigint "created_by_id", null: false
+    t.integer "monthly_price_cents"
+    t.integer "employee_limit"
+    t.integer "overage_per_employee_cents"
+    t.integer "ai_credits"
+    t.integer "whatsapp_messages"
+    t.integer "price_per_employee_cents"
+    t.integer "minimum_monthly_cents"
+    t.integer "ai_credits_per_employee"
+    t.integer "whatsapp_messages_per_employee"
+    t.integer "ai_credit_overage_cents", null: false
+    t.integer "whatsapp_overage_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_plan_versions_on_created_by_id"
+    t.index ["plan_id", "version"], name: "index_plan_versions_on_plan_id_and_version", unique: true
+  end
+
+  create_table "plans", force: :cascade do |t|
+    t.string "kind", null: false
+    t.string "name", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "kind, lower((name)::text)", name: "index_plans_on_kind_and_name", unique: true
+  end
+
   create_table "positions", force: :cascade do |t|
     t.bigint "company_id", null: false
     t.string "name", null: false
@@ -731,6 +791,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
   add_foreign_key "accounting_firm_companies", "users", column: "linked_by_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "add_on_prices", "add_ons"
+  add_foreign_key "add_on_prices", "users", column: "created_by_id"
   add_foreign_key "allocation_client_managers", "allocation_clients", on_delete: :cascade
   add_foreign_key "allocation_client_managers", "companies"
   add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
@@ -786,6 +848,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_140100) do
   add_foreign_key "notifications", "users", column: "recipient_user_id"
   add_foreign_key "partner_membership_companies", "companies"
   add_foreign_key "partner_membership_companies", "memberships"
+  add_foreign_key "plan_modules", "plan_versions"
+  add_foreign_key "plan_versions", "plans"
+  add_foreign_key "plan_versions", "users", column: "created_by_id"
   add_foreign_key "positions", "companies"
   add_foreign_key "support_accesses", "brands"
   add_foreign_key "support_accesses", "companies"

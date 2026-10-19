@@ -29,5 +29,12 @@ class PlatformAbility
     # Contact and MFA of the clients' users who also reach another organization (D-582).
     # Never of the CatalystHR team.
     can %i[read correct_contact reset_mfa release_email], User, platform_role: nil if user.superadmin? || user.support?
+    # Plans, modules, add-ons and their prices (spec 03, section 4.1, D-115, RN-19-010).
+    # Prices are never edited: a change is a new version (D-611).
+    if user.superadmin? || user.finance?
+      can %i[read create update], Plan
+      can :create, PlanVersion
+      can %i[read create], AddOnPrice
+    end
   end
 end

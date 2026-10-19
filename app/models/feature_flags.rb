@@ -7,8 +7,10 @@ module FeatureFlags
   BRAND_EMAIL_DOMAIN = :brand_email_domain
   # Company transfer by the superadmin (spec 01, RN-01-050 to RN-01-053, D-599).
   COMPANY_TRANSFER = :company_transfer
+  # Plans, contracts, usage, invoices and payments (spec 19), off until the launch (D-610).
+  BILLING = :billing
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER ].freeze
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING ].freeze
 
   module_function
 
