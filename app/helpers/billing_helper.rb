@@ -1,0 +1,33 @@
+# Amounts and summaries of the billing screens (spec 19). Amounts are kept in cents.
+module BillingHelper
+  def reais(cents)
+    cents.nil? ? "—" : "R$ #{MoneyCents.format(cents)}"
+  end
+
+  # "R$ 1.500,00 por mês, até 500 colaboradores" or "R$ 12,00 por colaborador, mínimo de R$ 300,00".
+  def plan_price_summary(version)
+    return "—" if version.nil?
+
+    if version.plan.partner?
+      t("billing.summary.partner", price: reais(version.monthly_price_cents), limit: number_with_delimiter(version.employee_limit))
+    else
+      t("billing.summary.direct", price: reais(version.price_per_employee_cents), minimum: reais(version.minimum_monthly_cents))
+    end
+  end
+
+  # "Vigente", "Futura" or "Substituída", by the version in force today. A version is
+  # replaced by a later one or by another of the same date registered after it (D-611).
+  def plan_version_state(version)
+    plan = version.plan
+    return :current if version == plan.version_on
+
+    corrected = plan.plan_versions.any? { |other| other.valid_from == version.valid_from && other.version > version.version }
+    corrected || version.valid_from <= Date.current ? :replaced : :future
+  end
+
+  VERSION_STATE_PILLS = { current: "pill-ok", future: "pill-info", replaced: "pill-mute" }.freeze
+
+  def plan_version_pill(state)
+    tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
+  end
+end

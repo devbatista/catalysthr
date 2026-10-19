@@ -53,6 +53,13 @@ Rails.application.routes.draw do
       resources :support_accesses, only: %i[new create], path: "support-accesses"
       # Company transfer (RN-01-050 to RN-01-053, D-599).
       resources :company_transfers, only: %i[new create], path: "company-transfers"
+      # Plans, modules and add-ons, with price versions (spec 19, RN-19-010 to RN-19-014, D-611).
+      resources :plans, only: %i[index new create show edit update] do
+        resources :versions, only: %i[new create], controller: "plan_versions"
+      end
+      resources :add_ons, only: [], path: "add-ons", param: :code do
+        resources :prices, only: %i[new create], controller: "add_on_prices"
+      end
       resources :users, only: :index do
         member do
           patch :contact

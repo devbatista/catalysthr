@@ -119,6 +119,17 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
     - [x] 15b. Preferências da empresa e da pessoa e eventos do SES pelo SNS, com o e-mail inválido (RN-15-020 a RN-15-023, RN-15-080, RN-15-083, CA-15-007, CA-15-009, D-609) (PR #41). Depois do deploy: assinatura do SNS e permissão no IAM (`contas-infraestrutura.md`), feitas em 2026-10-19
   - Até o resumo diário (fase 2), os avisos não urgentes do RH vão por e-mail um a um (D-607)
 - [ ] **Spec 19:** planos, módulos e adicionais; consumo e cotas; teste grátis; faturas; Mercado Pago (cartão salvo e PIX); novas tentativas; régua de inadimplência; cancelamento; ajustes; NFS-e pelo Asaas; área admin; painel CatalystHR. Na integração: conferir se os Pagamentos Automáticos usam `/v1/orders` (a documentação atual) em vez do `/v1/payments` citado na spec, e tratar a recusa por "limite de tentativas atingido" sem tentar de novo
+  - Em 9 PRs (D-610):
+    - [x] 19a. Planos, módulos e adicionais, com as versões de preço (RN-19-010, RN-19-011, RN-19-013, RN-19-014, D-611)
+    - [ ] 19b. Contratos e assinaturas, cadastro de parceiro e de empresa direta pelo admin, empresa cliente pelo parceiro (P-03-14), módulos contratados na `Ability`, módulo por empresa da carteira, planos privados e teste grátis (RN-19-001, RN-19-002, RN-19-012, RN-19-015, RN-19-030 a RN-19-034, RN-19-081, CA-19-003)
+    - [ ] 19c. Consumo, cotas com avisos de 80% e 100% e relatório do parceiro (RN-19-020 a RN-19-024, CA-19-002, CA-19-010)
+    - [ ] 19d. Faturas, proporcional e ajustes, sem pagamento (RN-19-040, RN-19-041, RN-19-060, RN-19-061, RN-19-070, RN-19-071, CA-19-001, CA-19-005, CA-19-009)
+    - [ ] 19e. PIX pelo Mercado Pago, webhook e conferência diária (RN-19-042, RN-19-046, CA-19-007, CA-19-008)
+    - [ ] 19f. Régua de inadimplência, somente leitura e cancelamento (RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006)
+    - [ ] 19g. Painel da equipe CatalystHR: Receita e Clientes (RN-19-090 a RN-19-092)
+    - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
+    - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015). Trava: conta no Asaas e respostas do contador
+  - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
 
 ### Pronto quando

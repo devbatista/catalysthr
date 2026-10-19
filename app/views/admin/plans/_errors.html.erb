@@ -1,0 +1,8 @@
+<% messages = records.compact.flat_map { |record| record.errors.full_messages } %>
+<% if messages.any? %>
+  <div class="alert-bad" role="alert">
+    <ul class="list-disc space-y-1 pl-5">
+      <% messages.each do |message| %><li><%= message %></li><% end %>
+    </ul>
+  </div>
+<% end %>

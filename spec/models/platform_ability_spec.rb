@@ -29,4 +29,21 @@ RSpec.describe PlatformAbility do
     expect(ability).not_to be_able_to(:create, SupportAccess)
     expect(ability).not_to be_able_to(:reset_mfa, client)
   end
+
+  it "gives plans, versions and add-on prices to the superadmin and finance only (spec 03, section 4.1, D-611)" do
+    %w[superadmin finance].each do |role|
+      ability = described_class.new(create(:user, platform_role: role))
+
+      expect(ability).to be_able_to(:create, Plan)
+      expect(ability).to be_able_to(:update, Plan)
+      expect(ability).to be_able_to(:create, PlanVersion)
+      expect(ability).to be_able_to(:create, AddOnPrice)
+      expect(ability).not_to be_able_to(:update, PlanVersion)
+      expect(ability).not_to be_able_to(:update, AddOnPrice)
+    end
+
+    support = described_class.new(create(:user, platform_role: "support"))
+    expect(support).not_to be_able_to(:read, Plan)
+    expect(support).not_to be_able_to(:create, PlanVersion)
+  end
 end

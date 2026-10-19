@@ -1,0 +1,91 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Plan) %>
+    <div class="flex flex-wrap gap-3">
+      <% Plan::KINDS.each do |kind| %>
+        <%= link_to t(".new.#{kind}"), new_admin_plan_path(kind: kind), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<h2 class="mt-8 text-base font-bold text-ink-strong"><%= t(".plans") %></h2>
+<% if @plans.empty? %>
+  <p class="card card-body mt-3 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-3 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th><%= t(".kind") %></th>
+          <th><%= t(".price") %></th>
+          <th><%= t(".since") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @plans.each do |plan| %>
+          <% current = plan.version_on %>
+          <tr>
+            <td><%= link_to plan.name, admin_plan_path(plan), class: "link-button" %></td>
+            <td class="text-ink-soft"><%= t("billing.kinds.#{plan.kind}") %></td>
+            <td class="text-ink-soft"><%= plan_price_summary(current || plan.latest_version) %></td>
+            <td class="whitespace-nowrap text-ink-soft">
+              <%= current ? l(current.valid_from) : t(".starts", date: l(plan.latest_version.valid_from)) %>
+            </td>
+            <td><span class="pill <%= plan.active? ? "pill-ok" : "pill-mute" %>"><%= t("billing.plan_statuses.#{plan.status}") %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<h2 class="mt-8 text-base font-bold text-ink-strong"><%= t(".add_ons") %></h2>
+<p class="mt-1 text-sm text-ink-soft"><%= t(".add_ons_hint") %></p>
+<div class="card mt-3 overflow-x-auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= t(".add_on") %></th>
+        <th><%= t(".monthly_price") %></th>
+        <th><%= t(".since") %></th>
+        <th><span class="sr-only"><%= t(".actions") %></span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% AddOn::CODES.each do |code| %>
+        <% add_on = @add_ons[code] %>
+        <% current = add_on&.price_on %>
+        <% latest = add_on&.latest_price %>
+        <tr>
+          <td><%= t("add_ons.names.#{code}") %></td>
+          <td class="text-ink-soft"><%= latest ? reais((current || latest).monthly_price_cents) : t(".no_price") %></td>
+          <td class="whitespace-nowrap text-ink-soft">
+            <% if current %>
+              <%= l(current.valid_from) %>
+            <% elsif latest %>
+              <%= t(".starts", date: l(latest.valid_from)) %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+          <td class="text-right">
+            <% if can?(:create, AddOnPrice) %>
+              <%= link_to t(latest ? ".new_price" : ".first_price"), new_admin_add_on_price_path(code), class: "link-button text-sm" %>
+            <% end %>
+          </td>
+        </tr>
+        <% if current && latest && latest.valid_from > Date.current %>
+          <tr>
+            <td colspan="4" class="text-xs text-ink-soft"><%= t(".next_price", price: reais(latest.monthly_price_cents), date: l(latest.valid_from)) %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
