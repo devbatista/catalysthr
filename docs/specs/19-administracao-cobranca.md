@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610, D-611 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-612 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -93,13 +93,14 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-030** — Criado pela equipe comercial (D-484): 14 dias, sem cartão, para parceiros e empresas diretas. As empresas cadastradas pelo parceiro em teste também ficam em teste.
 - **RN-19-031** — No teste, os módulos **ponto e eSocial não funcionam** (D-486). A folha pode ser configurada e calculada, mas não fecha competência. As cotas de IA e WhatsApp do teste são reduzidas: **100 créditos** e **100 mensagens** **[P-19-09]**.
 - **RN-19-032** — Avisos ao responsável 3 dias e 1 dia antes do fim, com o botão **Contratar**.
-- **RN-19-033** — Contratar durante o teste: escolhe o plano e os módulos, cadastra o pagamento, e a primeira mensalidade é cobrada na hora. O ciclo começa nesse dia **[P-19-10]**.
+- **RN-19-033** — Contratar durante o teste: escolhe o plano e os módulos, cadastra o pagamento, e a primeira mensalidade é cobrada na hora. O ciclo começa nesse dia **[P-19-10]**. O parceiro sem colaborador ativo na carteira paga a mensalidade de pré-ativação (RN-19-035).
 - **RN-19-034** — Fim do teste sem contratação (D-487): `trial_expired`, em somente leitura por 30 dias, com a exportação completa (spec 18). Contratando, tudo volta. Depois, exclusão total, como no encerramento. Na fase 1, só os status e a somente leitura; a exportação e a exclusão entram na fase 2 (D-610).
+- **RN-19-035** — **Pré-ativação do parceiro** (D-612): enquanto a carteira não tem nenhum colaborador ativo (a mesma medida da RN-19-020), o parceiro contratado paga só um **valor simbólico**, único para todos os planos de parceiro e com versões como os preços (D-611), mais os adicionais. A faixa e os módulos não são cobrados, e as cotas de IA e WhatsApp são as do teste (RN-19-031), com o excedente pelos preços do plano. No primeiro dia com um colaborador ativo, a faixa e os módulos passam a valer, e a diferença proporcional aos dias até o fim do ciclo entra na próxima fatura (RN-19-060). A ativação é única: a cobrança não volta ao valor simbólico. Não vale para a empresa direta.
 
 ### 4.5 Fatura e pagamento (D-112, D-113, D-481, D-488)
 
 - **RN-19-040** — **Ciclo mensal**, no dia do mês em que o contrato começou (dias 29 a 31 viram dia 28) **[P-19-11]**. A fatura do ciclo tem:
-  - a mensalidade do plano e dos módulos do mês que começa;
+  - a mensalidade do plano e dos módulos do mês que começa (ou o valor de pré-ativação do parceiro, RN-19-035);
   - os adicionais;
   - o excedente do ciclo anterior (colaboradores, IA, WhatsApp);
   - as cobranças proporcionais de aumentos feitos no ciclo anterior (RN-19-060);
