@@ -76,6 +76,8 @@ module CatalystHr
     config.active_record.encryption.key_derivation_salt = ENV["ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"]
 
     config.generators do |g|
+      # Every table has a UUIDv7 primary key (D-614).
+      g.orm :active_record, primary_key_type: :uuid
       g.test_framework :rspec, fixtures: true, view_specs: false, helper_specs: false, routing_specs: false
       g.fixture_replacement :factory_bot, dir: "spec/factories"
       g.system_tests = nil

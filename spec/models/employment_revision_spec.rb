@@ -86,7 +86,7 @@ RSpec.describe EmploymentRevision do
   it "keeps the salary encrypted and out of the versions (D-086)" do
     in_company do
       revision = employment.revisions.sole
-      raw = described_class.connection.select_value("SELECT salary_cents FROM employment_revisions WHERE id = #{revision.id}")
+      raw = described_class.connection.select_value("SELECT salary_cents FROM employment_revisions WHERE id = '#{revision.id}'")
 
       expect(raw).not_to include("200000")
       expect(revision.reload.salary_cents).to eq(200_000)

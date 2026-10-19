@@ -43,6 +43,7 @@ Não discorde só para parecer crítico. Confronte quando houver uma falha relev
 
 As regras abaixo não são negociáveis. Mudar qualquer uma delas exige uma decisão nova do responsável.
 
+- **Chaves UUID (D-614):** toda tabela tem chave primária UUIDv7 gerada pelo banco (`id: :uuid, default: -> { "uuidv7()" }`), e toda coluna que aponta para uma linha é UUID (`type: :uuid`). A única exceção é a `solid_cache_entries`. Um teste do schema e o `strong_migrations` recusam o que fugir disso.
 - **Isolamento entre empresas:** o tenant é a `Company`, com `acts_as_tenant` e `require_tenant` ligado. Jobs recebem a empresa como contexto. Visões de parceiro e de escritório contábil usam escopo explícito. Um dado de uma empresa nunca aparece em outra (spec 01).
 - **Ponto (REP-P):**
   - marcações são imutáveis, com proteção por trigger no banco;

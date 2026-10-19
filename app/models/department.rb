@@ -41,7 +41,7 @@ class Department < ApplicationRecord
       )
       SELECT id FROM tree
     SQL
-    connection.select_values(sanitize_sql([ sql, { ids: ids, company_id: ActsAsTenant.current_tenant.id } ])).map(&:to_i)
+    connection.select_values(sanitize_sql([ sql, { ids: ids, company_id: ActsAsTenant.current_tenant.id } ]))
   end
 
   # The departments a manager's membership manages, with their subdepartments: the E

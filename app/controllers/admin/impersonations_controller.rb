@@ -13,7 +13,7 @@ module Admin
     def create
       authorize! :create, ImpersonationSession
       user = User.where(platform_role: nil).find(params[:user_id])
-      brand = brands_of(user).find { |candidate| candidate.id == params[:brand_id].to_i }
+      brand = brands_of(user).find { |candidate| candidate.id == params[:brand_id].to_s }
       impersonation, token = ImpersonationSession.issue!(impersonator: current_user, impersonated_user: user, brand: brand,
         reason: params[:reason].to_s.strip)
       redirect_to impersonation.brand.panel_url("/impersonation", token: token), allow_other_host: true

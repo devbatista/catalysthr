@@ -211,7 +211,7 @@ RSpec.describe "MFA", type: :request do
   it "keeps the authenticator secret encrypted in the database (D-086)" do
     enable_mfa(user)
 
-    stored = User.connection.select_value("SELECT otp_secret FROM users WHERE id = #{user.id}")
+    stored = User.connection.select_value("SELECT otp_secret FROM users WHERE id = '#{user.id}'")
     expect(stored).not_to include(user.otp_secret)
   end
 end

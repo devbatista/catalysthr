@@ -10,19 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_180100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
 
-  create_table "access_events", force: :cascade do |t|
-    t.bigint "company_id"
-    t.bigint "user_id", null: false
-    t.bigint "impersonator_id"
+  create_table "access_events", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "user_id", null: false
+    t.uuid "impersonator_id"
     t.string "kind", null: false
     t.string "action", null: false
     t.string "subject_type"
-    t.bigint "subject_id"
+    t.uuid "subject_id"
     t.string "field"
     t.string "ip"
     t.string "user_agent"
@@ -37,22 +37,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["user_id"], name: "index_access_events_on_user_id"
   end
 
-  create_table "accounting_firm_companies", force: :cascade do |t|
-    t.bigint "accounting_firm_id", null: false
-    t.bigint "company_id", null: false
+  create_table "accounting_firm_companies", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "accounting_firm_id", null: false
+    t.uuid "company_id", null: false
     t.string "status", default: "pending", null: false
-    t.bigint "linked_by_id"
+    t.uuid "linked_by_id"
     t.datetime "accepted_at"
     t.datetime "ended_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["accounting_firm_id"], name: "index_accounting_firm_companies_on_accounting_firm_id"
     t.index ["company_id", "status"], name: "index_accounting_firm_companies_on_company_id_and_status"
-    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY ((ARRAY['pending'::character varying, 'active'::character varying])::text[]))"
+    t.index ["company_id"], name: "index_accounting_firm_companies_one_open_per_company", unique: true, where: "((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('active'::character varying)::text]))"
     t.index ["linked_by_id"], name: "index_accounting_firm_companies_on_linked_by_id"
   end
 
-  create_table "accounting_firms", force: :cascade do |t|
+  create_table "accounting_firms", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "cnpj", null: false
     t.string "status", default: "active", null: false
@@ -61,17 +61,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["cnpj"], name: "index_accounting_firms_on_cnpj", unique: true
   end
 
-  create_table "active_storage_attachments", force: :cascade do |t|
+  create_table "active_storage_attachments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
+    t.uuid "record_id", null: false
+    t.uuid "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", force: :cascade do |t|
+  create_table "active_storage_blobs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -83,25 +83,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", force: :cascade do |t|
-    t.bigint "blob_id", null: false
+  create_table "active_storage_variant_records", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "add_on_prices", force: :cascade do |t|
-    t.bigint "add_on_id", null: false
+  create_table "add_on_prices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "add_on_id", null: false
     t.integer "version", null: false
     t.date "valid_from", null: false
     t.integer "monthly_price_cents", null: false
-    t.bigint "created_by_id", null: false
+    t.uuid "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["add_on_id", "version"], name: "index_add_on_prices_on_add_on_id_and_version", unique: true
     t.index ["created_by_id"], name: "index_add_on_prices_on_created_by_id"
   end
 
-  create_table "add_ons", force: :cascade do |t|
+  create_table "add_ons", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "code", null: false
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
@@ -109,10 +109,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["code"], name: "index_add_ons_on_code", unique: true
   end
 
-  create_table "allocation_client_managers", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "allocation_client_id", null: false
-    t.bigint "membership_id", null: false
+  create_table "allocation_client_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "allocation_client_id", null: false
+    t.uuid "membership_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["allocation_client_id", "membership_id"], name: "idx_on_allocation_client_id_membership_id_74ea9def8f", unique: true
@@ -121,8 +121,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["membership_id"], name: "index_allocation_client_managers_on_membership_id"
   end
 
-  create_table "allocation_clients", force: :cascade do |t|
-    t.bigint "company_id", null: false
+  create_table "allocation_clients", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
     t.string "name", null: false
     t.string "document_type"
     t.string "document"
@@ -133,9 +133,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["company_id"], name: "index_allocation_clients_on_company_id"
   end
 
-  create_table "bank_accounts", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "worker_profile_id", null: false
+  create_table "bank_accounts", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
     t.string "bank_code"
     t.string "branch"
     t.text "account_number"
@@ -145,7 +145,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.boolean "primary", default: false, null: false
     t.string "status", default: "active", null: false
     t.date "ended_on"
-    t.bigint "declared_by_id", null: false
+    t.uuid "declared_by_id", null: false
     t.datetime "declared_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -155,10 +155,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["worker_profile_id"], name: "index_bank_accounts_one_primary_per_profile", unique: true, where: "(\"primary\" AND ((status)::text = 'active'::text))"
   end
 
-  create_table "billing_accounts", force: :cascade do |t|
+  create_table "billing_accounts", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "owner_type", null: false
-    t.bigint "owner_id", null: false
-    t.bigint "responsible_user_id"
+    t.uuid "owner_id", null: false
+    t.uuid "responsible_user_id"
     t.string "billing_email"
     t.integer "cycle_day", null: false
     t.datetime "created_at", null: false
@@ -167,8 +167,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["responsible_user_id"], name: "index_billing_accounts_on_responsible_user_id"
   end
 
-  create_table "brand_subdomains", force: :cascade do |t|
-    t.bigint "brand_id", null: false
+  create_table "brand_subdomains", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "brand_id", null: false
     t.string "slug", limit: 40, null: false
     t.string "status", default: "active", null: false
     t.datetime "redirect_until"
@@ -180,9 +180,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["slug"], name: "index_brand_subdomains_on_slug_in_use", unique: true, where: "((status)::text <> 'released'::text)"
   end
 
-  create_table "brands", force: :cascade do |t|
+  create_table "brands", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "owner_type", null: false
-    t.bigint "owner_id", null: false
+    t.uuid "owner_id", null: false
     t.string "commercial_name", null: false
     t.string "short_name"
     t.string "primary_color", limit: 7
@@ -197,13 +197,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.string "email_domain_status"
     t.jsonb "email_domain_records", default: [], null: false
     t.datetime "email_domain_checked_at"
-    t.bigint "email_domain_registered_by_id"
+    t.uuid "email_domain_registered_by_id"
     t.index ["email_domain"], name: "index_brands_on_email_domain", unique: true
     t.index ["email_domain_status"], name: "index_brands_on_email_domain_status"
     t.index ["owner_type", "owner_id"], name: "index_brands_on_owner", unique: true
   end
 
-  create_table "cbo_occupations", force: :cascade do |t|
+  create_table "cbo_occupations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "code", limit: 6, null: false
     t.string "title", null: false
     t.boolean "active", default: true, null: false
@@ -212,8 +212,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["code"], name: "index_cbo_occupations_on_code", unique: true
   end
 
-  create_table "companies", force: :cascade do |t|
-    t.bigint "partner_id"
+  create_table "companies", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "partner_id"
     t.string "name", null: false
     t.string "legal_name", null: false
     t.string "brand_display_mode"
@@ -228,8 +228,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
 
-  create_table "company_notification_settings", force: :cascade do |t|
-    t.bigint "company_id", null: false
+  create_table "company_notification_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
     t.string "notification_type", null: false
     t.string "channels", default: [], null: false, array: true
     t.datetime "created_at", null: false
@@ -237,11 +237,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["company_id", "notification_type"], name: "index_company_notification_settings_unique", unique: true
   end
 
-  create_table "company_transfers", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "from_partner_id"
-    t.bigint "to_partner_id"
-    t.bigint "performed_by_id", null: false
+  create_table "company_transfers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "from_partner_id"
+    t.uuid "to_partner_id"
+    t.uuid "performed_by_id", null: false
     t.text "authorized_by_text", null: false
     t.datetime "performed_at", null: false
     t.datetime "created_at", null: false
@@ -252,12 +252,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["to_partner_id"], name: "index_company_transfers_on_to_partner_id"
   end
 
-  create_table "consents", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "consents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "kind", null: false
     t.string "scope_type", null: false
-    t.bigint "scope_id", null: false
-    t.bigint "legal_document_id"
+    t.uuid "scope_id", null: false
+    t.uuid "legal_document_id"
     t.integer "document_version", null: false
     t.boolean "granted", null: false
     t.string "ip"
@@ -271,8 +271,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["user_id"], name: "index_consents_on_user_id"
   end
 
-  create_table "custom_field_definitions", force: :cascade do |t|
-    t.bigint "company_id", null: false
+  create_table "custom_field_definitions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
     t.string "key", null: false
     t.string "label", null: false
     t.string "field_type", null: false
@@ -287,10 +287,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["company_id"], name: "index_custom_field_definitions_on_company_id"
   end
 
-  create_table "department_managers", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "department_id", null: false
-    t.bigint "membership_id", null: false
+  create_table "department_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "department_id", null: false
+    t.uuid "membership_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_department_managers_on_company_id"
@@ -299,10 +299,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["membership_id"], name: "index_department_managers_on_membership_id"
   end
 
-  create_table "departments", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "unit_id", null: false
-    t.bigint "parent_id"
+  create_table "departments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "unit_id", null: false
+    t.uuid "parent_id"
     t.string "name", null: false
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
@@ -312,9 +312,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["unit_id"], name: "index_departments_on_unit_id"
   end
 
-  create_table "dependents", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "worker_profile_id", null: false
+  create_table "dependents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
     t.string "name", null: false
     t.text "cpf"
     t.date "birth_date", null: false
@@ -331,9 +331,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["worker_profile_id"], name: "index_dependents_on_worker_profile_id"
   end
 
-  create_table "emergency_contacts", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "worker_profile_id", null: false
+  create_table "emergency_contacts", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
     t.string "name", null: false
     t.string "relationship"
     t.string "phone", null: false
@@ -343,24 +343,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["worker_profile_id"], name: "index_emergency_contacts_on_worker_profile_id"
   end
 
-  create_table "employment_revisions", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "employment_id", null: false
+  create_table "employment_revisions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "employment_id", null: false
     t.date "effective_on", null: false
-    t.bigint "position_id", null: false
+    t.uuid "position_id", null: false
     t.string "cbo_code", limit: 6, null: false
     t.text "salary_cents"
     t.string "salary_unit", null: false
     t.text "variable_salary_description"
-    t.bigint "unit_id", null: false
-    t.bigint "department_id"
+    t.uuid "unit_id", null: false
+    t.uuid "department_id"
     t.decimal "weekly_hours", precision: 4, scale: 2
     t.string "reason", null: false
     t.text "justification"
-    t.bigint "created_by_id", null: false
+    t.uuid "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "allocation_client_id"
+    t.uuid "allocation_client_id"
     t.index ["allocation_client_id"], name: "index_employment_revisions_on_allocation_client_id"
     t.index ["company_id"], name: "index_employment_revisions_on_company_id"
     t.index ["created_by_id"], name: "index_employment_revisions_on_created_by_id"
@@ -371,9 +371,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["unit_id"], name: "index_employment_revisions_on_unit_id"
   end
 
-  create_table "employments", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "worker_profile_id", null: false
+  create_table "employments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
     t.string "kind", null: false
     t.string "category"
     t.string "registration_number", null: false
@@ -389,14 +389,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["worker_profile_id"], name: "index_employments_on_worker_profile_id"
   end
 
-  create_table "flipper_features", force: :cascade do |t|
+  create_table "flipper_features", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_flipper_features_on_key", unique: true
   end
 
-  create_table "flipper_gates", force: :cascade do |t|
+  create_table "flipper_gates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "feature_key", null: false
     t.string "key", null: false
     t.text "value"
@@ -405,10 +405,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
-  create_table "impersonation_sessions", force: :cascade do |t|
-    t.bigint "impersonator_id", null: false
-    t.bigint "impersonated_user_id", null: false
-    t.bigint "brand_id", null: false
+  create_table "impersonation_sessions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "impersonator_id", null: false
+    t.uuid "impersonated_user_id", null: false
+    t.uuid "brand_id", null: false
     t.text "reason", null: false
     t.string "token_digest"
     t.datetime "token_expires_at", null: false
@@ -424,13 +424,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["token_digest"], name: "index_impersonation_sessions_on_token_digest", unique: true
   end
 
-  create_table "legal_documents", force: :cascade do |t|
-    t.bigint "brand_id"
+  create_table "legal_documents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "brand_id"
     t.string "kind", null: false
     t.integer "version", null: false
     t.text "body", null: false
     t.datetime "published_at", null: false
-    t.bigint "published_by_id", null: false
+    t.uuid "published_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id", "kind", "version"], name: "index_legal_documents_on_brand_kind_and_version", unique: true, nulls_not_distinct: true
@@ -438,10 +438,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["published_by_id"], name: "index_legal_documents_on_published_by_id"
   end
 
-  create_table "membership_units", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "membership_id", null: false
-    t.bigint "unit_id", null: false
+  create_table "membership_units", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "membership_id", null: false
+    t.uuid "unit_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_membership_units_on_company_id"
@@ -450,21 +450,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["unit_id"], name: "index_membership_units_on_unit_id"
   end
 
-  create_table "memberships", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "memberships", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "organization_type", null: false
-    t.bigint "organization_id", null: false
+    t.uuid "organization_id", null: false
     t.string "roles", default: [], null: false, array: true
     t.string "status", default: "invited", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "invited_by_id"
+    t.uuid "invited_by_id"
     t.string "invitation_token_digest"
     t.datetime "invitation_sent_at"
     t.datetime "invitation_expires_at"
     t.string "invitation_channels", default: [], null: false, array: true
     t.string "enabled_modules", default: [], null: false, array: true
-    t.bigint "unit_ids", default: [], null: false, array: true
+    t.uuid "unit_ids", default: [], null: false, array: true
     t.index ["invitation_token_digest"], name: "index_memberships_on_invitation_token_digest", unique: true
     t.index ["invited_by_id"], name: "index_memberships_on_invited_by_id"
     t.index ["organization_type", "organization_id"], name: "index_memberships_on_organization"
@@ -472,8 +472,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
-  create_table "notification_deliveries", force: :cascade do |t|
-    t.bigint "notification_id", null: false
+  create_table "notification_deliveries", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "notification_id", null: false
     t.string "channel", null: false
     t.string "status", default: "queued", null: false
     t.integer "attempts", default: 0, null: false
@@ -488,8 +488,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["provider_message_id"], name: "index_notification_deliveries_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
   end
 
-  create_table "notification_preferences", force: :cascade do |t|
-    t.bigint "membership_id", null: false
+  create_table "notification_preferences", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "membership_id", null: false
     t.string "notification_type", null: false
     t.string "channels", default: [], null: false, array: true
     t.datetime "created_at", null: false
@@ -497,18 +497,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["membership_id", "notification_type"], name: "index_notification_preferences_unique", unique: true
   end
 
-  create_table "notifications", force: :cascade do |t|
-    t.bigint "company_id"
-    t.bigint "recipient_user_id", null: false
-    t.bigint "recipient_membership_id"
-    t.bigint "brand_id"
+  create_table "notifications", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "recipient_user_id", null: false
+    t.uuid "recipient_membership_id"
+    t.uuid "brand_id"
     t.string "area"
     t.string "notification_type", null: false
     t.string "title", null: false
     t.text "body"
     t.string "path", null: false
     t.string "subject_type"
-    t.bigint "subject_id"
+    t.uuid "subject_id"
     t.boolean "mandatory", default: false, null: false
     t.boolean "urgent", default: false, null: false
     t.boolean "in_bell", default: true, null: false
@@ -527,16 +527,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["subject_type", "subject_id"], name: "index_notifications_on_subject"
   end
 
-  create_table "partner_membership_companies", force: :cascade do |t|
-    t.bigint "membership_id", null: false
-    t.bigint "company_id", null: false
+  create_table "partner_membership_companies", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "membership_id", null: false
+    t.uuid "company_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_partner_membership_companies_on_company_id"
     t.index ["membership_id", "company_id"], name: "index_partner_membership_companies_on_membership_and_company", unique: true
   end
 
-  create_table "partners", force: :cascade do |t|
+  create_table "partners", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "legal_name", null: false
     t.string "cnpj", limit: 14, null: false
@@ -545,8 +545,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["cnpj"], name: "index_partners_on_cnpj", unique: true
   end
 
-  create_table "plan_modules", force: :cascade do |t|
-    t.bigint "plan_version_id", null: false
+  create_table "plan_modules", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "plan_version_id", null: false
     t.string "module", null: false
     t.integer "price_cents", null: false
     t.datetime "created_at", null: false
@@ -554,11 +554,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["plan_version_id", "module"], name: "index_plan_modules_on_plan_version_id_and_module", unique: true
   end
 
-  create_table "plan_versions", force: :cascade do |t|
-    t.bigint "plan_id", null: false
+  create_table "plan_versions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "plan_id", null: false
     t.integer "version", null: false
     t.date "valid_from", null: false
-    t.bigint "created_by_id", null: false
+    t.uuid "created_by_id", null: false
     t.integer "monthly_price_cents"
     t.integer "employee_limit"
     t.integer "overage_per_employee_cents"
@@ -576,7 +576,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["plan_id", "version"], name: "index_plan_versions_on_plan_id_and_version", unique: true
   end
 
-  create_table "plans", force: :cascade do |t|
+  create_table "plans", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "kind", null: false
     t.string "name", null: false
     t.string "status", default: "active", null: false
@@ -585,8 +585,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index "kind, lower((name)::text)", name: "index_plans_on_kind_and_name", unique: true
   end
 
-  create_table "positions", force: :cascade do |t|
-    t.bigint "company_id", null: false
+  create_table "positions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
     t.string "name", null: false
     t.string "cbo_code", limit: 6, null: false
     t.integer "salary_min_cents"
@@ -599,18 +599,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["company_id"], name: "index_positions_on_company_id"
   end
 
-  create_table "pre_activation_prices", force: :cascade do |t|
+  create_table "pre_activation_prices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.integer "version", null: false
     t.date "valid_from", null: false
     t.integer "monthly_price_cents", null: false
-    t.bigint "created_by_id", null: false
+    t.uuid "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_id"], name: "index_pre_activation_prices_on_created_by_id"
     t.index ["version"], name: "index_pre_activation_prices_on_version", unique: true
   end
 
-  create_table "reserved_slugs", force: :cascade do |t|
+  create_table "reserved_slugs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "slug", limit: 40, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -628,11 +628,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
-  create_table "subscription_items", force: :cascade do |t|
-    t.bigint "subscription_id", null: false
+  create_table "subscription_items", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "subscription_id", null: false
     t.string "kind", null: false
     t.string "module"
-    t.bigint "add_on_price_id"
+    t.uuid "add_on_price_id"
     t.date "starts_on", null: false
     t.date "ends_on"
     t.datetime "created_at", null: false
@@ -641,15 +641,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["subscription_id"], name: "index_subscription_items_on_subscription_id"
   end
 
-  create_table "subscriptions", force: :cascade do |t|
-    t.bigint "billing_account_id", null: false
-    t.bigint "plan_version_id", null: false
-    t.bigint "pre_activation_price_id"
+  create_table "subscriptions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.uuid "plan_version_id", null: false
+    t.uuid "pre_activation_price_id"
     t.string "status", null: false
     t.date "started_on", null: false
     t.date "trial_ends_on"
     t.date "activated_on"
-    t.bigint "created_by_id", null: false
+    t.uuid "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["billing_account_id"], name: "index_subscriptions_on_billing_account_id", unique: true
@@ -658,10 +658,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["pre_activation_price_id"], name: "index_subscriptions_on_pre_activation_price_id"
   end
 
-  create_table "support_accesses", force: :cascade do |t|
-    t.bigint "support_user_id", null: false
-    t.bigint "company_id", null: false
-    t.bigint "brand_id", null: false
+  create_table "support_accesses", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "support_user_id", null: false
+    t.uuid "company_id", null: false
+    t.uuid "brand_id", null: false
     t.text "reason", null: false
     t.string "token_digest"
     t.datetime "token_expires_at", null: false
@@ -676,8 +676,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["token_digest"], name: "index_support_accesses_on_token_digest", unique: true
   end
 
-  create_table "trusted_devices", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "trusted_devices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "token_digest", null: false
     t.string "user_agent"
     t.datetime "last_used_at"
@@ -690,8 +690,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["user_id"], name: "index_trusted_devices_on_user_id"
   end
 
-  create_table "units", force: :cascade do |t|
-    t.bigint "company_id", null: false
+  create_table "units", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
     t.string "name", null: false
     t.string "registration_type"
     t.string "registration_number"
@@ -714,11 +714,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["company_id"], name: "index_units_on_company_id"
   end
 
-  create_table "user_sessions", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "user_sessions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "token_digest", null: false
     t.string "area", null: false
-    t.bigint "brand_id"
+    t.uuid "brand_id"
     t.string "user_agent"
     t.string "ip"
     t.datetime "last_seen_at", null: false
@@ -733,7 +733,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["user_id"], name: "index_user_sessions_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "cpf", null: false
     t.string "email"
@@ -767,16 +767,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "versions", force: :cascade do |t|
+  create_table "versions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "item_type", null: false
-    t.bigint "item_id", null: false
+    t.uuid "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
     t.jsonb "object"
     t.jsonb "object_changes"
     t.string "sensitive_fields", default: [], null: false, array: true
-    t.bigint "impersonator_id"
-    t.bigint "company_id"
+    t.uuid "impersonator_id"
+    t.uuid "company_id"
     t.string "ip"
     t.string "request_id"
     t.datetime "created_at", null: false
@@ -784,9 +784,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_150000) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  create_table "worker_profiles", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "membership_id", null: false
+  create_table "worker_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "membership_id", null: false
     t.string "social_name"
     t.string "sex"
     t.string "race"

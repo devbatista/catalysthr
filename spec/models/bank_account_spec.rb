@@ -32,7 +32,7 @@ RSpec.describe BankAccount do
 
   it "keeps the account number and the key encrypted and out of the versions (D-086)" do
     account = register(bank_code: "001", branch: "1234", account_number: "12345-6", account_type: "checking")
-    raw = described_class.connection.select_value("SELECT account_number FROM bank_accounts WHERE id = #{account.id}")
+    raw = described_class.connection.select_value("SELECT account_number FROM bank_accounts WHERE id = '#{account.id}'")
 
     expect(raw).not_to include("123456")
     changes = PaperTrail::Version.where(item: account).filter_map(&:object_changes).flat_map(&:keys)
@@ -43,7 +43,7 @@ RSpec.describe BankAccount do
     in_company do
       dependent = profile.dependents.create!(name: "Lia Lima", birth_date: Date.new(2018, 4, 2), relationship_type: "child",
         cpf: "529.982.247-25", irrf: true)
-      raw = described_class.connection.select_value("SELECT cpf FROM dependents WHERE id = #{dependent.id}")
+      raw = described_class.connection.select_value("SELECT cpf FROM dependents WHERE id = '#{dependent.id}'")
       expect(raw).not_to include("52998224725")
 
       dependent.end!(on: Date.new(2026, 10, 1))

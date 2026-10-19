@@ -1,5 +1,5 @@
-# First load of the official CBO occupations (db/data/README.md). Later updates go
-# through bin/rails cbo:import. Idempotent.
+# First load of the official CBO occupations (db/data/README.md), after the baseline with
+# UUID keys (D-614). Later updates go through bin/rails cbo:import. Idempotent.
 class LoadCboOccupations < ActiveRecord::Migration[8.1]
   class MigrationOccupation < ActiveRecord::Base
     self.table_name = "cbo_occupations"

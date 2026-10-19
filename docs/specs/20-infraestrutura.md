@@ -1,7 +1,7 @@
 # 20 — Infraestrutura
 
 > Status: aprovado (transferência internacional e criptografia do Railway a confirmar) · Última atualização: 2026-10-13
-> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515 ([decisoes.md](decisoes.md))
+> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614 ([decisoes.md](decisoes.md))
 > Os itens **[P-20-nn]** foram todos aprovados sem ajuste (D-515, seção 10).
 
 ## 1. Objetivo
@@ -80,6 +80,8 @@ Definir **onde e como o CatalystHR roda**:
   | `redis` | Redis só para o Sidekiq (D-511), com persistência AOF e `maxmemory-policy noeviction` | 512 MB |
   | `clamav` | clamd e freshclam, só na rede privada, porta 3310 | 1 vCPU, 3 GB |
   | `backup` | Serviço de cron do Railway com o pg_dump (RN-20-041) | Sob demanda |
+
+  Toda tabela tem chave primária UUIDv7, gerada pelo banco (`uuidv7()`, Postgres 18), e toda referência é UUID; só a `solid_cache_entries` tem id numérico (D-614).
 
 - **RN-20-011** — **Filas do Sidekiq e prioridades** no `worker`, com limites de concorrência por fila (capsules do Sidekiq 7+) **[P-20-05]**:
 

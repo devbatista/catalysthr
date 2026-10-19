@@ -63,6 +63,14 @@
 - [x] **[você]** IAM: política inline `catalysthr-app-email` no usuário `catalysthr-app`, com `ses:DeleteSuppressedDestination` para o suporte liberar pelo admin um e-mail que voltou (D-609). O usuário não tinha nenhuma permissão do SES, então a política também cobre o envio (`ses:SendEmail` nas identidades da conta e no configuration set `catalysthr-padrao`) e os domínios das marcas (criar, ler, apagar e MAIL FROM das identidades), com um `Deny` que impede o app de apagar ou alterar a identidade `catalysthr.com.br`. Conferida pela simulação do IAM (2026-10-19)
 - [x] **[você]** `aws sso login` antes dos dois passos acima, que eu rodo pela CLI com a sua confirmação (2026-10-19)
 
+*Fase 1, troca para chaves UUID (D-614). O banco de produção é recriado; não havia dado a manter. O deploy é automático depois do CI verde da `main` (D-575), então o schema é recriado antes do merge:*
+
+- [x] **[Claude]** Conferir o que havia em produção: nenhum usuário, parceiro, empresa, marca, arquivo, flag ou texto legal (2026-10-19)
+- [x] **[você]** Dispensar o backup, porque não havia dado (2026-10-19)
+- [x] **[Claude]** Apagar e recriar o schema `public` do banco de produção, pelo `railway ssh` no `web`, e limpar as filas do Sidekiq no Redis (2026-10-19)
+- [ ] **[você]** Mergear o PR da D-614 logo em seguida. O deploy automático sobe o `web`, que roda o `db:prepare`, cria o banco pela migração base e carrega a CBO. Se o `web` antigo reiniciar antes do deploy, ele recria o schema antigo: aí é preciso apagar o schema de novo e rodar o deploy à mão
+- [ ] **[Claude]** Conferir no banco novo as tabelas com UUID e a CBO, e criar o superadmin
+
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 
 - [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)

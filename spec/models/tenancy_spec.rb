@@ -23,8 +23,8 @@ RSpec.describe "Company isolation" do
   end
 
   before do
-    ActiveRecord::Base.connection.create_table(:tenancy_probes) do |t|
-      t.references :company, null: false
+    ActiveRecord::Base.connection.create_table(:tenancy_probes, id: :uuid, default: -> { "uuidv7()" }) do |t|
+      t.references :company, type: :uuid, null: false
       t.string :name
     end
     TenancyProbe.reset_column_information

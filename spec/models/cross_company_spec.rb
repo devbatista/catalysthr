@@ -12,8 +12,8 @@ RSpec.describe CrossCompany do
   after(:all) { Object.send(:remove_const, :CrossCompanyProbe) }
 
   before do
-    ActiveRecord::Base.connection.create_table(:cross_company_probes) do |t|
-      t.references :company, null: false
+    ActiveRecord::Base.connection.create_table(:cross_company_probes, id: :uuid, default: -> { "uuidv7()" }) do |t|
+      t.references :company, type: :uuid, null: false
       t.string :name
     end
     CrossCompanyProbe.reset_column_information

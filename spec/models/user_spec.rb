@@ -10,7 +10,7 @@ RSpec.describe User do
     it "is stored encrypted and still found by value (D-086)" do
       user = create(:user, cpf: "123.456.789-09")
 
-      stored = described_class.connection.select_value("SELECT cpf FROM users WHERE id = #{user.id}")
+      stored = described_class.connection.select_value("SELECT cpf FROM users WHERE id = '#{user.id}'")
       expect(stored).not_to include("12345678909")
       expect(described_class.find_by(cpf: "123.456.789-09")).to eq(user)
     end

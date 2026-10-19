@@ -40,7 +40,7 @@
       <p class="mt-2 text-sm text-ink-soft"><%= t("panel.departments.form.no_managers") %></p>
     <% end %>
     <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-      <% selected = department.persisted? ? department.department_managers.map(&:membership_id) : Array(params.dig(:department, :manager_ids)).map(&:to_i) %>
+      <% selected = department.persisted? ? department.department_managers.map(&:membership_id) : Array(params.dig(:department, :manager_ids)) %>
       <% manager_options.each do |membership| %>
         <label class="flex items-center gap-2 text-sm">
           <%= check_box_tag "department[manager_ids][]", membership.id, selected.include?(membership.id), id: "department_manager_#{membership.id}" %>

@@ -13,7 +13,7 @@ RSpec.describe WorkerProfile do
     in_company do
       profile.update!(rg_number: "12.345.678-9", pis_nis: "120.12345.67-8", disability_types: %w[hearing],
         disability_rehabilitated: "1", disability_notes: "Usa aparelho auditivo")
-      row = described_class.connection.select_one("SELECT rg_number, pis_nis, disability FROM worker_profiles WHERE id = #{profile.id}")
+      row = described_class.connection.select_one("SELECT rg_number, pis_nis, disability FROM worker_profiles WHERE id = '#{profile.id}'")
 
       expect(row.values.join).not_to include("123456789", "12012345678", "hearing", "aparelho")
       expect(profile.reload).to have_attributes(rg_number: "123456789", pis_nis: "12012345678",
