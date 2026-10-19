@@ -89,3 +89,24 @@
     </tbody>
   </table>
 </div>
+
+<h2 class="mt-8 text-base font-bold text-ink-strong"><%= t(".pre_activation") %></h2>
+<p class="mt-1 text-sm text-ink-soft"><%= t(".pre_activation_hint") %></p>
+<% pre_current = PreActivationPrice.on %>
+<% pre_latest = PreActivationPrice.latest %>
+<div class="card card-body mt-3 flex max-w-3xl flex-wrap items-center justify-between gap-3">
+  <div class="text-sm">
+    <% if pre_current %>
+      <strong><%= reais(pre_current.monthly_price_cents) %></strong>
+      <span class="text-ink-soft"><%= t(".since_date", date: l(pre_current.valid_from)) %></span>
+    <% else %>
+      <span class="text-ink-soft"><%= t(".no_price") %></span>
+    <% end %>
+    <% if pre_latest && pre_latest.valid_from > Date.current && pre_latest != pre_current %>
+      <span class="block text-xs text-ink-soft"><%= t(".next_price", price: reais(pre_latest.monthly_price_cents), date: l(pre_latest.valid_from)) %></span>
+    <% end %>
+  </div>
+  <% if can?(:create, PreActivationPrice) %>
+    <%= link_to t(pre_latest ? ".new_price" : ".first_price"), new_admin_pre_activation_price_path, class: "link-button text-sm" %>
+  <% end %>
+</div>

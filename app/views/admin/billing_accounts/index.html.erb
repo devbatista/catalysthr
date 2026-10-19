@@ -1,0 +1,43 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, BillingAccount) %>
+    <div class="flex flex-wrap gap-3">
+      <% Billing::ClientRegistration::KINDS.each do |kind| %>
+        <%= link_to t(".new.#{kind}"), new_admin_client_path(kind: kind), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @accounts.empty? %>
+  <p class="card card-body mt-6 max-w-2xl text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th class="hidden sm:table-cell"><%= t(".kind") %></th>
+          <th><%= t(".plan") %></th>
+          <th><%= t(".status") %></th>
+          <th class="hidden sm:table-cell"><%= t(".since") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @accounts.each do |account| %>
+          <% subscription = account.subscription %>
+          <tr>
+            <td><%= link_to account.name, admin_client_path(account), class: "link-button" %></td>
+            <td class="hidden text-ink-soft sm:table-cell"><%= t("billing.kinds.#{account.partner? ? "partner" : "direct"}") %></td>
+            <td class="text-ink-soft"><%= subscription&.plan&.name || "—" %></td>
+            <td><%= subscription ? subscription_status_pill(subscription) : "—" %></td>
+            <td class="hidden whitespace-nowrap text-ink-soft sm:table-cell"><%= subscription ? l(subscription.started_on) : "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

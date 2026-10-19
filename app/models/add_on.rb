@@ -17,7 +17,7 @@ class AddOn < ApplicationRecord
 
   # The price in force on a date, with the same rule as the plan versions (D-611).
   def price_on(date = Date.current)
-    prices.select { |price| price.valid_from <= date }.max_by { |price| [ price.valid_from, price.version ] }
+    AddOnPrice.in_force(prices, date)
   end
 
   def latest_price

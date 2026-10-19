@@ -35,6 +35,11 @@ class PlatformAbility
       can %i[read create update], Plan
       can :create, PlanVersion
       can %i[read create], AddOnPrice
+      can %i[read create], PreActivationPrice
+      # Registering partners and direct companies, with trial or contract (RN-19-081).
+      can %i[read create], BillingAccount
     end
+    # The support reads the billing (spec 19, section 6).
+    can :read, BillingAccount if user.support?
   end
 end

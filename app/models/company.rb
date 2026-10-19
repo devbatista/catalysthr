@@ -8,6 +8,8 @@ class Company < ApplicationRecord
   # Own brand: required for a direct company to get a subdomain; optional for a
   # partner's company, shown according to brand_display_mode (D-163, RN-01-034).
   has_one :brand, as: :owner, dependent: :destroy
+  # The contract, for partners and direct companies (RN-19-001).
+  has_one :billing_account, as: :owner, dependent: :restrict_with_exception
 
   enum :brand_display_mode, { alongside: "alongside", replace: "replace" },
     prefix: :brand, validate: { allow_nil: true }

@@ -45,3 +45,11 @@ FactoryBot.define do
     association :created_by, factory: :user, platform_role: "finance"
   end
 end
+
+FactoryBot.define do
+  factory :pre_activation_price do
+    valid_from { Date.current }
+    monthly_price_cents { 1_990 }
+    association :created_by, factory: :user, platform_role: "finance"
+  end
+end
