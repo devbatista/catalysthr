@@ -40,5 +40,11 @@ NotificationType::CATALOG = [
     roles: %w[hr_admin hr_analyst consultant]),
   # Someone's e-mail bounced, to the HR of the scope (RN-15-083, D-609).
   NotificationType.new(code: "contacts.email_invalid", mandatory: false, urgent: false, channels: %w[system email],
-    roles: %w[hr_admin hr_analyst partner_admin firm_admin])
+    roles: %w[hr_admin hr_analyst partner_admin firm_admin]),
+  # The trial, to the contract's responsible: the partner's administrator or the direct
+  # company's HR administrator (RN-19-032, RN-19-034, D-616).
+  NotificationType.new(code: "billing.trial_ending", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  NotificationType.new(code: "billing.trial_expired", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin])
 ].index_by(&:code).freeze

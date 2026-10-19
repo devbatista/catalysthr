@@ -200,8 +200,9 @@ Rails.application.routes.draw do
             patch :contact
           end
         end
-        resources :companies, only: [] do
+        resources :companies, only: %i[new create] do
           resource :brand, only: %i[edit update], controller: "company_brands"
+          resource :modules, only: %i[edit update], controller: "company_modules"
           resources :hr_admins, path: "hr-admins", controller: "company_hr_admins" do
             post :resend_invitation, path: "resend-invitation", on: :member
           end

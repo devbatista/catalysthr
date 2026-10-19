@@ -77,8 +77,35 @@ end
 Membership.find_by!(user: User.find_by!(cpf: "11144477735"), organization: aurora).partner_membership_companies
   .find_or_create_by!(company: Company.find_by!(document: "12ABC345"))
 
-# Fictional CatalystHR legal texts, so the first access can be completed (D-578, D-579).
+# Contracts (spec 19): the Aurora under contract, with both modules on for its companies;
+# the Serra Azul in the free trial, where time tracking waits for the contract (D-616).
 author = User.find_by!(cpf: "52998224725")
+seed_plan = lambda do |kind, name, **prices|
+  plan = Plan.find_or_create_by!(kind: kind, name: name)
+  plan.latest_version || PlanVersion.create!(plan: plan, valid_from: Date.current, created_by: author,
+    ai_credit_overage_cents: 50, whatsapp_overage_cents: 35, module_prices: { "ponto" => "400,00", "folha" => "600,00" }, **prices)
+end
+partner_plan = seed_plan.call("partner", "Até 500 colaboradores", monthly_price_cents: 150_000, employee_limit: 500,
+  overage_per_employee_cents: 300, ai_credits: 1_000, whatsapp_messages: 2_000)
+direct_plan = seed_plan.call("direct", "Empresa direta", price_per_employee_cents: 1_200, minimum_monthly_cents: 30_000,
+  ai_credits_per_employee: 3, whatsapp_messages_per_employee: 5)
+[
+  [ aurora, partner_plan, "39053344705", { status: "active", activated_on: Date.current } ],
+  [ serra_azul, direct_plan, "98765432100", { status: "trialing", trial_ends_on: Date.current + Subscription::TRIAL_DAYS } ]
+].each do |owner, version, responsible_cpf, status|
+  next if owner.billing_account
+
+  account = BillingAccount.create!(owner: owner, responsible_user: User.find_by!(cpf: responsible_cpf),
+    cycle_day: BillingAccount.cycle_day_for(Date.current))
+  subscription = Subscription.create!(billing_account: account, plan_version: version, created_by: author,
+    started_on: Date.current, **status)
+  PlanModule::MODULES.each { |code| subscription.items.create!(kind: "module", module: code, starts_on: Date.current) }
+end
+aurora.companies.each do |company|
+  CompanyModuleSetting.apply(company, PlanModule::MODULES, by: author) if company.module_settings.empty?
+end
+
+# Fictional CatalystHR legal texts, so the first access can be completed (D-578, D-579).
 LegalDocument::KINDS.each do |kind|
   next if LegalDocument.platform.exists?(kind: kind)
 

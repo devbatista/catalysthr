@@ -72,6 +72,7 @@
 - [x] **[Claude]** Conferir o banco novo: 55 tabelas, nenhuma fora da regra da D-614 (2026-10-19)
 - [x] **[Claude]** Carregar a CBO com `bin/rails cbo:import` pelo `railway ssh` no `web`: 2.725 ocupações. Num banco vazio, o `db:prepare` carrega o `schema.rb` e marca as migrações como feitas sem rodá-las, então a migração de carga da CBO não carregou nada (2026-10-19)
 - [x] **[Claude]** Declarar as flags (`FeatureFlags.declare`) e ligar a `sign_in`. As demais (`billing`, `brand_email_domain`, `company_transfer`) continuam desligadas (2026-10-19)
+- [x] **[Claude]** Ligar a `billing` em produção, a seu pedido, para o menu Cobrança aparecer ao superadmin e ao financeiro. A `brand_email_domain` e a `company_transfer` continuam desligadas (2026-10-19)
 - [x] **[Claude]** Criar o superadmin (Rafael Batista) com um link de criar senha, e **[você]** definir a senha e ativar o MFA (2026-10-19)
 - [ ] **[você]** Publicar os termos de uso e a política de privacidade da CatalystHR no admin. Sem eles, ninguém conclui o primeiro acesso nas marcas sem textos próprios (D-578)
 

@@ -186,7 +186,7 @@
   }
 
   .pill-soon {
-    @apply rounded border border-dashed px-1.5 py-0.5 font-mono text-[8.5px] tracking-wider uppercase;
+    @apply shrink-0 rounded border border-dashed px-1.5 py-0.5 font-mono text-[8.5px] tracking-wider whitespace-nowrap uppercase;
   }
 
   .alert-ok {

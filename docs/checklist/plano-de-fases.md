@@ -102,6 +102,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] **Base visual (D-597):** cores, fontes e componentes do protótipo, barra lateral e cabeçalho, e o novo visual das telas que já existem (painel da empresa, do parceiro e do escritório, admin e login). Entra antes da spec 04. O portal do colaborador continua na spec 16 (PR #31)
 - [x] **Chaves UUID (D-614):** toda tabela com chave primária UUIDv7 e toda referência em UUID, como regra inalterável, conferida por teste do schema e pelo `strong_migrations`. As migrações das fases 0 e 1 viraram uma migração base, e o banco de produção foi recriado (PR #45)
 - [x] **Telas na largura inteira (D-615):** sem limite de largura nas telas logadas, com os campos em colunas (`form-grid`, `field-wide`, `field-full`). Login, telas do MFA, confirmação de senha e "Em breve" continuam centralizados (PR #47)
+- [ ] **Tela das feature flags (D-617):** no admin, só do superadmin, ver as flags do código e ligar e desligar cada uma para todos, com o registro de quem mudou. PR próprio, depois do 19b-2
 - [x] **Envio duplicado de formulário:** cada formulário é enviado uma vez, e a ativação repetida do MFA leva à página de segurança, em vez de "código inválido" (PR #46)
 - [x] **Spec 04:** empresa, unidades, departamentos, cargos, ficha, vínculos, revisões com vigência, campos personalizados
   - Em 5 PRs (D-600, D-602):
@@ -125,7 +126,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Em 9 PRs (D-610):
     - [x] 19a. Planos, módulos e adicionais, com as versões de preço (RN-19-010, RN-19-011, RN-19-013, RN-19-014, D-611)
     - [x] 19b-1. Contrato e assinatura com os status, cadastro de parceiro e de empresa direta pelo admin e valor de pré-ativação do parceiro (RN-19-001, RN-19-002, RN-19-035, RN-19-081, D-612, D-613)
-    - [ ] 19b-2. Empresa cliente pelo parceiro (P-03-14), módulo por empresa da carteira, módulos contratados na `Ability` e no menu, job do teste com os avisos e o status de teste vencido (RN-19-012, RN-19-030 a RN-19-032, RN-19-034, CA-19-003, D-613). A virada da pré-ativação para a faixa entra com o job diário do 19c
+    - [x] 19b-2. Empresa cliente pelo parceiro (P-03-14), módulo por empresa da carteira, módulos contratados na `Ability` e no menu, job do teste com os avisos e o status de teste vencido (RN-19-012, RN-19-030 a RN-19-032, RN-19-034, CA-19-003, D-613, D-616). A virada da pré-ativação para a faixa entra com o job diário do 19c
     - [ ] 19c. Consumo, cotas com avisos de 80% e 100% e relatório do parceiro (RN-19-020 a RN-19-024, CA-19-002, CA-19-010)
     - [ ] 19d. Faturas, proporcional, troca de plano, planos privados e ajustes, sem pagamento (RN-19-014, RN-19-015, RN-19-040, RN-19-041, RN-19-060, RN-19-061, RN-19-070, RN-19-071, CA-19-001, CA-19-005, CA-19-009, D-613)
     - [ ] 19e. PIX pelo Mercado Pago, webhook e conferência diária, e a contratação pelo cliente durante o teste (RN-19-033, RN-19-042, RN-19-046, CA-19-007, CA-19-008, D-613)

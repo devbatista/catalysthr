@@ -113,7 +113,7 @@ Definir **onde e como o CatalystHR roda**:
 
 - **RN-20-030** — Só **produção** (D-504). Para reduzir o risco **[P-20-11]**:
   - uma **empresa de demonstração** em produção, com dados fictícios, eSocial em produção restrita e marcada como interna (fora da cobrança e dos painéis de receita), para a equipe testar depois de cada deploy;
-  - **feature flags** (gem `flipper`, guardada no Postgres) para ligar funções novas por empresa antes de liberar para todos;
+  - **feature flags** (gem `flipper`, guardada no Postgres) para ligar funções novas por empresa antes de liberar para todos, numa tela do admin só do superadmin (D-617);
   - migrações seguras com a gem `strong_migrations`, no padrão expandir e depois contrair, para que a versão anterior continue funcionando durante o deploy.
 - **RN-20-031** — **CI no GitHub Actions**, em todo pull request **[P-20-12]**:
   - RuboCop, brakeman, bundler-audit e `importmap audit`;

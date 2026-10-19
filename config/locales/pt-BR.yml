@@ -566,7 +566,9 @@ pt-BR:
   navigation:
     menu: "Menu"
     close_menu: "Fechar o menu"
-    soon: "Em breve"
+    tags:
+      soon: "Em breve"
+      after_contract: "Após a contratação"
     admin_subtitle: "Administração CatalystHR"
     groups:
       operation: "Operação"
@@ -1267,8 +1269,10 @@ pt-BR:
         switch: "Trocar"
         choose: "Escolha a empresa"
       coming_soon:
-        badge: "Em breve"
         text: "Esta área ainda está em construção e será liberada numa próxima versão."
+        after_contract: "Este módulo fica disponível depois da contratação. Durante o teste grátis, ele não funciona."
+        after_contract_direct: "Para contratar, o RH administrador da empresa pode falar com a equipe da CatalystHR."
+        after_contract_partner: "A contratação é feita pelo parceiro que atende a sua empresa."
         back: "Voltar para o início"
     companies:
       index:
@@ -1418,6 +1422,44 @@ pt-BR:
           hr_admins: "RH da empresa"
           enter: "Entrar"
           company_brand: "Marca da empresa"
+          new_company: "Cadastrar empresa"
+          modules: "Módulos"
+          no_modules: "Nenhum"
+      companies:
+        new:
+          title: "Cadastrar empresa cliente"
+          subtitle: "A empresa entra na carteira, é cobrada no contrato do parceiro e recebe o convite do primeiro RH administrador."
+          back: "Voltar para a carteira"
+          company: "Empresa"
+          legal_name: "Razão social"
+          commercial_name: "Nome comercial"
+          cnpj: "CNPJ"
+          modules: "Módulos da empresa"
+          modules_hint: "Os módulos do contrato do parceiro. O preço não muda com o número de empresas que usam cada um, e dá para ligar e desligar depois, na carteira."
+          admin: "Primeiro RH administrador"
+          admin_hint: "A pessoa recebe o convite por e-mail. Se o CPF já tiver cadastro na plataforma, ela entra com a senha que já usa."
+          admin_name: "Nome"
+          admin_cpf: "CPF"
+          admin_email: "E-mail"
+          submit: "Cadastrar empresa"
+          cancel: "Cancelar"
+          without_contract: "O parceiro ainda não tem um contrato ativo com a CatalystHR. Para cadastrar empresas, fale com a equipe da CatalystHR."
+        create:
+          created: "Empresa %{company} cadastrada. O convite foi enviado para %{email}."
+          created_existing_person: "Empresa %{company} cadastrada. O CPF do RH administrador já tinha conta na plataforma: o convite foi para o e-mail já cadastrado dessa pessoa, e os dados dela não mudaram."
+      company_modules:
+        edit:
+          title: "Módulos de %{company}"
+          subtitle: "Ligue os módulos do contrato que esta empresa usa. O preço do módulo não muda com o número de empresas que usam."
+          back: "Voltar para a carteira"
+          hints:
+            ponto: "Ponto eletrônico. No teste grátis, ele não funciona."
+            folha: "Folha de pagamento, com o eSocial. No teste grátis, a folha não fecha a competência e o eSocial não funciona."
+          submit: "Salvar módulos"
+          cancel: "Cancelar"
+          without_modules: "O contrato do parceiro não tem módulos para ligar."
+        update:
+          updated: "Módulos de %{company} salvos."
       team_members:
         roles_fields:
           modules: "Módulos do consultor"
@@ -1670,6 +1712,19 @@ pt-BR:
         hint: "Quando o e-mail de uma pessoa que você acompanha volta e é marcado como inválido."
         title: "O e-mail de %{name} voltou"
         body: "O endereço foi marcado como inválido e deixa de receber os e-mails do sistema. Corrija o contato no cadastro da pessoa ou entregue os links em mãos."
+    billing:
+      trial_ending:
+        name: "Fim do teste grátis"
+        hint: "3 dias e 1 dia antes do fim do teste grátis."
+        title:
+          one: "O teste grátis de %{name} termina amanhã"
+          other: "O teste grátis de %{name} termina em %{count} dias"
+        body: "O teste termina em %{date}. Para continuar usando o sistema depois disso, fale com a equipe da CatalystHR."
+      trial_expired:
+        name: "Teste grátis encerrado"
+        hint: "Quando o teste grátis termina sem contratação."
+        title: "O teste grátis de %{name} terminou"
+        body: "O teste terminou em %{date}. Para contratar e continuar usando o sistema, fale com a equipe da CatalystHR."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
@@ -2392,6 +2447,14 @@ pt-BR:
         admin_name: "Nome do administrador"
         admin_cpf: "CPF do administrador"
         admin_email: "E-mail do administrador"
+      billing/portfolio_company_registration:
+        legal_name: "Razão social"
+        commercial_name: "Nome comercial"
+        cnpj: "CNPJ"
+        modules: "Módulos"
+        admin_name: "Nome do RH administrador"
+        admin_cpf: "CPF do RH administrador"
+        admin_email: "E-mail do RH administrador"
       employment_form:
         kind: "Tipo de vínculo"
         category: "Categoria"
@@ -2437,6 +2500,12 @@ pt-BR:
               without_price: "têm um adicional sem preço vigente"
             base:
               without_pre_activation_price: "Para começar com contrato, cadastre antes a mensalidade de pré-ativação em Planos e preços."
+        billing/portfolio_company_registration:
+          attributes:
+            modules:
+              not_contracted: "precisam estar no contrato do parceiro"
+            base:
+              without_contract: "O parceiro não tem um contrato ativo com a CatalystHR."
         employment_form:
           attributes:
             base:

@@ -8,6 +8,11 @@ module Panel
 
       private
 
+      # The partner's billing screens (spec 19), hidden while billing is off (D-610).
+      def require_billing_feature
+        head :not_found unless FeatureFlags.enabled?(FeatureFlags::BILLING)
+      end
+
       # The partner that owns the subdomain. Any other subdomain has no partner's panel.
       def partner
         owner = Current.brand.owner

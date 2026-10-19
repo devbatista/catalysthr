@@ -15,7 +15,7 @@
           <% group.items.each do |item| %>
             <%= link_to item.path, class: class_names("nav-link", "nav-link-active" => item.active), "aria-current": ("page" if item.active) do %>
               <span class="flex-1"><%= item.label %></span>
-              <% if item.soon %><span class="pill-soon"><%= t("navigation.soon") %></span><% end %>
+              <% if item.tag %><span class="pill-soon"><%= item.tag %></span><% end %>
             <% end %>
           <% end %>
         </div>

@@ -25,6 +25,10 @@ class PartnerAbility
     can %i[read update], Brand, owner_type: "Partner", owner_id: partner.id
     can %i[read create update], Brand, owner_type: "Company", owner_id: partner.companies.pluck(:id)
     can :update_brand_display_mode, Company, partner_id: partner.id
+    # The client companies: register one with its first HR administrator (P-03-14) and
+    # turn the contracted modules on or off for each (RN-19-012, D-616).
+    can :create, Company, partner_id: partner.id
+    can :manage_modules, Company, partner_id: partner.id
     # The partner's e-mail domain (spec 01, section 6, D-596). The client companies send
     # from it (P-01-18).
     can :manage_email_domain, Brand, owner_type: "Partner", owner_id: partner.id

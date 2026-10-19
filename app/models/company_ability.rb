@@ -2,7 +2,8 @@
 # of the membership there. A consultant of the company's partner, with the company
 # assigned, acts as an HR analyst of all units (D-192), with the modules the partner
 # released (P-03-06). The support entering a direct company acts the same way, with
-# every module the company contracted (D-581, D-593). Listings use hash conditions, so accessible_by works
+# every module the company contracted (D-581, D-593). The released modules count only
+# within the contracted ones (P-03-12, D-616). Listings use hash conditions, so accessible_by works
 # (RN-03-002). A read-only membership (D-090) manages nothing (RN-03-004).
 class CompanyAbility
   include CanCan::Ability
@@ -16,16 +17,17 @@ class CompanyAbility
   def initialize(user, company, support_access: nil)
     membership = Membership.with_access.find_by(user: user, organization: company)
     roles = membership.nil? || membership.read_only? ? [] : membership.roles
+    contracted = company.contract_modules.releasable
 
     hr_admin(user, company) if roles.include?("hr_admin")
     if roles.include?("hr_analyst")
-      hr_analyst(company, units: membership, modules: membership.enabled_modules)
+      hr_analyst(company, units: membership, modules: membership.enabled_modules & contracted)
     end
     # The consultant and the support act as an HR analyst of all units (D-192, D-581).
     if (consultant = consultant_membership(user, company))
-      hr_analyst(company, units: :all, modules: consultant.enabled_modules)
+      hr_analyst(company, units: :all, modules: consultant.enabled_modules & contracted)
     elsif support_at?(user, company, support_access)
-      hr_analyst(company, units: :all, modules: Membership::RELEASABLE_MODULES)
+      hr_analyst(company, units: :all, modules: contracted)
     end
     manager(company, membership) if roles.include?("manager")
     client_manager(company, membership) if roles.include?("client_manager")

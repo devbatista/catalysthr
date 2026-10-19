@@ -103,13 +103,8 @@ module Billing
       Partner.create!(name: commercial_name, legal_name: legal_name, cnpj: cnpj)
     end
 
-    # The employer is identified by the CNPJ root, and the full CNPJ goes to the
-    # headquarters (RN-04-001, RN-04-010, D-600).
     def create_direct_company
-      number = Cnpj.normalize(cnpj)
-      company = Company.create!(name: commercial_name, legal_name: legal_name, employer_type: "company", document: number[0, 8])
-      ActsAsTenant.with_tenant(company) { company.headquarters.update!(registration_type: "cnpj", registration_number: number) }
-      company
+      Company.create_with_cnpj!(cnpj: cnpj, name: commercial_name, legal_name: legal_name)
     end
 
     def plan_on_sale

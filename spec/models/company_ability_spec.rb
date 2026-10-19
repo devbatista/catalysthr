@@ -84,7 +84,44 @@ RSpec.describe CompanyAbility do
       expect(analyst_ability).not_to be_able_to(:create, WorkerProfile)
 
       analyst.update!(enabled_modules: %w[folha])
+      Flipper.enable(FeatureFlags::BILLING)
+      contract_for(company, modules: %w[folha])
+      company.reload
       expect(ability_for(analyst)).to be_able_to(:read_pay, at_branch)
+    end
+
+    it "counts a released module only when the contract has it (P-03-12, D-616)" do
+      Flipper.enable(FeatureFlags::BILLING)
+      analyst = create(:membership, organization: company, roles: %w[hr_analyst], status: "active", enabled_modules: %w[folha])
+      Memberships::AssignUnits.call(membership: analyst, unit_ids: [ branch.id ], by: hr_admin)
+      expect(ability_for(analyst)).not_to be_able_to(:read_pay, at_branch)
+
+      subscription = contract_for(company, modules: %w[ponto])
+      company.reload
+      expect(ability_for(analyst)).not_to be_able_to(:read_pay, at_branch)
+
+      subscription.items.create!(kind: "module", module: "folha", starts_on: Date.current)
+      company.reload
+      expect(ability_for(analyst)).to be_able_to(:read_pay, at_branch)
+
+      subscription.update!(status: "closed")
+      company.reload
+      expect(ability_for(analyst)).not_to be_able_to(:read_pay, at_branch)
+    end
+
+    it "gives the partner's consultant a module only when the partner turned it on for the company (RN-19-012, D-616)" do
+      Flipper.enable(FeatureFlags::BILLING)
+      partner = create(:partner)
+      company.update!(partner: partner)
+      consultant = create(:membership, organization: partner, roles: %w[consultant], status: "active", enabled_modules: %w[folha])
+      consultant.partner_membership_companies.create!(company: company)
+      contract_for(partner, modules: %w[folha])
+      company.reload
+      expect(ability_for(consultant)).not_to be_able_to(:read_pay, at_branch)
+
+      turn_on_modules(company, %w[folha])
+      company.reload
+      expect(ability_for(consultant)).to be_able_to(:read_pay, at_branch)
     end
 
     it "gives the manager the basic data of the team only (E)" do

@@ -22,7 +22,11 @@ RSpec.describe "Navigation", type: :request do
   end
 
   describe "in a company" do
+    let!(:subscription) { contract_for(partner) }
+
     before do
+      Flipper.enable(FeatureFlags::BILLING)
+      turn_on_modules(padaria)
       create(:membership, user: user, organization: padaria, roles: %w[manager])
       sign_in
     end
@@ -47,6 +51,47 @@ RSpec.describe "Navigation", type: :request do
       get "/soon/recruitment"
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "hides a module the partner turned off for the company, and does not open it (RN-19-012, D-616)" do
+      turn_on_modules(padaria, %w[folha])
+
+      get "/"
+      expect(response.body).to include("Folha de pagamento")
+      expect(response.body).not_to include("Ponto eletrônico")
+
+      get "/soon/time-tracking"
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "lists the modules as before the contracts while billing is off (D-610)" do
+      Flipper.disable(FeatureFlags::BILLING)
+      turn_on_modules(padaria, [])
+
+      get "/"
+      expect(response.body).to include("Folha de pagamento", "Ponto eletrônico")
+      expect(response.body.scan(">Em breve<").size).to eq(ComingSoon::COMPANY_FEATURES.size)
+    end
+
+    it "hides the modules out of the contract (P-03-12, D-616)" do
+      subscription.items.each { |item| item.update!(ends_on: Date.yesterday, starts_on: Date.yesterday) }
+
+      get "/"
+      expect(response.body).not_to include("Folha de pagamento", "Ponto eletrônico")
+      expect(response.body).to include("Integrações contábeis")
+    end
+
+    it "shows time tracking as available after the contract during the trial (CA-19-003, RN-19-031)" do
+      subscription.update!(status: "trialing", trial_ends_on: Date.current + 5, activated_on: nil)
+
+      get "/"
+      expect(response.body).to match(%r{href="/soon/time-tracking".*?Após a contratação}m)
+      expect(response.body).to match(%r{href="/soon/payroll".*?Em breve}m)
+
+      get "/soon/time-tracking"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Este módulo fica disponível depois da contratação",
+        "A contratação é feita pelo parceiro que atende a sua empresa")
     end
   end
 

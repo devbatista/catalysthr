@@ -13,4 +13,14 @@ class Partner < ApplicationRecord
 
   validates :name, :legal_name, presence: true
   validates :cnpj, presence: true, cnpj: true, uniqueness: true
+
+  def subscription
+    billing_account&.subscription
+  end
+
+  # The modules of the partner's contract, which it turns on per company (RN-19-012). A
+  # closed contract has none.
+  def contracted_modules
+    subscription.nil? || subscription.closed? ? [] : subscription.modules
+  end
 end
