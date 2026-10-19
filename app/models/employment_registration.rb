@@ -14,10 +14,10 @@ class EmploymentRegistration
   attribute :category, :string, default: "standard"
   attribute :registration_number, :string
   attribute :started_on, :date
-  attribute :position_id, :integer
-  attribute :unit_id, :integer
-  attribute :department_id, :integer
-  attribute :allocation_client_id, :integer
+  attribute :position_id, :string
+  attribute :unit_id, :string
+  attribute :department_id, :string
+  attribute :allocation_client_id, :string
   attribute :salary, :string
   attribute :salary_unit, :string, default: "month"
   attribute :variable_salary_description, :string

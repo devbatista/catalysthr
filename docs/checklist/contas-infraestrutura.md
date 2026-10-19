@@ -63,6 +63,16 @@
 - [x] **[você]** IAM: política inline `catalysthr-app-email` no usuário `catalysthr-app`, com `ses:DeleteSuppressedDestination` para o suporte liberar pelo admin um e-mail que voltou (D-609). O usuário não tinha nenhuma permissão do SES, então a política também cobre o envio (`ses:SendEmail` nas identidades da conta e no configuration set `catalysthr-padrao`) e os domínios das marcas (criar, ler, apagar e MAIL FROM das identidades), com um `Deny` que impede o app de apagar ou alterar a identidade `catalysthr.com.br`. Conferida pela simulação do IAM (2026-10-19)
 - [x] **[você]** `aws sso login` antes dos dois passos acima, que eu rodo pela CLI com a sua confirmação (2026-10-19)
 
+*Fase 1, troca para chaves UUID (D-614). O banco de produção é recriado; não havia dado a manter. Nesta ordem, cada passo com a sua confirmação:*
+
+- [ ] **[Claude]** Anotar o que está em produção para refazer depois: as flags ligadas e os textos legais publicados (só os nomes e as versões)
+- [ ] **[Claude]** Backup do banco de produção com `pg_dump` pela CLI do Railway, guardado fora do repositório, até o banco novo ser conferido
+- [ ] **[você]** Mergear o PR da D-614, **sem aprovar ainda o deploy** no GitHub Actions
+- [ ] **[Claude]** Apagar e recriar o schema `public` do banco de produção e limpar as filas do Sidekiq no Redis, que guardam ids antigos
+- [ ] **[você]** Aprovar o deploy. Ao subir, o `web` roda o `db:prepare`, que cria o banco pela migração base e carrega a CBO
+- [ ] **[Claude]** Recriar o superadmin, ligar de novo as flags anotadas e conferir o login no admin
+- [ ] **[você]** Republicar os termos de uso e a política de privacidade da CatalystHR no admin
+
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 
 - [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)

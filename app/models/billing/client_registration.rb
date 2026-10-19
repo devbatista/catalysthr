@@ -17,7 +17,7 @@ module Billing
     attribute :commercial_name, :string
     attribute :cnpj, :string
     attribute :slug, :string
-    attribute :plan_id, :integer
+    attribute :plan_id, :string
     attribute :modules, default: -> { [] }
     attribute :add_on_codes, default: -> { [] }
     attribute :admin_name, :string

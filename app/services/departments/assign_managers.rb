@@ -8,7 +8,7 @@ module Departments
 
     def initialize(department:, membership_ids:)
       @department = department
-      @membership_ids = Array(membership_ids).compact_blank.map(&:to_i)
+      @membership_ids = Array(membership_ids).compact_blank
     end
 
     def call
