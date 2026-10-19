@@ -1,7 +1,7 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 
 <% if @link.nil? %>
-  <div class="card card-body mt-6 max-w-2xl">
+  <div class="card card-body mt-6">
     <p class="text-sm text-ink-soft"><%= t(".none") %></p>
     <% if can?(:link, AccountingFirmCompany.new(company: Current.company)) %>
       <p class="mt-4"><%= link_to t(".link"), new_accounting_firm_path, class: "btn btn-primary" %></p>
@@ -9,7 +9,7 @@
   </div>
 <% else %>
   <% firm = @link.accounting_firm %>
-  <div class="card card-body mt-6 max-w-3xl">
+  <div class="card card-body mt-6">
     <dl class="details-list">
       <div><dt><%= t(".name") %></dt><dd><%= firm.name %></dd></div>
       <div><dt><%= t(".cnpj") %></dt><dd class="font-mono"><%= Cnpj.format(firm.cnpj) %></dd></div>
@@ -23,7 +23,7 @@
   </div>
 
   <% if @pending_admins.any? && can?(:resend_invitation, @link) %>
-    <section class="card card-body mt-6 max-w-3xl space-y-4">
+    <section class="card card-body mt-6 space-y-4">
       <p class="text-sm text-ink-soft"><%= t(".pending_admin") %></p>
       <% @pending_admins.each do |membership| %>
         <%= form_with url: resend_invitation_accounting_firm_path, method: :post, class: "space-y-2" do |form| %>

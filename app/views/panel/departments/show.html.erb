@@ -6,7 +6,7 @@
   <span class="pill <%= @department.active? ? "pill-ok" : "pill-mute" %>"><%= t("departments.statuses.#{@department.status}") %></span>
 </div>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <dl class="details-list">
     <div><dt><%= t(".unit") %></dt><dd><%= @department.unit.name %></dd></div>
     <div><dt><%= t(".parent") %></dt><dd><%= @department.ancestors.reverse.map(&:name).join(" › ").presence || "—" %></dd></div>

@@ -1,6 +1,6 @@
 <%# The unit's form (RN-04-011 to RN-04-013): the address by CEP (D-215) and the position
     confirmed on the map (RN-04-012, D-216). Without JavaScript, everything is filled by hand. %>
-<%= form_with model: unit, url: url, method: method, class: "mt-6 max-w-3xl space-y-6", data: { unit_form: true } do |form| %>
+<%= form_with model: unit, url: url, method: method, class: "mt-6 space-y-6", data: { unit_form: true } do |form| %>
   <% if unit.errors.any? %>
     <div class="alert-bad" role="alert">
       <ul class="list-disc space-y-1 pl-5">
@@ -11,11 +11,11 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t("panel.units.form.identification") %></h2>
-    <div>
-      <%= form.label :name, t("panel.units.form.name"), class: "field-label" %>
-      <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
-    </div>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :name, t("panel.units.form.name"), class: "field-label" %>
+        <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+      </div>
       <div>
         <%= form.label :registration_type, t("panel.units.form.registration_type"), class: "field-label" %>
         <%= form.select :registration_type, Unit::REGISTRATION_TYPES.map { |type| [ t("units.registration_types.#{type}"), type ] },
@@ -25,9 +25,7 @@
         <%= form.label :registration_number, t("panel.units.form.registration_number"), class: "field-label" %>
         <%= form.text_field :registration_number, autocomplete: "off", class: "input font-mono" %>
       </div>
-    </div>
-    <p class="field-hint"><%= t("panel.units.form.registration_hint", root: Current.company.formatted_document) %></p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <p class="field-hint field-full -mt-3"><%= t("panel.units.form.registration_hint", root: Current.company.formatted_document) %></p>
       <div>
         <%= form.label :time_zone, t("panel.units.form.time_zone"), class: "field-label" %>
         <%= form.select :time_zone, Unit::TIME_ZONES, {}, class: "input" %>
@@ -55,32 +53,32 @@
       </button>
     </div>
     <p class="field-hint" data-lookup-status aria-live="polite"></p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-6">
-      <div class="sm:col-span-4">
+    <div class="form-grid">
+      <div class="field-wide">
         <%= form.label :street, t("panel.units.form.street"), class: "field-label" %>
         <%= form.text_field :street, autocomplete: "address-line1", class: "input", data: { address_field: "street" } %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :street_number, t("panel.units.form.street_number"), class: "field-label" %>
         <%= form.text_field :street_number, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :complement, t("panel.units.form.complement"), class: "field-label" %>
         <%= form.text_field :complement, autocomplete: "address-line2", class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :district, t("panel.units.form.district"), class: "field-label" %>
         <%= form.text_field :district, class: "input", data: { address_field: "district" } %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :city, t("panel.units.form.city"), class: "field-label" %>
         <%= form.text_field :city, autocomplete: "address-level2", class: "input", data: { address_field: "city" } %>
       </div>
-      <div class="sm:col-span-1">
+      <div>
         <%= form.label :state, t("panel.units.form.state"), class: "field-label" %>
         <%= form.select :state, Unit::STATES, { include_blank: true }, class: "input", data: { address_field: "state" } %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :ibge_city_code, t("panel.units.form.ibge_city_code"), class: "field-label" %>
         <%= form.text_field :ibge_city_code, inputmode: "numeric", class: "input font-mono", data: { address_field: "ibge_city_code" } %>
       </div>
@@ -97,7 +95,7 @@
     <div class="h-72 overflow-hidden rounded-lg border border-line bg-canvas" data-unit-map
       data-not-found="<%= t("panel.units.form.not_found") %>" data-searching="<%= t("panel.units.form.searching") %>"
       data-found="<%= t("panel.units.form.found") %>"></div>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <div>
         <%= form.label :latitude, t("panel.units.form.latitude"), class: "field-label" %>
         <%= form.number_field :latitude, step: "any", min: -90, max: 90, class: "input font-mono", data: { latitude: true } %>

@@ -1,5 +1,5 @@
 <%# The brand's e-mail domain (RN-01-040, D-596). Locals: brand, url. %>
-<section class="card card-body mt-6 max-w-2xl" aria-labelledby="email-domain-title">
+<section class="card card-body mt-6" aria-labelledby="email-domain-title">
   <h2 id="email-domain-title" class="card-title"><%= t("brands.email_domain.title") %></h2>
   <% if brand.email_domain.blank? %>
     <p class="mt-1 text-sm"><%= t("brands.email_domain.not_configured", address: BrandSender::PLATFORM_ADDRESS) %></p>

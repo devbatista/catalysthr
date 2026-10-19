@@ -9,7 +9,7 @@
 <h1 class="page-title mt-3"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
-<%= form_with model: @profile, url: employee_path(@profile), method: :patch, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with model: @profile, url: employee_path(@profile), method: :patch, class: "mt-6 space-y-6" do |form| %>
   <% if @profile.errors.any? %>
     <div class="alert-bad" role="alert">
       <ul class="list-disc space-y-1 pl-5">
@@ -20,11 +20,11 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".identification") %></h2>
-    <div>
-      <%= form.label :social_name, t(".social_name"), class: "field-label" %>
-      <%= form.text_field :social_name, maxlength: 120, class: "input" %>
-    </div>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :social_name, t(".social_name"), class: "field-label" %>
+        <%= form.text_field :social_name, maxlength: 120, class: "input" %>
+      </div>
       <div>
         <%= form.label :sex, t(".sex"), class: "field-label" %>
         <%= form.select :sex, select_options.("sexes", WorkerProfile::SEXES), { include_blank: true }, class: "input" %>
@@ -46,20 +46,20 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".birth") %></h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-6">
-      <div class="sm:col-span-3">
+    <div class="form-grid">
+      <div>
         <%= form.label :birth_city, t(".birth_city"), class: "field-label" %>
         <%= form.text_field :birth_city, class: "input" %>
       </div>
-      <div class="sm:col-span-1">
+      <div>
         <%= form.label :birth_state, t(".state"), class: "field-label" %>
         <%= form.select :birth_state, Unit::STATES, { include_blank: true }, class: "input" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :birth_country, t(".birth_country"), class: "field-label" %>
         <%= form.text_field :birth_country, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :nationality, t(".nationality"), class: "field-label" %>
         <%= form.text_field :nationality, class: "input" %>
       </div>
@@ -71,64 +71,64 @@
       <h2 class="card-title"><%= t(".documents") %></h2>
       <p class="field-hint"><%= t(".sensitive_hint") %></p>
     </div>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-6">
-      <div class="sm:col-span-2">
+    <div class="form-grid">
+      <div>
         <%= form.label :rg_number, t(".rg_number"), class: "field-label" %>
         <%= form.text_field :rg_number, value: reveal_confirmed(@profile, :rg_number, as: :text, section: :documents), autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :rg_issuer, t(".rg_issuer"), class: "field-label" %>
         <%= form.text_field :rg_issuer, class: "input" %>
       </div>
-      <div class="sm:col-span-1">
+      <div>
         <%= form.label :rg_state, t(".state"), class: "field-label" %>
         <%= form.select :rg_state, Unit::STATES, { include_blank: true }, class: "input" %>
       </div>
-      <div class="sm:col-span-1">
+      <div>
         <%= form.label :rg_issued_on, t(".issued_on"), class: "field-label" %>
         <%= form.date_field :rg_issued_on, class: "input" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :ctps_number, t(".ctps_number"), class: "field-label" %>
         <%= form.text_field :ctps_number, value: reveal_confirmed(@profile, :ctps_number, as: :text, section: :documents), autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :ctps_series, t(".ctps_series"), class: "field-label" %>
         <%= form.text_field :ctps_series, class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :ctps_state, t(".state"), class: "field-label" %>
         <%= form.select :ctps_state, Unit::STATES, { include_blank: true }, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :pis_nis, t(".pis_nis"), class: "field-label" %>
         <%= form.text_field :pis_nis, value: reveal_confirmed(@profile, :pis_nis, as: :text, section: :documents), inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :voter_id, t(".voter_id"), class: "field-label" %>
         <%= form.text_field :voter_id, value: reveal_confirmed(@profile, :voter_id, as: :text, section: :documents), inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :cnh_number, t(".cnh_number"), class: "field-label" %>
         <%= form.text_field :cnh_number, value: reveal_confirmed(@profile, :cnh_number, as: :text, section: :documents), autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :cnh_category, t(".cnh_category"), class: "field-label" %>
         <%= form.select :cnh_category, WorkerProfile::CNH_CATEGORIES, { include_blank: true }, class: "input" %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :cnh_expires_on, t(".cnh_expires_on"), class: "field-label" %>
         <%= form.date_field :cnh_expires_on, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :class_registration, t(".class_registration"), class: "field-label" %>
         <%= form.text_field :class_registration, value: reveal_confirmed(@profile, :class_registration, as: :text, section: :documents), autocomplete: "off", class: "input font-mono" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :class_registration_issuer, t(".class_registration_issuer"), class: "field-label" %>
         <%= form.text_field :class_registration_issuer, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :foreign_registration, t(".foreign_registration"), class: "field-label" %>
         <%= form.text_field :foreign_registration, value: reveal_confirmed(@profile, :foreign_registration, as: :text, section: :documents), autocomplete: "off", class: "input font-mono" %>
       </div>
@@ -152,40 +152,40 @@
       </button>
     </div>
     <p class="field-hint" data-lookup-status aria-live="polite"></p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-6">
-      <div class="sm:col-span-4">
+    <div class="form-grid">
+      <div class="field-wide">
         <%= form.label :street, t(".street"), class: "field-label" %>
         <%= form.text_field :street, class: "input", data: { address_field: "street" } %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :street_number, t(".street_number"), class: "field-label" %>
         <%= form.text_field :street_number, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :complement, t(".complement"), class: "field-label" %>
         <%= form.text_field :complement, class: "input" %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :district, t(".district"), class: "field-label" %>
         <%= form.text_field :district, class: "input", data: { address_field: "district" } %>
       </div>
-      <div class="sm:col-span-3">
+      <div>
         <%= form.label :city, t(".city"), class: "field-label" %>
         <%= form.text_field :city, class: "input", data: { address_field: "city" } %>
       </div>
-      <div class="sm:col-span-1">
+      <div>
         <%= form.label :state, t(".state"), class: "field-label" %>
         <%= form.select :state, Unit::STATES, { include_blank: true }, class: "input", data: { address_field: "state" } %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :ibge_city_code, t(".ibge_city_code"), class: "field-label" %>
         <%= form.text_field :ibge_city_code, inputmode: "numeric", class: "input font-mono", data: { address_field: "ibge_city_code" } %>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <%= form.label :foreign_country, t(".foreign_country"), class: "field-label" %>
         <%= form.text_field :foreign_country, class: "input" %>
       </div>
-      <div class="sm:col-span-4">
+      <div class="field-wide">
         <%= form.label :foreign_address, t(".foreign_address"), class: "field-label" %>
         <%= form.text_field :foreign_address, class: "input" %>
       </div>
@@ -195,12 +195,12 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".foreign") %></h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <div>
         <%= form.label :arrived_on, t(".arrived_on"), class: "field-label" %>
         <%= form.date_field :arrived_on, class: "input" %>
       </div>
-      <div>
+      <div class="field-wide">
         <%= form.label :immigration_condition, t(".immigration_condition"), class: "field-label" %>
         <%= form.select :immigration_condition, select_options.("immigration_conditions", WorkerProfile::IMMIGRATION_CONDITIONS),
           { include_blank: true }, class: "input" %>
@@ -243,7 +243,7 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".contact") %></h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <div>
         <%= form.label :personal_email, t(".personal_email"), class: "field-label" %>
         <%= form.email_field :personal_email, class: "input" %>
@@ -260,7 +260,7 @@
   <% if definitions.any? %>
     <section class="card card-body space-y-4">
       <h2 class="card-title"><%= t(".custom_fields") %></h2>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="form-grid">
         <% definitions.each do |definition| %>
           <% name = "worker_profile[custom_fields][#{definition.key}]" %>
           <% id = "worker_profile_custom_#{definition.key}" %>

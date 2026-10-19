@@ -1,18 +1,18 @@
 <%# A new employment with its first conditions (RN-04-051, RN-04-060), or the intern's
     conversion to CLT (CA-04-006, D-604). %>
-<%= form_with model: @registration, scope: :employment_form, url: url, method: :post, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with model: @registration, scope: :employment_form, url: url, method: :post, class: "mt-6 space-y-6" do |form| %>
   <%= render "panel/employees/errors", record: @registration %>
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t("panel.employments.registration.employment") %></h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <% unless conversion %>
         <div>
           <%= form.label :kind, t("panel.employments.registration.kind"), class: "field-label" %>
           <%= form.select :kind, Employment::KINDS.map { |kind| [ t("employments.kinds.#{kind}"), kind ] }, {}, class: "input" %>
         </div>
       <% end %>
-      <div>
+      <div class="field-wide">
         <%= form.label :category, t("panel.employments.registration.category"), class: "field-label" %>
         <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] }, {}, class: "input" %>
         <% unless conversion %><p class="field-hint"><%= t("panel.employments.registration.category_hint") %></p><% end %>

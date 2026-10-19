@@ -6,8 +6,8 @@
 <% units = unit_options.to_a | [ revision.try(:unit) ].compact %>
 <% departments = (department_options.to_a | [ revision.try(:department) ].compact).group_by(&:unit) %>
 <% clients = Current.company.uses_allocation_clients ? allocation_client_options.to_a | [ revision.try(:allocation_client) ].compact : [] %>
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-  <div class="sm:col-span-2">
+<div class="form-grid">
+  <div class="field-wide">
     <%= form.label :position_id, t("panel.employment_revisions.form.position"), class: "field-label" %>
     <%= form.select :position_id, positions.map { |position| [ "#{position.name} (CBO #{position.cbo_code})", position.id ] },
       { prompt: t("panel.employment_revisions.form.choose_position") }, required: true, class: "input" %>
@@ -27,7 +27,7 @@
     <p class="field-hint"><%= t("panel.employment_revisions.form.department_hint") %></p>
   </div>
   <% if Current.company.uses_allocation_clients %>
-    <div class="sm:col-span-2">
+    <div class="field-wide">
       <%= form.label :allocation_client_id, t("panel.employment_revisions.form.allocation_client"), class: "field-label" %>
       <%= form.select :allocation_client_id, clients.map { |client| [ client.name, client.id ] },
         { include_blank: t("panel.employment_revisions.form.no_allocation_client") }, class: "input" %>
@@ -43,7 +43,7 @@
     <%= form.select :salary_unit, EmploymentRevision::SALARY_UNITS.map { |unit| [ t("employment_revisions.salary_unit_options.#{unit}"), unit ] },
       {}, class: "input" %>
   </div>
-  <div class="sm:col-span-2">
+  <div class="field-full">
     <%= form.label :variable_salary_description, t("panel.employment_revisions.form.variable_salary_description"), class: "field-label" %>
     <%= form.text_area :variable_salary_description, rows: 2, class: "input" %>
     <p class="field-hint"><%= t("panel.employment_revisions.form.variable_salary_hint") %></p>
@@ -52,7 +52,7 @@
     <%= form.label :weekly_hours, t("panel.employment_revisions.form.weekly_hours"), class: "field-label" %>
     <%= form.number_field :weekly_hours, step: "0.25", min: 0, max: 99.75, class: "input w-32" %>
   </div>
-  <div class="sm:col-span-2">
+  <div class="field-full">
     <%= form.label :justification, t("panel.employment_revisions.form.justification"), class: "field-label" %>
     <%= form.text_area :justification, rows: 2, class: "input" %>
     <p class="field-hint"><%= t("panel.employment_revisions.form.justification_hint") %></p>

@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<div class="mt-6 max-w-4xl space-y-6">
+<div class="mt-6 space-y-6">
   <% @profile.employments.sort_by { |item| [ item.open? ? 0 : 1, -item.started_on.jd ] }.each do |employment| %>
     <% current = employment.effective_revision %>
     <section class="card card-body" id="employment-<%= employment.id %>">

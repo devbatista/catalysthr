@@ -4,7 +4,7 @@
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 <p class="mt-3 text-sm"><%= link_to t(".notifications"), edit_company_notification_settings_path, class: "link-button" %></p>
 
-<%= form_with model: @company, url: company_settings_path, method: :patch, scope: :company, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with model: @company, url: company_settings_path, method: :patch, scope: :company, class: "mt-6 space-y-6" do |form| %>
   <% if @company.errors.any? %>
     <div class="alert-bad" role="alert">
       <ul class="list-disc space-y-1 pl-5">
@@ -15,8 +15,8 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".company") %></h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div>
+    <div class="form-grid">
+      <div class="field-wide">
         <%= form.label :legal_name, t(".legal_name"), class: "field-label" %>
         <%= form.text_field :legal_name, required: true, class: "input" %>
       </div>
@@ -41,22 +41,24 @@
 
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".rules") %></h2>
-    <div>
-      <%= form.label :read_only_period_days, t(".read_only_period_days"), class: "field-label" %>
-      <%= form.number_field :read_only_period_days, min: 0, max: 3650, required: true, class: "input w-32" %>
-      <p class="field-hint"><%= t(".read_only_period_hint") %></p>
-    </div>
-    <div>
-      <%= form.label :next_registration_number, t(".next_registration_number"), class: "field-label" %>
-      <%= form.number_field :next_registration_number, min: 1, required: true, class: "input w-40 font-mono" %>
-      <p class="field-hint"><%= t(".next_registration_number_hint") %></p>
-    </div>
-    <div>
-      <label class="flex items-center gap-2 text-sm font-semibold">
-        <%= form.check_box :uses_allocation_clients %>
-        <%= t(".uses_allocation_clients") %>
-      </label>
-      <p class="field-hint"><%= t(".uses_allocation_clients_hint") %></p>
+    <div class="form-grid">
+      <div>
+        <%= form.label :read_only_period_days, t(".read_only_period_days"), class: "field-label" %>
+        <%= form.number_field :read_only_period_days, min: 0, max: 3650, required: true, class: "input w-32" %>
+        <p class="field-hint"><%= t(".read_only_period_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :next_registration_number, t(".next_registration_number"), class: "field-label" %>
+        <%= form.number_field :next_registration_number, min: 1, required: true, class: "input w-40 font-mono" %>
+        <p class="field-hint"><%= t(".next_registration_number_hint") %></p>
+      </div>
+      <div class="field-wide">
+        <label class="flex items-center gap-2 text-sm font-semibold">
+          <%= form.check_box :uses_allocation_clients %>
+          <%= t(".uses_allocation_clients") %>
+        </label>
+        <p class="field-hint"><%= t(".uses_allocation_clients_hint") %></p>
+      </div>
     </div>
   </section>
 

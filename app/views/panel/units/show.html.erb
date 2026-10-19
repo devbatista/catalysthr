@@ -7,7 +7,7 @@
   <span class="pill <%= @unit.active? ? "pill-ok" : "pill-mute" %>"><%= t("units.statuses.#{@unit.status}") %></span>
 </div>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <dl class="details-list">
     <div><dt><%= t(".registration") %></dt><dd class="font-mono"><%= unit_registration(@unit) %></dd></div>
     <div><dt><%= t(".time_zone") %></dt><dd><%= @unit.time_zone %></dd></div>

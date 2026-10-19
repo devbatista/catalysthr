@@ -3,7 +3,7 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".instructions") %></p>
 
-<%= form_with url: admin_users_path, method: :get, class: "mt-6 flex max-w-xl flex-wrap items-end gap-3" do |form| %>
+<%= form_with url: admin_users_path, method: :get, class: "mt-6 flex flex-wrap items-end gap-3" do |form| %>
   <div class="flex-1">
     <%= form.label :cpf, t(".cpf"), class: "field-label" %>
     <%= form.text_field :cpf, value: @cpf, autocomplete: "off", required: true,
@@ -13,9 +13,9 @@
 <% end %>
 
 <% if @cpf.present? && @user.nil? %>
-  <p class="alert-info mt-6 max-w-xl"><%= t(".not_found") %></p>
+  <p class="alert-info mt-6"><%= t(".not_found") %></p>
 <% elsif @user %>
-  <section class="card card-body mt-6 max-w-2xl space-y-6">
+  <section class="card card-body mt-6 space-y-6">
     <div>
       <h2 class="card-title"><%= @user.name %></h2>
       <dl class="details-list mt-4">
@@ -40,10 +40,14 @@
       <%= form_with url: contact_admin_user_path(@user), method: :patch, class: "space-y-2" do |form| %>
         <h3 class="card-title"><%= t(".contact") %></h3>
         <p class="field-hint"><%= t(".contact_hint") %></p>
-        <%= email_field_tag :email, @user.email, class: "input", "aria-label": t(".email") %>
-        <%= telephone_field_tag :mobile_phone, @user.mobile_phone, class: "input", "aria-label": t(".mobile_phone") %>
-        <%= text_field_tag :reason, nil, id: "contact_reason", required: true, maxlength: 500, placeholder: t(".reason"),
-          class: "input", "aria-label": t(".reason") %>
+        <div class="form-grid">
+          <div><%= email_field_tag :email, @user.email, class: "input", "aria-label": t(".email") %></div>
+          <div><%= telephone_field_tag :mobile_phone, @user.mobile_phone, class: "input", "aria-label": t(".mobile_phone") %></div>
+          <div class="field-wide">
+            <%= text_field_tag :reason, nil, id: "contact_reason", required: true, maxlength: 500, placeholder: t(".reason"),
+              class: "input", "aria-label": t(".reason") %>
+          </div>
+        </div>
         <%= form.submit t(".contact_submit"), class: "btn btn-secondary" %>
       <% end %>
     <% end %>
@@ -52,8 +56,12 @@
       <%= form_with url: release_email_admin_user_path(@user), method: :post, class: "space-y-2" do |form| %>
         <h3 class="card-title"><%= t(".release_email") %></h3>
         <p class="field-hint"><%= t(".release_email_hint") %></p>
-        <%= text_field_tag :reason, nil, id: "release_reason", required: true, maxlength: 500, placeholder: t(".reason"),
-          class: "input", "aria-label": t(".reason") %>
+        <div class="form-grid">
+          <div class="field-wide">
+            <%= text_field_tag :reason, nil, id: "release_reason", required: true, maxlength: 500, placeholder: t(".reason"),
+              class: "input", "aria-label": t(".reason") %>
+          </div>
+        </div>
         <%= form.submit t(".release_email_submit"), class: "btn btn-secondary" %>
       <% end %>
     <% end %>
@@ -62,8 +70,12 @@
       <%= form_with url: reset_mfa_admin_user_path(@user), method: :post, class: "space-y-2",
         data: { confirm: t(".reset_mfa_confirm") } do |form| %>
         <h3 class="card-title"><%= t(".reset_mfa") %></h3>
-        <%= text_field_tag :reason, nil, id: "mfa_reason", required: true, maxlength: 500, placeholder: t(".reason"),
-          class: "input", "aria-label": t(".reason") %>
+        <div class="form-grid">
+          <div class="field-wide">
+            <%= text_field_tag :reason, nil, id: "mfa_reason", required: true, maxlength: 500, placeholder: t(".reason"),
+              class: "input", "aria-label": t(".reason") %>
+          </div>
+        </div>
         <%= form.submit t(".reset_mfa_submit"), class: "btn btn-danger" %>
       <% end %>
     <% end %>

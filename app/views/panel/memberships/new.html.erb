@@ -2,14 +2,16 @@
 <p class="page-subtitle"><%= membership_t("new.instructions") %></p>
 <%= render "panel/memberships/errors" %>
 
-<%= form_with url: url_for(action: :create), method: :post, class: "card card-body mt-6 max-w-xl space-y-5" do |form| %>
-  <% [ [ :name, :text_field, "name" ], [ :cpf, :text_field, "off" ], [ :email, :email_field, "email" ], [ :mobile_phone, :telephone_field, "tel" ] ].each do |field, type, autocomplete| %>
-    <div>
-      <%= label_tag "invitation_#{field}", membership_t("new.#{field}"), class: "field-label" %>
-      <%= public_send("#{type}_tag", "invitation[#{field}]", @form[field], id: "invitation_#{field}", autocomplete: autocomplete,
-        required: field.in?(%i[name cpf]), class: "input") %>
-    </div>
-  <% end %>
+<%= form_with url: url_for(action: :create), method: :post, class: "card card-body mt-6 space-y-5" do |form| %>
+  <div class="form-grid">
+    <% [ [ :name, :text_field, "name" ], [ :cpf, :text_field, "off" ], [ :email, :email_field, "email" ], [ :mobile_phone, :telephone_field, "tel" ] ].each do |field, type, autocomplete| %>
+      <div class="<%= "field-wide" if field == :name %>">
+        <%= label_tag "invitation_#{field}", membership_t("new.#{field}"), class: "field-label" %>
+        <%= public_send("#{type}_tag", "invitation[#{field}]", @form[field], id: "invitation_#{field}", autocomplete: autocomplete,
+          required: field.in?(%i[name cpf]), class: "input") %>
+      </div>
+    <% end %>
+  </div>
 
   <%= render "panel/memberships/roles_fields", scope: "invitation", selected_roles: @form[:roles],
     selected_modules: @form[:enabled_modules], selected_company_ids: @form[:company_ids], selected_unit_ids: @form[:unit_ids] %>

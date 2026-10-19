@@ -9,7 +9,7 @@
 </div>
 <p class="page-subtitle"><%= t("billing.kinds.#{kind}") %> · <%= @account.owner.legal_name %></p>
 
-<div class="card card-body mt-6 max-w-3xl">
+<div class="card card-body mt-6">
   <h2 class="text-base font-bold text-ink-strong"><%= t(".contract") %></h2>
   <dl class="details-list mt-4">
     <div><dt><%= t(".address") %></dt><dd class="font-mono text-sm"><% slug = @account.brand&.active_subdomain&.slug %><%= slug ? "#{slug}.#{Rails.configuration.x.panel_domain}" : "—" %></dd></div>
@@ -29,7 +29,7 @@
         <div><dt><%= t(".trial_ends_on") %></dt><dd><%= l(subscription.trial_ends_on) %></dd></div>
       <% end %>
       <% if subscription.pre_activation? %>
-        <div class="sm:col-span-2">
+        <div class="field-wide">
           <dt><%= t(".pre_activation") %></dt>
           <dd><%= t(".pre_activation_value", price: reais(subscription.pre_activation_price.monthly_price_cents)) %></dd>
         </div>

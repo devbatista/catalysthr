@@ -14,7 +14,7 @@
   <p class="page-subtitle font-mono"><%= @client.formatted_document %></p>
 <% end %>
 
-<div class="mt-6 max-w-3xl space-y-6">
+<div class="mt-6 space-y-6">
   <section class="card card-body">
     <h2 class="card-title"><%= t(".allocated", count: @allocated.size) %></h2>
     <% if @allocated.empty? %>
@@ -37,7 +37,7 @@
         <% if manager_options.empty? %>
           <p class="text-sm text-ink-soft"><%= t(".no_managers") %></p>
         <% else %>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             <% selected = @client.allocation_client_managers.map(&:membership_id) %>
             <% manager_options.each do |membership| %>
               <label class="flex items-center gap-2 text-sm">
@@ -60,8 +60,8 @@
       <h2 class="card-title"><%= t(".invite_title") %></h2>
       <p class="field-hint"><%= t(".invite_hint") %></p>
       <%= form_with url: invite_manager_allocation_client_path(@client), method: :post, scope: :invitation, class: "mt-3 space-y-4" do |form| %>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
+        <div class="form-grid">
+          <div class="field-wide">
             <%= form.label :name, t(".name"), class: "field-label" %>
             <%= form.text_field :name, required: true, maxlength: 120, autocomplete: "off", class: "input" %>
           </div>

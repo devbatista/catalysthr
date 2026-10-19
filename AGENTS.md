@@ -61,7 +61,7 @@ As regras abaixo não são negociáveis. Mudar qualquer uma delas exige uma deci
 - **Frontend:**
   - ERB, Tailwind e JavaScript puro pelo importmap;
   - **sem Hotwire (Turbo e Stimulus) e sem React** (D-022);
-  - toda tela nova usa a estrutura e os componentes da base visual (D-597) e segue o protótipo quando ele existe; sem protótipo, monta a tela com os mesmos componentes, sem estilo próprio. O módulo construído sai do "Em breve" (`ComingSoon`) no mesmo PR, e as telas são conferidas no computador e no celular (D-598);
+  - toda tela nova usa a estrutura e os componentes da base visual (D-597) e segue o protótipo quando ele existe; as telas ocupam a largura inteira, com os campos em colunas (`form-grid`, `field-wide`, `field-full`) (D-615); sem protótipo, monta a tela com os mesmos componentes, sem estilo próprio. O módulo construído sai do "Em breve" (`ComingSoon`) no mesmo PR, e as telas são conferidas no computador e no celular (D-598);
   - o PWA não guarda dados pessoais no aparelho.
 - **eSocial:** nada é enviado sem a revisão do RH. Os eventos dependem uns dos outros, e os layouts têm versão. Uma falha de envio nunca pode ser silenciosa (spec 13).
 - **Impersonate:** é sempre somente leitura. Escritas rodam em simulação e são desfeitas, sem jobs nem chamadas externas.

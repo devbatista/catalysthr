@@ -7,7 +7,7 @@
 <h1 class="page-title mt-3"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".subtitle", kind: t("employments.kinds.#{@employment.kind}"), registration: @employment.registration_number) %></p>
 
-<%= form_with model: @employment, url: employment_path(@employment), method: :patch, class: "card card-body mt-6 max-w-3xl space-y-5" do |form| %>
+<%= form_with model: @employment, url: employment_path(@employment), method: :patch, class: "card card-body mt-6 space-y-5" do |form| %>
   <% if @employment.errors.any? %>
     <div class="alert-bad" role="alert">
       <ul class="list-disc space-y-1 pl-5">
@@ -17,21 +17,23 @@
   <% end %>
 
   <% if @employment.clt? %>
-    <div>
-      <%= form.label :category, t(".category"), class: "field-label" %>
-      <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] }, {}, class: "input" %>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :category, t(".category"), class: "field-label" %>
+        <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] }, {}, class: "input" %>
+      </div>
     </div>
   <% end %>
 
   <% if fields.empty? %>
     <p class="text-sm text-ink-soft"><%= t(".no_details") %></p>
   <% else %>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="form-grid">
       <% fields.each do |key| %>
         <% id = "employment_details_#{key}" %>
         <% name = "employment[details][#{key}]" %>
         <% value = @employment.detail(key) %>
-        <div class="<%= "sm:col-span-2" if key.in?(%w[contract_object internship_area school_name agent_name contractor_legal_name admission_type]) %>">
+        <div class="<%= key == "contract_object" ? "field-full" : ("field-wide" if key.in?(%w[internship_area school_name agent_name contractor_legal_name admission_type])) %>">
           <% if key == "assurance_clause" %>
             <%= hidden_field_tag name, "0", id: nil %>
             <label class="flex items-center gap-2 text-sm">

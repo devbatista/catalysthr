@@ -4,10 +4,10 @@
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
 <% unless current_user.email_deliverable? %>
-  <p class="alert-bad mt-6 max-w-3xl" role="alert"><%= t(current_user.email_bounced? ? ".email_bounced" : ".email_missing") %></p>
+  <p class="alert-bad mt-6" role="alert"><%= t(current_user.email_bounced? ? ".email_bounced" : ".email_missing") %></p>
 <% end %>
 
-<%= form_with url: notification_preferences_path, method: :patch, class: "mt-6 max-w-3xl space-y-6" do |form| %>
+<%= form_with url: notification_preferences_path, method: :patch, class: "mt-6 space-y-6" do |form| %>
   <% if @sections.empty? %>
     <p class="card card-body text-sm text-ink-soft"><%= t(".empty") %></p>
   <% end %>

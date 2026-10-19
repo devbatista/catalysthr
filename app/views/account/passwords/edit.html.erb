@@ -1,5 +1,5 @@
 <p class="text-sm"><%= link_to t("account.back_to_security"), account_root_path, class: "link-button" %></p>
-<div class="card card-body mt-3 max-w-xl">
+<div class="card card-body mt-3">
   <h1 class="page-title"><%= t(".title") %></h1>
   <%= render "users/shared/password_rules" %>
   <p class="mt-2 text-sm"><%= t(".effect") %></p>
@@ -15,13 +15,15 @@
   <% end %>
 
   <%= form_with model: current_user, scope: :user, url: account_password_path, method: :patch, class: "mt-6 space-y-4" do |form| %>
-    <% [ [ :current_password, "current-password" ], [ :password, "new-password" ], [ :password_confirmation, "new-password" ] ].each do |field, autocomplete| %>
-      <div>
-        <%= form.label field, t(".#{field}"), class: "field-label" %>
-        <%= form.password_field field, required: true, autocomplete: autocomplete,
-          class: "input" %>
-      </div>
-    <% end %>
+    <div class="form-grid">
+      <% [ [ :current_password, "current-password" ], [ :password, "new-password" ], [ :password_confirmation, "new-password" ] ].each do |field, autocomplete| %>
+        <div>
+          <%= form.label field, t(".#{field}"), class: "field-label" %>
+          <%= form.password_field field, required: true, autocomplete: autocomplete,
+            class: "input" %>
+        </div>
+      <% end %>
+    </div>
 
     <%= form.submit t(".submit"), class: "btn btn-primary btn-block" %>
   <% end %>
