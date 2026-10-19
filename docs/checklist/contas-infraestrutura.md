@@ -59,16 +59,16 @@
 
 *Fase 1, depois do deploy do bloco 15b (D-609). Custo: 100 mil entregas HTTP do SNS por mês gratuitas, depois US$ 0,06 a cada 100 mil:*
 
-- [ ] **[Claude]** SNS: assinatura HTTPS do tópico `catalysthr-ses-eventos` em `https://admin.catalysthr.com.br/webhooks/ses-events`. O app confirma sozinho a assinatura, conferindo a mensagem do SNS. Depois, conferir que a assinatura ficou `Confirmed`
-- [ ] **[Claude]** IAM: permissão `ses:DeleteSuppressedDestination` no usuário `catalysthr-app`, para o suporte liberar pelo admin um e-mail que voltou (D-609)
-- [ ] **[você]** `aws sso login` antes dos dois passos acima, que eu rodo pela CLI com a sua confirmação
+- [x] **[Claude]** SNS: assinatura HTTPS do tópico `catalysthr-ses-eventos` em `https://admin.catalysthr.com.br/webhooks/ses-events`. O app confirma sozinho a assinatura, conferindo a mensagem do SNS. Depois, conferir que a assinatura ficou `Confirmed` (confirmada pelo app em 2026-10-19)
+- [x] **[você]** IAM: política inline `catalysthr-app-email` no usuário `catalysthr-app`, com `ses:DeleteSuppressedDestination` para o suporte liberar pelo admin um e-mail que voltou (D-609). O usuário não tinha nenhuma permissão do SES, então a política também cobre o envio (`ses:SendEmail` nas identidades da conta e no configuration set `catalysthr-padrao`) e os domínios das marcas (criar, ler, apagar e MAIL FROM das identidades), com um `Deny` que impede o app de apagar ou alterar a identidade `catalysthr.com.br`. Conferida pela simulação do IAM (2026-10-19)
+- [x] **[você]** `aws sso login` antes dos dois passos acima, que eu rodo pela CLI com a sua confirmação (2026-10-19)
 
 *Fase 1, antes da primeira função que grava arquivo em produção ou do pg_dump (cerca de US$ 2 por mês nas chaves, mais o uso):*
 
 - [ ] **[Claude]** KMS: chaves dos arquivos e dos backups, com rotação anual (P-20-22)
 - [ ] **[Claude]** S3 `catalysthr-files` (nome confirmado em 2026-10-16, D-595): privado, bloqueio de acesso público, SSE-KMS com S3 Bucket Key, versionamento com as versões antigas apagadas aos 35 dias (P-20-17)
 - [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS com S3 Bucket Key, regra de ciclo de vida que apaga aos 35 dias (D-502)
-- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES
+- [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES (feito em 2026-10-19, política `catalysthr-app-email`). Faltam o `catalysthr-backup` e o `catalysthr-restore`, com o pg_dump
 
 *Fase 3, junto com o certificado A1 (cerca de US$ 1 por mês):*
 
