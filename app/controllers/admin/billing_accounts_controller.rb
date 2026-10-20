@@ -30,6 +30,7 @@ module Admin
         { items: { add_on_price: :add_on } } ]).find(params[:id])
       authorize! :read, @account
       @invoices = @account.invoices.recent_first
+      @adjustments = @account.billing_adjustments.includes(:created_by, :invoice_lines).newest_first
       return unless can?(:change_contract, @account)
 
       @offered_plans = Plan.offered_to(@account).includes(plan_versions: :plan_modules).ordered.select(&:version_on)

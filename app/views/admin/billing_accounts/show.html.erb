@@ -52,6 +52,16 @@
   <%= render "contract_changes", account: @account, subscription: subscription %>
 <% end %>
 
+<div class="mt-8 flex flex-wrap items-center justify-between gap-3">
+  <h2 class="section-title"><%= t(".adjustments") %></h2>
+  <% if can?(:create, BillingAdjustment) %>
+    <%= link_to t(".new_adjustment"), new_admin_client_adjustment_path(@account), class: "btn btn-secondary btn-sm" %>
+  <% end %>
+</div>
+<div class="mt-3">
+  <%= render "admin/billing_adjustments/table", adjustments: @adjustments %>
+</div>
+
 <h2 class="section-title mt-8"><%= t(".invoices") %></h2>
 <div class="mt-3">
   <%= render "shared/invoices/table", invoices: @invoices, path: ->(invoice) { admin_invoice_path(invoice) } %>

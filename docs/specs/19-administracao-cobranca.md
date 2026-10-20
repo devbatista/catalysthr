@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-620 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-621 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -332,7 +332,7 @@ fiscal_settings                                      -- configuração fiscal (P
 - **Mercado Pago** (D-496): gem oficial (`mercadopago-sdk`), com o cliente e o cartão salvos (Customers e Cards), pagamentos automáticos com o cartão salvo no valor de cada fatura (`/v1/payments`, com chave de idempotência por tentativa), e PIX pela mesma API. Webhooks com a assinatura conferida. **Pré-requisito:** confirmar com o Mercado Pago a habilitação da conta para cobrar o cartão salvo sem o CVV (item em aberto). O Pix Automático pode entrar numa fase seguinte **[P-19-29]**.
 - **Cotação do dólar:** API pública do Banco Central (PTAX) **[P-19-27]**.
 - **Asaas** (D-560): API REST v3 por cliente HTTP próprio (Faraday), com a chave de API nas variáveis de ambiente. Endpoints de clientes, notas fiscais (agendar, emitir, cancelar) e webhooks de notas. Em desenvolvimento, o sandbox do Asaas; nos testes, WebMock **[P-19-37]**.
-- **Avisos novos** no catálogo da spec 15, para o responsável financeiro: `billing.invoice_issued`, `billing.price_change` (D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued` (obrigatórios, sino e e-mail). Para o financeiro e o superadmin: `platform.nfse_error` (S E) **[P-19-38]**. Para o RH administrador das empresas da carteira: `billing.partner_read_only` e `billing.partner_cancelled` (obrigatórios, sino e e-mail).
+- **Avisos novos** no catálogo da spec 15, para o responsável financeiro: `billing.invoice_issued`, `billing.price_change` (D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued` (obrigatórios, sino e e-mail). Para o financeiro e o superadmin: `platform.nfse_error` (S E) **[P-19-38]**. Para o superadmin: `platform.adjustment_pending` (S E, D-621). Para o RH administrador das empresas da carteira: `billing.partner_read_only` e `billing.partner_cancelled` (obrigatórios, sino e e-mail).
 
 ## 9. Critérios de aceite
 

@@ -153,7 +153,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
   **Cobrança (spec 19):** para o responsável financeiro, `billing.invoice_issued`, `billing.price_change` (aviso de 30 dias da migração de preço, D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued`; para o financeiro e o superadmin, `platform.nfse_error`; para o RH administrador das empresas da carteira, `billing.partner_read_only` e `billing.partner_cancelled`. Todos obrigatórios, em S E.
 
-  **Equipe CatalystHR:** `platform.ai_circuit_open` (disjuntor da IA, RN-14-123), `platform.ai_daily_cap` (RN-14-114), `platform.holidays_task` (RN-11-021), em S E.
+  **Equipe CatalystHR:** `platform.adjustment_pending` (ajuste acima de 20% aguardando o superadmin, D-621), `platform.ai_circuit_open` (disjuntor da IA, RN-14-123), `platform.ai_daily_cap` (RN-14-114), `platform.holidays_task` (RN-11-021), em S E.
 
 - **RN-15-013** — Novas specs (16 a 22) acrescentam tipos ao catálogo seguindo o mesmo formato. O catálogo no código e as telas de preferências têm só os tipos que o sistema já gera; cada spec acrescenta os seus quando é construída (D-607).
 

@@ -11,9 +11,9 @@ module Billing
   #   WhatsApp quotas, which are per employee. The employees are the peak of the last closed
   #   month, or those active on the day when there is none;
   # - the prorations of changes not yet charged (RN-19-060).
-  # The manual adjustments come with block 19d-3.
+  # The manual adjustments are added on top of these lines (Adjustments).
   class InvoiceLines
-    Line = Data.define(:kind, :description, :quantity, :unit_cents, :proration_id) do
+    Line = Data.define(:kind, :description, :quantity, :unit_cents, :proration_id, :billing_adjustment_id) do
       def total_cents
         quantity * unit_cents
       end
@@ -142,7 +142,8 @@ module Billing
     end
 
     def line(kind, description, quantity, unit_cents, proration_id: nil)
-      Line.new(kind: kind.to_s, description: description, quantity: quantity, unit_cents: unit_cents, proration_id: proration_id)
+      Line.new(kind: kind.to_s, description: description, quantity: quantity, unit_cents: unit_cents, proration_id: proration_id,
+        billing_adjustment_id: nil)
     end
 
     def t(key, **params)

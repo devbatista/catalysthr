@@ -296,6 +296,56 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Mensalidade de pré-ativação registrada, a partir de %{date}."
+    billing_adjustments:
+      table:
+        empty: "Nenhum ajuste."
+        client: "Cliente"
+        adjustment: "Ajuste"
+        reason: "Motivo"
+        launched: "Lançado"
+        status: "Situação"
+        actions: "Ações"
+        approve: "Aprovar"
+        approve_confirm: "Aprovar o ajuste? Ele passa a valer na próxima fatura emitida."
+        cancel: "Cancelar"
+        cancel_confirm: "Cancelar o ajuste? Ele não vai entrar em nenhuma fatura."
+      index:
+        title: "Ajustes"
+        subtitle: "Descontos, créditos e isenções de excedente lançados nos contratos. Os lançados pelo financeiro acima de 20% da próxima fatura só valem depois da aprovação do superadmin."
+        pending: "Aguardando aprovação"
+        recent: "Últimos %{limit} ajustes"
+      new:
+        title: "Lançar ajuste"
+        back: "Voltar para %{name}"
+        subtitle: "O ajuste vale nas próximas faturas de %{name}, que nunca ficam abaixo de zero. O motivo fica só na auditoria e no admin: a fatura do cliente mostra apenas o tipo de ajuste."
+        kind: "Tipo de ajuste"
+        kinds:
+          discount: "Um valor ou um percentual de toda a fatura, numa fatura ou em várias."
+          credit: "Um valor que abate as próximas faturas até acabar."
+          overage_waiver: "Tira o excedente escolhido da próxima fatura."
+        value: "Valor (R$)"
+        value_hint: "No desconto em valor e no crédito."
+        percent: "Percentual (%)"
+        percent_hint: "No desconto percentual, sobre toda a fatura antes dos ajustes."
+        cycles: "Número de faturas"
+        cycles_hint: "Só no desconto: em quantas faturas seguidas ele vale."
+        overage_scope: "Excedente isento"
+        overage_scope_hint: "Só na isenção: que excedente sai da próxima fatura."
+        reason: "Motivo"
+        reason_hint: "Obrigatório. Fica na auditoria."
+        approval_finance: "Se o ajuste passar de 20% da próxima fatura, ele fica aguardando a aprovação do superadmin, que é avisado."
+        approval_superadmin: "Como superadmin, o ajuste vale direto, sem aprovação."
+        submit: "Lançar ajuste"
+        cancel: "Cancelar"
+      create:
+        approved: "Ajuste lançado. Ele vale na próxima fatura emitida."
+        pending: "Ajuste lançado, acima de 20% da próxima fatura. Ele aguarda a aprovação do superadmin, que foi avisado."
+      approve:
+        approved: "Ajuste aprovado. Ele vale na próxima fatura emitida."
+        not_pending: "Esse ajuste não está aguardando aprovação."
+      cancel:
+        cancelled: "Ajuste cancelado."
+        not_cancellable: "Esse ajuste já entrou numa fatura e não pode ser cancelado."
     contract_changes:
       closed: "Um contrato em encerramento ou encerrado não muda."
       proration: "O proporcional de %{amount} entra na próxima fatura."
@@ -415,6 +465,8 @@ pt-BR:
         remove_module_confirm: "Retirar o módulo? Vale depois do último dia já faturado. Os dados continuam guardados e em leitura, e o AFD e os XMLs do eSocial ficam na exportação."
       show:
         back: "Voltar para clientes"
+        adjustments: "Ajustes"
+        new_adjustment: "Lançar ajuste"
         invoices: "Faturas"
         contract: "Contrato"
         address: "Endereço de acesso"
@@ -711,6 +763,7 @@ pt-BR:
     portfolio: "Carteira"
     usage: "Consumo"
     invoices: "Faturas"
+    adjustments: "Ajustes"
     team: "Equipe"
     brand: "Marca e domínio"
     firm_companies: "Empresas atendidas"
@@ -1907,6 +1960,12 @@ pt-BR:
         hint: "Com 30 dias de antecedência, quando o preço do plano muda."
         title: "O preço do plano %{plan} muda em %{date}"
         body: "A partir do ciclo que começa em %{date}, o contrato de %{name} passa a valer %{price}. Até lá, nada muda. Dúvidas? Fale com a equipe da CatalystHR."
+    platform:
+      adjustment_pending:
+        name: "Ajuste aguardando aprovação"
+        hint: "Quando o financeiro lança um ajuste acima de 20% da próxima fatura."
+        title: "Ajuste de %{name} aguardando aprovação"
+        body: "%{by} lançou %{adjustment} para %{name}, acima de 20% da próxima fatura. O ajuste só vale depois da sua aprovação."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
@@ -2103,6 +2162,39 @@ pt-BR:
       paid: "Paga"
       overdue: "Vencida"
       void: "Cancelada"
+    adjustments:
+      discount: "Desconto"
+      discount_percent: "Desconto de %{percent}%"
+      credit: "Crédito"
+      cycle: "(%{number} de %{cycles})"
+      overage_waiver:
+        employees: "Isenção do excedente de colaboradores"
+        ai: "Isenção do excedente de créditos de IA"
+        whatsapp: "Isenção do excedente de mensagens de WhatsApp"
+        all: "Isenção de todo o excedente"
+      summary:
+        discount:
+          one: "desconto de %{amount}"
+          other: "desconto de %{amount} por %{count} faturas"
+        credit: "crédito de %{amount}"
+        overage_waiver:
+          employees: "isenção do excedente de colaboradores"
+          ai: "isenção do excedente de créditos de IA"
+          whatsapp: "isenção do excedente de mensagens de WhatsApp"
+          all: "isenção de todo o excedente"
+    adjustment_kinds:
+      discount: "Desconto"
+      credit: "Crédito"
+      overage_waiver: "Isenção de excedente"
+    adjustment_progress:
+      credit: "%{used} de %{total} usados"
+      invoices:
+        one: "%{used} de 1 fatura"
+        other: "%{used} de %{count} faturas"
+    adjustment_statuses:
+      pending: "Aguardando aprovação"
+      approved: "Aprovado"
+      cancelled: "Cancelado"
     prorations:
       plan: "Proporcional da troca para o plano %{plan}, a partir de %{date}"
       module: "Proporcional do módulo %{module}, a partir de %{date}"
@@ -2184,6 +2276,13 @@ pt-BR:
       pre_activation_price:
         monthly_price_cents: "Mensalidade"
         valid_from: "Data de início"
+      billing_adjustment:
+        kind: "Tipo"
+        value_cents: "Valor"
+        percent: "Percentual"
+        cycles: "Faturas"
+        overage_scope: "Excedente"
+        reason: "Motivo"
       plan:
         name: "Nome do plano"
         kind: "Tipo"
@@ -2430,6 +2529,15 @@ pt-BR:
           attributes:
             plan_version:
               other_kind: "precisa ser do mesmo tipo do cliente"
+        billing_adjustment:
+          attributes:
+            base:
+              value_or_percent: "Informe o valor ou o percentual do desconto, não os dois"
+              waiver_without_amount: "A isenção de excedente não tem valor nem percentual"
+            cycles:
+              one_cycle: "só o desconto vale por mais de uma fatura"
+            value_cents:
+              invalid_amount: "precisa ser um valor em reais, como 2.500,00"
         plan:
           attributes:
             billing_account:

@@ -45,8 +45,12 @@ class PlatformAbility
       # Plan, modules, add-ons and price migration of a contract (RN-19-014, RN-19-060,
       # RN-19-061, D-620). The client's own changes come with block 19e.
       can :change_contract, BillingAccount
+      # Manual adjustments; above 20% of the next invoice, the finance team's wait for the
+      # superadmin (RN-19-070, RN-19-071, D-621).
+      can %i[read create cancel], BillingAdjustment
+      can :approve, BillingAdjustment if user.superadmin?
     end
     # The support reads the billing (spec 19, section 6).
-    can :read, [ BillingAccount, Invoice ] if user.support?
+    can :read, [ BillingAccount, Invoice, BillingAdjustment ] if user.support?
   end
 end

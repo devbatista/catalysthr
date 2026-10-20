@@ -1,0 +1,54 @@
+<%# Manual adjustments (RN-19-070, D-621). locals: adjustments; client: show the contract's name. %>
+<% client = local_assigns.fetch(:client, false) %>
+<% if adjustments.empty? %>
+  <p class="card card-body text-sm text-ink-soft"><%= t("admin.billing_adjustments.table.empty") %></p>
+<% else %>
+  <div class="card overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <% if client %><th class="hidden sm:table-cell"><%= t("admin.billing_adjustments.table.client") %></th><% end %>
+          <th><%= t("admin.billing_adjustments.table.adjustment") %></th>
+          <th class="hidden lg:table-cell"><%= t("admin.billing_adjustments.table.reason") %></th>
+          <th class="hidden md:table-cell"><%= t("admin.billing_adjustments.table.launched") %></th>
+          <th class="hidden sm:table-cell"><%= t("admin.billing_adjustments.table.status") %></th>
+          <th class="text-right"><span class="sr-only"><%= t("admin.billing_adjustments.table.actions") %></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% adjustments.each do |adjustment| %>
+          <tr>
+            <% if client %>
+              <td class="hidden font-bold text-ink-strong sm:table-cell"><%= link_to adjustment.billing_account.name, admin_client_path(adjustment.billing_account), class: "link-button" %></td>
+            <% end %>
+            <td>
+              <% if client %>
+                <%= link_to adjustment.billing_account.name, admin_client_path(adjustment.billing_account), class: "link-button mb-1 block text-sm sm:hidden" %>
+              <% end %>
+              <span class="font-semibold text-ink-strong"><%= Billing::Adjustments.summary(adjustment).upcase_first %></span>
+              <span class="block text-xs text-ink-soft"><%= adjustment_progress(adjustment) %></span>
+              <span class="mt-1 block sm:hidden"><%= adjustment_status_pill(adjustment) %></span>
+            </td>
+            <td class="hidden max-w-sm text-sm text-ink-soft lg:table-cell"><%= adjustment.reason %></td>
+            <td class="hidden whitespace-nowrap text-sm text-ink-soft md:table-cell">
+              <%= l(adjustment.created_at.to_date) %> · <%= adjustment.created_by.name %>
+            </td>
+            <td class="hidden sm:table-cell"><%= adjustment_status_pill(adjustment) %></td>
+            <td>
+              <span class="flex flex-wrap items-center justify-end gap-2">
+                <% if adjustment.pending? && can?(:approve, adjustment) %>
+                  <%= button_to t("admin.billing_adjustments.table.approve"), approve_admin_adjustment_path(adjustment), class: "btn btn-primary btn-sm",
+                    form: { data: { confirm: t("admin.billing_adjustments.table.approve_confirm") } } %>
+                <% end %>
+                <% if adjustment.cancellable? && can?(:cancel, adjustment) %>
+                  <%= button_to t("admin.billing_adjustments.table.cancel"), cancel_admin_adjustment_path(adjustment), class: "btn btn-danger btn-sm",
+                    form: { data: { confirm: t("admin.billing_adjustments.table.cancel_confirm") } } %>
+                <% end %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

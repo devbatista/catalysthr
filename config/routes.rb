@@ -78,6 +78,15 @@ Rails.application.routes.draw do
           post "add-ons/:code", action: :add_add_on, as: :add_on
           delete "add-ons/:code", action: :remove_add_on
         end
+        # Manual adjustments of the next invoices (RN-19-070, D-621).
+        resources :adjustments, only: %i[new create], controller: "billing_adjustments"
+      end
+      # Adjustments waiting for the superadmin, and the latest ones (RN-19-071, D-621).
+      resources :adjustments, only: :index, controller: "billing_adjustments" do
+        member do
+          post :approve
+          post :cancel
+        end
       end
       # The contracts' invoices (RN-19-040, RN-19-041, D-619).
       resources :invoices, only: %i[index show]
