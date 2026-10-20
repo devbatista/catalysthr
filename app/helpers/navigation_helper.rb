@@ -62,8 +62,8 @@ module NavigationHelper
     FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)
   end
 
-  def billing_allowed?(subject)
-    FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(:read, subject)
+  def billing_allowed?(action = :read, subject)
+    FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(action, subject)
   end
 
   def client_manager_only?
@@ -113,6 +113,7 @@ module NavigationHelper
       nav_group(:partner, [
         nav_item(t("navigation.portfolio"), partner_root_path,
           controller_path.in?(%w[panel/partner_panel/home panel/partner_panel/company_brands panel/partner_panel/company_hr_admins])),
+        (nav_item(t("navigation.usage"), partner_usage_path, controller_path == "panel/partner_panel/usages") if billing_allowed?(:read_usage, partner)),
         (nav_item(t("navigation.team"), partner_team_members_path, controller_path == "panel/partner_panel/team_members") if can?(:read, Membership.new(organization: partner))),
         (nav_item(t("navigation.brand"), edit_partner_brand_path, controller_path.in?(%w[panel/partner_panel/brands panel/partner_panel/brand_email_domains])) if partner.brand && can?(:update, partner.brand)),
         *ComingSoon::PARTNER_FEATURES.map { |feature| soon_item(feature, partner_coming_soon_path(feature)) }

@@ -642,6 +642,7 @@ pt-BR:
     accounting_firm: "Escritório contábil"
     companies: "Empresas"
     portfolio: "Carteira"
+    usage: "Consumo"
     team: "Equipe"
     brand: "Marca e domínio"
     firm_companies: "Empresas atendidas"
@@ -1516,6 +1517,36 @@ pt-BR:
           without_modules: "O contrato do parceiro não tem módulos para ligar."
         update:
           updated: "Módulos de %{company} salvos."
+      usages:
+        show:
+          title: "Consumo"
+          subtitle: "Quanto da faixa e das cotas a carteira usou no mês, e o consumo de cada empresa, para você cobrar os seus clientes."
+          download: "Baixar CSV"
+          months: "Meses"
+          closed: "Mês fechado"
+          closed_hint: "Fechado em %{date}. Os números não mudam mais."
+          partial: "Parcial"
+          partial_hint: "Conta os dias até %{date}. O consumo de cada dia é gravado na madrugada seguinte."
+          not_recorded: "Nenhum dia registrado neste mês ainda. O consumo de cada dia é gravado na madrugada seguinte."
+          cards:
+            employees:
+              label: "Pico de colaboradores ativos"
+              of: "de %{limit} na faixa"
+            ai_credits:
+              label: "Créditos de IA"
+              of: "de %{limit} no mês"
+            whatsapp_messages:
+              label: "Mensagens de WhatsApp"
+              of: "de %{limit} no mês"
+          percent: "%{percent}%"
+          pre_activation: "Pré-ativação: a faixa passa a valer no primeiro dia com um colaborador ativo na carteira."
+          reduced_quotas: "Cota reduzida do teste grátis e da pré-ativação."
+          no_block: "Nada é bloqueado ao passar da faixa ou das cotas: o excedente entra na fatura seguinte. A cota não acumula para o mês seguinte."
+          empty: "Nenhuma empresa com consumo neste mês."
+          company: "Empresa"
+          peak_employees: "Pico"
+          no_modules: "Nenhum"
+          without_contract: "O parceiro ainda não tem um contrato com a CatalystHR. Para ver o consumo, fale com a equipe da CatalystHR."
       team_members:
         roles_fields:
           modules: "Módulos do consultor"
@@ -1781,6 +1812,15 @@ pt-BR:
         hint: "Quando o teste grátis termina sem contratação."
         title: "O teste grátis de %{name} terminou"
         body: "O teste terminou em %{date}. Para contratar e continuar usando o sistema, fale com a equipe da CatalystHR."
+      usage_threshold:
+        name: "Faixa e cotas do plano"
+        hint: "Quando o consumo do mês chega a 80% e a 100% da faixa de colaboradores ou das cotas do plano."
+        employees_80:
+          title: "%{name} chegou a 80% da faixa de colaboradores"
+          body: "Em %{month}, o pico foi de %{used} colaboradores ativos, para uma faixa de %{limit}. Nada é bloqueado: se passar da faixa, cada colaborador a mais entra como excedente na fatura seguinte."
+        employees_100:
+          title: "%{name} chegou ao limite da faixa de colaboradores"
+          body: "Em %{month}, o pico foi de %{used} colaboradores ativos, para uma faixa de %{limit}. Nada é bloqueado: cada colaborador acima da faixa entra como excedente na fatura seguinte."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
@@ -1925,6 +1965,9 @@ pt-BR:
     forbidden: "Você não tem permissão para esta ação"
   rack_attack:
     throttled: "Muitas tentativas a partir deste endereço. Aguarde alguns minutos e tente de novo."
+  date:
+    formats:
+      month_year: "%B de %Y"
   billing:
     kinds:
       partner: "Parceiro"
@@ -1946,6 +1989,14 @@ pt-BR:
       trial_expired: "Teste vencido"
       cancel_scheduled: "Cancelamento agendado"
     pre_activation: "Pré-ativação"
+    usage_report:
+      columns:
+        document: "CNPJ/CPF"
+        name: "Empresa"
+        peak_employees: "Pico de colaboradores"
+        modules: "Módulos"
+        ai_credits: "Créditos de IA"
+        whatsapp_messages: "Mensagens de WhatsApp"
     summary:
       partner: "%{price} por mês, até %{limit} colaboradores"
       direct: "%{price} por colaborador, mínimo de %{minimum}"

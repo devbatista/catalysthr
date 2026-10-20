@@ -8,6 +8,10 @@ class Subscription < ApplicationRecord
 
   STATUSES = %w[trialing active past_due read_only closing closed trial_expired cancel_scheduled].freeze
   TRIAL_DAYS = 14
+  # The reduced quotas of the trial, also used in the partner's pre-activation (RN-19-031,
+  # P-19-09, D-612).
+  REDUCED_AI_CREDITS = 100
+  REDUCED_WHATSAPP_MESSAGES = 100
 
   belongs_to :billing_account
   belongs_to :plan_version
@@ -31,6 +35,26 @@ class Subscription < ApplicationRecord
 
   def modules
     items.select { |item| item.kind_module? && item.current? }.map(&:module)
+  end
+
+  # The partner's band of employees (D-480), not charged in the pre-activation (D-612). A
+  # direct company has none (RN-19-010).
+  def employee_band
+    plan_version.employee_limit unless pre_activation?
+  end
+
+  # The partner's monthly quotas: the plan's, or the reduced ones in the trial and in the
+  # pre-activation. The direct company's are per employee and come with the invoices
+  # (block 19d).
+  def partner_quotas
+    return unless billing_account.partner?
+    return { ai_credits: REDUCED_AI_CREDITS, whatsapp_messages: REDUCED_WHATSAPP_MESSAGES } if reduced_quotas?
+
+    { ai_credits: plan_version.ai_credits, whatsapp_messages: plan_version.whatsapp_messages }
+  end
+
+  def reduced_quotas?
+    trialing? || trial_expired? || pre_activation?
   end
 
   def add_on_prices
