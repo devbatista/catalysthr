@@ -30,6 +30,10 @@ module Admin
         { items: { add_on_price: :add_on } } ]).find(params[:id])
       authorize! :read, @account
       @invoices = @account.invoices.recent_first
+      return unless can?(:change_contract, @account)
+
+      @offered_plans = Plan.offered_to(@account).includes(plan_versions: :plan_modules).ordered.select(&:version_on)
+      @add_ons = AddOn.active.includes(:prices).order(:code)
     end
 
     private

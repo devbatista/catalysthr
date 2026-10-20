@@ -151,7 +151,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
   **Avaliação (spec 22):** `performance.probation_review_open`, `performance.cycle_phase_started`, `performance.review_pending`, `performance.peer_nomination_pending`, `performance.calibration_invite`, `performance.result_released` (obrigatório) e `feedback.received`. Em S E P.
 
-  **Cobrança (spec 19):** para o responsável financeiro, `billing.invoice_issued`, `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued`; para o financeiro e o superadmin, `platform.nfse_error`; para o RH administrador das empresas da carteira, `billing.partner_read_only` e `billing.partner_cancelled`. Todos obrigatórios, em S E.
+  **Cobrança (spec 19):** para o responsável financeiro, `billing.invoice_issued`, `billing.price_change` (aviso de 30 dias da migração de preço, D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued`; para o financeiro e o superadmin, `platform.nfse_error`; para o RH administrador das empresas da carteira, `billing.partner_read_only` e `billing.partner_cancelled`. Todos obrigatórios, em S E.
 
   **Equipe CatalystHR:** `platform.ai_circuit_open` (disjuntor da IA, RN-14-123), `platform.ai_daily_cap` (RN-14-114), `platform.holidays_task` (RN-11-021), em S E.
 

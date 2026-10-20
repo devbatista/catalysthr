@@ -11,7 +11,7 @@
           <th><%= t("shared.invoices.table.number") %></th>
           <% if client %><th><%= t("shared.invoices.table.client") %></th><% end %>
           <th class="hidden md:table-cell"><%= t("shared.invoices.table.period") %></th>
-          <th><%= t("shared.invoices.table.due_on") %></th>
+          <th class="hidden sm:table-cell"><%= t("shared.invoices.table.due_on") %></th>
           <th class="text-right"><%= t("shared.invoices.table.total") %></th>
           <th><%= t("shared.invoices.table.status") %></th>
         </tr>
@@ -22,7 +22,7 @@
             <td class="font-mono"><%= link_to invoice.display_number, path.call(invoice), class: "link-button" %></td>
             <% if client %><td class="font-bold text-ink-strong"><%= invoice.billing_account.name %></td><% end %>
             <td class="hidden whitespace-nowrap text-ink-soft md:table-cell"><%= l(invoice.period_start) %> – <%= l(invoice.period_end) %></td>
-            <td class="whitespace-nowrap"><%= l(invoice.due_on) %></td>
+            <td class="hidden whitespace-nowrap sm:table-cell"><%= l(invoice.due_on) %></td>
             <td class="whitespace-nowrap text-right"><%= reais(invoice.total_cents) %></td>
             <td><%= invoice_status_pill(invoice) %></td>
           </tr>

@@ -3,7 +3,8 @@ module Billing
   # starts on the contract's cycle day (P-19-11); its invoice is issued 3 days before and is
   # due on the first day, charging the month that starts. The first cycle starts on the
   # contract's start, and its invoice is issued at once, due that day (RN-19-033). The
-  # overage is the one of the last closed month, charged once (D-619). Issuing again
+  # overage is the one of the last closed month, charged once (D-619), and the prorations of
+  # the changes made since the last invoice go in too (RN-19-060, D-620). Issuing again
   # changes nothing: each cycle has one invoice, and two runs at the same time wait for each
   # other.
   module Invoicing
@@ -43,12 +44,19 @@ module Billing
         next if account.invoices.exists?(period_start: start)
 
         usage = billable_usage(account, today)
-        employees = usage&.peak_employees || Usage.active_employees(account, today) unless account.partner?
-        lines = InvoiceLines.new(subscription, start, usage: usage, employees: employees).lines
+        employees = employees_basis(account, today) unless account.partner?
+        lines = InvoiceLines.new(subscription, start, usage: usage, employees: employees, prorations: account.prorations.pending.to_a).lines
         create(account, start, usage, lines)
       end
       notify(invoice) if invoice
       invoice
+    end
+
+    # The direct company's employees to charge: the peak of the last closed month, or those
+    # active on the day when there is none (D-619).
+    def employees_basis(account, today)
+      last = UsagePeriod.totals.where(billing_account: account).where.not(closed_at: nil).order(period: :desc).first
+      last&.peak_employees || Usage.active_employees(account, today)
     end
 
     # The month before the issue, closed, unless an earlier invoice already charged it.
@@ -67,7 +75,7 @@ module Billing
         total_cents: lines.sum(&:total_cents), usage_period: usage&.period, issued_at: Time.current)
       lines.each.with_index(1) do |line, position|
         invoice.lines.new(position: position, kind: line.kind, description: line.description, quantity: line.quantity,
-          unit_cents: line.unit_cents, total_cents: line.total_cents)
+          unit_cents: line.unit_cents, total_cents: line.total_cents, proration_id: line.proration_id)
       end
       invoice.save!
       invoice

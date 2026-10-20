@@ -67,7 +67,18 @@ Rails.application.routes.draw do
       # The partner's pre-activation fee (RN-19-035, D-612).
       resources :pre_activation_prices, only: %i[new create], path: "pre-activation-prices"
       # Partners and direct companies with their contracts (RN-19-080, RN-19-081, D-613).
-      resources :clients, only: %i[index new create show], controller: "billing_accounts"
+      resources :clients, only: %i[index new create show], controller: "billing_accounts" do
+        # Changes to the contract by the team (RN-19-014, RN-19-060, RN-19-061, D-620).
+        resource :contract, only: [], controller: "contract_changes" do
+          patch :plan, action: :change_plan
+          delete :plan, action: :cancel_scheduled
+          post :price_migration, path: "price-migration", action: :migrate_price
+          post "modules/:code", action: :add_module, as: :module
+          delete "modules/:code", action: :remove_module
+          post "add-ons/:code", action: :add_add_on, as: :add_on
+          delete "add-ons/:code", action: :remove_add_on
+        end
+      end
       # The contracts' invoices (RN-19-040, RN-19-041, D-619).
       resources :invoices, only: %i[index show]
       resources :users, only: :index do

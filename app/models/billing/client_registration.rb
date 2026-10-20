@@ -48,7 +48,7 @@ module Billing
     end
 
     def plan
-      @plan ||= Plan.active.where(kind: kind).find_by(id: plan_id) if plan_id
+      @plan ||= Plan.active.public_plans.where(kind: kind).find_by(id: plan_id) if plan_id
     end
 
     def plan_version

@@ -42,6 +42,9 @@ class PlatformAbility
       can %i[read create], BillingAccount
       # The invoices of every contract (spec 19, section 6, D-619).
       can :read, Invoice
+      # Plan, modules, add-ons and price migration of a contract (RN-19-014, RN-19-060,
+      # RN-19-061, D-620). The client's own changes come with block 19e.
+      can :change_contract, BillingAccount
     end
     # The support reads the billing (spec 19, section 6).
     can :read, [ BillingAccount, Invoice ] if user.support?

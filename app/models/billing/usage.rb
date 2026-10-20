@@ -110,8 +110,9 @@ module Billing
     end
 
     # The partner's first day with an active employee in the portfolio ends the
-    # pre-activation: from then on, the band and the modules are charged (RN-19-035, D-612).
-    # The activation happens once; the proration enters the invoice with block 19d.
+    # pre-activation: from then on, the band and the modules are charged (RN-19-035, D-612),
+    # with the difference for the days already invoiced on the next invoice. The activation
+    # happens once.
     def activate_partners(date)
       Subscription.joins(:billing_account).where(billing_accounts: { owner_type: "Partner" }, activated_on: nil)
         .where.not(status: %w[trialing trial_expired]).find_each do |subscription|
@@ -119,7 +120,12 @@ module Billing
           .where("active_employees > 0").minimum(:date)
         next if first.nil?
 
-        subscription.with_lock { subscription.update!(activated_on: first) if subscription.pre_activation? }
+        subscription.with_lock do
+          next unless subscription.pre_activation?
+
+          subscription.update!(activated_on: first)
+          ContractChanges.prorate_activation(subscription, first)
+        end
       end
     end
 

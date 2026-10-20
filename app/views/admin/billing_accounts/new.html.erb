@@ -1,5 +1,5 @@
 <% content_for :title, t(".title.#{@registration.kind}") %>
-<% plans = Plan.active.where(kind: @registration.kind).includes(plan_versions: :plan_modules).ordered.select(&:version_on) %>
+<% plans = Plan.active.public_plans.where(kind: @registration.kind).includes(plan_versions: :plan_modules).ordered.select(&:version_on) %>
 <% add_ons = AddOn.active.includes(:prices).select(&:price_on) %>
 
 <p class="text-sm"><%= link_to t("admin.billing_accounts.show.back"), admin_clients_path, class: "link-button" %></p>
