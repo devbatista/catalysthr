@@ -63,8 +63,14 @@
 
 > Fatos de [API and data retention](https://platform.claude.com/docs/en/manage-claude/api-and-data-retention), conferidos em 2026-10-14: a retenção zero é pedida ao [comercial](https://claude.com/contact-sales) e ligada por organização. Cobre a Messages API e a contagem de tokens com os recursos elegíveis: PDF e imagem no corpo da requisição, citações, cache de prompt e saídas estruturadas (estas com ressalva: só o esquema JSON fica guardado por até 24 horas). Não cobre a Batch API nem a Files API (D-385). O Claude Sonnet 5.5 (RN-14-002) é compatível; os modelos Fable 5 e 5.1 não funcionam com retenção zero. Mesmo com ela, a Anthropic pode guardar por até 2 anos o conteúdo marcado pelos sistemas de segurança ou exigido por lei. Vale também para o Claude Code quando ele usa uma chave da organização; não vale para contas pessoais do Claude.
 
-- [ ] **Anthropic:** criar a organização **DevBatista** no Console, com `rafael@devbatista.com` como dona. Não usar a API com dados reais antes da retenção zero ativa
-- [ ] **Anthropic:** pedir a **retenção zero** ao comercial (D-380), com o texto preparado em 2026-10-14: uso só da Messages API com o Sonnet 5.5, sem Batch, Files, execução de código, conector MCP ou Managed Agents. Perguntar se exige contrato ou consumo mínimo e qual DPA se aplica (com a transferência internacional). Não aceitar custo antes de avaliar
+> Conferido em 2026-10-20 ([conta Claude e conta do Console](https://support.claude.com/en/articles/8987223-can-i-have-a-claude-account-and-a-console-account), [créditos da API](https://support.claude.com/en/articles/8977456-how-do-i-pay-for-my-claude-api-usage)):
+> - a organização do Console é uma conta separada dos planos do Claude.ai (Free, Pro, Max), mesmo com o mesmo e-mail;
+> - os planos de consumidor do Claude.ai não têm retenção zero, nem o playground do Console;
+> - a API só funciona com créditos pré-pagos, que não são reembolsáveis e vencem em 1 ano;
+> - a documentação não cita custo para criar a organização nem gasto mínimo para a retenção zero.
+
+- [x] **Anthropic:** criar a organização **DevBatista** no Console, com `rafael@devbatista.com` como dona. Não usar a API com dados reais antes da retenção zero ativa (criada em 2026-10-20, sem créditos, com o workspace Default e o limite inicial de US$ 500 por mês)
+- [x] **Anthropic:** pedir a **retenção zero** ao comercial (D-380). Enviado em 2026-10-20 pelo formulário de Contact sales, na opção "Zero data retention", com o ID da organização, o caso de uso e as perguntas sobre contrato, gasto mínimo e DPA; sem número de protocolo na confirmação. Pedido original:, com o texto preparado em 2026-10-14: uso só da Messages API com o Sonnet 5.5, sem Batch, Files, execução de código, conector MCP ou Managed Agents. Perguntar se exige contrato ou consumo mínimo e qual DPA se aplica (com a transferência internacional). Não aceitar custo antes de avaliar
 - [ ] **Anthropic:** confirmar por escrito que a retenção zero está ativa e cobre os recursos usados
 
 ## Voyage AI — trava a fase 5

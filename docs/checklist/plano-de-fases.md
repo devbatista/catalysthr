@@ -151,7 +151,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ## Fase 2 — Núcleo de RH (16 a 22 semanas) · primeiro cliente
 
 ### Pré-requisitos
-- [ ] Anthropic: retenção zero contratada. Criar a organização e pedir ao comercial lá pela metade da fase 1, umas 6 a 8 semanas antes da fase 2, porque o prazo de resposta não é documentado
+- [ ] Anthropic: retenção zero contratada. Criar a organização e pedir ao comercial lá pela metade da fase 1, umas 6 a 8 semanas antes da fase 2, porque o prazo de resposta não é documentado. Organização DevBatista criada e pedido enviado em 2026-10-20; falta a confirmação por escrito
 - [ ] Jurídico: prazos de retenção e transferência internacional validados; minutas de termos de uso, política de privacidade e contrato de tratamento de dados revisadas
 - [ ] WhatsApp pela Twilio: empresa verificada na Meta, remetente registrado e modelos aprovados
 - [ ] Especialista em DP: spec 09 conferida, menos as férias
