@@ -14,6 +14,7 @@ class BillingAccount < ApplicationRecord
   has_one :subscription, dependent: :restrict_with_exception
   has_many :invoices, dependent: :restrict_with_exception
   has_many :prorations, dependent: :restrict_with_exception
+  has_many :billing_adjustments, dependent: :restrict_with_exception
 
   normalizes :billing_email, with: ->(email) { email.to_s.strip.downcase.presence }
 

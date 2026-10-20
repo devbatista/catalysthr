@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_200100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -165,6 +165,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
     t.datetime "updated_at", null: false
     t.index ["owner_type", "owner_id"], name: "index_billing_accounts_on_owner", unique: true
     t.index ["responsible_user_id"], name: "index_billing_accounts_on_responsible_user_id"
+  end
+
+  create_table "billing_adjustments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.string "kind", null: false
+    t.bigint "value_cents"
+    t.decimal "percent", precision: 5, scale: 2
+    t.integer "cycles", default: 1, null: false
+    t.string "overage_scope"
+    t.text "reason", null: false
+    t.string "status", null: false
+    t.uuid "created_by_id", null: false
+    t.uuid "approved_by_id"
+    t.datetime "approved_at"
+    t.uuid "cancelled_by_id"
+    t.datetime "cancelled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_billing_adjustments_on_approved_by_id"
+    t.index ["billing_account_id"], name: "index_billing_adjustments_on_billing_account_id"
+    t.index ["cancelled_by_id"], name: "index_billing_adjustments_on_cancelled_by_id"
+    t.index ["created_by_id"], name: "index_billing_adjustments_on_created_by_id"
+    t.index ["status"], name: "index_billing_adjustments_on_status"
   end
 
   create_table "brand_subdomains", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -468,6 +491,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "proration_id"
+    t.uuid "billing_adjustment_id"
+    t.index ["billing_adjustment_id"], name: "index_invoice_lines_on_billing_adjustment_id"
     t.index ["invoice_id"], name: "index_invoice_lines_on_invoice_id"
     t.index ["proration_id"], name: "index_invoice_lines_on_proration_id", unique: true
   end
@@ -955,6 +980,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"
   add_foreign_key "billing_accounts", "users", column: "responsible_user_id"
+  add_foreign_key "billing_adjustments", "billing_accounts"
+  add_foreign_key "billing_adjustments", "users", column: "approved_by_id"
+  add_foreign_key "billing_adjustments", "users", column: "cancelled_by_id"
+  add_foreign_key "billing_adjustments", "users", column: "created_by_id"
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
@@ -993,6 +1022,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
+  add_foreign_key "invoice_lines", "billing_adjustments"
   add_foreign_key "invoice_lines", "invoices"
   add_foreign_key "invoice_lines", "prorations"
   add_foreign_key "invoices", "billing_accounts"

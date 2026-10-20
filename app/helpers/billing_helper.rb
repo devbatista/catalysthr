@@ -48,6 +48,21 @@ module BillingHelper
     tag.span(t("billing.invoice_statuses.#{invoice.status}"), class: "pill #{INVOICE_STATUS_PILLS.fetch(invoice.status)}")
   end
 
+  ADJUSTMENT_STATUS_PILLS = { "pending" => "pill-warn", "approved" => "pill-ok", "cancelled" => "pill-mute" }.freeze
+
+  def adjustment_status_pill(adjustment)
+    tag.span(t("billing.adjustment_statuses.#{adjustment.status}"), class: "pill #{ADJUSTMENT_STATUS_PILLS.fetch(adjustment.status)}")
+  end
+
+  # How much of an adjustment the invoices already used (D-621).
+  def adjustment_progress(adjustment)
+    if adjustment.credit?
+      t("billing.adjustment_progress.credit", used: reais(adjustment.applied_cents), total: reais(adjustment.value_cents))
+    else
+      t("billing.adjustment_progress.invoices", count: adjustment.discount? ? adjustment.cycles : 1, used: adjustment.invoice_lines.size)
+    end
+  end
+
   def plan_version_pill(state)
     tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
   end

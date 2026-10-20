@@ -4,7 +4,8 @@ module Billing
   # due on the first day, charging the month that starts. The first cycle starts on the
   # contract's start, and its invoice is issued at once, due that day (RN-19-033). The
   # overage is the one of the last closed month, charged once (D-619), and the prorations of
-  # the changes made since the last invoice go in too (RN-19-060, D-620). Issuing again
+  # the changes made since the last invoice go in too (RN-19-060, D-620), then the approved
+  # manual adjustments (RN-19-070, D-621). Issuing again
   # changes nothing: each cycle has one invoice, and two runs at the same time wait for each
   # other.
   module Invoicing
@@ -44,12 +45,27 @@ module Billing
         next if account.invoices.exists?(period_start: start)
 
         usage = billable_usage(account, today)
-        employees = employees_basis(account, today) unless account.partner?
-        lines = InvoiceLines.new(subscription, start, usage: usage, employees: employees, prorations: account.prorations.pending.to_a).lines
-        create(account, start, usage, lines)
+        lines = charges(subscription, start, today, usage)
+        create(account, start, usage, lines + Adjustments.lines_for(account, lines))
       end
       notify(invoice) if invoice
       invoice
+    end
+
+    # What the cycle charges before the manual adjustments.
+    def charges(subscription, start, today, usage)
+      account = subscription.billing_account
+      employees = employees_basis(account, today) unless account.partner?
+      InvoiceLines.new(subscription, start, usage: usage, employees: employees, prorations: account.prorations.pending.to_a).lines
+    end
+
+    # The next invoice as it would be issued today, before the adjustments: what an
+    # adjustment is compared with (RN-19-071, D-619).
+    def preview_lines(subscription, today = Date.current)
+      account = subscription.billing_account
+      last = account.invoices.maximum(:period_start)
+      start = last ? next_cycle(last, account.cycle_day) : subscription.started_on
+      charges(subscription, start, today, billable_usage(account, today))
     end
 
     # The direct company's employees to charge: the peak of the last closed month, or those
@@ -75,7 +91,8 @@ module Billing
         total_cents: lines.sum(&:total_cents), usage_period: usage&.period, issued_at: Time.current)
       lines.each.with_index(1) do |line, position|
         invoice.lines.new(position: position, kind: line.kind, description: line.description, quantity: line.quantity,
-          unit_cents: line.unit_cents, total_cents: line.total_cents, proration_id: line.proration_id)
+          unit_cents: line.unit_cents, total_cents: line.total_cents, proration_id: line.proration_id,
+          billing_adjustment_id: line.billing_adjustment_id)
       end
       invoice.save!
       invoice

@@ -39,6 +39,7 @@ module NavigationHelper
       nav_group(:billing, [
         (nav_item(t("navigation.clients"), admin_clients_path, controller_path == "admin/billing_accounts") if billing_allowed?(BillingAccount)),
         (nav_item(t("navigation.invoices"), admin_invoices_path, controller_path == "admin/invoices") if billing_allowed?(Invoice)),
+        (nav_item(t("navigation.adjustments"), admin_adjustments_path, controller_path == "admin/billing_adjustments") if billing_allowed?(BillingAdjustment)),
         (nav_item(t("navigation.plans"), admin_plans_path,
           controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan))
       ]),

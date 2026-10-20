@@ -4,8 +4,9 @@ class InvoiceLine < ApplicationRecord
   KINDS = %w[plan module add_on overage_employees overage_ai overage_whatsapp proration adjustment].freeze
 
   belongs_to :invoice, inverse_of: :lines
-  # The proration the line charges, once (D-620).
+  # The proration the line charges, once (D-620), or the manual adjustment it applies (D-621).
   belongs_to :proration, optional: true
+  belongs_to :billing_adjustment, optional: true
 
   enum :kind, KINDS.index_by(&:itself), prefix: true, validate: true
 

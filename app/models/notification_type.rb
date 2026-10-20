@@ -56,5 +56,8 @@ NotificationType::CATALOG = [
     roles: %w[partner_admin hr_admin]),
   # The 30 days' notice of a price migration, to the contract's responsible (RN-19-014, D-620).
   NotificationType.new(code: "billing.price_change", mandatory: true, urgent: false, channels: %w[system email],
-    roles: %w[partner_admin hr_admin])
+    roles: %w[partner_admin hr_admin]),
+  # The CatalystHR team: an adjustment above 20% waiting for the superadmin (RN-19-071, D-621).
+  NotificationType.new(code: "platform.adjustment_pending", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin])
 ].index_by(&:code).freeze
