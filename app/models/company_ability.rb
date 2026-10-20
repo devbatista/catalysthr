@@ -100,6 +100,9 @@ class CompanyAbility
     # The company's settings and units (spec 03, section 4.2, D-601). The employer's
     # document is corrected only by the superadmin.
     can :update_settings, Company, id: company.id
+    # The direct company's invoices, as its financial responsible (RN-19-044, D-619). A
+    # partner's company has no contract of its own (RN-19-001).
+    can :read_invoices, Company, id: company.id if company.direct?
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
     can %i[lookup geocode], :address
     can :lookup, :cbo

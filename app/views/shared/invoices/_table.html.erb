@@ -1,0 +1,33 @@
+<%# The invoices of a contract, or of every contract in the admin (D-619).
+    locals: invoices; path: lambda giving an invoice's path; client: show the contract's name. %>
+<% client = local_assigns.fetch(:client, false) %>
+<% if invoices.empty? %>
+  <p class="card card-body text-sm text-ink-soft"><%= t("shared.invoices.table.empty") %></p>
+<% else %>
+  <div class="card overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t("shared.invoices.table.number") %></th>
+          <% if client %><th><%= t("shared.invoices.table.client") %></th><% end %>
+          <th class="hidden md:table-cell"><%= t("shared.invoices.table.period") %></th>
+          <th><%= t("shared.invoices.table.due_on") %></th>
+          <th class="text-right"><%= t("shared.invoices.table.total") %></th>
+          <th><%= t("shared.invoices.table.status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% invoices.each do |invoice| %>
+          <tr>
+            <td class="font-mono"><%= link_to invoice.display_number, path.call(invoice), class: "link-button" %></td>
+            <% if client %><td class="font-bold text-ink-strong"><%= invoice.billing_account.name %></td><% end %>
+            <td class="hidden whitespace-nowrap text-ink-soft md:table-cell"><%= l(invoice.period_start) %> – <%= l(invoice.period_end) %></td>
+            <td class="whitespace-nowrap"><%= l(invoice.due_on) %></td>
+            <td class="whitespace-nowrap text-right"><%= reais(invoice.total_cents) %></td>
+            <td><%= invoice_status_pill(invoice) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

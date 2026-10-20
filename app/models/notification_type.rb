@@ -50,5 +50,8 @@ NotificationType::CATALOG = [
   # 80% and 100% of the band of employees, to the contract's responsible (RN-19-022,
   # D-092). Specs 14 and 15 add the AI and WhatsApp quotas as other variants (D-101, D-407).
   NotificationType.new(code: "billing.usage_threshold", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  # The cycle's invoice, to the contract's responsible (RN-19-041, D-619).
+  NotificationType.new(code: "billing.invoice_issued", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin])
 ].index_by(&:code).freeze

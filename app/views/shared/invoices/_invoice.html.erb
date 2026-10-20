@@ -1,0 +1,47 @@
+<%# An invoice with every line (RN-19-041, D-619). locals: invoice; back: the list's path. %>
+<p class="text-sm"><%= link_to t("shared.invoices.invoice.back"), back, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= t("shared.invoices.invoice.title", number: invoice.display_number) %></h1>
+  <%= invoice_status_pill(invoice) %>
+</div>
+<p class="page-subtitle"><%= invoice.billing_account.name %> · <%= invoice.billing_account.owner.legal_name %></p>
+
+<div class="card card-body mt-6">
+  <dl class="details-list">
+    <div><dt><%= t("shared.invoices.invoice.period") %></dt><dd><%= l(invoice.period_start) %> – <%= l(invoice.period_end) %></dd></div>
+    <div><dt><%= t("shared.invoices.invoice.due_on") %></dt><dd><%= l(invoice.due_on) %></dd></div>
+    <div><dt><%= t("shared.invoices.invoice.issued_at") %></dt><dd><%= l(invoice.issued_at.to_date) %></dd></div>
+    <div><dt><%= t("shared.invoices.invoice.total") %></dt><dd class="font-bold text-ink-strong"><%= reais(invoice.total_cents) %></dd></div>
+  </dl>
+</div>
+
+<div class="card mt-6 overflow-x-auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= t("shared.invoices.invoice.description") %></th>
+        <th class="text-right"><%= t("shared.invoices.invoice.quantity") %></th>
+        <th class="hidden text-right sm:table-cell"><%= t("shared.invoices.invoice.unit") %></th>
+        <th class="text-right"><%= t("shared.invoices.invoice.line_total") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% invoice.lines.each do |line| %>
+        <tr>
+          <td><%= line.description %></td>
+          <td class="text-right"><%= number_with_delimiter(line.quantity) %></td>
+          <td class="hidden whitespace-nowrap text-right sm:table-cell"><%= reais(line.unit_cents) %></td>
+          <td class="whitespace-nowrap text-right"><%= reais(line.total_cents) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" class="font-bold text-ink-strong sm:hidden"><%= t("shared.invoices.invoice.total") %></td>
+        <td colspan="3" class="hidden font-bold text-ink-strong sm:table-cell"><%= t("shared.invoices.invoice.total") %></td>
+        <td class="whitespace-nowrap text-right font-bold text-ink-strong"><%= reais(invoice.total_cents) %></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<p class="field-hint mt-2"><%= t("shared.invoices.invoice.payment_soon") %></p>

@@ -1,0 +1,4 @@
+<% content_for :title, t("shared.invoices.invoice.title", number: @invoice.display_number) %>
+
+<%= render "shared/invoices/invoice", invoice: @invoice, back: admin_invoices_path %>
+<p class="mt-4 text-sm"><%= link_to t(".client", name: @invoice.billing_account.name), admin_client_path(@invoice.billing_account), class: "link-button" %></p>

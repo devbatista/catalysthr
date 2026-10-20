@@ -291,6 +291,12 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Mensalidade de pré-ativação registrada, a partir de %{date}."
+    invoices:
+      index:
+        title: "Faturas"
+        subtitle: "As faturas de todos os contratos, das mais recentes para as mais antigas. A lista mostra as %{limit} últimas; as de cada cliente ficam na página dele."
+      show:
+        client: "Ver o contrato de %{name}"
     billing_accounts:
       index:
         title: "Clientes"
@@ -349,6 +355,7 @@ pt-BR:
         created_existing_person: "Cliente cadastrado. O CPF do administrador já tinha conta na plataforma: o convite foi para o e-mail já cadastrado dessa pessoa, e os dados dela não mudaram."
       show:
         back: "Voltar para clientes"
+        invoices: "Faturas"
         contract: "Contrato"
         address: "Endereço de acesso"
         responsible: "Responsável financeiro"
@@ -643,6 +650,7 @@ pt-BR:
     companies: "Empresas"
     portfolio: "Carteira"
     usage: "Consumo"
+    invoices: "Faturas"
     team: "Equipe"
     brand: "Marca e domínio"
     firm_companies: "Empresas atendidas"
@@ -676,6 +684,10 @@ pt-BR:
       accounting_integrations: "Integrações contábeis"
       process_templates: "Modelos de processo"
   panel:
+    invoices:
+      index:
+        title: "Faturas"
+        subtitle: "As faturas do contrato da empresa com a CatalystHR, uma por mês, emitidas 3 dias antes do vencimento."
     home:
       coming_soon:
         default_welcome: "Acesse sua conta."
@@ -1469,6 +1481,10 @@ pt-BR:
           back: "Voltar para a equipe"
           revoke_confirm: "Remover o acesso desta pessoa ao escritório? As sessões dela serão encerradas."
     partner_panel:
+      invoices:
+        index:
+          title: "Faturas"
+          subtitle: "As faturas do contrato do parceiro com a CatalystHR, uma por mês, emitidas 3 dias antes do vencimento."
       home:
         index:
           title: "Carteira"
@@ -1821,6 +1837,11 @@ pt-BR:
         employees_100:
           title: "%{name} chegou ao limite da faixa de colaboradores"
           body: "Em %{month}, o pico foi de %{used} colaboradores ativos, para uma faixa de %{limit}. Nada é bloqueado: cada colaborador acima da faixa entra como excedente na fatura seguinte."
+      invoice_issued:
+        name: "Fatura disponível"
+        hint: "Quando a fatura do mês é emitida, 3 dias antes do vencimento."
+        title: "Fatura %{number} de %{name}: %{total}"
+        body: "A fatura do período de %{period_start} a %{period_end} vence em %{due}. Veja o detalhamento de cada item na plataforma."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
@@ -1968,6 +1989,28 @@ pt-BR:
   date:
     formats:
       month_year: "%B de %Y"
+  shared:
+    invoices:
+      table:
+        empty: "Nenhuma fatura emitida ainda."
+        number: "Número"
+        client: "Cliente"
+        period: "Período"
+        due_on: "Vencimento"
+        total: "Total"
+        status: "Situação"
+      invoice:
+        back: "Voltar para as faturas"
+        title: "Fatura %{number}"
+        period: "Período"
+        due_on: "Vencimento"
+        issued_at: "Emitida em"
+        total: "Total"
+        description: "Item"
+        quantity: "Quantidade"
+        unit: "Valor unitário"
+        line_total: "Valor"
+        payment_soon: "Para pagar esta fatura, fale com a equipe da CatalystHR."
   billing:
     kinds:
       partner: "Parceiro"
@@ -1989,6 +2032,25 @@ pt-BR:
       trial_expired: "Teste vencido"
       cancel_scheduled: "Cancelamento agendado"
     pre_activation: "Pré-ativação"
+    invoice_statuses:
+      draft: "Rascunho"
+      open: "Em aberto"
+      paid: "Paga"
+      overdue: "Vencida"
+      void: "Cancelada"
+    invoice_lines:
+      plan: "Plano %{plan}"
+      pre_activation: "Mensalidade de pré-ativação"
+      module: "Módulo %{module}"
+      plan_per_employee: "Plano %{plan}, por colaborador ativo"
+      plan_minimum:
+        zero: "Plano %{plan}, mínimo mensal (nenhum colaborador ativo)"
+        one: "Plano %{plan}, mínimo mensal (1 colaborador ativo)"
+        other: "Plano %{plan}, mínimo mensal (%{count} colaboradores ativos)"
+      module_per_employee: "Módulo %{module}, por colaborador ativo"
+      overage_employees: "Colaboradores acima da faixa em %{month} (pico de %{peak} para a faixa de %{limit})"
+      overage_ai: "Créditos de IA acima da cota em %{month} (%{used} de %{quota})"
+      overage_whatsapp: "Mensagens de WhatsApp acima da cota em %{month} (%{used} de %{quota})"
     usage_report:
       columns:
         document: "CNPJ/CPF"

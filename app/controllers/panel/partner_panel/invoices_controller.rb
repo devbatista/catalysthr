@@ -1,0 +1,26 @@
+module Panel
+  module PartnerPanel
+    # The partner contract's invoices, for the partner's administrator, its financial
+    # responsible (RN-19-044, D-619).
+    class InvoicesController < BaseController
+      before_action :require_billing_feature
+
+      def index
+        authorize! :read_invoices, partner
+        @invoices = invoices.recent_first
+      end
+
+      def show
+        authorize! :read_invoices, partner
+        @invoice = invoices.includes(:lines).find(params[:id])
+      end
+
+      private
+
+      # Only the partner's own contract; any other invoice is not found.
+      def invoices
+        partner.billing_account&.invoices || Invoice.none
+      end
+    end
+  end
+end

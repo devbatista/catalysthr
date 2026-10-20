@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -455,6 +455,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
     t.index ["impersonated_user_id"], name: "index_impersonation_sessions_on_impersonated_user_id"
     t.index ["impersonator_id"], name: "index_impersonation_sessions_on_impersonator_id"
     t.index ["token_digest"], name: "index_impersonation_sessions_on_token_digest", unique: true
+  end
+
+  create_table "invoice_lines", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "invoice_id", null: false
+    t.integer "position", null: false
+    t.string "kind", null: false
+    t.string "description", null: false
+    t.integer "quantity", null: false
+    t.bigint "unit_cents", null: false
+    t.bigint "total_cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_lines_on_invoice_id"
+  end
+
+  create_table "invoices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.bigint "number", null: false
+    t.date "period_start", null: false
+    t.date "period_end", null: false
+    t.date "due_on", null: false
+    t.string "status", default: "open", null: false
+    t.bigint "total_cents", null: false
+    t.string "usage_period"
+    t.datetime "issued_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_account_id", "period_start"], name: "index_invoices_on_billing_account_id_and_period_start", unique: true
+    t.index ["number"], name: "index_invoices_on_number", unique: true
+    t.index ["status", "due_on"], name: "index_invoices_on_status_and_due_on"
   end
 
   create_table "legal_documents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -941,6 +971,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
+  add_foreign_key "invoice_lines", "invoices"
+  add_foreign_key "invoices", "billing_accounts"
   add_foreign_key "legal_documents", "brands"
   add_foreign_key "legal_documents", "users", column: "published_by_id"
   add_foreign_key "membership_units", "companies"

@@ -61,16 +61,27 @@ module Billing
       recorded = DailyUsage.where(date: day).pluck(:company_id).to_set
       missing = due.reject { |company| recorded.include?(company.id) }
       missing.each_slice(BATCH) do |batch|
-        counts = CrossCompany.scope(Employment, Company.where(id: batch.map(&:id)))
-          .where(status: COUNTED_EMPLOYMENTS, started_on: ..day)
-          .where("employments.ended_on IS NULL OR employments.ended_on >= ?", day)
-          .group(:company_id).count
+        counts = counted_employments(batch.map(&:id), day).group(:company_id).count
         rows = batch.map do |company|
           { billing_account_id: company.billing_account_id, company_id: company.id, date: day,
             active_employees: counts.fetch(company.id, 0), modules: company.modules }
         end
         DailyUsage.insert_all(rows, unique_by: %i[company_id date])
       end
+    end
+
+    # The employments of the companies that count on the day (COUNTED_EMPLOYMENTS).
+    def counted_employments(company_ids, day)
+      CrossCompany.scope(Employment, Company.where(id: company_ids))
+        .where(status: COUNTED_EMPLOYMENTS, started_on: ..day)
+        .where("employments.ended_on IS NULL OR employments.ended_on >= ?", day)
+    end
+
+    # The contract's employees active or on leave on the day, by the same rule as the
+    # recorded days: for an invoice with no closed month to go by (D-619).
+    def active_employees(account, day)
+      ids = counted_companies.select { |company| company.billing_account_id == account.id && company.since <= day }.map(&:id)
+      ids.empty? ? 0 : counted_employments(ids, day).count
     end
 
     # The month of each company and of each contract, from the recorded days: the peak of
