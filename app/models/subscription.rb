@@ -33,8 +33,10 @@ class Subscription < ApplicationRecord
     billing_account&.partner? && !trialing? && !trial_expired? && activated_on.nil?
   end
 
-  def modules
-    items.select { |item| item.kind_module? && item.current? }.map(&:module)
+  # The modules and add-ons in force on a date: a reduction ends them at the end of the
+  # cycle (RN-19-061).
+  def modules(date = Date.current)
+    items.select { |item| item.kind_module? && item.current?(date) }.map(&:module)
   end
 
   # The partner's band of employees (D-480), not charged in the pre-activation (D-612). A
@@ -57,8 +59,8 @@ class Subscription < ApplicationRecord
     trialing? || trial_expired? || pre_activation?
   end
 
-  def add_on_prices
-    items.select { |item| item.kind_add_on? && item.current? }.map(&:add_on_price)
+  def add_on_prices(date = Date.current)
+    items.select { |item| item.kind_add_on? && item.current?(date) }.map(&:add_on_price)
   end
 
   private

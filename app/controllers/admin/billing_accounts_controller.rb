@@ -29,6 +29,7 @@ module Admin
       @account = BillingAccount.includes(:responsible_user, subscription: [ { plan_version: :plan }, :pre_activation_price,
         { items: { add_on_price: :add_on } } ]).find(params[:id])
       authorize! :read, @account
+      @invoices = @account.invoices.recent_first
     end
 
     private

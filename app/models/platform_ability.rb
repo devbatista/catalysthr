@@ -40,8 +40,10 @@ class PlatformAbility
       can %i[read create], PreActivationPrice
       # Registering partners and direct companies, with trial or contract (RN-19-081).
       can %i[read create], BillingAccount
+      # The invoices of every contract (spec 19, section 6, D-619).
+      can :read, Invoice
     end
     # The support reads the billing (spec 19, section 6).
-    can :read, BillingAccount if user.support?
+    can :read, [ BillingAccount, Invoice ] if user.support?
   end
 end

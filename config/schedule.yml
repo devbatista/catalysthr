@@ -60,3 +60,9 @@ billing_close_period:
   cron: "30 4 * * *"           # 01:30 in Brasília, after the day's usage
   class: "Billing::ClosePeriodJob"
   queue: "default"
+
+# The invoices of the cycles that start in up to 3 days (spec 19, RN-19-040, RN-19-041, D-619)
+billing_generate_invoices:
+  cron: "0 5 * * *"            # 02:00 in Brasília, after the month's usage is closed
+  class: "Billing::GenerateInvoicesJob"
+  queue: "default"

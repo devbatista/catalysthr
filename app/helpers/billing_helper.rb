@@ -41,6 +41,13 @@ module BillingHelper
     safe_join([ status, tag.span(t("billing.pre_activation"), class: "pill pill-mute") ], " ")
   end
 
+  INVOICE_STATUS_PILLS = { "draft" => "pill-mute", "open" => "pill-info", "paid" => "pill-ok", "overdue" => "pill-bad",
+    "void" => "pill-mute" }.freeze
+
+  def invoice_status_pill(invoice)
+    tag.span(t("billing.invoice_statuses.#{invoice.status}"), class: "pill #{INVOICE_STATUS_PILLS.fetch(invoice.status)}")
+  end
+
   def plan_version_pill(state)
     tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
   end

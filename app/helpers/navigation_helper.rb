@@ -38,6 +38,7 @@ module NavigationHelper
       ]),
       nav_group(:billing, [
         (nav_item(t("navigation.clients"), admin_clients_path, controller_path == "admin/billing_accounts") if billing_allowed?(BillingAccount)),
+        (nav_item(t("navigation.invoices"), admin_invoices_path, controller_path == "admin/invoices") if billing_allowed?(Invoice)),
         (nav_item(t("navigation.plans"), admin_plans_path,
           controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan))
       ]),
@@ -100,6 +101,7 @@ module NavigationHelper
         (nav_item(t("navigation.allocation_clients"), allocation_clients_path, controller_path == "panel/allocation_clients") if company.uses_allocation_clients && can?(:read, AllocationClient)),
         (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
+        (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),
         (nav_item(t("navigation.settings"), edit_company_settings_path, controller_path == "panel/company_settings") if can?(:update_settings, company))
       ])
     ]
@@ -114,6 +116,7 @@ module NavigationHelper
         nav_item(t("navigation.portfolio"), partner_root_path,
           controller_path.in?(%w[panel/partner_panel/home panel/partner_panel/company_brands panel/partner_panel/company_hr_admins])),
         (nav_item(t("navigation.usage"), partner_usage_path, controller_path == "panel/partner_panel/usages") if billing_allowed?(:read_usage, partner)),
+        (nav_item(t("navigation.invoices"), partner_invoices_path, controller_path == "panel/partner_panel/invoices") if billing_allowed?(:read_invoices, partner)),
         (nav_item(t("navigation.team"), partner_team_members_path, controller_path == "panel/partner_panel/team_members") if can?(:read, Membership.new(organization: partner))),
         (nav_item(t("navigation.brand"), edit_partner_brand_path, controller_path.in?(%w[panel/partner_panel/brands panel/partner_panel/brand_email_domains])) if partner.brand && can?(:update, partner.brand)),
         *ComingSoon::PARTNER_FEATURES.map { |feature| soon_item(feature, partner_coming_soon_path(feature)) }

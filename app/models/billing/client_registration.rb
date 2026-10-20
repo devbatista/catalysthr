@@ -3,7 +3,8 @@ module Billing
   # D-484, D-613): the organization, its brand and subdomain, the contract with the plan's
   # current version, the modules and add-ons, a trial or a contract starting today, and
   # the invitation of the first administrator, who becomes the responsible (RN-19-044).
-  # A partner under contract starts on the pre-activation fee (RN-19-035, D-612).
+  # A partner under contract starts on the pre-activation fee (RN-19-035, D-612). A
+  # contract gets the first cycle's invoice at once, due that day (D-619).
   class ClientRegistration
     include ActiveModel::Model
     include ActiveModel::Attributes
@@ -96,6 +97,8 @@ module Billing
         activated_on: (today if !partner? && mode == "contract"))
       selected_modules.each { |code| subscription.items.create!(kind: "module", module: code, starts_on: today) }
       selected_add_on_prices.each { |price| subscription.items.create!(kind: "add_on", add_on_price: price, starts_on: today) }
+      # The first cycle's invoice, due today (RN-19-033, D-619).
+      Invoicing.issue_due(subscription, today, lead: 0) if mode == "contract"
       invitation
     end
 
