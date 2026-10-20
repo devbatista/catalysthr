@@ -4,7 +4,7 @@
 # - worker-time: only the `time` queue (time entries, receipts, AFD), so it never
 #   waits behind other jobs (P-10-26). Start with SIDEKIQ_ROLE=time.
 # - worker: every other queue, plus sidekiq-cron.
-redis_config = { url: ENV.fetch("REDIS_URL", "redis://localhost:6380/0") }
+redis_config = { url: ENV.fetch("REDIS_URL", "redis://localhost:6390/0") }
 
 Sidekiq.configure_client do |config|
   config.redis = redis_config

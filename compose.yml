@@ -1,5 +1,5 @@
 # Desenvolvimento local (spec 20, RN-20-034, D-587).
-# Uso: docker compose up    (web em http://aurora.painel.localhost:3000)
+# Uso: docker compose up    (web em http://aurora.painel.localhost:3300)
 # Postgres e Redis também ficam expostos na máquina, em portas diferentes das padrão,
 # para os testes e para quem usar um cliente de banco.
 x-app: &app
@@ -24,7 +24,7 @@ services:
   web:
     <<: *app
     ports:
-      - "3000:3000"
+      - "3300:3000"
     # Para o `debugger`: docker compose attach web
     stdin_open: true
     tty: true
@@ -44,7 +44,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"
+      - "5440:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -57,7 +57,7 @@ services:
     image: redis:7-alpine
     command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
     ports:
-      - "6380:6379"
+      - "6390:6379"
     volumes:
       - redis_data:/data
 

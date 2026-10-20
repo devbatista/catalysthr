@@ -2,7 +2,7 @@
 # never by seeds. Idempotent: run `bin/rails db:seed` as often as needed.
 return unless Rails.env.development?
 
-# A partner with two client companies: http://aurora.painel.localhost:3000
+# A partner with two client companies: http://aurora.painel.localhost:3300
 aurora = Partner.find_or_create_by!(cnpj: "98765432000198") do |partner|
   partner.name = "Aurora Gestão de Pessoas"
   partner.legal_name = "Aurora Gestão de Pessoas Ltda"
@@ -34,7 +34,7 @@ end
   seed_company(cnpj, name: name, legal_name: legal_name, partner: aurora)
 end
 
-# A direct company without a configured brand: http://serraazul.painel.localhost:3000
+# A direct company without a configured brand: http://serraazul.painel.localhost:3300
 serra_azul = seed_company("24681357000140", name: "Metalúrgica Serra Azul", legal_name: "Metalúrgica Serra Azul Ltda")
 serra_azul_brand = Brand.find_or_create_by!(owner: serra_azul) do |brand|
   brand.commercial_name = serra_azul.name
@@ -53,15 +53,15 @@ FeatureFlags.declare
 Flipper.enable(FeatureFlags::SIGN_IN)
 
 [
-  # CatalystHR team, at http://admin.localhost:3000
+  # CatalystHR team, at http://admin.localhost:3300
   [ "Paulo Lima", "52998224725", "paulo@catalysthr.example", { platform_role: "superadmin" }, nil, nil ],
-  # Partner's administrator and consultant, and a client company's HR, at http://aurora.painel.localhost:3000
+  # Partner's administrator and consultant, and a client company's HR, at http://aurora.painel.localhost:3300
   [ "Beatriz Nunes", "39053344705", "beatriz@aurora.example", {}, aurora, %w[partner_admin] ],
   [ "Ana Ribeiro", "11144477735", "ana@aurora.example", {}, aurora, %w[consultant] ],
   [ "Maria Souza", "12345678909", "maria@padaria.example", {}, Company.find_by!(document: "12ABC345"), %w[hr_admin] ],
-  # The accounting firm's administrator, at http://aurora.painel.localhost:3000 (MFA optional)
+  # The accounting firm's administrator, at http://aurora.painel.localhost:3300 (MFA optional)
   [ "Eva Martins", "71460238001", "eva@exata.example", {}, exata, %w[firm_admin] ],
-  # Direct company's HR, at http://serraazul.painel.localhost:3000
+  # Direct company's HR, at http://serraazul.painel.localhost:3300
   [ "Carlos Mendes", "98765432100", "carlos@serraazul.example", {}, serra_azul, %w[hr_admin] ]
 ].each do |name, cpf, email, attributes, organization, roles|
   user = User.find_by(cpf: cpf) || User.create!(name: name, cpf: cpf, email: email, password: "Catalyst#2026", **attributes)
