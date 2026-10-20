@@ -18,7 +18,7 @@ Ruby 4.0 e Rails 8.1 (ERB, sem Hotwire e sem React), Tailwind e JavaScript puro 
 Pré-requisito: Docker. Tudo roda no Docker Compose (D-587): web, Tailwind, Sidekiq, Postgres com pgvector e Redis. O código fica montado no container, então uma mudança aparece na hora.
 
 ```bash
-docker compose up -d --build                  # sobe tudo (web em http://aurora.painel.localhost:3000)
+docker compose up -d --build                  # sobe tudo (web em http://aurora.painel.localhost:3300)
 docker compose run --rm web bin/rails db:prepare db:seed   # na primeira vez: banco e dados fictícios
 docker compose logs -f web                    # logs do Rails
 docker compose exec web bundle exec rspec     # testes
@@ -28,26 +28,26 @@ docker compose attach web                     # para usar o `debugger` (sair com
 
 Depois de mudar o `Gemfile`, o container instala as gems novas ao subir. Para mudar a imagem (`Dockerfile.dev`), rode `docker compose build`.
 
-Cada requisição é resolvida pelo host (spec 01, RN-01-001), então `http://localhost:3000` responde 404. Depois de `bin/rails db:seed`, que cria dados fictícios só em desenvolvimento:
+Cada requisição é resolvida pelo host (spec 01, RN-01-001), então `http://localhost:3300` responde 404. Depois de `bin/rails db:seed`, que cria dados fictícios só em desenvolvimento:
 
 | Endereço local | O que abre |
 |---|---|
-| http://aurora.painel.localhost:3000 | Marca de um parceiro, com cores próprias |
-| http://serraazul.painel.localhost:3000 | Empresa direta sem marca configurada (nome em texto) |
-| http://admin.localhost:3000 | Área administrativa CatalystHR |
+| http://aurora.painel.localhost:3300 | Marca de um parceiro, com cores próprias |
+| http://serraazul.painel.localhost:3300 | Empresa direta sem marca configurada (nome em texto) |
+| http://admin.localhost:3300 | Área administrativa CatalystHR |
 
 O seed também liga o login (flag `sign_in`) e cria pessoas fictícias, todas com a senha `Catalyst#2026`. O login aceita o CPF, com ou sem máscara, ou o e-mail:
 
 | Pessoa | CPF | Onde entra |
 |---|---|---|
-| Paulo Lima (superadmin) | 529.982.247-25 | http://admin.localhost:3000 |
-| Beatriz Nunes (administradora da Aurora) | 390.533.447-05 | http://aurora.painel.localhost:3000 (painel do parceiro e equipe) |
-| Ana Ribeiro (consultora da Aurora, atende a Padaria Pão Quente) | 111.444.777-35 | http://aurora.painel.localhost:3000 |
-| Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost:3000 |
-| Eva Martins (administradora do escritório Contábil Exata, que atende a Padaria) | 714.602.380-01 | http://aurora.painel.localhost:3000 |
-| Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost:3000 |
+| Paulo Lima (superadmin) | 529.982.247-25 | http://admin.localhost:3300 |
+| Beatriz Nunes (administradora da Aurora) | 390.533.447-05 | http://aurora.painel.localhost:3300 (painel do parceiro e equipe) |
+| Ana Ribeiro (consultora da Aurora, atende a Padaria Pão Quente) | 111.444.777-35 | http://aurora.painel.localhost:3300 |
+| Maria Souza (RH da Padaria Pão Quente) | 123.456.789-09 | http://aurora.painel.localhost:3300 |
+| Eva Martins (administradora do escritório Contábil Exata, que atende a Padaria) | 714.602.380-01 | http://aurora.painel.localhost:3300 |
+| Carlos Mendes (RH da Serra Azul) | 987.654.321-00 | http://serraazul.painel.localhost:3300 |
 
-Exceto a Eva, que é do escritório contábil (MFA opcional), todas têm perfil com MFA obrigatório (RN-02-040). O Paulo Lima pode ver o sistema como qualquer uma delas pelo impersonate, em http://admin.localhost:3000/impersonations/new, informando o CPF e um motivo; o que for salvo nesse modo é simulado e desfeito (RN-02-084). A entrada numa empresa direta é só do suporte (D-581, P-03-03); para testar com o mesmo usuário, sem cadastrar outro MFA, troque o perfil dele e volte depois:
+Exceto a Eva, que é do escritório contábil (MFA opcional), todas têm perfil com MFA obrigatório (RN-02-040). O Paulo Lima pode ver o sistema como qualquer uma delas pelo impersonate, em http://admin.localhost:3300/impersonations/new, informando o CPF e um motivo; o que for salvo nesse modo é simulado e desfeito (RN-02-084). A entrada numa empresa direta é só do suporte (D-581, P-03-03); para testar com o mesmo usuário, sem cadastrar outro MFA, troque o perfil dele e volte depois:
 
 ```bash
 docker compose exec web bin/rails runner 'User.find_by!(cpf: "52998224725").update!(platform_role: "support")'
@@ -60,9 +60,9 @@ Portas locais:
 
 | Serviço | Porta | Observação |
 |---|---|---|
-| `web` (Rails, Docker) | 3000 | Publicada pelo Docker em todas as interfaces: aparelhos da mesma rede conseguem acessar; só use dados fictícios |
-| Postgres (Docker) | 5433 | Não conflita com um Postgres local na 5432 |
-| Redis (Docker) | 6380 | Não conflita com um Redis local na 6379 |
+| `web` (Rails, Docker) | 3300 | Publicada pelo Docker em todas as interfaces: aparelhos da mesma rede conseguem acessar; só use dados fictícios |
+| Postgres (Docker) | 5440 | Não conflita com um Postgres local na 5432 nem com outros projetos em Docker |
+| Redis (Docker) | 6390 | Não conflita com um Redis local na 6379 nem com outros projetos em Docker |
 
 Tailwind (`css`) e Sidekiq (`worker`) não usam porta.
 
