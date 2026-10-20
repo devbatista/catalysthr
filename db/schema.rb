@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -297,6 +297,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "key"], name: "index_custom_field_definitions_on_company_id_and_key", unique: true
     t.index ["company_id"], name: "index_custom_field_definitions_on_company_id"
+  end
+
+  create_table "daily_usages", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.uuid "company_id", null: false
+    t.date "date", null: false
+    t.integer "active_employees", default: 0, null: false
+    t.string "modules", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_account_id", "date"], name: "index_daily_usages_on_billing_account_id_and_date"
+    t.index ["company_id", "date"], name: "index_daily_usages_on_company_id_and_date", unique: true
   end
 
   create_table "department_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -735,6 +747,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
     t.index ["company_id"], name: "index_units_on_company_id"
   end
 
+  create_table "usage_periods", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.uuid "company_id"
+    t.string "period", null: false
+    t.integer "peak_employees", default: 0, null: false
+    t.integer "ai_credits", default: 0, null: false
+    t.integer "whatsapp_messages", default: 0, null: false
+    t.string "modules", default: [], null: false, array: true
+    t.integer "employees_alerted_percent"
+    t.datetime "closed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_account_id", "period", "company_id"], name: "index_usage_periods_on_account_period_company", unique: true, nulls_not_distinct: true
+    t.index ["company_id", "period"], name: "index_usage_periods_on_company_id_and_period"
+  end
+
   create_table "user_sessions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
     t.string "token_digest", null: false
@@ -888,6 +916,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
   add_foreign_key "consents", "legal_documents"
   add_foreign_key "consents", "users"
   add_foreign_key "custom_field_definitions", "companies"
+  add_foreign_key "daily_usages", "billing_accounts"
+  add_foreign_key "daily_usages", "companies"
   add_foreign_key "department_managers", "companies"
   add_foreign_key "department_managers", "departments", on_delete: :cascade
   add_foreign_key "department_managers", "memberships", on_delete: :cascade
@@ -942,6 +972,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_210000) do
   add_foreign_key "support_accesses", "users", column: "support_user_id"
   add_foreign_key "trusted_devices", "users"
   add_foreign_key "units", "companies"
+  add_foreign_key "usage_periods", "billing_accounts"
+  add_foreign_key "usage_periods", "companies"
   add_foreign_key "user_sessions", "brands"
   add_foreign_key "user_sessions", "users"
   add_foreign_key "worker_profiles", "companies"

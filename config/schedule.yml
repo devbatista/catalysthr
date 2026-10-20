@@ -47,3 +47,16 @@ billing_trial:
   cron: "0 9 * * *"            # 06:00 in Brasília, before the time-tracking peak
   class: "Billing::TrialJob"
   queue: "default"
+
+# The employees of each company and contract on the day that ended, the end of the
+# partner's pre-activation and the notices of the band (spec 19, RN-19-020 to RN-19-023, D-618)
+billing_daily_usage:
+  cron: "0 4 * * *"            # 01:00 in Brasília
+  class: "Billing::DailyUsageJob"
+  queue: "default"
+
+# Closes the usage of the months before the current one (spec 19, RN-19-023, RN-19-024)
+billing_close_period:
+  cron: "30 4 * * *"           # 01:30 in Brasília, after the day's usage
+  class: "Billing::ClosePeriodJob"
+  queue: "default"

@@ -204,6 +204,8 @@ Rails.application.routes.draw do
             patch :contact
           end
         end
+        # The portfolio's usage and its CSV (spec 19, RN-19-024).
+        resource :usage, only: :show
         resources :companies, only: %i[new create] do
           resource :brand, only: %i[edit update], controller: "company_brands"
           resource :modules, only: %i[edit update], controller: "company_modules"

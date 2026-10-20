@@ -29,6 +29,8 @@ class PartnerAbility
     # turn the contracted modules on or off for each (RN-19-012, D-616).
     can :create, Company, partner_id: partner.id
     can :manage_modules, Company, partner_id: partner.id
+    # The portfolio's usage and its report by company (RN-19-024, spec 19, section 6).
+    can :read_usage, Partner, id: partner.id
     # The partner's e-mail domain (spec 01, section 6, D-596). The client companies send
     # from it (P-01-18).
     can :manage_email_domain, Brand, owner_type: "Partner", owner_id: partner.id

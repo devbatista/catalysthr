@@ -39,6 +39,16 @@ class BillingAccount < ApplicationRecord
     owner.brand
   end
 
+  # Who gets the contract's notices: the responsible (RN-19-044), even before accepting the
+  # invitation; when they no longer have access to the owner, its administrators.
+  def notice_recipients
+    memberships = Membership.where(status: [ "invited", *Membership::ACCESS_STATUSES ], organization: owner).includes(:user)
+    responsible = memberships.find_by(user_id: responsible_user_id) if responsible_user_id
+    return [ responsible ] if responsible
+
+    memberships.where(status: "active").with_role(partner? ? "partner_admin" : "hr_admin").to_a
+  end
+
   private
 
   # A partner's company is billed through the partner (RN-19-001).

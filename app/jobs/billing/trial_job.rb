@@ -37,21 +37,11 @@ module Billing
 
     def notify(subscription, code, date, **params)
       account = subscription.billing_account
-      recipients(account).each do |membership|
+      account.notice_recipients.each do |membership|
         Notifications.notify!(code, user: membership.user, membership: membership, subject: subscription,
           dedup_key: "#{code}/#{subscription.id}/#{date.iso8601}", path: account.partner? ? "/partner" : "/",
           name: account.name, date: I18n.l(subscription.trial_ends_on), **params)
       end
-    end
-
-    # The responsible (RN-19-044), even before accepting the invitation; when they no
-    # longer have access to the contract's owner, its administrators.
-    def recipients(account)
-      memberships = Membership.where(status: [ "invited", *Membership::ACCESS_STATUSES ], organization: account.owner).includes(:user)
-      responsible = memberships.find_by(user_id: account.responsible_user_id) if account.responsible_user_id
-      return [ responsible ] if responsible
-
-      memberships.where(status: "active").with_role(account.partner? ? "partner_admin" : "hr_admin").to_a
     end
   end
 end

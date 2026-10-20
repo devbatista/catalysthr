@@ -1,0 +1,95 @@
+<div class="flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <h1 class="page-title"><%= t(".title") %></h1>
+    <p class="page-subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <% if @report&.companies&.any? %>
+    <%= link_to t(".download"), partner_usage_path(period: @period, format: :csv), class: "btn btn-secondary" %>
+  <% end %>
+</div>
+
+<% if @account.nil? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".without_contract") %></p>
+<% else %>
+  <nav class="mt-6 flex flex-wrap gap-2" aria-label="<%= t(".months") %>">
+    <% @periods.each do |period| %>
+      <%= link_to l(UsagePeriod.days(period).first, format: :month_year).capitalize, partner_usage_path(period: period),
+        class: [ "chip no-underline hover:no-underline", ("chip-active" if period == @period) ], aria: { current: (period == @period ? "page" : nil) } %>
+    <% end %>
+  </nav>
+
+  <p class="mt-4 text-sm text-ink-soft">
+    <% through = @report.recorded_through %>
+    <% if @report.closed? %>
+      <span class="pill pill-mute"><%= t(".closed") %></span>
+      <%= t(".closed_hint", date: l(@report.total.closed_at.to_date)) %>
+    <% elsif through %>
+      <span class="pill pill-info"><%= t(".partial") %></span>
+      <%= t(".partial_hint", date: l(through)) %>
+    <% else %>
+      <%= t(".not_recorded") %>
+    <% end %>
+  </p>
+
+  <% total = @report.total %>
+  <% quotas = @current ? @subscription&.partner_quotas : nil %>
+  <% band = @current ? @subscription&.employee_band : nil %>
+  <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <% [
+      [ :employees, total&.peak_employees.to_i, band ],
+      [ :ai_credits, total&.ai_credits.to_i, quotas&.dig(:ai_credits) ],
+      [ :whatsapp_messages, total&.whatsapp_messages.to_i, quotas&.dig(:whatsapp_messages) ]
+    ].each do |kind, used, limit| %>
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".cards.#{kind}.label") %></p>
+        <p class="mt-2 flex flex-wrap items-baseline gap-2">
+          <span class="text-2xl font-extrabold text-ink-strong"><%= number_with_delimiter(used) %></span>
+          <% if limit %>
+            <span class="text-sm text-ink-soft"><%= t(".cards.#{kind}.of", limit: number_with_delimiter(limit)) %></span>
+            <% percent = limit.positive? ? used * 100 / limit : 100 %>
+            <% if percent >= 80 %>
+              <span class="pill <%= percent >= 100 ? "pill-bad" : "pill-warn" %>"><%= t(".percent", percent: percent) %></span>
+            <% end %>
+          <% end %>
+        </p>
+        <% if kind == :employees && @current && @subscription&.pre_activation? %>
+          <p class="field-hint"><%= t(".pre_activation") %></p>
+        <% elsif kind != :employees && @current && @subscription&.reduced_quotas? %>
+          <p class="field-hint"><%= t(".reduced_quotas") %></p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <p class="field-hint mt-2"><%= t(".no_block") %></p>
+
+  <% if @report.companies.empty? %>
+    <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <div class="card mt-6 overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".company") %></th>
+            <th class="hidden md:table-cell"><%= t("billing.usage_report.columns.document") %></th>
+            <th class="text-right"><%= t(".peak_employees") %></th>
+            <th class="hidden sm:table-cell"><%= t("billing.usage_report.columns.modules") %></th>
+            <th class="hidden text-right lg:table-cell"><%= t("billing.usage_report.columns.ai_credits") %></th>
+            <th class="hidden text-right lg:table-cell"><%= t("billing.usage_report.columns.whatsapp_messages") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @report.companies.each do |usage| %>
+            <tr>
+              <td class="font-bold text-ink-strong"><%= usage.company.name %></td>
+              <td class="hidden font-mono text-xs md:table-cell"><%= @report.document(usage.company) %></td>
+              <td class="text-right"><%= number_with_delimiter(usage.peak_employees) %></td>
+              <td class="hidden text-sm sm:table-cell"><%= usage.modules.any? ? @report.modules(usage) : t(".no_modules") %></td>
+              <td class="hidden text-right lg:table-cell"><%= number_with_delimiter(usage.ai_credits) %></td>
+              <td class="hidden text-right lg:table-cell"><%= number_with_delimiter(usage.whatsapp_messages) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% end %>
