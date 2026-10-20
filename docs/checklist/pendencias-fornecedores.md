@@ -12,7 +12,7 @@
   - 2026-10-14, resposta ao chamado WCS-54705: o suporte técnico não habilita os Pagamentos Automáticos nem encaminhou ao comercial. Disse que o valor de uma assinatura não muda, o que contradiz a documentação do `PUT /preapproval/{id}`. Sem API pública de Pix Automático. O link "Contato comercial" do site (`/quero-usar/`) redireciona para o blog. Respondido no chamado pedindo o canal do comercial
   - Se o comercial não liberar: avaliar outro fornecedor para o cartão (começando pelo Asaas), as Assinaturas do Mercado Pago (revisa a D-496 e a D-497) ou o cartão pago a cada fatura. Decisão do responsável
   - Tarifas atuais da conta no Checkout, informadas pelo suporte (não valem necessariamente para os Pagamentos Automáticos): crédito com recebimento na hora 4,98%, em 14 dias 4,49%, em 30 dias 3,98%
-- [ ] Confirmar a cobrança por PIX pela API de pagamentos, com QR e vencimento (D-481). A conta já recebe PIX e cartão; falta conferir o vencimento na integração
+- [ ] Confirmar a cobrança por PIX pela API de pagamentos, com QR e vencimento (D-481). A conta já recebe PIX e cartão; falta conferir o vencimento na integração. Documentação conferida em 2026-10-20: o vencimento vai de 30 minutos a 30 dias, e a API de Orders é a recomendada para integrações novas ([`mercado-pago-pix-19e.md`](mercado-pago-pix-19e.md))
 - [ ] Configurar os webhooks e a assinatura de validação
 - [x] Para uma fase seguinte, perguntar sobre a disponibilidade do **Pix Automático** pela API. Resposta em 2026-10-14: não há API pública nem previsão informada pelo suporte
 
