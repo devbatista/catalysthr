@@ -48,6 +48,10 @@
   </dl>
 </div>
 
+<% if subscription && @offered_plans && !subscription.closing? && !subscription.closed? %>
+  <%= render "contract_changes", account: @account, subscription: subscription %>
+<% end %>
+
 <h2 class="section-title mt-8"><%= t(".invoices") %></h2>
 <div class="mt-3">
   <%= render "shared/invoices/table", invoices: @invoices, path: ->(invoice) { admin_invoice_path(invoice) } %>

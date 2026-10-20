@@ -31,7 +31,10 @@
         <% @plans.each do |plan| %>
           <% current = plan.version_on %>
           <tr>
-            <td><%= link_to plan.name, admin_plan_path(plan), class: "link-button" %></td>
+            <td>
+              <%= link_to plan.name, admin_plan_path(plan), class: "link-button" %>
+              <% if plan.private? %><span class="pill pill-info ml-2"><%= t(".private", client: plan.billing_account.name) %></span><% end %>
+            </td>
             <td class="text-ink-soft"><%= t("billing.kinds.#{plan.kind}") %></td>
             <td class="text-ink-soft"><%= plan_price_summary(current || plan.latest_version) %></td>
             <td class="whitespace-nowrap text-ink-soft">

@@ -190,6 +190,7 @@ pt-BR:
         since: "Desde"
         starts: "Começa em %{date}"
         status: "Situação"
+        private: "Privado de %{client}"
         add_ons: "Adicionais"
         add_ons_hint: "Itens com mensalidade fixa, contratados à parte. O preço segue a mesma regra das versões dos planos."
         add_on: "Adicional"
@@ -208,6 +209,10 @@ pt-BR:
           direct: "Novo plano de empresa direta"
         subtitle: "O plano já nasce com a primeira versão de preço. Depois, um preço novo é sempre uma nova versão."
         name: "Nome do plano"
+        private: "Plano privado"
+        private_check: "Plano privado, com condições negociadas para um cliente só"
+        private_client: "Escolha o cliente"
+        private_hint: "Um plano privado não aparece no cadastro de clientes: ele é oferecido só ao cliente escolhido, na troca de plano da página do cliente."
         submit: "Cadastrar plano"
         cancel: "Cancelar"
       create:
@@ -291,6 +296,30 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Mensalidade de pré-ativação registrada, a partir de %{date}."
+    contract_changes:
+      closed: "Um contrato em encerramento ou encerrado não muda."
+      proration: "O proporcional de %{amount} entra na próxima fatura."
+      change_plan:
+        unavailable: "Escolha outro plano, ativo e com preço vigente."
+        same_plan: "O contrato já está neste plano. Para passar ao preço novo do mesmo plano, use a migração de preço, com aviso de 30 dias."
+        changed: "Plano trocado para %{plan} a partir de hoje."
+        scheduled: "Troca para o plano %{plan} agendada para %{date}, no próximo ciclo."
+      cancel_scheduled:
+        cancelled: "Troca agendada desfeita. O contrato continua no plano e no preço de hoje."
+      migrate_price:
+        scheduled: "Migração agendada para %{date}. O responsável recebeu o aviso."
+        nothing: "Não há versão de preço mais nova para migrar."
+      add_module:
+        added: "Módulo %{module} contratado a partir de hoje."
+      remove_module:
+        removed: "O módulo %{module} sai em %{date}. Os dados continuam guardados e em leitura."
+        absent: "O contrato não tem esse módulo."
+      add_add_on:
+        added: "%{add_on} contratado a partir de hoje."
+        without_price: "Esse adicional ainda não tem preço vigente."
+      remove_add_on:
+        removed: "%{add_on} sai em %{date}."
+        absent: "O contrato não tem esse adicional."
     invoices:
       index:
         title: "Faturas"
@@ -353,6 +382,37 @@ pt-BR:
       create:
         created: "Cliente cadastrado. O convite foi enviado para %{email}."
         created_existing_person: "Cliente cadastrado. O CPF do administrador já tinha conta na plataforma: o convite foi para o e-mail já cadastrado dessa pessoa, e os dados dela não mudaram."
+      contract_changes:
+        title: "Alterar o contrato"
+        subtitle: "Um aumento vale na hora, e a diferença proporcional aos dias até o fim do que já foi faturado entra na próxima fatura. Uma redução vale no próximo ciclo. O cliente ainda não faz essas trocas sozinho."
+        scheduled:
+          reduction: "Redução agendada: plano %{plan} (versão %{version}) a partir de %{date}."
+          price_migration: "Migração de preço agendada: versão %{version} do plano %{plan} a partir de %{date}."
+          undo: "Desfazer"
+          undo_confirm: "Desfazer a troca agendada? O contrato continua no plano e no preço de hoje."
+        plan: "Plano"
+        plan_label: "Plano do contrato"
+        private: "privado"
+        current: "atual"
+        plan_submit: "Trocar plano"
+        plan_confirm: "Trocar o plano? Se o mês ficar mais caro, a troca vale hoje, com o proporcional na próxima fatura. Se ficar igual ou mais barato, vale no próximo ciclo."
+        plan_hint: "Aparecem os planos ativos do mesmo tipo e os planos privados deste cliente. Aumento ou redução é decidido pelo valor do mês, com os mesmos colaboradores e módulos."
+        migration: "O plano tem uma versão de preço mais nova (versão %{version}: %{price})."
+        migration_submit: "Migrar para o preço novo"
+        migration_confirm: "Migrar para o preço novo? O responsável recebe o aviso hoje, e o preço novo vale a partir do primeiro ciclo que começa daqui a 30 dias ou mais."
+        items: "Módulos e adicionais"
+        item: "Item"
+        situation: "Situação"
+        actions: "Ações"
+        not_contracted: "Não contratado"
+        contracted: "Contratado"
+        ending: "Sai em %{date}"
+        add: "Contratar"
+        add_confirm: "Contratar a partir de hoje? O proporcional até o fim do que já foi faturado entra na próxima fatura."
+        keep: "Manter"
+        remove: "Retirar"
+        remove_confirm: "Retirar? Vale depois do último dia já faturado."
+        remove_module_confirm: "Retirar o módulo? Vale depois do último dia já faturado. Os dados continuam guardados e em leitura, e o AFD e os XMLs do eSocial ficam na exportação."
       show:
         back: "Voltar para clientes"
         invoices: "Faturas"
@@ -1842,6 +1902,11 @@ pt-BR:
         hint: "Quando a fatura do mês é emitida, 3 dias antes do vencimento."
         title: "Fatura %{number} de %{name}: %{total}"
         body: "A fatura do período de %{period_start} a %{period_end} vence em %{due}. Veja o detalhamento de cada item na plataforma."
+      price_change:
+        name: "Mudança de preço do plano"
+        hint: "Com 30 dias de antecedência, quando o preço do plano muda."
+        title: "O preço do plano %{plan} muda em %{date}"
+        body: "A partir do ciclo que começa em %{date}, o contrato de %{name} passa a valer %{price}. Até lá, nada muda. Dúvidas? Fale com a equipe da CatalystHR."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
@@ -2038,6 +2103,11 @@ pt-BR:
       paid: "Paga"
       overdue: "Vencida"
       void: "Cancelada"
+    prorations:
+      plan: "Proporcional da troca para o plano %{plan}, a partir de %{date}"
+      module: "Proporcional do módulo %{module}, a partir de %{date}"
+      add_on: "Proporcional de %{add_on}, a partir de %{date}"
+      activation: "Proporcional da ativação em %{date}: faixa e módulos no lugar da pré-ativação"
     invoice_lines:
       plan: "Plano %{plan}"
       pre_activation: "Mensalidade de pré-ativação"
@@ -2118,6 +2188,7 @@ pt-BR:
         name: "Nome do plano"
         kind: "Tipo"
         status: "Situação"
+        billing_account: "Cliente do plano privado"
       plan_version:
         valid_from: "Data de início"
         monthly_price_cents: "Mensalidade da faixa"
@@ -2359,6 +2430,12 @@ pt-BR:
           attributes:
             plan_version:
               other_kind: "precisa ser do mesmo tipo do cliente"
+        plan:
+          attributes:
+            billing_account:
+              blank: "precisa ser escolhido num plano privado"
+              present: "só se escolhe num plano privado"
+              other_kind: "precisa ser do mesmo tipo do plano"
         pre_activation_price:
           attributes:
             valid_from:

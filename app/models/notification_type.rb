@@ -53,5 +53,8 @@ NotificationType::CATALOG = [
     roles: %w[partner_admin hr_admin]),
   # The cycle's invoice, to the contract's responsible (RN-19-041, D-619).
   NotificationType.new(code: "billing.invoice_issued", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  # The 30 days' notice of a price migration, to the contract's responsible (RN-19-014, D-620).
+  NotificationType.new(code: "billing.price_change", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin])
 ].index_by(&:code).freeze

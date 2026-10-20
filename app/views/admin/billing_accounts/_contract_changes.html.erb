@@ -1,0 +1,88 @@
+<%# Changes to the contract by the team (RN-19-014, RN-19-060, RN-19-061, D-620). locals: account, subscription. %>
+<% today = Date.current %>
+<h2 class="section-title mt-8"><%= t(".title") %></h2>
+<p class="mt-1 text-sm text-ink-soft"><%= t(".subtitle") %></p>
+
+<div class="card card-body mt-3 space-y-6">
+  <% if subscription.next_plan_version %>
+    <div class="alert-info flex flex-wrap items-center justify-between gap-3">
+      <span>
+        <%= t(".scheduled.#{subscription.next_plan_version_reason}", plan: subscription.next_plan_version.plan.name,
+          version: subscription.next_plan_version.version, date: l(subscription.next_plan_version_on)) %>
+      </span>
+      <%= button_to t(".scheduled.undo"), plan_admin_client_contract_path(account), method: :delete, class: "btn btn-secondary btn-sm",
+        form: { data: { confirm: t(".scheduled.undo_confirm") } } %>
+    </div>
+  <% end %>
+
+  <div>
+    <h3 class="card-title"><%= t(".plan") %></h3>
+    <%= form_with url: plan_admin_client_contract_path(account), method: :patch, class: "mt-3 flex flex-wrap items-end gap-3",
+      data: { confirm: t(".plan_confirm") } do |form| %>
+      <div class="min-w-64 flex-1">
+        <%= form.label :plan_id, t(".plan_label"), class: "field-label" %>
+        <% options = @offered_plans.map do |plan|
+             current = plan == subscription.plan
+             label = [ plan.name, (t(".private") if plan.private?), (t(".current") if current) ].compact.join(" · ")
+             [ "#{label} · #{plan_price_summary(current ? subscription.plan_version : plan.version_on)}", plan.id ]
+           end %>
+        <%= form.select :plan_id, options, { selected: subscription.plan.id }, class: "input" %>
+      </div>
+      <%= form.submit t(".plan_submit"), class: "btn btn-primary" %>
+    <% end %>
+    <p class="field-hint"><%= t(".plan_hint") %></p>
+  </div>
+
+  <% newer = subscription.plan.version_on %>
+  <% if newer && newer.version > subscription.plan_version.version && subscription.next_plan_version != newer %>
+    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line-soft pt-5">
+      <p class="text-sm"><%= t(".migration", version: newer.version, price: plan_price_summary(newer)) %></p>
+      <%= button_to t(".migration_submit"), price_migration_admin_client_contract_path(account), class: "btn btn-secondary btn-sm",
+        form: { data: { confirm: t(".migration_confirm") } } %>
+    </div>
+  <% end %>
+
+  <div class="border-t border-line-soft pt-5">
+    <h3 class="card-title"><%= t(".items") %></h3>
+    <div class="mt-3 overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".item") %></th>
+            <th class="hidden sm:table-cell"><%= t(".situation") %></th>
+            <th class="text-right"><span class="sr-only"><%= t(".actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows = PlanModule::MODULES.map { |code| [ t("modules.#{code}"), subscription.items.find { |item| item.kind_module? && item.module == code && item.current?(today) }, module_admin_client_contract_path(account, code), true ] } %>
+          <% rows += @add_ons.map { |add_on| [ t("add_ons.names.#{add_on.code}"), subscription.items.find { |item| item.kind_add_on? && item.add_on_price.add_on_id == add_on.id && item.current?(today) }, add_on_admin_client_contract_path(account, add_on.code), false ] } %>
+          <% rows.each do |name, item, path, keeps_data| %>
+            <tr>
+              <% situation = capture do %>
+                <% if item.nil? %>
+                  <span class="pill pill-mute"><%= t(".not_contracted") %></span>
+                <% elsif item.ends_on %>
+                  <span class="pill pill-warn"><%= t(".ending", date: l(item.ends_on)) %></span>
+                <% else %>
+                  <span class="pill pill-ok"><%= t(".contracted") %></span>
+                <% end %>
+              <% end %>
+              <td class="font-bold text-ink-strong"><%= name %><div class="mt-1 sm:hidden"><%= situation %></div></td>
+              <td class="hidden sm:table-cell"><%= situation %></td>
+              <td class="text-right">
+                <% if item.nil? %>
+                  <%= button_to t(".add"), path, class: "btn btn-secondary btn-sm", form: { data: { confirm: t(".add_confirm") } } %>
+                <% elsif item.ends_on %>
+                  <%= button_to t(".keep"), path, class: "btn btn-secondary btn-sm" %>
+                <% else %>
+                  <%= button_to t(".remove"), path, method: :delete, class: "btn btn-danger btn-sm",
+                    form: { data: { confirm: t(keeps_data ? ".remove_module_confirm" : ".remove_confirm") } } %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

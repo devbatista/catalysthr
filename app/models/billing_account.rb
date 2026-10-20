@@ -13,6 +13,7 @@ class BillingAccount < ApplicationRecord
   belongs_to :responsible_user, class_name: "User", optional: true
   has_one :subscription, dependent: :restrict_with_exception
   has_many :invoices, dependent: :restrict_with_exception
+  has_many :prorations, dependent: :restrict_with_exception
 
   normalizes :billing_email, with: ->(email) { email.to_s.strip.downcase.presence }
 

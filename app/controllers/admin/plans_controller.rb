@@ -8,7 +8,7 @@ module Admin
 
     def index
       authorize! :read, Plan
-      @plans = Plan.includes(plan_versions: :plan_modules).ordered
+      @plans = Plan.includes(plan_versions: :plan_modules, billing_account: :owner).ordered
       @add_ons = AddOn.includes(:prices).index_by(&:code)
     end
 
@@ -19,8 +19,9 @@ module Admin
     end
 
     def create
-      attributes = params.expect(plan: %i[kind name])
+      attributes = params.expect(plan: %i[kind name private billing_account_id])
       @plan = Plan.new(attributes.merge(kind: known_kind(attributes[:kind])))
+      @plan.billing_account_id = nil unless @plan.private?
       authorize! :create, @plan
       @version = PlanVersion.new(version_params.merge(plan: @plan, created_by: current_user))
 

@@ -13,6 +13,17 @@
       <%= form.label :name, t(".name"), class: "field-label" %>
       <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
     </div>
+    <div class="field-wide">
+      <%= form.label :billing_account_id, t(".private"), class: "field-label" %>
+      <% clients = BillingAccount.includes(:owner).where(owner_type: @plan.partner? ? "Partner" : "Company").sort_by(&:name) %>
+      <label class="mt-2 flex items-center gap-2 text-sm">
+        <%= form.check_box :private %>
+        <%= t(".private_check") %>
+      </label>
+      <%= form.select :billing_account_id, clients.map { |account| [ account.name, account.id ] }, { include_blank: t(".private_client") },
+        class: "input" %>
+      <p class="field-hint"><%= t(".private_hint") %></p>
+    </div>
   </div>
 
   <%= render "version_fields", version: @version %>

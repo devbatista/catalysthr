@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_180100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -467,7 +467,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
     t.bigint "total_cents", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "proration_id"
     t.index ["invoice_id"], name: "index_invoice_lines_on_invoice_id"
+    t.index ["proration_id"], name: "index_invoice_lines_on_proration_id", unique: true
   end
 
   create_table "invoices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -645,7 +647,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "private", default: false, null: false
+    t.uuid "billing_account_id"
     t.index "kind, lower((name)::text)", name: "index_plans_on_kind_and_name", unique: true
+    t.index ["billing_account_id"], name: "index_plans_on_billing_account_id"
   end
 
   create_table "positions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -671,6 +676,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
     t.datetime "updated_at", null: false
     t.index ["created_by_id"], name: "index_pre_activation_prices_on_created_by_id"
     t.index ["version"], name: "index_pre_activation_prices_on_version", unique: true
+  end
+
+  create_table "prorations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id", null: false
+    t.string "kind", null: false
+    t.string "description", null: false
+    t.date "effective_on", null: false
+    t.bigint "total_cents", null: false
+    t.uuid "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_account_id"], name: "index_prorations_on_billing_account_id"
+    t.index ["created_by_id"], name: "index_prorations_on_created_by_id"
   end
 
   create_table "reserved_slugs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -715,8 +733,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
     t.uuid "created_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "next_plan_version_id"
+    t.date "next_plan_version_on"
+    t.string "next_plan_version_reason"
     t.index ["billing_account_id"], name: "index_subscriptions_on_billing_account_id", unique: true
     t.index ["created_by_id"], name: "index_subscriptions_on_created_by_id"
+    t.index ["next_plan_version_id"], name: "index_subscriptions_on_next_plan_version_id"
     t.index ["plan_version_id"], name: "index_subscriptions_on_plan_version_id"
     t.index ["pre_activation_price_id"], name: "index_subscriptions_on_pre_activation_price_id"
   end
@@ -972,6 +994,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
   add_foreign_key "invoice_lines", "invoices"
+  add_foreign_key "invoice_lines", "prorations"
   add_foreign_key "invoices", "billing_accounts"
   add_foreign_key "legal_documents", "brands"
   add_foreign_key "legal_documents", "users", column: "published_by_id"
@@ -991,12 +1014,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_150000) do
   add_foreign_key "plan_modules", "plan_versions"
   add_foreign_key "plan_versions", "plans"
   add_foreign_key "plan_versions", "users", column: "created_by_id"
+  add_foreign_key "plans", "billing_accounts"
   add_foreign_key "positions", "companies"
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
+  add_foreign_key "prorations", "billing_accounts"
+  add_foreign_key "prorations", "users", column: "created_by_id"
   add_foreign_key "subscription_items", "add_on_prices"
   add_foreign_key "subscription_items", "subscriptions"
   add_foreign_key "subscriptions", "billing_accounts"
   add_foreign_key "subscriptions", "plan_versions"
+  add_foreign_key "subscriptions", "plan_versions", column: "next_plan_version_id"
   add_foreign_key "subscriptions", "pre_activation_prices"
   add_foreign_key "subscriptions", "users", column: "created_by_id"
   add_foreign_key "support_accesses", "brands"
