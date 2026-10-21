@@ -230,4 +230,4 @@ Fontes:
 - [x] **[Claude]** Conferir a assinatura do webhook (pelo código dos SDKs oficiais), a API de Orders (situações, busca e cancelamento) e o conteúdo da gem 3.5.0 (seção 5a)
 - [ ] **[você, antes do 19h]** Perguntar ao Mercado Pago se o "Automatic Payments" da API de Orders (cobrança recorrente sem CVV por `payment_profile_id`) está disponível para a conta no Brasil e se precisa ser habilitado
 - [x] **[Claude]** 19e-1: PIX das faturas, webhook e conferência diária, com WebMock
-- [ ] **[Claude]** 19e-2: contratação durante o teste
+- [x] **[Claude]** 19e-2: contratação durante o teste ou depois dele (D-623)

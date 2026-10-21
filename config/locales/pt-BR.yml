@@ -762,6 +762,7 @@ pt-BR:
     companies: "Empresas"
     portfolio: "Carteira"
     usage: "Consumo"
+    contract: "Contratar"
     invoices: "Faturas"
     adjustments: "Ajustes"
     team: "Equipe"
@@ -1935,12 +1936,12 @@ pt-BR:
         title:
           one: "O teste grátis de %{name} termina amanhã"
           other: "O teste grátis de %{name} termina em %{count} dias"
-        body: "O teste termina em %{date}. Para continuar usando o sistema depois disso, fale com a equipe da CatalystHR."
+        body: "O teste termina em %{date}. Para continuar usando o sistema depois disso, escolha o plano em Contratar e pague a primeira fatura por PIX."
       trial_expired:
         name: "Teste grátis encerrado"
         hint: "Quando o teste grátis termina sem contratação."
         title: "O teste grátis de %{name} terminou"
-        body: "O teste terminou em %{date}. Para contratar e continuar usando o sistema, fale com a equipe da CatalystHR."
+        body: "O teste terminou em %{date}. Escolha o plano em Contratar e pague a primeira fatura por PIX: tudo volta a funcionar na hora."
       usage_threshold:
         name: "Faixa e cotas do plano"
         hint: "Quando o consumo do mês chega a 80% e a 100% da faixa de colaboradores ou das cotas do plano."
@@ -2145,6 +2146,28 @@ pt-BR:
         ticket: "Abrir no Mercado Pago"
         valid_until: "PIX de %{amount}, válido até %{date} às %{time}. Depois disso, abra esta fatura de novo para gerar outro código."
         unavailable: "O PIX desta fatura não está disponível agora. Tente de novo em alguns minutos."
+        checkout: "Esta é a fatura da contratação: o contrato começa assim que o PIX for pago, até 23h59 do dia da contratação. Até lá, o teste continua."
+        void:
+          checkout_unpaid: "Fatura cancelada: o PIX da contratação não foi pago no dia. Para contratar, comece de novo."
+          checkout_replaced: "Fatura cancelada: substituída por uma nova contratação."
+    contracts:
+      form:
+        title: "Contratar"
+        subtitle:
+          trialing: "Seu teste grátis vai até %{date}. Escolha o plano e os módulos para continuar depois dele."
+          trial_expired: "O teste terminou em %{date}. Contratando, tudo volta a funcionar."
+        pending: "Você já tem uma contratação de %{total} aguardando o PIX de hoje. Contratar de novo substitui essa fatura."
+        pending_link: "Ver a fatura"
+        no_plans: "Nenhum plano disponível no momento. Fale com a equipe da CatalystHR."
+        plan: "Plano"
+        modules: "Módulos"
+        modules_hint: "O valor de cada módulo depende do plano e aparece na fatura, linha a linha. A Folha inclui o eSocial."
+        pre_activation: "Enquanto a carteira não tiver nenhum colaborador ativo, a mensalidade é a de pré-ativação, de %{price}, mais os adicionais. A faixa e os módulos passam a valer no primeiro dia com um colaborador ativo, com a diferença proporcional na fatura seguinte."
+        how: "A primeira fatura sai agora, com vencimento hoje, e é paga por PIX. O contrato começa quando o PIX for pago, até 23h59 de hoje, e o ciclo mensal passa a ser neste dia do mês. Se o PIX não for pago hoje, a fatura é cancelada e você pode contratar de novo."
+        submit: "Contratar e pagar com PIX"
+        started: "Contratação registrada. Pague o PIX abaixo até 23h59 de hoje para ativar o contrato."
+        invalid: "Não foi possível contratar com essa escolha. Confira o plano e tente de novo; se continuar, fale com a equipe da CatalystHR."
+        not_open: "Seu contrato já está ativo."
   billing:
     kinds:
       partner: "Parceiro"

@@ -144,8 +144,10 @@ Rails.application.routes.draw do
 
       # The company's settings and units (spec 04, RN-04-002 to RN-04-014, D-601).
       resource :company_settings, path: "settings", only: %i[edit update]
-      # The direct company's invoices (spec 19, RN-19-041, D-619).
+      # The direct company's invoices (spec 19, RN-19-041, D-619) and its contracting during
+      # the trial or after it (RN-19-033, D-622).
       resources :invoices, only: %i[index show]
+      resource :contract, only: %i[new create]
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
@@ -232,9 +234,11 @@ Rails.application.routes.draw do
             patch :contact
           end
         end
-        # The portfolio's usage and its CSV (spec 19, RN-19-024), and the contract's invoices (D-619).
+        # The portfolio's usage and its CSV (spec 19, RN-19-024), the contract's invoices (D-619)
+        # and the contracting during the trial or after it (RN-19-033, D-622).
         resource :usage, only: :show
         resources :invoices, only: %i[index show]
+        resource :contract, only: %i[new create]
         resources :companies, only: %i[new create] do
           resource :brand, only: %i[edit update], controller: "company_brands"
           resource :modules, only: %i[edit update], controller: "company_modules"

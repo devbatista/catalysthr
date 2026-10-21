@@ -1,0 +1,50 @@
+<%# The contracting during the trial or after it (RN-19-033, RN-19-034, D-622). %>
+<% content_for :title, t("shared.contracts.form.title") %>
+
+<h1 class="page-title"><%= t("shared.contracts.form.title") %></h1>
+<p class="page-subtitle">
+  <%= t("shared.contracts.form.subtitle.#{@subscription.status}", date: l(@subscription.trial_ends_on || Date.current)) %>
+</p>
+
+<% if @pending %>
+  <p class="alert-info mt-6">
+    <%= t("shared.contracts.form.pending", total: reais(@pending.total_cents)) %>
+    <%= link_to t("shared.contracts.form.pending_link"), checkout_invoice_path(@pending), class: "link-button" %>
+  </p>
+<% end %>
+
+<%= form_with url: checkout_form_path, method: :post, class: "card card-body mt-6 space-y-5" do %>
+  <div class="form-grid">
+    <% if @plans.empty? %>
+      <p class="alert-info field-full"><%= t("shared.contracts.form.no_plans") %></p>
+    <% else %>
+      <div class="field-wide">
+        <%= label_tag :plan_id, t("shared.contracts.form.plan"), class: "field-label" %>
+        <%= select_tag :plan_id, options_for_select(@plans.map { |plan| [ "#{plan.name} · #{plan_price_summary(plan.version_on)}", plan.id ] }, @plan_id),
+          required: true, class: "input" %>
+      </div>
+    <% end %>
+
+    <div class="field-wide">
+      <span class="field-label"><%= t("shared.contracts.form.modules") %></span>
+      <div class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+        <% PlanModule::MODULES.each do |code| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "modules[]", code, @modules.include?(code), id: "modules_#{code}" %>
+            <%= t("modules.#{code}") %>
+          </label>
+        <% end %>
+      </div>
+      <p class="field-hint"><%= t("shared.contracts.form.modules_hint") %></p>
+    </div>
+  </div>
+
+  <% if @pre_activation_price %>
+    <p class="alert-info"><%= t("shared.contracts.form.pre_activation", price: reais(@pre_activation_price.monthly_price_cents)) %></p>
+  <% end %>
+
+  <div class="border-t border-line-soft pt-5">
+    <p class="field-hint"><%= t("shared.contracts.form.how") %></p>
+    <button type="submit" class="btn btn-primary mt-4" <%= "disabled" if @plans.empty? %>><%= t("shared.contracts.form.submit") %></button>
+  </div>
+<% end %>

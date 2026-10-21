@@ -30,8 +30,9 @@ class PartnerAbility
     can :create, Company, partner_id: partner.id
     can :manage_modules, Company, partner_id: partner.id
     # The portfolio's usage and its report by company (RN-19-024, spec 19, section 6), and
-    # the contract's invoices, as its financial responsible (RN-19-044, D-619).
-    can %i[read_usage read_invoices], Partner, id: partner.id
+    # the contract's invoices, as its financial responsible (RN-19-044, D-619); and the
+    # contracting during the trial or after it (RN-19-033, D-622).
+    can %i[read_usage read_invoices contract], Partner, id: partner.id
     # The partner's e-mail domain (spec 01, section 6, D-596). The client companies send
     # from it (P-01-18).
     can :manage_email_domain, Brand, owner_type: "Partner", owner_id: partner.id

@@ -23,14 +23,14 @@ RSpec.describe Billing::TrialJob do
     Notification.where(notification_type: code)
   end
 
-  it "tells the responsible 3 days and 1 day before the end, once a day, with no button to contract (RN-19-032)" do
+  it "tells the responsible 3 days and 1 day before the end, once a day, with the link to contract (RN-19-032, D-622)" do
     subscription
 
     perform_enqueued_jobs { 2.times { described_class.perform_now(today) } }
     notice = notices("billing.trial_ending").sole
     expect(notice).to have_attributes(recipient_user: responsible.user, recipient_membership: responsible, company: company,
-      path: "/", mandatory: true, title: "O teste grátis de Metalúrgica Serra Azul termina em 3 dias")
-    expect(notice.body).to include("23/10/2026", "fale com a equipe da CatalystHR")
+      path: "/contract/new", mandatory: true, title: "O teste grátis de Metalúrgica Serra Azul termina em 3 dias")
+    expect(notice.body).to include("23/10/2026", "escolha o plano em Contratar")
     expect(notice.deliveries.sole.channel).to eq("email")
 
     described_class.perform_now(today + 1)
@@ -91,7 +91,7 @@ RSpec.describe Billing::TrialJob do
 
     described_class.perform_now(today)
 
-    expect(notices("billing.trial_ending").sole).to have_attributes(recipient_membership: admin, path: "/partner",
+    expect(notices("billing.trial_ending").sole).to have_attributes(recipient_membership: admin, path: "/partner/contract/new",
       title: "O teste grátis de Aurora Gestão de Pessoas termina amanhã")
   end
 end

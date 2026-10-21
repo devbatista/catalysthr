@@ -68,6 +68,11 @@ module NavigationHelper
     FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(action, subject)
   end
 
+  # "Contratar", while the contract is in its trial or in the 30 days after it (RN-19-033).
+  def checkout_allowed?(owner)
+    billing_allowed?(:contract, owner) && Billing::Checkout.open?(owner.billing_account&.subscription)
+  end
+
   def client_manager_only?
     Membership.with_access.find_by(user: current_user, organization: Current.company)&.roles == %w[client_manager]
   end
@@ -102,6 +107,7 @@ module NavigationHelper
         (nav_item(t("navigation.allocation_clients"), allocation_clients_path, controller_path == "panel/allocation_clients") if company.uses_allocation_clients && can?(:read, AllocationClient)),
         (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
+        (nav_item(t("navigation.contract"), new_contract_path, controller_path == "panel/contracts") if checkout_allowed?(company)),
         (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),
         (nav_item(t("navigation.settings"), edit_company_settings_path, controller_path == "panel/company_settings") if can?(:update_settings, company))
       ])
@@ -117,6 +123,7 @@ module NavigationHelper
         nav_item(t("navigation.portfolio"), partner_root_path,
           controller_path.in?(%w[panel/partner_panel/home panel/partner_panel/company_brands panel/partner_panel/company_hr_admins])),
         (nav_item(t("navigation.usage"), partner_usage_path, controller_path == "panel/partner_panel/usages") if billing_allowed?(:read_usage, partner)),
+        (nav_item(t("navigation.contract"), new_partner_contract_path, controller_path == "panel/partner_panel/contracts") if checkout_allowed?(partner)),
         (nav_item(t("navigation.invoices"), partner_invoices_path, controller_path == "panel/partner_panel/invoices") if billing_allowed?(:read_invoices, partner)),
         (nav_item(t("navigation.team"), partner_team_members_path, controller_path == "panel/partner_panel/team_members") if can?(:read, Membership.new(organization: partner))),
         (nav_item(t("navigation.brand"), edit_partner_brand_path, controller_path.in?(%w[panel/partner_panel/brands panel/partner_panel/brand_email_domains])) if partner.brand && can?(:update, partner.brand)),

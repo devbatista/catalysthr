@@ -78,20 +78,23 @@ module Billing
       last&.peak_employees || Usage.active_employees(account, today)
     end
 
-    # The month before the issue, closed, unless an earlier invoice already charged it.
+    # The month before the issue, closed, unless an earlier invoice already charged it. The
+    # months before the one the contract started in, a trial's only, are never charged
+    # (D-622).
     def billable_usage(account, today)
       period = UsagePeriod.period_of(today.prev_month)
       return if account.invoices.exists?(usage_period: period)
+      return if account.subscription && period < UsagePeriod.period_of(account.subscription.started_on)
 
       UsagePeriod.totals.where.not(closed_at: nil).find_by(billing_account: account, period: period)
     end
 
-    def create(account, start, usage, lines)
+    def create(account, start, usage, lines, checkout: false)
       # The numbers follow each other with no gap; two invoices issued at the same time wait.
       Invoice.connection.execute("SELECT pg_advisory_xact_lock(hashtext('invoices/number'))")
       invoice = account.invoices.new(number: (Invoice.maximum(:number) || 0) + 1, period_start: start,
         period_end: next_cycle(start, account.cycle_day) - 1, due_on: start, status: "open",
-        total_cents: lines.sum(&:total_cents), usage_period: usage&.period, issued_at: Time.current)
+        total_cents: lines.sum(&:total_cents), usage_period: usage&.period, issued_at: Time.current, checkout: checkout)
       lines.each.with_index(1) do |line, position|
         invoice.lines.new(position: position, kind: line.kind, description: line.description, quantity: line.quantity,
           unit_cents: line.unit_cents, total_cents: line.total_cents, proration_id: line.proration_id,
