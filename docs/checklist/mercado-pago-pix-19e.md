@@ -139,25 +139,95 @@ Fontes:
 - **Atenção:** a versão 3.5.0 aparece com **4,5 KB**, contra 367 KB da 3.4.0. O pacote pode ter sido publicado sem o código. É preciso conferir o conteúdo antes de fixar a versão.
 - **Spec:** a spec prevê a gem oficial (P-19-29). Para o Asaas, a escolha foi um cliente HTTP próprio com Faraday (P-19-37).
 
+## 5a. Conferência de 2026-10-21
+
+Esta seção fecha as lacunas das seções 2 a 5. Onde ela diverge delas, vale esta seção.
+
+### Gem: a 3.5.0 saiu vazia
+
+- **Fato:** o pacote 3.5.0 (`gem fetch mercadopago-sdk -v 3.5.0`) não traz nenhum arquivo, porque os metadados dizem `files: []`.
+- **Fato:** a 3.4.0 traz `sdk.order` (`create`, `get`, `search`, `cancel`, `refund`, `capture`, `process`), `sdk.payment` e o `Mercadopago::Webhook::Validator`.
+- **Conclusão:** se for a gem, ela fica fixada em `3.4.0`.
+
+### Assinatura do webhook
+
+A aba "Sem SDKs" continua sem abrir, porque é montada no navegador. O que segue vem do código dos SDKs oficiais de Ruby (3.4.0), Python e Node, que coincidem:
+
+- **Texto assinado:** `id:<data.id>;request-id:<x-request-id>;ts:<ts>;`, nessa ordem e com `;` no fim.
+  - Se o `data.id` ou o `x-request-id` vier vazio, o par sai do texto.
+  - Sem o `ts`, a notificação é recusada.
+- **Algoritmo:** HMAC-SHA256 com a assinatura secreta, em hexadecimal, comparado ao `v1` em tempo constante.
+- **Minúsculas:** nenhum SDK converte o `data.id`. O comentário da gem Ruby diz que converte, mas o código não faz isso, e o teste `test_uppercase_dataid_is_preserved` confirma. O guia Ruby manda passar os valores "exactly as received".
+- **Origem do `data.id`:** é o parâmetro `data.id` da URL da notificação, não o corpo.
+- **Tolerância do `ts`:** a documentação não recomenda nenhuma, e nos SDKs a conferência é opcional. Os exemplos usam 300 segundos.
+
+### API de Orders
+
+Fontes:
+- [Situações da order](https://www.mercadopago.com.br/developers/pt/docs/checkout-api-orders/payment-management/status/order-status)
+- [Buscar orders](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api/search-order/get)
+- [Cancelar order](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api/cancel-order/post)
+- [Cartões salvos](https://www.mercadopago.com.br/developers/pt/docs/checkout-api-orders/payment-management/improve-payment-approval/saved-cards)
+
+**Situações:**
+
+| `status` | `status_detail` |
+|---|---|
+| `created` | `created` |
+| `action_required` | `waiting_payment`, `waiting_capture`, `waiting_transfer`, `waiting_retry` |
+| `processing` | `in_process` |
+| `processed` | `accredited`, `partially_refunded` |
+| `canceled` | `canceled`, `expired` ("A order expirou e foi cancelada.") |
+| `failed` | `expired` ("A order expirou e falhou."), `failed` |
+| `refunded` | `refunded` |
+| `charged_back` | `in_process`, `settled`, `reimbursed` |
+
+- **PIX pendente:** fica em `action_required` / `waiting_transfer`.
+- **PIX que venceu:** a documentação não diz se vira `canceled` / `expired` ou `failed` / `expired`. A conferência precisa tratar os dois casos como "não pago".
+
+**Busca:**
+- A chamada é `GET /v1/orders`, com `begin_date` e `end_date` obrigatórios (data de criação, RFC 3339).
+- Os filtros incluem `external_reference`, `status` e paginação (`page_size` até 100).
+- Isso basta para a conferência diária.
+
+**Cancelamento:**
+- A chamada é `POST /v1/orders/{id}/cancel`, com `X-Idempotency-Key`.
+- Só cancela uma order em `created` ou `action_required`. Depois de 30 dias, não é mais possível cancelar à mão.
+
+**Vencimento do PIX:**
+- O campo é `transactions.payments[].expiration_time`, em duração ISO 8601.
+- Vai de 30 minutos a 30 dias, com 24 horas por padrão.
+
+**Cartão salvo sem CVV, para o 19h. Não está resolvido em nenhuma das duas APIs:**
+- **A documentação pública** das duas APIs manda capturar o CVV de novo a cada cobrança com cartão salvo: "O Mercado Pago não armazena o código de segurança em nenhuma das duas APIs".
+- **A gem 3.4.0** traz um exemplo de cobrança recorrente pela API de Orders sem CVV (`examples/order/create_automatic_payment.rb`):
+  - a 1ª cobrança é feita pelo cliente, com CVV, e registra o cartão (`stored_credential.first_payment: true`);
+  - as seguintes são feitas por nós (`payment_initiator: "merchant"`), por um `payment_profile_id` criado em `POST /v1/customers/{id}/payment-profiles`.
+- **Esse recurso ("Automatic Payments") não aparece na documentação pública.** Não está confirmado se ele vale no Brasil nem se precisa ser habilitado na conta.
+- **Alternativa:** o produto separado "Assinaturas" (preapproval). Ainda não foi lido.
+
 ## 6. Decisões que são suas
+
+> **Decididas em 2026-10-21 (D-622):** API de Orders; cliente HTTP próprio, não a gem (a 3.4.0 rebaixaria o `json` do app para a série 2); PIX novo quando a fatura vencida é aberta.
 
 1. **A API do PIX:**
    - **(a) API de Orders:** é a recomendada para integrações novas e terá funcionalidades novas. Muda a referência da spec (seção 8, P-19-29) e exige conferir se ela atende o cartão salvo sem CVV do 19h.
    - **(b) API de Payments:** é a da spec e funciona hoje, mas está congelada ("legacy").
-   - **Recomendação:** (a), condicionada a confirmar que a API de Orders cobre o cartão salvo. Se não cobrir, usar as duas APIs no mesmo contrato complica a conferência, e a (b) fica mais simples.
+   - **Recomendação (revista em 2026-10-21):** (a). A conferência mostrou que a Payments API também não documenta o cartão salvo sem CVV. A única pista de cobrança recorrente sem CVV está na API de Orders (seção 5a). O cartão deixa de ser um motivo para ficar na (b).
 2. **A gem oficial ou um cliente HTTP próprio:**
-   - **Recomendação:** a gem oficial na versão 3.4.0, conferindo o conteúdo do pacote, como a spec prevê. Ela já traz o validador de webhook.
+   - **Recomendação:** a gem oficial fixada na 3.4.0, como a spec prevê. Ela já traz o validador de webhook. A 3.5.0 está vazia (seção 5a).
    - **Alternativa:** um cliente com Faraday, como no Asaas, que dá mais controle e não depende de uma gem com problema de publicação.
 3. **O QR code da fatura vencida:** o QR vence de 30 minutos a 30 dias, e a fatura sai 3 dias antes do vencimento (RN-19-041). Mas a régua de inadimplência vai até 30 dias depois do vencimento (RN-19-050), e o cliente pode pagar uma fatura atrasada (CA-19-007).
    - **Recomendação:** gerar o PIX na emissão da fatura, vencendo no dia do vencimento da fatura. Depois do vencimento, gerar um PIX novo quando o cliente abrir a fatura vencida, cancelando o anterior.
 
 ## 7. Próximos passos
 
-- [ ] **[você]** Decidir os itens da seção 6
+- [x] **[você]** Decidir os itens da seção 6 (D-622)
 - [ ] **[você]** Confirmar no Mercado Pago que a chave Pix está cadastrada na conta DevBatista usada pela API
-- [ ] **[você]** Configurar o webhook no painel (Suas integrações → Webhooks), com a URL de teste, e guardar a assinatura secreta nas variáveis de ambiente. A URL depende da rota que o 19e vai criar
-- [ ] **[Claude]** Conferir no navegador, ou em páginas que abram:
-  - a aba "Sem SDKs" da assinatura do webhook;
-  - a API de Orders: criação, situações, busca e cartão salvo;
-  - o conteúdo da gem 3.5.0
-- [ ] **[Claude]** Com as decisões, trazer o plano do 19e e implementar com WebMock e respostas gravadas, sem chamar a API real nos testes
+- [ ] **[você]** Configurar o webhook no painel (Suas integrações → Webhooks), evento **Order (Mercado Pago)**, com a URL `https://admin.catalysthr.com.br/webhooks/mercado-pago`, e guardar a assinatura secreta em `MERCADO_PAGO_WEBHOOK_SECRET` no Railway
+- [ ] **[você]** Guardar o access token de produção em `MERCADO_PAGO_ACCESS_TOKEN` no Railway. Sem ele, nenhum PIX é gerado
+- [ ] **[você]** Conferir em "Tarifas" no painel do Mercado Pago a tarifa por PIX recebido
+- [x] **[Claude]** Conferir a assinatura do webhook (pelo código dos SDKs oficiais), a API de Orders (situações, busca e cancelamento) e o conteúdo da gem 3.5.0 (seção 5a)
+- [ ] **[você, antes do 19h]** Perguntar ao Mercado Pago se o "Automatic Payments" da API de Orders (cobrança recorrente sem CVV por `payment_profile_id`) está disponível para a conta no Brasil e se precisa ser habilitado
+- [x] **[Claude]** 19e-1: PIX das faturas, webhook e conferência diária, com WebMock
+- [ ] **[Claude]** 19e-2: contratação durante o teste

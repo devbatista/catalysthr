@@ -5,7 +5,7 @@ module Billing
   # contract's start, and its invoice is issued at once, due that day (RN-19-033). The
   # overage is the one of the last closed month, charged once (D-619), and the prorations of
   # the changes made since the last invoice go in too (RN-19-060, D-620), then the approved
-  # manual adjustments (RN-19-070, D-621). Issuing again
+  # manual adjustments (RN-19-070, D-621). Its PIX is generated right after (D-622). Issuing again
   # changes nothing: each cycle has one invoice, and two runs at the same time wait for each
   # other.
   module Invoicing
@@ -48,7 +48,10 @@ module Billing
         lines = charges(subscription, start, today, usage)
         create(account, start, usage, lines + Adjustments.lines_for(account, lines))
       end
-      notify(invoice) if invoice
+      if invoice
+        notify(invoice)
+        CreatePixJob.perform_later(invoice) if invoice.payable?
+      end
       invoice
     end
 

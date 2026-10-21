@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_200100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_21_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -509,6 +509,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_200100) do
     t.datetime "issued_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "paid_at"
     t.index ["billing_account_id", "period_start"], name: "index_invoices_on_billing_account_id_and_period_start", unique: true
     t.index ["number"], name: "index_invoices_on_number", unique: true
     t.index ["status", "due_on"], name: "index_invoices_on_status_and_due_on"
@@ -633,6 +634,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_200100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["cnpj"], name: "index_partners_on_cnpj", unique: true
+  end
+
+  create_table "payments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "invoice_id", null: false
+    t.string "payment_method", null: false
+    t.string "status", null: false
+    t.bigint "amount_cents", null: false
+    t.string "idempotency_key", null: false
+    t.string "provider_order_id"
+    t.string "provider_payment_id"
+    t.string "raw_status"
+    t.text "qr_code"
+    t.text "qr_code_base64"
+    t.string "ticket_url"
+    t.datetime "expires_at"
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["idempotency_key"], name: "index_payments_on_idempotency_key", unique: true
+    t.index ["invoice_id"], name: "index_payments_on_invoice_id"
+    t.index ["provider_order_id"], name: "index_payments_on_provider_order_id", unique: true
+    t.index ["status"], name: "index_payments_on_status"
   end
 
   create_table "plan_modules", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1041,6 +1064,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_200100) do
   add_foreign_key "notifications", "users", column: "recipient_user_id"
   add_foreign_key "partner_membership_companies", "companies"
   add_foreign_key "partner_membership_companies", "memberships"
+  add_foreign_key "payments", "invoices"
   add_foreign_key "plan_modules", "plan_versions"
   add_foreign_key "plan_versions", "plans"
   add_foreign_key "plan_versions", "users", column: "created_by_id"

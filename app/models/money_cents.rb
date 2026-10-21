@@ -20,4 +20,10 @@ module MoneyCents
     reais, centavos = cents.divmod(100)
     "#{reais.to_s.reverse.scan(/\d{1,3}/).join(".").reverse},#{centavos.to_s.rjust(2, "0")}"
   end
+
+  # 250050 => "2500.50", as payment APIs take it.
+  def decimal(cents)
+    reais, centavos = cents.divmod(100)
+    "#{reais}.#{centavos.to_s.rjust(2, "0")}"
+  end
 end

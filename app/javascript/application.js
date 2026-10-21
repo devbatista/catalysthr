@@ -42,6 +42,20 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && shell) setSidebarOpen(shell, false)
 })
 
+// A button with data-copy copies the field it names, as the invoice's PIX code (D-622).
+// Without the clipboard, the code is selected for the person to copy.
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-copy]")
+  const field = button && document.getElementById(button.dataset.copy)
+  if (!field) return
+  try {
+    await navigator.clipboard.writeText(field.value)
+    button.textContent = button.dataset.copied
+  } catch {
+    field.select()
+  }
+})
+
 // The bell's unread count, fetched every 60 seconds without WebSocket (RN-15-001). A failed
 // fetch keeps the last count.
 const bell = document.querySelector("[data-bell]")

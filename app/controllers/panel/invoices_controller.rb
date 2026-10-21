@@ -2,6 +2,8 @@ module Panel
   # The direct company's invoices, for its HR administrator, the financial responsible
   # (RN-19-044, D-619). A partner's company has no contract of its own (RN-19-001).
   class InvoicesController < BaseController
+    include InvoicePix
+
     before_action :require_current_company
     before_action :require_billing_feature
 
@@ -13,6 +15,7 @@ module Panel
     def show
       authorize! :read_invoices, Current.company
       @invoice = invoices.includes(:lines).find(params[:id])
+      load_pix(@invoice)
     end
 
     private

@@ -1,4 +1,5 @@
-<%# An invoice with every line (RN-19-041, D-619). locals: invoice; back: the list's path. %>
+<%# An invoice with every line (RN-19-041, D-619) and how to pay it (D-622). locals: invoice;
+    back: the list's path; payer: whether the viewer pays it; pix: its valid PIX, if any. %>
 <p class="text-sm"><%= link_to t("shared.invoices.invoice.back"), back, class: "link-button" %></p>
 <div class="mt-3 flex flex-wrap items-center gap-3">
   <h1 class="page-title"><%= t("shared.invoices.invoice.title", number: invoice.display_number) %></h1>
@@ -44,4 +45,4 @@
     </tfoot>
   </table>
 </div>
-<p class="field-hint mt-2"><%= t("shared.invoices.invoice.payment_soon") %></p>
+<%= render "shared/invoices/payment", invoice: invoice, payer: local_assigns.fetch(:payer, false), pix: local_assigns[:pix] %>

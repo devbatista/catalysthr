@@ -3,6 +3,8 @@ module Panel
     # The partner contract's invoices, for the partner's administrator, its financial
     # responsible (RN-19-044, D-619).
     class InvoicesController < BaseController
+      include InvoicePix
+
       before_action :require_billing_feature
 
       def index
@@ -13,6 +15,7 @@ module Panel
       def show
         authorize! :read_invoices, partner
         @invoice = invoices.includes(:lines).find(params[:id])
+        load_pix(@invoice)
       end
 
       private

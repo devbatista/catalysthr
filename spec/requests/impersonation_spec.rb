@@ -181,4 +181,17 @@ RSpec.describe "Impersonation", type: :request do
     expect(ImpersonationSession.new(impersonator: support, impersonated_user: finance, brand: brand, reason: "x",
       token_expires_at: 1.minute.from_now)).not_to be_valid
   end
+
+  it "opens an invoice without generating its PIX in Mercado Pago (D-622)" do
+    Flipper.enable(FeatureFlags::BILLING)
+    configure_mercado_pago
+    invoice = Billing::Invoicing.issue_due(contract_for(company), Date.current, lead: 0).sole
+    start_impersonation
+
+    get "/invoices/#{invoice.id}"
+
+    expect(response.body).to include("O PIX desta fatura não está disponível agora")
+    expect(a_request(:any, /mercadopago/)).not_to have_been_made
+    expect(Payment.count).to eq(0)
+  end
 end
