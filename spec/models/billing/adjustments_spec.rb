@@ -33,7 +33,7 @@ RSpec.describe Billing::Adjustments do
 
   # September's usage, with the band in force then (D-612).
   def closed_month(**usage)
-    subscription.update!(activated_on: Date.new(2026, 9, 1))
+    subscription.update!(activated_on: Date.new(2026, 9, 1), started_on: Date.new(2026, 9, 1))
     UsagePeriod.create!(billing_account: account, period: "2026-09", closed_at: Time.current, peak_employees: 0, **usage)
   end
 

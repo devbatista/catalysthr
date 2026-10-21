@@ -91,8 +91,9 @@ module Billing
     end
 
     # Paid: the PIX, the invoice, and the contract back to `active` right away (RN-19-053,
-    # CA-19-007), unless another invoice is still past due. A payment below the amount is
-    # not taken as paid and is reported.
+    # CA-19-007), unless another invoice is still past due; the checkout's invoice starts
+    # the contract (RN-19-033). A payment below the amount is not taken as paid and is
+    # reported.
     def approve(payment, order, now)
       return if payment.approved? || payment.refunded?
 
@@ -104,8 +105,14 @@ module Billing
 
       payment.assign_attributes(status: "approved", paid_at: now)
       invoice = payment.invoice
-      invoice.update!(status: "paid", paid_at: now) if invoice.payable?
-      reactivate(invoice.billing_account, now.to_date)
+      unless invoice.payable?
+        # Paid after the invoice was paid another way or voided: someone has to look at it.
+        Rails.error.report(MercadoPago::Error.new("PIX paid for an invoice not payable"), context: { payment_id: payment.id })
+        return
+      end
+
+      invoice.update!(status: "paid", paid_at: now)
+      invoice.checkout? ? Checkout.activate(invoice) : reactivate(invoice.billing_account, now.to_date)
     end
 
     def reactivate(account, today)

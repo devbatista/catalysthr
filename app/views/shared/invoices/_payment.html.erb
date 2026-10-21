@@ -2,6 +2,8 @@
     the CatalystHR team. locals: invoice; payer; pix: the valid PIX, or nil. %>
 <% if invoice.paid? %>
   <p class="alert-ok mt-6"><%= t("shared.invoices.payment.paid", date: l(invoice.paid_at.to_date)) %></p>
+<% elsif invoice.void? && invoice.void_reason %>
+  <p class="alert-info mt-6"><%= t("shared.invoices.payment.void.#{invoice.void_reason}") %></p>
 <% elsif !invoice.payable? %>
   <%# Void, or nothing to charge. %>
 <% elsif !payer %>
@@ -9,6 +11,9 @@
 <% elsif pix %>
   <section class="card card-body mt-6" aria-labelledby="pix-title">
     <h2 id="pix-title" class="card-title"><%= t("shared.invoices.payment.title") %></h2>
+    <% if invoice.checkout? %>
+      <p class="field-hint mt-1"><%= t("shared.invoices.payment.checkout") %></p>
+    <% end %>
     <div class="mt-4 flex flex-col gap-6 sm:flex-row sm:items-start">
       <% if pix.qr_code_base64.present? %>
         <img src="data:image/png;base64,<%= pix.qr_code_base64 %>" alt="<%= t("shared.invoices.payment.qr_alt") %>"

@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-622 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-623 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -211,7 +211,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 
 **Assinatura:** `trialing` → `active` ⇄ `past_due` → `read_only` → `closing` → `closed` · `trial_expired` · `cancel_scheduled`
 
-**Fatura:** `draft` → `open` → `paid` | `overdue` → `paid` | `void` (cancelada pelo financeiro, com motivo)
+**Fatura:** `draft` → `open` → `paid` | `overdue` → `paid` | `void` (cancelada pelo financeiro, com motivo; a da contratação também é cancelada quando é substituída ou não é paga no dia, D-623)
 
 **Pagamento:** `pending` → `approved` | `rejected` | `refunded` | `cancelled` (PIX que expirou ou foi trocado, D-622)
 
@@ -280,10 +280,10 @@ usage_periods
   id, billing_account_id, company_id (nullable = total), period ('YYYY-MM'),
   peak_employees, ai_credits, whatsapp_messages, closed_at
 
-invoices
+invoices                                             -- o PIX fica em payments (D-622)
   id, billing_account_id, number, period_start, period_end, due_on, status,
-  total_cents, mercado_pago_payment_id,
-  pix_qr_code, pix_copy_paste, paid_at
+  total_cents, usage_period, issued_at, paid_at,
+  checkout, void_reason, voided_at                   -- a fatura da contratação (D-623)
 
 invoice_lines
   id, invoice_id, kind ('plan'|'module'|'add_on'|'overage_employees'|'overage_ai'|

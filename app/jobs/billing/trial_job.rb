@@ -39,7 +39,7 @@ module Billing
       account = subscription.billing_account
       account.notice_recipients.each do |membership|
         Notifications.notify!(code, user: membership.user, membership: membership, subject: subscription,
-          dedup_key: "#{code}/#{subscription.id}/#{date.iso8601}", path: account.partner? ? "/partner" : "/",
+          dedup_key: "#{code}/#{subscription.id}/#{date.iso8601}", path: account.partner? ? "/partner/contract/new" : "/contract/new",
           name: account.name, date: I18n.l(subscription.trial_ends_on), **params)
       end
     end

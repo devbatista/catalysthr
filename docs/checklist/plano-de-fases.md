@@ -132,9 +132,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
       - [x] 19d-1. Faturas de cada ciclo com as linhas (plano ou pré-ativação, módulos, adicionais e excedentes do último mês fechado), a primeira no cadastro do contrato, a numeração, o aviso `billing.invoice_issued` e as telas no admin, no parceiro e na empresa direta (RN-19-040, RN-19-041, CA-19-001)
       - [x] 19d-2. Troca de plano, módulos e adicionais pelo admin, com o proporcional e a redução no próximo ciclo, o proporcional da ativação do parceiro, planos privados e migração de preço com aviso de 30 dias (RN-19-014, RN-19-015, RN-19-060, RN-19-061, CA-19-005, D-612)
       - [x] 19d-3. Ajustes manuais (desconto, crédito, isenção de excedente) com a aprovação do superadmin acima de 20%, comparados com a prévia da próxima fatura (RN-19-070, RN-19-071, CA-19-009)
-    - [ ] 19e. PIX pelo Mercado Pago, webhook e conferência diária, e a contratação pelo cliente durante o teste (RN-19-033, RN-19-042, RN-19-046, CA-19-007, CA-19-008, D-613, D-622)
+    - [x] 19e. PIX pelo Mercado Pago, webhook e conferência diária, e a contratação pelo cliente durante o teste (RN-19-033, RN-19-042, RN-19-046, CA-19-007, CA-19-008, D-613, D-622, D-623)
       - [x] 19e-1. PIX das faturas pela API de Orders, webhook com assinatura e conferência diária (RN-19-042, RN-19-046, RN-19-053, CA-19-007, CA-19-008)
-      - [ ] 19e-2. Contratação pelo cliente durante o teste, valendo com o pagamento do PIX (RN-19-033)
+      - [x] 19e-2. Contratação pelo cliente durante o teste ou depois dele, valendo com o pagamento do PIX (RN-19-033, RN-19-034)
     - [ ] 19f. Régua de inadimplência, somente leitura (também do teste vencido) e cancelamento (RN-19-034, RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006, D-613)
     - [ ] 19g. Painel da equipe CatalystHR: Receita e Clientes (RN-19-090 a RN-19-092)
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
