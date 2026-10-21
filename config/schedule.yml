@@ -1,68 +1,69 @@
-# Scheduled jobs (sidekiq-cron, D-108). Times are in UTC.
+# Scheduled jobs (sidekiq-cron, D-108). Every cron names its time zone, in Brasília time:
+# without one, sidekiq-cron reads it in the Rails time zone (et-orbi), not in UTC.
 # Each spec adds its jobs here. Example:
 #
 # billing_daily_usage:
-#   cron: "0 4 * * *"            # 01:00 in Brasília
+#   cron: "0 1 * * * America/Sao_Paulo"
 #   class: "Billing::DailyUsageJob"
 #   queue: default
 
 # Releases subdomains whose 90-day redirect is over (spec 01, RN-01-022)
 brands_release_expired_subdomains:
-  cron: "0 6 * * *"            # 03:00 in Brasília
+  cron: "0 3 * * * America/Sao_Paulo"
   class: "Brands::ReleaseExpiredSubdomainsJob"
   queue: "default"
 
 # Asks SES about the brands' pending and failed e-mail domains (spec 01, RN-01-040, D-596)
 brands_verify_email_domains:
-  cron: "15 * * * *"           # every hour
+  cron: "15 * * * * America/Sao_Paulo"          # every hour
   class: "Brands::VerifyEmailDomainJob"
   queue: "default"
 
 # Deletes expired or forgotten remembered devices (spec 02, RN-02-043)
 trusted_devices_purge_expired:
-  cron: "10 6 * * *"           # 03:10 in Brasília
+  cron: "10 3 * * * America/Sao_Paulo"
   class: "TrustedDevices::PurgeExpiredJob"
   queue: "default"
 
 # Deletes sessions closed for more than 30 days (spec 02, D-576)
 user_sessions_purge_expired:
-  cron: "20 6 * * *"           # 03:20 in Brasília
+  cron: "20 3 * * * America/Sao_Paulo"
   class: "UserSessions::PurgeExpiredJob"
   queue: "default"
 
 # Tells the HR about the revisions that come into force on the day (spec 04, P-04-29, D-608)
 employments_apply_scheduled_revisions:
-  cron: "30 10 * * *"          # 07:30 in Brasília
+  cron: "30 7 * * * America/Sao_Paulo"
   class: "Employments::ApplyScheduledRevisionsJob"
   queue: "default"
 
 # Takes old notices out of the bell and deletes them after 1 year (spec 15, RN-15-090, D-608)
 notifications_purge:
-  cron: "30 6 * * *"           # 03:30 in Brasília
+  cron: "30 3 * * * America/Sao_Paulo"
   class: "Notifications::PurgeJob"
   queue: "default"
 
 # The free trial: notices 3 days and 1 day before the end, and the end (spec 19, RN-19-032, RN-19-034, D-616)
 billing_trial:
-  cron: "0 9 * * *"            # 06:00 in Brasília, before the time-tracking peak
+  cron: "0 6 * * * America/Sao_Paulo"           # before the time-tracking peak
   class: "Billing::TrialJob"
   queue: "default"
 
 # The employees of each company and contract on the day that ended, the end of the
 # partner's pre-activation and the notices of the band (spec 19, RN-19-020 to RN-19-023, D-618)
 billing_daily_usage:
-  cron: "0 4 * * *"            # 01:00 in Brasília
+  cron: "0 1 * * * America/Sao_Paulo"
   class: "Billing::DailyUsageJob"
   queue: "default"
 
 # Closes the usage of the months before the current one (spec 19, RN-19-023, RN-19-024)
 billing_close_period:
-  cron: "30 4 * * *"           # 01:30 in Brasília, after the day's usage
+  cron: "30 1 * * * America/Sao_Paulo"          # after the day's usage
   class: "Billing::ClosePeriodJob"
   queue: "default"
 
 # The invoices of the cycles that start in up to 3 days (spec 19, RN-19-040, RN-19-041, D-619)
 billing_generate_invoices:
-  cron: "0 5 * * *"            # 02:00 in Brasília, after the month's usage is closed
+  cron: "0 2 * * * America/Sao_Paulo"           # after the month's usage is closed
   class: "Billing::GenerateInvoicesJob"
   queue: "default"
