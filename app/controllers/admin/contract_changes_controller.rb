@@ -2,7 +2,8 @@ module Admin
   # The superadmin and the finance team change a contract's plan, modules and add-ons, and
   # migrate it to the plan's newer price (RN-19-014, RN-19-060, RN-19-061, D-620). An
   # increase takes effect at once, with the proportional difference on the next invoice; a
-  # reduction after the last day invoiced. A contract in closing or closed does not change.
+  # reduction after the last day invoiced. A contract in closing or closed does not change;
+  # the superadmin reactivates one in closing (RN-19-053).
   class ContractChangesController < BillingController
     before_action :load_contract
 
@@ -80,6 +81,14 @@ module Admin
       return back(alert: t(".absent")) if result.nil?
 
       back(notice: t(".removed", add_on: t("add_ons.names.#{add_on.code}"), date: l(result.effective_on)))
+    end
+
+    # The superadmin reactivates a contract in closing, within 90 days, once no invoice is
+    # past due, with the reason (RN-19-053, P-19-18, D-624).
+    def reactivate
+      authorize! :reactivate, @account
+      result = Billing::Dunning.reactivate(@subscription, by: current_user, reason: params[:reason])
+      result == :reactivated ? back(notice: t(".reactivated")) : back(alert: t(".#{result}"))
     end
 
     private

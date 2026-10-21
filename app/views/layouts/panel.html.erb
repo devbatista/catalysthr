@@ -38,6 +38,7 @@
   <body class="min-h-screen">
     <%= render "panel/shared/impersonation" if impersonating? %>
     <%= render "panel/shared/support_access" if Current.support_access %>
+    <%= render "panel/shared/contract_lock", lock: contract_lock if defined?(contract_lock) && contract_lock %>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

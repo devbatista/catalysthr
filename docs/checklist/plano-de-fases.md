@@ -135,7 +135,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
     - [x] 19e. PIX pelo Mercado Pago, webhook e conferência diária, e a contratação pelo cliente durante o teste (RN-19-033, RN-19-042, RN-19-046, CA-19-007, CA-19-008, D-613, D-622, D-623)
       - [x] 19e-1. PIX das faturas pela API de Orders, webhook com assinatura e conferência diária (RN-19-042, RN-19-046, RN-19-053, CA-19-007, CA-19-008)
       - [x] 19e-2. Contratação pelo cliente durante o teste ou depois dele, valendo com o pagamento do PIX (RN-19-033, RN-19-034)
-    - [ ] 19f. Régua de inadimplência, somente leitura (também do teste vencido) e cancelamento (RN-19-034, RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006, D-613)
+    - [ ] 19f. Régua de inadimplência, somente leitura (também do teste vencido) e cancelamento (RN-19-034, RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006, D-613, D-624)
+      - [x] 19f-1. Régua, `past_due`, `read_only` e `closing`, bloqueio de escrita no painel (também do teste vencido), faixas, avisos e reativação pelo superadmin (RN-19-050 a RN-19-053, CA-19-006)
+      - [ ] 19f-2. Cancelamento pelo cliente, com senha e motivo, desfazível até o fim do ciclo, e o aviso às empresas da carteira (RN-19-062, RN-19-063)
     - [ ] 19g. Painel da equipe CatalystHR: Receita e Clientes (RN-19-090 a RN-19-092)
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
     - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015). Trava: conta no Asaas e respostas do contador

@@ -2,6 +2,9 @@ module Panel
   # Terms of use and privacy policy of the brand: accepted in the first access and
   # again after every new version (RN-02-014, item 2; RN-02-015; RN-02-017).
   class LegalAcceptancesController < BaseController
+    # Open while the contract is read only (D-624).
+    writes_while_locked :create
+
     layout "auth"
 
     skip_before_action :require_legal_acceptance, :require_mfa_setup, :set_current_company

@@ -9,6 +9,7 @@ module Panel
     # The token and the running session are their own authorization.
     public_actions :show, :destroy
     real_writes_during_impersonation :destroy
+    writes_while_locked :destroy
 
     def show
       impersonation = ImpersonationSession.redeem!(params[:token], brand: Current.brand)

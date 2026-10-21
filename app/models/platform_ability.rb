@@ -49,6 +49,8 @@ class PlatformAbility
       # superadmin (RN-19-070, RN-19-071, D-621).
       can %i[read create cancel], BillingAdjustment
       can :approve, BillingAdjustment if user.superadmin?
+      # Only the superadmin reactivates a contract in closing (RN-19-053, P-19-18, D-624).
+      can :reactivate, BillingAccount if user.superadmin?
     end
     # The support reads the billing (spec 19, section 6).
     can :read, [ BillingAccount, Invoice, BillingAdjustment ] if user.support?

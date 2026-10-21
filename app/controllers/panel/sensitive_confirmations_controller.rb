@@ -3,6 +3,9 @@ module Panel
   # offered during an impersonate (RN-02-087). Wrong attempts are limited per address
   # (config/initializers/rack_attack.rb) and become access events.
   class SensitiveConfirmationsController < BaseController
+    # Open while the contract is read only (D-624).
+    writes_while_locked :create
+
     include SensitiveAccess
 
     before_action :forbidden, if: :impersonating?

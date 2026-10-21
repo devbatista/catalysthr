@@ -1,0 +1,14 @@
+<%# The superadmin's reactivation of a contract in closing (RN-19-053, P-19-18, D-624). %>
+<%= form_with url: reactivation_admin_client_contract_path(account), method: :post, class: "card card-body mt-6 space-y-4" do %>
+  <h2 class="card-title"><%= t("admin.contract_changes.reactivation.title") %></h2>
+  <p class="field-hint">
+    <%= t("admin.contract_changes.reactivation.hint", date: l(subscription.closing_on), limit: l(subscription.closing_on + Billing::Dunning::REACTIVATION_DAYS)) %>
+  </p>
+  <div class="form-grid">
+    <div class="field-full">
+      <%= label_tag :reason, t("admin.contract_changes.reactivation.reason"), class: "field-label" %>
+      <%= text_area_tag :reason, nil, required: true, maxlength: 500, rows: 2, class: "input" %>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary"><%= t("admin.contract_changes.reactivation.submit") %></button>
+<% end %>

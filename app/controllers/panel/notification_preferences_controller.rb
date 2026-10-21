@@ -4,6 +4,9 @@ module Panel
   # the company's default applies, and then the catalog's. A mandatory type keeps at least
   # one external channel (RN-15-022, CA-15-007).
   class NotificationPreferencesController < BaseController
+    # Open while the contract is read only (D-624).
+    writes_while_locked :update
+
     def edit
       authorize! :update, :own_notification_preferences
       @sections = sections

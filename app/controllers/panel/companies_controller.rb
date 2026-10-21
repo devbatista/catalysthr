@@ -4,6 +4,7 @@ module Panel
   class CompaniesController < BaseController
     # Choosing the company only changes the browser's session.
     real_writes_during_impersonation :select
+    writes_while_locked :select
 
     def index
       authorize! :read, :panel_home

@@ -2,8 +2,8 @@ module Billing
   # Every morning, the free trial (RN-19-030 to RN-19-034, D-613, D-616): 3 days and
   # 1 day before the end, tells the contract's responsible that the trial is ending
   # (`billing.trial_ending`); on the end date, without a contract, the subscription goes
-  # to trial_expired and the responsible is told (`billing.trial_expired`). The read-only
-  # mode comes with block 19f, and the button to contract with 19e. Runs again without
+  # to trial_expired, read only (ContractLock, D-624), and the responsible is told
+  # (`billing.trial_expired`), with the way to contract (D-623). Runs again without
   # repeating: a status changes once, and the same notice for the same day is not repeated
   # (RN-15-085). A day the job did not run still ends the trial on the next run. Does
   # nothing while billing is off (D-610).

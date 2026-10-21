@@ -145,7 +145,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
   **Contabilidade:** `accounting.admission_forwarded` (admissão encaminhada) e `accounting.payroll_closed` (folha fechada, relatórios disponíveis), ambos não obrigatórios, em S E.
 
-  **Administrador do parceiro e RH administrador da empresa direta (contrato):** `billing.usage_threshold` (80% e 100% de colaboradores, IA ou WhatsApp, D-092, D-101, D-407), `billing.overdue` (pagamento em atraso, D-116, spec 19), `brand.email_domain_status` (domínio verificado ou com falha, RN-01-040), todos obrigatórios, em S E.
+  **Administrador do parceiro e RH administrador da empresa direta (contrato):** `billing.usage_threshold` (80% e 100% de colaboradores, IA ou WhatsApp, D-092, D-101, D-407), `billing.overdue` (pagamento em atraso, nos dias 1, 5, 10 e 15, D-116, D-624), `brand.email_domain_status` (domínio verificado ou com falha, RN-01-040), todos obrigatórios, em S E.
 
   **Recrutamento (spec 21):** `recruiting.requisition_submitted`, `recruiting.requisition_decided`, `recruiting.interview_assigned`, `recruiting.scorecard_pending`, `recruiting.offer_answered` e `recruiting.internal_offer`. Nenhum obrigatório, em S E P. As mensagens a candidatos ficam fora do catálogo (RN-21-073).
 

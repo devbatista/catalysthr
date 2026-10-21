@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -513,6 +513,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_180000) do
     t.boolean "checkout", default: false, null: false
     t.string "void_reason"
     t.datetime "voided_at"
+    t.integer "dunning_stage", default: 0, null: false
     t.index ["billing_account_id", "period_start"], name: "index_invoices_on_account_period_start_not_void", unique: true, where: "((status)::text <> 'void'::text)"
     t.index ["number"], name: "index_invoices_on_number", unique: true
     t.index ["status", "due_on"], name: "index_invoices_on_status_and_due_on"
@@ -787,11 +788,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_180000) do
     t.uuid "next_plan_version_id"
     t.date "next_plan_version_on"
     t.string "next_plan_version_reason"
+    t.date "closing_on"
+    t.datetime "reactivated_at"
+    t.text "reactivation_reason"
+    t.uuid "reactivated_by_id"
     t.index ["billing_account_id"], name: "index_subscriptions_on_billing_account_id", unique: true
     t.index ["created_by_id"], name: "index_subscriptions_on_created_by_id"
     t.index ["next_plan_version_id"], name: "index_subscriptions_on_next_plan_version_id"
     t.index ["plan_version_id"], name: "index_subscriptions_on_plan_version_id"
     t.index ["pre_activation_price_id"], name: "index_subscriptions_on_pre_activation_price_id"
+    t.index ["reactivated_by_id"], name: "index_subscriptions_on_reactivated_by_id"
   end
 
   create_table "support_accesses", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1083,6 +1089,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_180000) do
   add_foreign_key "subscriptions", "plan_versions", column: "next_plan_version_id"
   add_foreign_key "subscriptions", "pre_activation_prices"
   add_foreign_key "subscriptions", "users", column: "created_by_id"
+  add_foreign_key "subscriptions", "users", column: "reactivated_by_id"
   add_foreign_key "support_accesses", "brands"
   add_foreign_key "support_accesses", "companies"
   add_foreign_key "support_accesses", "users", column: "support_user_id"

@@ -3,6 +3,9 @@ module Panel
     # The partner's contracting during the trial or after it (RN-19-033, RN-19-034, D-622),
     # for its administrator.
     class ContractsController < BaseController
+      # Open while the contract is read only (D-624).
+      writes_while_locked :create
+
       include ContractCheckout
 
       before_action :require_billing_feature

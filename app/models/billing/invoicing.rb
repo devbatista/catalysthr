@@ -92,9 +92,12 @@ module Billing
     def create(account, start, usage, lines, checkout: false)
       # The numbers follow each other with no gap; two invoices issued at the same time wait.
       Invoice.connection.execute("SELECT pg_advisory_xact_lock(hashtext('invoices/number'))")
+      # An invoice the adjustments take to zero is born paid: nothing to charge (D-624).
+      total = lines.sum(&:total_cents)
+      now = Time.current
       invoice = account.invoices.new(number: (Invoice.maximum(:number) || 0) + 1, period_start: start,
-        period_end: next_cycle(start, account.cycle_day) - 1, due_on: start, status: "open",
-        total_cents: lines.sum(&:total_cents), usage_period: usage&.period, issued_at: Time.current, checkout: checkout)
+        period_end: next_cycle(start, account.cycle_day) - 1, due_on: start, status: total.positive? ? "open" : "paid",
+        paid_at: (now unless total.positive?), total_cents: total, usage_period: usage&.period, issued_at: now, checkout: checkout)
       lines.each.with_index(1) do |line, position|
         invoice.lines.new(position: position, kind: line.kind, description: line.description, quantity: line.quantity,
           unit_cents: line.unit_cents, total_cents: line.total_cents, proration_id: line.proration_id,

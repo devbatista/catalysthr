@@ -3,6 +3,9 @@ module Panel
   # carries a one-time token, which signs the support in at the company's subdomain.
   # Ending it goes back to the admin area.
   class SupportAccessesController < BaseController
+    # Open while the contract is read only (D-624).
+    writes_while_locked :destroy
+
     layout "auth"
 
     skip_before_action :authenticate_user!, :require_legal_acceptance, :require_mfa_setup, :set_current_company

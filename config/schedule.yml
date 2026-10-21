@@ -73,3 +73,9 @@ billing_reconcile:
   cron: "30 2 * * * America/Sao_Paulo"          # after the day's invoices
   class: "Billing::ReconcileJob"
   queue: "default"
+
+# The dunning schedule: notices, read only and closing (spec 19, RN-19-050, D-624)
+billing_dunning:
+  cron: "0 3 * * * America/Sao_Paulo"           # after the PIX check
+  class: "Billing::DunningJob"
+  queue: "default"
