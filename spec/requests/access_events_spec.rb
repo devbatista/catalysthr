@@ -65,7 +65,7 @@ RSpec.describe "Access events of sign-in and security", type: :request do
 
     travel 1.minute do
       post "/sign-in", params: { user: { login: "12345678909", password: "Nova#Senha2026" } }
-      post "/sign-in/code", params: { otp_code: "000000" }
+      post "/sign-in/code", params: { otp_code: wrong_otp(user.reload.otp_secret) }
       post "/sign-in/code", params: { otp_code: user.reload.current_otp, remember_device: "1" }
     end
 

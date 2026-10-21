@@ -44,7 +44,7 @@ RSpec.describe "MFA", type: :request do
       expect(response.body).to include("<svg", "O seu perfil exige a verificação em duas etapas")
       expect(response.headers["Cache-Control"]).to eq("no-store")
 
-      post "/security/mfa", params: { otp_code: "000000" }
+      post "/security/mfa", params: { otp_code: wrong_otp(session[Account::MfaController::SECRET_KEY]) }
       expect(response).to have_http_status(:unprocessable_content)
 
       set_up_mfa
@@ -133,7 +133,7 @@ RSpec.describe "MFA", type: :request do
       perform_enqueued_jobs do
         3.times { sign_in_with("Errada#2026") }
         sign_in_with
-        2.times { submit_code("000000") }
+        2.times { submit_code(wrong_otp(user.reload.otp_secret)) }
       end
 
       expect(user.reload).to be_access_locked
