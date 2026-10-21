@@ -348,6 +348,17 @@ pt-BR:
         not_cancellable: "Esse ajuste já entrou numa fatura e não pode ser cancelado."
     contract_changes:
       closed: "Um contrato em encerramento ou encerrado não muda."
+      reactivate:
+        reactivated: "Contrato reativado. A conta e as empresas voltaram ao normal."
+        not_closing: "Só um contrato em encerramento pode ser reativado."
+        too_late: "O prazo de 90 dias para reativar este contrato já passou."
+        past_due: "Ainda há fatura vencida. Ela precisa ser paga antes de reativar o contrato."
+        without_reason: "Informe o motivo da reativação."
+      reactivation:
+        title: "Reativar o contrato"
+        hint: "O contrato está em encerramento desde %{date} por falta de pagamento. Até %{limit}, o superadmin pode reativá-lo, depois que as faturas vencidas forem pagas."
+        reason: "Motivo"
+        submit: "Reativar contrato"
       proration: "O proporcional de %{amount} entra na próxima fatura."
       change_plan:
         unavailable: "Escolha outro plano, ativo e com preço vigente."
@@ -1951,6 +1962,35 @@ pt-BR:
         employees_100:
           title: "%{name} chegou ao limite da faixa de colaboradores"
           body: "Em %{month}, o pico foi de %{used} colaboradores ativos, para uma faixa de %{limit}. Nada é bloqueado: cada colaborador acima da faixa entra como excedente na fatura seguinte."
+      overdue:
+        name: "Fatura vencida"
+        hint: "No 1º, no 5º e no 10º dia de atraso, e quando a conta entra em somente leitura."
+        first:
+          title: "A fatura %{number} de %{name} venceu"
+          body: "A fatura de %{total} venceu em %{due}. Pague por PIX na plataforma para evitar a somente leitura, que começa em %{read_only_on}."
+        reminder:
+          title: "A fatura %{number} de %{name} continua em aberto"
+          body: "A fatura de %{total} venceu em %{due}. Pague por PIX na plataforma para evitar a somente leitura, que começa em %{read_only_on}."
+        read_only_soon:
+          title: "%{name} entra em somente leitura em 5 dias"
+          body: "A fatura %{number}, de %{total}, venceu em %{due}. Se não for paga até %{read_only_on}, a conta fica em somente leitura: o ponto continua funcionando, mas nada novo pode ser criado ou alterado."
+        read_only:
+          title: "%{name} está em somente leitura"
+          body: "A fatura %{number}, de %{total}, venceu em %{due}. Ao pagar, tudo volta a funcionar na hora. Sem o pagamento, o contrato entra em encerramento em %{closing_on}."
+      contract_closing:
+        name: "Encerramento do contrato"
+        hint: "5 dias antes e no dia em que o contrato entra em encerramento por falta de pagamento."
+        soon:
+          title: "O contrato de %{name} entra em encerramento em 5 dias"
+          body: "A fatura %{number}, de %{total}, está vencida desde %{due}. Se não for paga até %{closing_on}, começa o encerramento do contrato."
+        closing:
+          title: "O contrato de %{name} entrou em encerramento"
+          body: "A fatura %{number}, de %{total}, venceu em %{due} e não foi paga. O contrato está em encerramento e em somente leitura. Para reativá-lo, fale com a equipe da CatalystHR."
+      partner_read_only:
+        name: "Acesso limitado pelo parceiro"
+        hint: "Quando o contrato do parceiro entra em somente leitura."
+        title: "Acesso limitado por pendência com %{partner}"
+        body: "O acesso a %{company_name} está em somente leitura por uma pendência com %{partner}. O ponto continua funcionando. Para mais informações, fale com %{partner}."
       invoice_issued:
         name: "Fatura disponível"
         hint: "Quando a fatura do mês é emitida, 3 dias antes do vencimento."
@@ -2109,6 +2149,19 @@ pt-BR:
       ignore: "Se não foi você que tentou entrar, desbloqueie o acesso e troque a senha."
   authorization:
     forbidden: "Você não tem permissão para esta ação"
+  contract_lock:
+    refused: "A conta está em somente leitura: nada novo pode ser criado ou alterado."
+    read_only: "Você pode consultar tudo, mas nada novo pode ser criado ou alterado."
+    pay: "Pagar a fatura"
+    contract: "Contratar"
+    owner:
+      overdue: "Conta em somente leitura por fatura vencida. Ao pagar, tudo volta na hora."
+      closing: "Contrato em encerramento por falta de pagamento. Para reativá-lo, fale com a equipe da CatalystHR."
+      trial_expired: "O teste grátis terminou e a conta está em somente leitura. Contrate para voltar a usar tudo."
+    portfolio:
+      overdue: "Acesso limitado por pendência com %{partner}."
+      closing: "Acesso limitado por pendência com %{partner}."
+      trial_expired: "Acesso limitado: o teste grátis de %{partner} terminou."
   rack_attack:
     throttled: "Muitas tentativas a partir deste endereço. Aguarde alguns minutos e tente de novo."
   date:

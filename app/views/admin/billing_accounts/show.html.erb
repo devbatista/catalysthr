@@ -48,6 +48,10 @@
   </dl>
 </div>
 
+<% if subscription&.closing? && subscription.closing_on && can?(:reactivate, @account) %>
+  <%= render "reactivation", account: @account, subscription: subscription %>
+<% end %>
+
 <% if subscription && @offered_plans && !subscription.closing? && !subscription.closed? %>
   <%= render "contract_changes", account: @account, subscription: subscription %>
 <% end %>

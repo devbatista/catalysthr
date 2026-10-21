@@ -1,0 +1,20 @@
+<%# The contract's read only on every page of the panel (RN-19-051, RN-19-052, D-624). The
+    companies of a partner's portfolio see only the partner's name, never amounts. %>
+<% account = lock.account %>
+<% owner = account.owner %>
+<% portfolio = lock.portfolio_company? && partner_membership.nil? %>
+<div class="border-b border-warn/30 bg-warn-bg text-warn" role="status">
+  <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm sm:px-7">
+    <p>
+      <strong><%= t("contract_lock.#{portfolio ? "portfolio" : "owner"}.#{lock.reason}", partner: account.name) %></strong>
+      <span class="ml-1"><%= t("contract_lock.read_only") %></span>
+    </p>
+    <% unless portfolio %>
+      <% if lock.reason == :overdue && can?(:read_invoices, owner) %>
+        <%= link_to t("contract_lock.pay"), owner.is_a?(Partner) ? partner_invoices_path : invoices_path, class: "btn btn-sm btn-secondary" %>
+      <% elsif lock.reason == :trial_expired && can?(:contract, owner) %>
+        <%= link_to t("contract_lock.contract"), owner.is_a?(Partner) ? new_partner_contract_path : new_contract_path, class: "btn btn-sm btn-secondary" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

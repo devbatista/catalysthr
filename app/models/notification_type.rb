@@ -57,6 +57,16 @@ NotificationType::CATALOG = [
   # The 30 days' notice of a price migration, to the contract's responsible (RN-19-014, D-620).
   NotificationType.new(code: "billing.price_change", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin]),
+  # The dunning, to the contract's responsible: the invoice past due on days 1, 5 and 10, and
+  # the read only on day 15; the closing on days 25 and 30 (RN-19-050, D-116, D-493, D-624).
+  NotificationType.new(code: "billing.overdue", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  NotificationType.new(code: "billing.contract_closing", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  # The partner's read only, to the HR administrator of each company of the portfolio,
+  # without amounts (RN-19-052, D-495).
+  NotificationType.new(code: "billing.partner_read_only", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   # The CatalystHR team: an adjustment above 20% waiting for the superadmin (RN-19-071, D-621).
   NotificationType.new(code: "platform.adjustment_pending", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[superadmin])

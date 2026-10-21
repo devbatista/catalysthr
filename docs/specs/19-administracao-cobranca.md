@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-623 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-624 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -133,9 +133,10 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
   - o **ponto** continua funcionando (D-116);
   - o RH transmite ao eSocial os **eventos já gerados** e consulta os retornos (D-494);
   - nada novo é criado ou alterado;
-  - o portal do colaborador continua em leitura.
+  - o portal do colaborador continua em leitura;
+  - no painel, toda escrita é recusada com mensagem e uma faixa no topo, também em `closing` e no teste vencido; a conta da própria pessoa, o pagamento e a contratação continuam liberados (D-613, D-624).
 - **RN-19-052** — Empresas de parceiro em `read_only`: o RH administrador vê a faixa **"Acesso limitado por pendência com [parceiro]"**, sem valores (D-495).
-- **RN-19-053** — O pagamento confirmado volta a conta para `active` na hora, em qualquer etapa antes de `closing`. Em `closing`, só o superadmin pode reativar, nos 90 dias **[P-19-18]**.
+- **RN-19-053** — O pagamento confirmado volta a conta para `active` na hora, em qualquer etapa antes de `closing`. Em `closing`, só o superadmin pode reativar, nos 90 dias, com motivo e sem fatura vencida (D-624) **[P-19-18]**.
 
 ### 4.7 Troca de plano e cancelamento (D-489, D-492)
 
@@ -321,7 +322,7 @@ fiscal_settings                                      -- configuração fiscal (P
 | `Billing::ClosePeriodJob` | Dia 1 | Fecha o consumo do mês anterior e gera o relatório do parceiro |
 | `Billing::GenerateInvoicesJob` | Diário | Gera as faturas que vencem em 3 dias |
 | `Billing::ChargeJob` | No vencimento e nas novas tentativas (1, 3 e 5 dias) | Pede ao Mercado Pago a cobrança do cartão salvo |
-| `Billing::DunningJob` | Diário | Aplica a régua de inadimplência |
+| `Billing::DunningJob` | Diário, às 3h | Aplica a régua de inadimplência (D-624) |
 | `Billing::ReconcileJob` | Diário, às 2h30 | Confere na API do Mercado Pago os PIX pendentes (D-622) |
 | `Billing::TrialJob` | Diário | Avisos e fim dos testes |
 | `Billing::CancellationJob` | Diário | Aplica os cancelamentos agendados no fim do ciclo |

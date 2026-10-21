@@ -21,6 +21,8 @@ class Subscription < ApplicationRecord
   # migration (RN-19-014, D-620).
   belongs_to :next_plan_version, class_name: "PlanVersion", optional: true
   belongs_to :created_by, class_name: "User"
+  # The superadmin who reactivated it from closing (RN-19-053, D-624).
+  belongs_to :reactivated_by, class_name: "User", optional: true
   has_many :items, -> { order(:id) }, class_name: "SubscriptionItem", inverse_of: :subscription, dependent: :restrict_with_exception
 
   enum :status, STATUSES.index_by(&:itself), validate: true

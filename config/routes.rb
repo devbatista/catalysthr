@@ -81,6 +81,8 @@ Rails.application.routes.draw do
           delete "modules/:code", action: :remove_module
           post "add-ons/:code", action: :add_add_on, as: :add_on
           delete "add-ons/:code", action: :remove_add_on
+          # The superadmin's reactivation of a contract in closing (RN-19-053, D-624).
+          post :reactivation, action: :reactivate
         end
         # Manual adjustments of the next invoices (RN-19-070, D-621).
         resources :adjustments, only: %i[new create], controller: "billing_adjustments"

@@ -38,7 +38,10 @@ module Billing
         employees = Invoicing.employees_basis(account, today) unless account.partner?
         lines = InvoiceLines.new(subscription, today, employees: employees,
           pre_activation: account.partner? && subscription.activated_on.nil?).lines
-        Invoicing.create(account, today, nil, lines + Adjustments.lines_for(account, lines), checkout: true)
+        invoice = Invoicing.create(account, today, nil, lines + Adjustments.lines_for(account, lines), checkout: true)
+        # A credit that covers everything leaves nothing to pay: the contract starts now (D-624).
+        activate(invoice) if invoice.paid?
+        invoice
       end
     end
 
