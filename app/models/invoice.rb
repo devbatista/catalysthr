@@ -11,6 +11,7 @@ class Invoice < ApplicationRecord
 
   belongs_to :billing_account
   has_many :lines, -> { order(:position) }, class_name: "InvoiceLine", inverse_of: :invoice, dependent: :restrict_with_exception
+  has_many :payments, dependent: :restrict_with_exception
 
   enum :status, STATUSES.index_by(&:itself), validate: true
 
@@ -21,5 +22,15 @@ class Invoice < ApplicationRecord
   # "000123".
   def display_number
     number.to_s.rjust(6, "0")
+  end
+
+  # Still to be paid (RN-19-042): open or overdue, with something to charge.
+  def payable?
+    status.in?(%w[open overdue]) && total_cents.positive?
+  end
+
+  # Past its due date and not paid (block 19f turns it `overdue`).
+  def past_due?(today = Date.current)
+    payable? && due_on < today
   end
 end

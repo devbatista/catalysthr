@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   # the controller accepts only messages signed by SNS for the app's topic.
   post "webhooks/ses-events", to: "ses_events#create", as: :ses_events
 
+  # Mercado Pago's notices (spec 19, RN-19-046, D-622). Answers on any host, without
+  # sign-in; the controller accepts only a notice signed with the account's secret.
+  post "webhooks/mercado-pago", to: "mercado_pago_webhooks#create", as: :mercado_pago_webhooks
+
   # Sign-in, recovery and unlock (spec 02), on the admin host and on every brand's
   # subdomain. Who may sign in depends on the host (RN-02-004, RN-01-002).
   devise_for :users, path: "", controllers: { sessions: "users/sessions" },

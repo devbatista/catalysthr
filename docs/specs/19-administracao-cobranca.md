@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-621 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-622 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -108,7 +108,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-041** — A fatura é gerada **3 dias antes** do vencimento, com o detalhamento de cada linha, e avisada ao responsável (`billing.invoice_issued`) **[P-19-12]**.
 - **RN-19-042** — **Gestão e cobrança** (D-496): a assinatura, o ciclo, as faturas, a régua e o status ficam **na plataforma**. O Mercado Pago **executa** cada cobrança:
   - **cartão de crédito:** o cliente informa o cartão ao contratar, e a primeira cobrança é feita com o cartão presente (com o CVV). O cartão fica salvo no Mercado Pago, e as faturas seguintes são cobradas no vencimento, no valor da fatura, como **pagamento automático** sem pedir o CVV de novo;
-  - **PIX:** a fatura traz o QR code e o código copia e cola, gerados pela API de pagamentos do Mercado Pago, com vencimento.
+  - **PIX:** a fatura traz o QR code e o código copia e cola, gerados pela API de Orders do Mercado Pago, com vencimento no fim do dia do vencimento da fatura. Vencido, um PIX novo é gerado quando o cliente abre a fatura, válido até o fim daquele dia (D-622).
 
   As assinaturas do próprio Mercado Pago (preapproval) não são usadas.
 - **RN-19-043** — Cartão recusado (D-497): a plataforma pede uma nova cobrança ao Mercado Pago **1, 3 e 5 dias** depois. A cada recusa, o cliente recebe `billing.payment_failed`, com o link para pagar por PIX ou trocar o cartão. Se nada der certo, segue a régua de inadimplência (RN-19-050) **[P-19-13]**.
@@ -213,7 +213,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 
 **Fatura:** `draft` → `open` → `paid` | `overdue` → `paid` | `void` (cancelada pelo financeiro, com motivo)
 
-**Pagamento:** `pending` → `approved` | `rejected` | `refunded`
+**Pagamento:** `pending` → `approved` | `rejected` | `refunded` | `cancelled` (PIX que expirou ou foi trocado, D-622)
 
 **Nota fiscal:** `scheduled` → `authorized` | `error` → (`scheduled`, ao emitir de novo) · `authorized` → `cancelling` → `cancelled` | `cancel_error`
 
@@ -294,9 +294,10 @@ billing_adjustments
   id, billing_account_id, kind ('discount'|'credit'|'overage_waiver'), value_cents,
   percent, cycles, reason, created_by_id, approved_by_id, applied_invoice_id
 
-payments
-  id, invoice_id, provider_payment_id, idempotency_key, method, status, attempt,
-  amount_cents, raw_status, next_retry_on, created_at
+payments                                             -- D-622; attempt e next_retry_on entram com o cartão (19h)
+  id, invoice_id, payment_method ('pix'|'card'), status, amount_cents, idempotency_key,
+  provider_order_id, provider_payment_id, raw_status, qr_code, qr_code_base64,
+  ticket_url, expires_at, paid_at, attempt, next_retry_on, created_at
 
 fx_rates
   date, currency ('USD'), brl_rate
@@ -321,7 +322,7 @@ fiscal_settings                                      -- configuração fiscal (P
 | `Billing::GenerateInvoicesJob` | Diário | Gera as faturas que vencem em 3 dias |
 | `Billing::ChargeJob` | No vencimento e nas novas tentativas (1, 3 e 5 dias) | Pede ao Mercado Pago a cobrança do cartão salvo |
 | `Billing::DunningJob` | Diário | Aplica a régua de inadimplência |
-| `Billing::ReconcileJob` | Diário | Confere na API do Mercado Pago as faturas em aberto |
+| `Billing::ReconcileJob` | Diário, às 2h30 | Confere na API do Mercado Pago os PIX pendentes (D-622) |
 | `Billing::TrialJob` | Diário | Avisos e fim dos testes |
 | `Billing::CancellationJob` | Diário | Aplica os cancelamentos agendados no fim do ciclo |
 | `Billing::FxRateJob` | Diário | Busca a cotação do dólar **[P-19-27]** |
@@ -329,7 +330,7 @@ fiscal_settings                                      -- configuração fiscal (P
 | `Billing::CancelServiceInvoiceJob` | Ao receber o estorno | Pede o cancelamento da nota ao Asaas |
 | `Billing::ServiceInvoiceReconcileJob` | Diário | Confere na API do Asaas as notas sem retorno |
 
-- **Mercado Pago** (D-496): gem oficial (`mercadopago-sdk`), com o cliente e o cartão salvos (Customers e Cards), pagamentos automáticos com o cartão salvo no valor de cada fatura (`/v1/payments`, com chave de idempotência por tentativa), e PIX pela mesma API. Webhooks com a assinatura conferida. **Pré-requisito:** confirmar com o Mercado Pago a habilitação da conta para cobrar o cartão salvo sem o CVV (item em aberto). O Pix Automático pode entrar numa fase seguinte **[P-19-29]**.
+- **Mercado Pago** (D-496, D-622): API de Orders (`/v1/orders`) por cliente HTTP próprio, sem a gem oficial, com chave de idempotência por pedido. PIX criado com `payment_method` `pix`/`bank_transfer` e `expiration_time`. Webhook em `POST /webhooks/mercado-pago`, no host do admin, com a assinatura `x-signature` conferida com a assinatura secreta da conta (tópico Order); o aviso só diz qual pedido mudou, e o pedido é lido na API. Cartão: cliente e cartão salvos, cobrados no valor de cada fatura como pagamento automático; o desenho na API de Orders é definido no 19h. **Pré-requisito:** confirmar com o Mercado Pago a habilitação da conta para cobrar o cartão salvo sem o CVV (item em aberto). O Pix Automático pode entrar numa fase seguinte **[P-19-29]**.
 - **Cotação do dólar:** API pública do Banco Central (PTAX) **[P-19-27]**.
 - **Asaas** (D-560): API REST v3 por cliente HTTP próprio (Faraday), com a chave de API nas variáveis de ambiente. Endpoints de clientes, notas fiscais (agendar, emitir, cancelar) e webhooks de notas. Em desenvolvimento, o sandbox do Asaas; nos testes, WebMock **[P-19-37]**.
 - **Avisos novos** no catálogo da spec 15, para o responsável financeiro: `billing.invoice_issued`, `billing.price_change` (D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued` (obrigatórios, sino e e-mail). Para o financeiro e o superadmin: `platform.nfse_error` (S E) **[P-19-38]**. Para o superadmin: `platform.adjustment_pending` (S E, D-621). Para o RH administrador das empresas da carteira: `billing.partner_read_only` e `billing.partner_cancelled` (obrigatórios, sino e e-mail).

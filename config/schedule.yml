@@ -67,3 +67,9 @@ billing_generate_invoices:
   cron: "0 2 * * * America/Sao_Paulo"           # after the month's usage is closed
   class: "Billing::GenerateInvoicesJob"
   queue: "default"
+
+# Reads the pending PIX in Mercado Pago, for a lost webhook (spec 19, RN-19-046, CA-19-008, D-622)
+billing_reconcile:
+  cron: "30 2 * * * America/Sao_Paulo"          # after the day's invoices
+  class: "Billing::ReconcileJob"
+  queue: "default"

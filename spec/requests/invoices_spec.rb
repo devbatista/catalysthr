@@ -92,7 +92,7 @@ RSpec.describe "Invoices", type: :request do
       expect(response.body).to include("000001", "R$ 2.500,00")
       expect(response.body).not_to include("000002")
       get "/partner/invoices/#{invoice.id}"
-      expect(response.body).to include("Plano #{invoice.billing_account.subscription.plan.name}", "fale com a equipe da CatalystHR")
+      expect(response.body).to include("Plano #{invoice.billing_account.subscription.plan.name}", "O PIX desta fatura não está disponível agora")
       get "/partner/invoices/#{other_invoice.id}"
       expect(response).to have_http_status(:not_found)
     end
@@ -133,6 +133,42 @@ RSpec.describe "Invoices", type: :request do
       expect(response.body).to include("000001", "R$ 300,00")
       get "/invoices/#{invoice.id}"
       expect(response.body).to include("mínimo mensal (nenhum colaborador ativo)")
+    end
+
+    it "shows the HR administrator the invoice's PIX to pay, with the code to copy (RN-19-042, D-622)" do
+      configure_mercado_pago
+      invoice.billing_account.update!(billing_email: "financeiro@serraazul.example")
+      stub_create_order
+      sign_in_member(%w[hr_admin])
+
+      get "/invoices/#{invoice.id}"
+
+      payment = invoice.payments.sole
+      expect(response.body).to include("Pagar com PIX", "PIX copia e cola", payment.qr_code, "Copiar código", "Abrir no Mercado Pago",
+        "PIX de R$ 300,00, válido até 15/10/2026 às 23h59", "data:image/png;base64,#{payment.qr_code_base64}")
+      get "/invoices/#{invoice.id}"
+      expect(invoice.payments.count).to eq(1)
+    end
+
+    it "tells the HR administrator when Mercado Pago is out of the air" do
+      configure_mercado_pago
+      stub_request(:post, MercadoPagoStub::ORDERS_URL).to_return(status: 503, body: "{}")
+      sign_in_member(%w[hr_admin])
+
+      get "/invoices/#{invoice.id}"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("O PIX desta fatura não está disponível agora")
+    end
+
+    it "shows the paid invoice without a PIX" do
+      invoice.update!(status: "paid", paid_at: Time.current)
+      sign_in_member(%w[hr_admin])
+
+      get "/invoices/#{invoice.id}"
+
+      expect(response.body).to include("Fatura paga em 15/10/2026", "Paga")
+      expect(response.body).not_to include("Pagar com PIX")
     end
 
     it "keeps the invoices closed to the HR analyst" do

@@ -2134,7 +2134,17 @@ pt-BR:
         quantity: "Quantidade"
         unit: "Valor unitário"
         line_total: "Valor"
-        payment_soon: "Para pagar esta fatura, fale com a equipe da CatalystHR."
+      payment:
+        paid: "Fatura paga em %{date}."
+        awaiting: "Aguardando o pagamento por PIX."
+        title: "Pagar com PIX"
+        qr_alt: "QR code do PIX desta fatura"
+        code: "PIX copia e cola"
+        copy: "Copiar código"
+        copied: "Código copiado"
+        ticket: "Abrir no Mercado Pago"
+        valid_until: "PIX de %{amount}, válido até %{date} às %{time}. Depois disso, abra esta fatura de novo para gerar outro código."
+        unavailable: "O PIX desta fatura não está disponível agora. Tente de novo em alguns minutos."
   billing:
     kinds:
       partner: "Parceiro"
