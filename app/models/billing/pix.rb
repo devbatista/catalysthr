@@ -120,7 +120,7 @@ module Billing
       return unless subscription&.status.in?(REACTIVATED)
       return if account.invoices.any? { |invoice| invoice.past_due?(today) }
 
-      subscription.update!(status: "active")
+      subscription.update!(status: subscription.regular_status)
     end
 
     # The daily check (RN-19-046, CA-19-008): every pending PIX is read in the API, in case

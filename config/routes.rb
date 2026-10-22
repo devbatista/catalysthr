@@ -83,6 +83,8 @@ Rails.application.routes.draw do
           delete "add-ons/:code", action: :remove_add_on
           # The superadmin's reactivation of a contract in closing (RN-19-053, D-624).
           post :reactivation, action: :reactivate
+          # The team undoes a cancellation the client asked, with the reason (RN-19-062, D-625).
+          delete :cancellation, action: :undo_cancellation
         end
         # Manual adjustments of the next invoices (RN-19-070, D-621).
         resources :adjustments, only: %i[new create], controller: "billing_adjustments"
@@ -150,6 +152,8 @@ Rails.application.routes.draw do
       # the trial or after it (RN-19-033, D-622).
       resources :invoices, only: %i[index show]
       resource :contract, only: %i[new create]
+      # The cancellation by the client and its undo (RN-19-062, D-625).
+      resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
@@ -241,6 +245,8 @@ Rails.application.routes.draw do
         resource :usage, only: :show
         resources :invoices, only: %i[index show]
         resource :contract, only: %i[new create]
+        # The cancellation by the client and its undo (RN-19-062, RN-19-063, D-625).
+        resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
         resources :companies, only: %i[new create] do
           resource :brand, only: %i[edit update], controller: "company_brands"
           resource :modules, only: %i[edit update], controller: "company_modules"

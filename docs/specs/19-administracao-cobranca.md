@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-624 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-625 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -142,7 +142,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 
 - **RN-19-060** — **Aumento** de plano, contratação de módulo ou de adicional: vale na hora. A diferença proporcional aos dias até o fim do ciclo entra na próxima fatura (RN-19-040) **[P-19-19]**.
 - **RN-19-061** — **Redução** ou retirada de módulo ou adicional: vale no início do próximo ciclo. Retirar o módulo de ponto ou folha avisa que os dados continuam guardados e em leitura, e que o AFD e os XMLs do eSocial ficam na exportação **[P-19-20]**.
-- **RN-19-062** — **Cancelamento** pelo cliente (D-489): pedido pelo responsável financeiro, com confirmação de senha ou passkey e um motivo (lista simples, mais texto). Vale no fim do ciclo pago, sem multa. Até lá, pode ser desfeito. Depois, começa o encerramento (D-222) **[P-19-21]**.
+- **RN-19-062** — **Cancelamento** pelo cliente (D-489): pedido pelo responsável financeiro, com confirmação de senha ou passkey e um motivo (lista simples, mais texto). Vale no fim do ciclo pago, sem multa. Até lá, pode ser desfeito, pelo cliente ou pela equipe. Depois, começa o encerramento (D-222). A fatura do próximo ciclo já emitida e não paga é cancelada (D-625) **[P-19-21]**.
 - **RN-19-063** — Parceiro que cancela: todas as empresas da carteira entram no encerramento junto. Antes disso, o superadmin pode **transferir** empresas para outro parceiro ou para contratação direta (D-123), com a autorização de cada uma. O aviso de cancelamento ao RH administrador de cada empresa da carteira sai **30 dias antes** do fim do ciclo, ou no pedido, se faltar menos **[P-19-22]**.
 
 ### 4.8 Ajustes manuais (D-491)
@@ -325,7 +325,7 @@ fiscal_settings                                      -- configuração fiscal (P
 | `Billing::DunningJob` | Diário, às 3h | Aplica a régua de inadimplência (D-624) |
 | `Billing::ReconcileJob` | Diário, às 2h30 | Confere na API do Mercado Pago os PIX pendentes (D-622) |
 | `Billing::TrialJob` | Diário | Avisos e fim dos testes |
-| `Billing::CancellationJob` | Diário | Aplica os cancelamentos agendados no fim do ciclo |
+| `Billing::CancellationJob` | Diário, às 2h50 | Aplica os cancelamentos agendados no fim do ciclo e avisa a carteira 30 dias antes (D-625) |
 | `Billing::FxRateJob` | Diário | Busca a cotação do dólar **[P-19-27]** |
 | `Billing::IssueServiceInvoiceJob` | Ao confirmar o pagamento | Cadastra ou atualiza o cliente no Asaas e agenda a nota |
 | `Billing::CancelServiceInvoiceJob` | Ao receber o estorno | Pede o cancelamento da nota ao Asaas |

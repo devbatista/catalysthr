@@ -4,3 +4,5 @@
 <div class="mt-6">
   <%= render "shared/invoices/table", invoices: @invoices, path: ->(invoice) { invoice_path(invoice) } %>
 </div>
+
+<%= render "shared/cancellations/entry", account: Current.company.billing_account, path: cancellation_path %>

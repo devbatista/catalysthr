@@ -1,0 +1,59 @@
+<%# The cancellation asked by the client, and its undo (RN-19-062, RN-19-063, D-625). %>
+<% scheduled = Billing::Cancellation.scheduled?(@subscription) %>
+<% title = t("shared.cancellations.show.#{scheduled ? "title_scheduled" : "title"}") %>
+<% content_for :title, title %>
+<% partner = @account.partner? %>
+
+<h1 class="page-title"><%= title %></h1>
+
+<% if scheduled %>
+  <p class="alert-info mt-6"><%= t("shared.cancellations.show.scheduled_on", date: l(@subscription.cancel_on)) %></p>
+  <div class="card card-body mt-6">
+    <dl class="details-list">
+      <div><dt><%= t("shared.cancellations.show.requested_at") %></dt><dd><%= l(@subscription.cancel_requested_at.to_date) %></dd></div>
+      <div><dt><%= t("shared.cancellations.show.requested_by") %></dt><dd><%= @subscription.cancel_requested_by&.name %></dd></div>
+      <div><dt><%= t("shared.cancellations.show.reason") %></dt><dd><%= t("shared.cancellations.reasons.#{@subscription.cancel_reason}") %></dd></div>
+      <% if @subscription.cancel_reason_text %>
+        <div><dt><%= t("shared.cancellations.show.details") %></dt><dd><%= @subscription.cancel_reason_text %></dd></div>
+      <% end %>
+    </dl>
+    <%= button_to t("shared.cancellations.show.undo"), cancellation_form_path, method: :delete, class: "btn btn-primary mt-6",
+      form: { data: { confirm: t("shared.cancellations.show.undo_confirm") } } %>
+  </div>
+<% else %>
+  <p class="page-subtitle"><%= t("shared.cancellations.show.subtitle", date: l(@cancel_on)) %></p>
+
+  <div class="card card-body mt-6 space-y-3 text-sm">
+    <p><%= t("shared.cancellations.show.effect.#{partner ? "partner" : "direct"}", date: l(@cancel_on)) %></p>
+    <% @to_void.each do |invoice| %>
+      <p><%= t("shared.cancellations.show.voids", number: invoice.display_number, total: reais(invoice.total_cents)) %></p>
+    <% end %>
+    <% if partner %>
+      <p><%= t("shared.cancellations.show.portfolio") %></p>
+    <% end %>
+    <p><%= t("shared.cancellations.show.undo_until", date: l(@cancel_on)) %></p>
+  </div>
+
+  <%= form_with url: cancellation_form_path, method: :post, class: "card card-body mt-6 space-y-5",
+    data: { confirm: t("shared.cancellations.show.confirm", date: l(@cancel_on)) } do %>
+    <fieldset>
+      <legend class="field-label"><%= t("shared.cancellations.show.reason") %></legend>
+      <div class="mt-2 grid gap-2 sm:grid-cols-2">
+        <% Billing::Cancellation::REASONS.each do |reason| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= radio_button_tag :reason, reason, params[:reason] == reason, required: true %>
+            <%= t("shared.cancellations.reasons.#{reason}") %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+    <div class="form-grid">
+      <div class="field-full">
+        <%= label_tag :reason_text, t("shared.cancellations.show.reason_text"), class: "field-label" %>
+        <%= text_area_tag :reason_text, params[:reason_text], rows: 3, maxlength: 1000, class: "input" %>
+        <p class="field-hint"><%= t("shared.cancellations.show.reason_text_hint") %></p>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-danger"><%= t("shared.cancellations.show.submit") %></button>
+  <% end %>
+<% end %>

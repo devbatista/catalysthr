@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_150100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -792,7 +792,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_120100) do
     t.datetime "reactivated_at"
     t.text "reactivation_reason"
     t.uuid "reactivated_by_id"
+    t.date "cancel_on"
+    t.datetime "cancel_requested_at"
+    t.string "cancel_reason"
+    t.text "cancel_reason_text"
+    t.date "cancel_portfolio_notified_on"
+    t.datetime "cancel_undone_at"
+    t.text "cancel_undone_reason"
+    t.uuid "cancel_requested_by_id"
+    t.uuid "cancel_undone_by_id"
     t.index ["billing_account_id"], name: "index_subscriptions_on_billing_account_id", unique: true
+    t.index ["cancel_requested_by_id"], name: "index_subscriptions_on_cancel_requested_by_id"
+    t.index ["cancel_undone_by_id"], name: "index_subscriptions_on_cancel_undone_by_id"
     t.index ["created_by_id"], name: "index_subscriptions_on_created_by_id"
     t.index ["next_plan_version_id"], name: "index_subscriptions_on_next_plan_version_id"
     t.index ["plan_version_id"], name: "index_subscriptions_on_plan_version_id"
@@ -1088,6 +1099,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_120100) do
   add_foreign_key "subscriptions", "plan_versions"
   add_foreign_key "subscriptions", "plan_versions", column: "next_plan_version_id"
   add_foreign_key "subscriptions", "pre_activation_prices"
+  add_foreign_key "subscriptions", "users", column: "cancel_requested_by_id"
+  add_foreign_key "subscriptions", "users", column: "cancel_undone_by_id"
   add_foreign_key "subscriptions", "users", column: "created_by_id"
   add_foreign_key "subscriptions", "users", column: "reactivated_by_id"
   add_foreign_key "support_accesses", "brands"

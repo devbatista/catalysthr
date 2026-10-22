@@ -15,7 +15,7 @@ module Billing
     READ_ONLY_DAY = 15
     CLOSING_DAY = 30
     # The statuses the schedule moves; closing waits for the superadmin.
-    DUNNED = %w[active past_due read_only].freeze
+    DUNNED = %w[active past_due read_only cancel_scheduled].freeze
     # How long the superadmin may reactivate a contract in closing (RN-19-053, P-19-18).
     REACTIVATION_DAYS = 90
 
@@ -33,14 +33,15 @@ module Billing
         late = account.invoices.where(status: %w[open overdue], due_on: ...today).where("total_cents > 0").order(:due_on, :number).to_a
         late.each { |invoice| invoice.update!(status: "overdue") if invoice.open? }
         oldest = late.first
-        status = status_for(oldest, today)
+        status = status_for(oldest, today) || subscription.regular_status
         subscription.update!(status: status, closing_on: (today if status == "closing")) if status != subscription.status
         notify(account, oldest, today) if oldest
       end
     end
 
+    # The status the oldest late invoice gives, or nil when none is late.
     def status_for(oldest, today)
-      return "active" if oldest.nil?
+      return if oldest.nil?
 
       days = (today - oldest.due_on).to_i
       if days >= CLOSING_DAY then "closing"
@@ -79,7 +80,7 @@ module Billing
         next :past_due if account.invoices.where(status: %w[open overdue], due_on: ...today).where("total_cents > 0").exists?
 
         subscription.update!(status: "active", closing_on: nil, reactivated_at: Time.current, reactivated_by: by,
-          reactivation_reason: reason.strip)
+          reactivation_reason: reason.strip, cancel_on: nil, cancel_portfolio_notified_on: nil)
         :reactivated
       end
     end

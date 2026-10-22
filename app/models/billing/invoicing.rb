@@ -20,12 +20,16 @@ module Billing
     def issue_due(subscription, today = Date.current, lead: LEAD_DAYS)
       return [] unless subscription.status.in?(BILLABLE)
 
-      cycle_starts(subscription, today + lead).filter_map { |start| issue(subscription, start, today) }
+      # Nothing after the cancellation takes effect (RN-19-062, D-625).
+      through = [ today + lead, subscription.cancel_on ].compact.min
+      cycle_starts(subscription, through).filter_map { |start| issue(subscription, start, today) }
     end
 
+    # A voided invoice does not count: its cycle is issued again if it is still charged
+    # (D-625).
     def cycle_starts(subscription, through)
       account = subscription.billing_account
-      last = account.invoices.maximum(:period_start)
+      last = account.invoices.where.not(status: "void").maximum(:period_start)
       start = last ? next_cycle(last, account.cycle_day) : subscription.started_on
       starts = []
       while start <= through
@@ -42,7 +46,7 @@ module Billing
     def issue(subscription, start, today)
       account = subscription.billing_account
       invoice = subscription.with_lock do
-        next if account.invoices.exists?(period_start: start)
+        next if account.invoices.where.not(status: "void").exists?(period_start: start)
 
         usage = billable_usage(account, today)
         lines = charges(subscription, start, today, usage)
@@ -66,7 +70,7 @@ module Billing
     # adjustment is compared with (RN-19-071, D-619).
     def preview_lines(subscription, today = Date.current)
       account = subscription.billing_account
-      last = account.invoices.maximum(:period_start)
+      last = account.invoices.where.not(status: "void").maximum(:period_start)
       start = last ? next_cycle(last, account.cycle_day) : subscription.started_on
       charges(subscription, start, today, billable_usage(account, today))
     end

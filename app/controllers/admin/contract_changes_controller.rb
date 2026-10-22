@@ -91,6 +91,16 @@ module Admin
       result == :reactivated ? back(notice: t(".reactivated")) : back(alert: t(".#{result}"))
     end
 
+    # The superadmin or the finance team undoes a cancellation the client asked, with the
+    # reason (RN-19-062, D-625).
+    def undo_cancellation
+      authorize! :change_contract, @account
+      return back(alert: t(".without_reason")) if params[:reason].blank?
+
+      result = Billing::Cancellation.undo(@subscription, by: current_user, reason: params[:reason].strip)
+      result == :undone ? back(notice: t(".undone")) : back(alert: t(".not_scheduled"))
+    end
+
     private
 
     def load_contract

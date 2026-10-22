@@ -74,6 +74,12 @@ billing_reconcile:
   class: "Billing::ReconcileJob"
   queue: "default"
 
+# The cancellations that take effect, and the portfolios' notice (spec 19, RN-19-062, RN-19-063, D-625)
+billing_cancellation:
+  cron: "50 2 * * * America/Sao_Paulo"          # before the dunning
+  class: "Billing::CancellationJob"
+  queue: "default"
+
 # The dunning schedule: notices, read only and closing (spec 19, RN-19-050, D-624)
 billing_dunning:
   cron: "0 3 * * * America/Sao_Paulo"           # after the PIX check

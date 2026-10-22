@@ -67,6 +67,12 @@ NotificationType::CATALOG = [
   # without amounts (RN-19-052, D-495).
   NotificationType.new(code: "billing.partner_read_only", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[hr_admin]),
+  # The cancellation asked by the client, to the responsible; and to the HR administrator of
+  # each company of a partner's portfolio, 30 days before the end (RN-19-062, RN-19-063, D-625).
+  NotificationType.new(code: "billing.cancel_scheduled", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[partner_admin hr_admin]),
+  NotificationType.new(code: "billing.partner_cancelled", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   # The CatalystHR team: an adjustment above 20% waiting for the superadmin (RN-19-071, D-621).
   NotificationType.new(code: "platform.adjustment_pending", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[superadmin])

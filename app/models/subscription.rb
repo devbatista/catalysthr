@@ -23,6 +23,9 @@ class Subscription < ApplicationRecord
   belongs_to :created_by, class_name: "User"
   # The superadmin who reactivated it from closing (RN-19-053, D-624).
   belongs_to :reactivated_by, class_name: "User", optional: true
+  # Who asked the cancellation, and who last undid one (RN-19-062, D-625).
+  belongs_to :cancel_requested_by, class_name: "User", optional: true
+  belongs_to :cancel_undone_by, class_name: "User", optional: true
   has_many :items, -> { order(:id) }, class_name: "SubscriptionItem", inverse_of: :subscription, dependent: :restrict_with_exception
 
   enum :status, STATUSES.index_by(&:itself), validate: true
@@ -35,6 +38,12 @@ class Subscription < ApplicationRecord
   validate :plan_of_the_owner
 
   delegate :plan, to: :plan_version
+
+  # The status of a contract with nothing past due: active, or waiting for its cancellation
+  # (RN-19-062, D-625).
+  def regular_status
+    cancel_on ? "cancel_scheduled" : "active"
+  end
 
   # A partner under contract before the first active employee (D-612).
   def pre_activation?
