@@ -70,6 +70,8 @@ Rails.application.routes.draw do
       end
       # The partner's pre-activation fee (RN-19-035, D-612).
       resources :pre_activation_prices, only: %i[new create], path: "pre-activation-prices"
+      # The CatalystHR team's panel (RN-19-090, D-626).
+      resource :dashboard, only: :show
       # Partners and direct companies with their contracts (RN-19-080, RN-19-081, D-613).
       resources :clients, only: %i[index new create show], controller: "billing_accounts" do
         # Changes to the contract by the team (RN-19-014, RN-19-060, RN-19-061, D-620).

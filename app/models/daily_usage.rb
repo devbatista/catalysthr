@@ -7,6 +7,14 @@ class DailyUsage < ApplicationRecord
   belongs_to :billing_account
   belongs_to :company
 
+  # The employees of each contract on its last recorded day, by contract id: what the team's
+  # panel shows and prices the direct companies' recurring revenue with (D-626).
+  def self.latest_totals(account_ids)
+    where(billing_account_id: account_ids)
+      .where("daily_usages.date = (SELECT MAX(latest.date) FROM daily_usages latest WHERE latest.billing_account_id = daily_usages.billing_account_id)")
+      .group(:billing_account_id).sum(:active_employees)
+  end
+
   def readonly?
     persisted? || super
   end

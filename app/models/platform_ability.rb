@@ -54,5 +54,9 @@ class PlatformAbility
     end
     # The support reads the billing (spec 19, section 6).
     can :read, [ BillingAccount, Invoice, BillingAdjustment ] if user.support?
+    # The team's panel: every block for the superadmin and the finance team, Clients for
+    # the support (P-19-28). Phase 1 has only Revenue and Clients (D-610).
+    can :read, %i[team_panel team_panel_clients]
+    can :read, :team_panel_revenue if user.superadmin? || user.finance?
   end
 end

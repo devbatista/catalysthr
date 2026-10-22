@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_150100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -29,6 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_150100) do
     t.string "request_id"
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
+    t.index "((metadata ->> 'brand_id'::text)), created_at", name: "index_access_events_on_sign_in_brand", where: "(((kind)::text = 'auth'::text) AND ((action)::text = 'sign_in'::text))"
     t.index ["company_id", "created_at"], name: "index_access_events_on_company_id_and_created_at"
     t.index ["company_id"], name: "index_access_events_on_company_id"
     t.index ["impersonator_id"], name: "index_access_events_on_impersonator_id"

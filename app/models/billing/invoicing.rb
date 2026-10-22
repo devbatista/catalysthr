@@ -70,9 +70,15 @@ module Billing
     # adjustment is compared with (RN-19-071, D-619).
     def preview_lines(subscription, today = Date.current)
       account = subscription.billing_account
-      last = account.invoices.where.not(status: "void").maximum(:period_start)
-      start = last ? next_cycle(last, account.cycle_day) : subscription.started_on
-      charges(subscription, start, today, billable_usage(account, today))
+      charges(subscription, next_cycle_start(subscription), today, billable_usage(account, today))
+    end
+
+    # The start of the next cycle to invoice. last_start: the period start of the latest
+    # invoice not void, when already known, to spare the query.
+    def next_cycle_start(subscription, last_start: :unknown)
+      account = subscription.billing_account
+      last = last_start == :unknown ? account.invoices.where.not(status: "void").maximum(:period_start) : last_start
+      last ? next_cycle(last, account.cycle_day) : subscription.started_on
     end
 
     # The direct company's employees to charge: the peak of the last closed month, or those

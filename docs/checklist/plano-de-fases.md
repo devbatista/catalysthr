@@ -138,7 +138,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
     - [x] 19f. Régua de inadimplência, somente leitura (também do teste vencido) e cancelamento (RN-19-034, RN-19-050 a RN-19-053, RN-19-062, RN-19-063, CA-19-006, D-613, D-624, D-625)
       - [x] 19f-1. Régua, `past_due`, `read_only` e `closing`, bloqueio de escrita no painel (também do teste vencido), faixas, avisos e reativação pelo superadmin (RN-19-050 a RN-19-053, CA-19-006)
       - [x] 19f-2. Cancelamento pelo cliente, com senha e motivo, desfazível até o fim do ciclo, e o aviso às empresas da carteira (RN-19-062, RN-19-063)
-    - [ ] 19g. Painel da equipe CatalystHR: Receita e Clientes (RN-19-090 a RN-19-092)
+    - [x] 19g. Painel da equipe CatalystHR: Receita e Clientes, com o risco de cancelamento pelos logins já gravados (RN-19-090, RN-19-091, D-626). A cotação do dólar (RN-19-092) entra com o bloco Custos, na spec 14
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
     - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015). Trava: conta no Asaas e respostas do contador
   - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
