@@ -354,6 +354,15 @@ pt-BR:
         too_late: "O prazo de 90 dias para reativar este contrato já passou."
         past_due: "Ainda há fatura vencida. Ela precisa ser paga antes de reativar o contrato."
         without_reason: "Informe o motivo da reativação."
+      undo_cancellation:
+        undone: "Cancelamento desfeito. O contrato continua normalmente."
+        not_scheduled: "Não há cancelamento agendado para desfazer."
+        without_reason: "Informe o motivo para desfazer o cancelamento."
+      cancellation:
+        title: "Cancelamento pedido pelo cliente"
+        summary: "Agendado para %{date}, pedido em %{requested_at} por %{by}. Motivo: %{reason}."
+        reason: "Motivo para desfazer"
+        submit: "Desfazer cancelamento"
       reactivation:
         title: "Reativar o contrato"
         hint: "O contrato está em encerramento desde %{date} por falta de pagamento. Até %{limit}, o superadmin pode reativá-lo, depois que as faturas vencidas forem pagas."
@@ -1986,6 +1995,16 @@ pt-BR:
         closing:
           title: "O contrato de %{name} entrou em encerramento"
           body: "A fatura %{number}, de %{total}, venceu em %{due} e não foi paga. O contrato está em encerramento e em somente leitura. Para reativá-lo, fale com a equipe da CatalystHR."
+      cancel_scheduled:
+        name: "Cancelamento do contrato"
+        hint: "Quando o cancelamento do contrato é pedido."
+        title: "Cancelamento de %{name} agendado para %{date}"
+        body: "O contrato continua funcionando até %{date}, sem multa. Depois disso, começa o encerramento, e a conta fica em somente leitura. Até lá, você pode desfazer o cancelamento na plataforma."
+      partner_cancelled:
+        name: "Fim do contrato do parceiro"
+        hint: "30 dias antes do fim do contrato cancelado pelo parceiro, ou no pedido, se faltar menos."
+        title: "O contrato de %{partner} com a CatalystHR termina em %{date}"
+        body: "%{partner} cancelou o contrato com a CatalystHR. Depois de %{date}, o acesso a %{company_name} entra em encerramento e fica em somente leitura. Para continuar usando o sistema, fale com %{partner} ou com a equipe da CatalystHR sobre a transferência da empresa."
       partner_read_only:
         name: "Acesso limitado pelo parceiro"
         hint: "Quando o contrato do parceiro entra em somente leitura."
@@ -2203,6 +2222,46 @@ pt-BR:
         void:
           checkout_unpaid: "Fatura cancelada: o PIX da contratação não foi pago no dia. Para contratar, comece de novo."
           checkout_replaced: "Fatura cancelada: substituída por uma nova contratação."
+    cancellations:
+      reasons:
+        price: "Preço"
+        missing_feature: "Faltou alguma funcionalidade"
+        other_system: "Vamos usar outro sistema"
+        usability: "Dificuldade de uso"
+        business_closed: "A empresa encerrou ou reduziu as atividades"
+        other: "Outro motivo"
+      show:
+        title: "Cancelar contrato"
+        title_scheduled: "Cancelamento do contrato"
+        details: "Detalhes"
+        subtitle: "O cancelamento vale no fim do ciclo pago, em %{date}, sem multa."
+        effect:
+          direct: "Até %{date}, tudo continua funcionando. Depois disso, começa o encerramento, e a conta fica em somente leitura."
+          partner: "Até %{date}, tudo continua funcionando para o parceiro e para as empresas da carteira. Depois disso, o parceiro e todas as empresas da carteira entram no encerramento e ficam em somente leitura."
+        voids: "A fatura %{number}, de %{total}, do próximo ciclo, ainda não paga, será cancelada."
+        portfolio: "O RH administrador de cada empresa da carteira é avisado 30 dias antes do fim, ou agora, se faltar menos. Antes disso, a equipe da CatalystHR pode transferir empresas para outro parceiro ou para contrato direto, com a autorização de cada uma."
+        undo_until: "Até %{date}, você pode desfazer o cancelamento nesta mesma página."
+        reason: "Motivo"
+        reason_text: "Conte mais, se quiser"
+        reason_text_hint: "Obrigatório quando o motivo é \"Outro motivo\"."
+        submit: "Cancelar contrato"
+        confirm: "Cancelar o contrato a partir de %{date}?"
+        scheduled: "Cancelamento agendado."
+        scheduled_on: "O cancelamento está agendado para %{date}. Até lá, tudo funciona normalmente."
+        requested_at: "Pedido em"
+        requested_by: "Pedido por"
+        undo: "Desfazer cancelamento"
+        undo_confirm: "Desfazer o cancelamento e manter o contrato?"
+        undone: "Cancelamento desfeito. O contrato continua normalmente."
+        not_cancellable: "Este contrato não pode ser cancelado agora."
+        entry: "Cancelar contrato"
+        entry_scheduled: "Cancelamento agendado para %{date}."
+        entry_link: "Ver ou desfazer"
+        errors:
+          reason: "Escolha o motivo do cancelamento."
+          reason_text: "Conte o motivo quando escolher \"Outro motivo\"."
+          not_cancellable: "Este contrato não pode ser cancelado agora."
+          not_scheduled: "Não há cancelamento agendado para desfazer."
     contracts:
       form:
         title: "Contratar"

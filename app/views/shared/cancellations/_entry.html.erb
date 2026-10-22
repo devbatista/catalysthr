@@ -1,0 +1,13 @@
+<%# Where the financial responsible cancels the contract or sees the cancellation
+    scheduled (RN-19-062, D-625). locals: account; path: the cancellation's page. %>
+<% subscription = account&.subscription %>
+<% if subscription && can?(:cancel_contract, account.owner) %>
+  <% if Billing::Cancellation.scheduled?(subscription) %>
+    <p class="alert-info mt-6">
+      <%= t("shared.cancellations.show.entry_scheduled", date: l(subscription.cancel_on)) %>
+      <%= link_to t("shared.cancellations.show.entry_link"), path, class: "link-button" %>
+    </p>
+  <% elsif subscription.status.in?(Billing::Cancellation::CANCELLABLE) %>
+    <p class="mt-8 text-sm"><%= link_to t("shared.cancellations.show.entry"), path, class: "link-button text-bad" %></p>
+  <% end %>
+<% end %>

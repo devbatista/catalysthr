@@ -1,0 +1,20 @@
+<%# The cancellation the client asked, and the team's undo (RN-19-062, D-625). %>
+<div class="card card-body mt-6 space-y-4">
+  <h2 class="card-title"><%= t("admin.contract_changes.cancellation.title") %></h2>
+  <p class="text-sm">
+    <%= t("admin.contract_changes.cancellation.summary", date: l(subscription.cancel_on), requested_at: l(subscription.cancel_requested_at.to_date),
+      by: subscription.cancel_requested_by&.name, reason: t("shared.cancellations.reasons.#{subscription.cancel_reason}")) %>
+    <% if subscription.cancel_reason_text %>“<%= subscription.cancel_reason_text %>”<% end %>
+  </p>
+  <% if can?(:change_contract, account) %>
+    <%= form_with url: cancellation_admin_client_contract_path(account), method: :delete, class: "space-y-4" do %>
+      <div class="form-grid">
+        <div class="field-full">
+          <%= label_tag :reason, t("admin.contract_changes.cancellation.reason"), class: "field-label" %>
+          <%= text_area_tag :reason, nil, required: true, maxlength: 500, rows: 2, class: "input" %>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-secondary"><%= t("admin.contract_changes.cancellation.submit") %></button>
+    <% end %>
+  <% end %>
+</div>

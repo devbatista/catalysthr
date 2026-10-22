@@ -48,6 +48,10 @@
   </dl>
 </div>
 
+<% if Billing::Cancellation.scheduled?(subscription) %>
+  <%= render "cancellation", account: @account, subscription: subscription %>
+<% end %>
+
 <% if subscription&.closing? && subscription.closing_on && can?(:reactivate, @account) %>
   <%= render "reactivation", account: @account, subscription: subscription %>
 <% end %>

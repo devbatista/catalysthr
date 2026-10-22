@@ -103,7 +103,7 @@ class CompanyAbility
     # The direct company's invoices and its contracting during the trial or after it, as
     # its financial responsible (RN-19-033, RN-19-044, D-619, D-622). A
     # partner's company has no contract of its own (RN-19-001).
-    can %i[read_invoices contract], Company, id: company.id if company.direct?
+    can %i[read_invoices contract cancel_contract], Company, id: company.id if company.direct?
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
     can %i[lookup geocode], :address
     can :lookup, :cbo
