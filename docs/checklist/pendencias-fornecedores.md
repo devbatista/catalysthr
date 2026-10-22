@@ -12,6 +12,8 @@
   - 2026-10-14, resposta ao chamado WCS-54705: o suporte técnico não habilita os Pagamentos Automáticos nem encaminhou ao comercial. Disse que o valor de uma assinatura não muda, o que contradiz a documentação do `PUT /preapproval/{id}`. Sem API pública de Pix Automático. O link "Contato comercial" do site (`/quero-usar/`) redireciona para o blog. Respondido no chamado pedindo o canal do comercial
   - 2026-10-15, resposta ao chamado WCS-54705: a habilitação passa por análise comercial, pedida pelo formulário `/quero-usar/`. Chamado fechado com a resolução "Not supported". Em 2026-10-22 o link ainda redireciona para o blog
   - 2026-10-22, chat de atendimento (caso 490500571): os atendentes Misael e Lorena receberam o pedido, com o valor variável, a tarifa e o prazo da análise. Primeiro a Lorena indicou o portal de desenvolvedores, depois responder no WCS-54705 pedindo o encaminhamento ao comercial. Por fim, encaminhou o caso à equipe especializada para abrir um chamado novo, com contato **por e-mail**. Aguardando esse e-mail
+  - 2026-10-22, chamado **WCS-55670** aberto pelo assistente do portal de desenvolvedores, com status "Pendente". Pede o encaminhamento ao comercial, e não ao suporte técnico, e o vínculo ao caso 490500571 e ao WCS-54705. Repete o valor variável, a recusa das Assinaturas, produção e teste, a tarifa e o prazo da análise. Nenhum prazo de retorno foi informado
+  - 2026-10-22, resposta ao WCS-55670: o fluxo depende de habilitação comercial específica, que não pode ser ativada nem pedida pelo suporte técnico. Não há habilitação ativa na conta. Tarifa, prazo e liberação não são tratados por esse canal. O suporte diz agora que o `/quero-usar/` não é uma referência válida, o que contradiz a resposta ao WCS-54705. Nenhum canal comercial foi indicado
   - Canais: chamados do portal de desenvolvedores em [Central de chamados](https://www.mercadopago.com.br/developers/pt/support/center/tickets?status=all#from=/mp_wcs/list_all_tickets); chat pela conta logada, em "Contato" e depois "Inicie um chat"; SAC por telefone com o código gerado na conta ([canais](https://www.mercadopago.com.br/sac-pin/public-info))
   - O CatalystHR ainda não tem site público. Se o comercial exigir um, perguntar o que aceitam no lugar
   - Se o comercial não liberar: avaliar outro fornecedor para o cartão (começando pelo Asaas), as Assinaturas do Mercado Pago (revisa a D-496 e a D-497) ou o cartão pago a cada fatura. Decisão do responsável
@@ -20,7 +22,7 @@
 - [ ] Configurar os webhooks e a assinatura de validação
 - [x] Para uma fase seguinte, perguntar sobre a disponibilidade do **Pix Automático** pela API. Resposta em 2026-10-14: não há API pública nem previsão informada pelo suporte
 
-## Asaas e contador da CatalystHR (Contabilizei) — trava a fase 1
+## Asaas e contador da DevBatista (Contabilizei) — trava a fase 1
 
 - [x] **Contador:** respostas recebidas em 2026-10-14 (D-560 a D-562). Falta registrar como decisão, depois dos pontos abaixo:
   - serviço: item **01.05** da LC 116, código municipal **02798** (São Paulo); CNAE 6202-3/00, que atende segundo o contador

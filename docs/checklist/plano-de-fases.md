@@ -67,8 +67,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Pré-requisitos
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
-- [x] Contador da CatalystHR: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
-- [ ] Contador da CatalystHR: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista)
+- [x] Contador da DevBatista: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
+- [ ] Contador da DevBatista: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista)
 - [ ] Asaas: conta configurada na prefeitura ou no Portal Nacional
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
