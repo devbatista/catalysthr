@@ -2,6 +2,9 @@
 # Uso: docker compose up    (web em http://aurora.painel.localhost:3300)
 # Postgres e Redis também ficam expostos na máquina, em portas diferentes das padrão,
 # para os testes e para quem usar um cliente de banco.
+# Nome fixo: os volumes (catalystrh_*) não dependem do nome da pasta.
+name: catalystrh
+
 x-app: &app
   image: catalyst_hr-dev
   build:

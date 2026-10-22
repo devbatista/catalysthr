@@ -1,6 +1,6 @@
 # Pendências com fornecedores (checklist)
 
-> Última atualização: 2026-10-14
+> Última atualização: 2026-10-22
 > Para uso interno da equipe CatalystHR. Cada item informa o que pedir ou fazer, por que, que fase ele trava (`plano-de-fases.md`) e a referência.
 
 ## Mercado Pago — trava a fase 1
@@ -10,6 +10,10 @@
   - 2026-10-14: chamado aberto pelo suporte ao desenvolvimento, encaminhado a atendimento humano e ao comercial, na conta da DevBatista (produção e credenciais de teste). Pedidos: habilitar `card_on_file` sem CVV, confirmar o valor diferente a cada mês, tarifas e Pix Automático
   - O primeiro atendimento sugeriu as Assinaturas (preapproval), recusadas: valor fixo, novas tentativas próprias e cancelamento automático depois de 3 recusas, contra a D-496, a D-497 e a RN-19-042
   - 2026-10-14, resposta ao chamado WCS-54705: o suporte técnico não habilita os Pagamentos Automáticos nem encaminhou ao comercial. Disse que o valor de uma assinatura não muda, o que contradiz a documentação do `PUT /preapproval/{id}`. Sem API pública de Pix Automático. O link "Contato comercial" do site (`/quero-usar/`) redireciona para o blog. Respondido no chamado pedindo o canal do comercial
+  - 2026-10-15, resposta ao chamado WCS-54705: a habilitação passa por análise comercial, pedida pelo formulário `/quero-usar/`. Chamado fechado com a resolução "Not supported". Em 2026-10-22 o link ainda redireciona para o blog
+  - 2026-10-22, chat de atendimento (caso 490500571): os atendentes Misael e Lorena receberam o pedido, com o valor variável, a tarifa e o prazo da análise. Primeiro a Lorena indicou o portal de desenvolvedores, depois responder no WCS-54705 pedindo o encaminhamento ao comercial. Por fim, encaminhou o caso à equipe especializada para abrir um chamado novo, com contato **por e-mail**. Aguardando esse e-mail
+  - Canais: chamados do portal de desenvolvedores em [Central de chamados](https://www.mercadopago.com.br/developers/pt/support/center/tickets?status=all#from=/mp_wcs/list_all_tickets); chat pela conta logada, em "Contato" e depois "Inicie um chat"; SAC por telefone com o código gerado na conta ([canais](https://www.mercadopago.com.br/sac-pin/public-info))
+  - O CatalystHR ainda não tem site público. Se o comercial exigir um, perguntar o que aceitam no lugar
   - Se o comercial não liberar: avaliar outro fornecedor para o cartão (começando pelo Asaas), as Assinaturas do Mercado Pago (revisa a D-496 e a D-497) ou o cartão pago a cada fatura. Decisão do responsável
   - Tarifas atuais da conta no Checkout, informadas pelo suporte (não valem necessariamente para os Pagamentos Automáticos): crédito com recebimento na hora 4,98%, em 14 dias 4,49%, em 30 dias 3,98%
 - [ ] Confirmar a cobrança por PIX pela API de pagamentos, com QR e vencimento (D-481). A conta já recebe PIX e cartão; falta conferir o vencimento na integração. Documentação conferida em 2026-10-20: o vencimento vai de 30 minutos a 30 dias, e a API de Orders é a recomendada para integrações novas ([`mercado-pago-pix-19e.md`](mercado-pago-pix-19e.md))
