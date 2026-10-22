@@ -1,0 +1,144 @@
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @revenue %>
+  <section class="mt-8" aria-labelledby="revenue-title">
+    <h2 id="revenue-title" class="section-title"><%= t(".revenue.title") %></h2>
+    <% recurring = @revenue.recurring %>
+    <% conversion = @revenue.conversion %>
+    <% late = @revenue.late_contracts %>
+    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".revenue.recurring") %></p>
+        <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= reais(recurring.total_cents) %></p>
+        <p class="field-hint"><%= t(".revenue.recurring_hint", monthly: reais(recurring.monthly_cents), add_ons: reais(recurring.add_on_cents),
+          count: recurring.contracts) %></p>
+      </div>
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".revenue.overage") %></p>
+        <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= reais(@revenue.overage_invoiced_cents) %></p>
+        <p class="field-hint"><%= t(".revenue.overage_hint", month: l(@revenue.today, format: :month_year)) %></p>
+      </div>
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".revenue.overdue") %></p>
+        <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= reais(@revenue.overdue_cents) %></p>
+        <p class="mt-2 flex flex-wrap gap-2">
+          <% late.each do |status, count| %>
+            <span class="pill <%= count.positive? ? BillingHelper::STATUS_PILLS.fetch(status) : "pill-mute" %>">
+              <%= t(".revenue.late_status", status: t("billing.subscription_statuses.#{status}"), count: count) %>
+            </span>
+          <% end %>
+        </p>
+      </div>
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".revenue.trials") %></p>
+        <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= number_with_delimiter(@revenue.trials_running) %></p>
+        <p class="field-hint"><%= t(".revenue.trials_hint") %></p>
+      </div>
+      <div class="card card-body">
+        <p class="eyebrow"><%= t(".revenue.conversion") %></p>
+        <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= conversion.percent ? t(".percent", percent: conversion.percent) : "—" %></p>
+        <p class="field-hint"><%= t(".revenue.conversion_hint", converted: conversion.converted, count: conversion.ended,
+          days: Billing::RevenueSummary::CONVERSION_DAYS) %></p>
+      </div>
+    </div>
+
+    <h3 class="card-title mt-6"><%= t(".revenue.cancellations") %></h3>
+    <% cancellations = @revenue.scheduled_cancellations %>
+    <% if cancellations.empty? %>
+      <p class="card card-body mt-2 text-sm text-ink-soft"><%= t(".revenue.no_cancellations") %></p>
+    <% else %>
+      <div class="card mt-2 overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><%= t(".clients.name") %></th>
+              <th class="hidden sm:table-cell"><%= t(".clients.kind") %></th>
+              <th><%= t(".revenue.cancel_on") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% cancellations.each do |subscription| %>
+              <% account = subscription.billing_account %>
+              <tr>
+                <td><%= link_to account.name, admin_client_path(account), class: "link-button" %></td>
+                <td class="hidden text-ink-soft sm:table-cell"><%= t("billing.kinds.#{account.partner? ? "partner" : "direct"}") %></td>
+                <td class="whitespace-nowrap"><%= l(subscription.cancel_on) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+<% end %>
+
+<% if @clients %>
+  <section class="mt-10" aria-labelledby="clients-title">
+    <h2 id="clients-title" class="section-title"><%= t(".clients.title") %></h2>
+    <p class="field-hint"><%= t(".clients.hint", days: Billing::ClientsOverview::ACCESS_WINDOW, drop: Billing::ClientsOverview::ACCESS_DROP_PERCENT,
+      admin_days: Billing::ClientsOverview::ADMIN_AWAY_DAYS) %></p>
+    <% if @clients.empty? %>
+      <p class="card card-body mt-4 text-sm text-ink-soft"><%= t(".clients.empty") %></p>
+    <% else %>
+      <div class="card mt-4 overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><%= t(".clients.name") %></th>
+              <th class="hidden md:table-cell"><%= t(".clients.plan") %></th>
+              <th><%= t(".clients.status") %></th>
+              <th class="hidden text-right sm:table-cell"><%= t(".clients.employees") %></th>
+              <th class="hidden lg:table-cell"><%= t(".clients.usage") %></th>
+              <th class="hidden sm:table-cell"><%= t(".clients.last_sign_in") %></th>
+              <th><%= t(".clients.risk") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @clients.each do |row| %>
+              <tr>
+                <td>
+                  <%= link_to row.account.name, admin_client_path(row.account), class: "link-button" %>
+                  <span class="block text-xs text-ink-soft"><%= t("billing.kinds.#{row.account.partner? ? "partner" : "direct"}") %></span>
+                </td>
+                <td class="hidden text-ink-soft md:table-cell"><%= row.subscription.plan.name %></td>
+                <td><%= subscription_status_pill(row.subscription) %></td>
+                <td class="hidden text-right sm:table-cell"><%= number_with_delimiter(row.employees) %></td>
+                <td class="hidden text-sm lg:table-cell">
+                  <% [
+                    ([ :employees, row.usage&.peak_employees.to_i, row.band ] if row.band),
+                    [ :ai_credits, row.usage&.ai_credits.to_i, row.quotas[:ai_credits] ],
+                    [ :whatsapp_messages, row.usage&.whatsapp_messages.to_i, row.quotas[:whatsapp_messages] ]
+                  ].compact.each do |kind, used, limit| %>
+                    <% percent = limit.positive? ? used * 100 / limit : nil %>
+                    <span class="block whitespace-nowrap">
+                      <%= t(".clients.usage_line.#{kind}", used: number_with_delimiter(used), limit: number_with_delimiter(limit)) %>
+                      <% if percent && percent >= 80 %>
+                        <span class="pill <%= percent >= 100 ? "pill-bad" : "pill-warn" %>"><%= t(".percent", percent: percent) %></span>
+                      <% end %>
+                    </span>
+                  <% end %>
+                </td>
+                <td class="hidden whitespace-nowrap text-ink-soft sm:table-cell">
+                  <%= row.last_sign_in_at ? l(row.last_sign_in_at, format: :short) : t(".clients.never") %>
+                </td>
+                <td>
+                  <% if row.high_risk? %>
+                    <span class="pill pill-bad"><%= t(".clients.high_risk") %></span>
+                  <% end %>
+                  <% if row.signals.any? %>
+                    <span class="mt-1 block text-xs text-ink-soft"><%= row.signals.map { |signal| t(".clients.signals.#{signal}") }.to_sentence %></span>
+                  <% else %>
+                    <span class="text-ink-soft">—</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+<% end %>

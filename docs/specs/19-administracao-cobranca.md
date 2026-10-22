@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
 > Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-625 ([decisoes.md](decisoes.md))
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-626 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -179,9 +179,9 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
   | **Operação** | Filas do Sidekiq (tamanho e atraso), falhas de IA e disjuntor, entregas com falha por canal, rejeições do eSocial fora do comum, certificados vencendo, tarefas de feriados |
   | **Clientes** | Plano, colaboradores, uso das cotas, adoção (spec 17), última atividade e **risco de cancelamento** |
 
-  Na fase 1, só os blocos Receita e Clientes, sem a adoção. Custos contra o cobrado e Operação entram quando as fontes existirem (D-610).
+  Na fase 1, só os blocos Receita e Clientes, sem a adoção. Custos contra o cobrado e Operação entram quando as fontes existirem (D-610). As medidas de Receita e Clientes estão definidas na D-626.
 
-- **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**.
+- **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**. Os acessos são os logins já gravados em `access_events`, pela marca do contrato (D-626).
 - **RN-19-092** — O custo da IA em dólares (spec 14) é convertido pela cotação do dia, guardada junto do custo **[P-19-27]**.
 
 ### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565)

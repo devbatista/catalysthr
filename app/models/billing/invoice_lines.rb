@@ -52,6 +52,12 @@ module Billing
       base_lines.sum(&:total_cents)
     end
 
+    # The plan, the modules and the add-ons: the recurring revenue of the team's panel
+    # (RN-19-090, D-626).
+    def recurring_lines
+      base_lines + add_on_lines
+    end
+
     private
 
     def partner?

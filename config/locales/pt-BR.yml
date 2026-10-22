@@ -396,6 +396,53 @@ pt-BR:
         subtitle: "As faturas de todos os contratos, das mais recentes para as mais antigas. A lista mostra as %{limit} últimas; as de cada cliente ficam na página dele."
       show:
         client: "Ver o contrato de %{name}"
+    dashboards:
+      show:
+        title: "Painel da equipe CatalystHR"
+        subtitle: "Receita e clientes. Os custos de IA e WhatsApp e a operação entram quando a IA, o WhatsApp e o eSocial estiverem no sistema."
+        percent: "%{percent}%"
+        revenue:
+          title: "Receita"
+          recurring: "Receita recorrente mensal"
+          recurring_hint:
+            one: "Mensalidades %{monthly} e adicionais %{add_ons}, de 1 contrato cobrado. Sem ajustes nem excedentes."
+            other: "Mensalidades %{monthly} e adicionais %{add_ons}, de %{count} contratos cobrados. Sem ajustes nem excedentes."
+          overage: "Excedentes faturados"
+          overage_hint: "Nas faturas emitidas em %{month}."
+          overdue: "Inadimplência"
+          late_status: "%{status}: %{count}"
+          trials: "Testes em andamento"
+          trials_hint: "Parceiros e empresas diretas no teste grátis."
+          conversion: "Conversão de testes"
+          conversion_hint:
+            one: "%{converted} de 1 teste encerrado nos últimos %{days} dias contratou."
+            other: "%{converted} de %{count} testes encerrados nos últimos %{days} dias contrataram."
+          cancellations: "Cancelamentos agendados"
+          no_cancellations: "Nenhum cancelamento agendado."
+          cancel_on: "Encerra em"
+        clients:
+          title: "Clientes"
+          hint: "Risco alto com dois sinais ou mais: queda de %{drop}% nos acessos nos últimos %{days} dias, fatura vencida, módulo cancelado nos últimos %{days} dias ou o administrador sem acessar há %{admin_days} dias. Os acessos são os logins de cada dia, sem a equipe CatalystHR."
+          empty: "Nenhum cliente cadastrado."
+          name: "Cliente"
+          kind: "Tipo"
+          plan: "Plano"
+          status: "Situação"
+          employees: "Colaboradores"
+          usage: "Uso no mês"
+          usage_line:
+            employees: "Faixa: %{used} de %{limit}"
+            ai_credits: "IA: %{used} de %{limit}"
+            whatsapp_messages: "WhatsApp: %{used} de %{limit}"
+          last_sign_in: "Último acesso"
+          never: "Nenhum"
+          risk: "Risco"
+          high_risk: "Alto"
+          signals:
+            accesses: "queda nos acessos"
+            late_payment: "fatura vencida"
+            module_cancelled: "módulo cancelado"
+            admin_away: "administrador sem acessar"
     billing_accounts:
       index:
         title: "Clientes"
@@ -798,6 +845,7 @@ pt-BR:
     company_transfer: "Transferir empresa"
     feature_flags: "Flags"
     clients: "Clientes"
+    dashboard: "Indicadores"
     plans: "Planos e preços"
     units: "Unidades"
     departments: "Departamentos"

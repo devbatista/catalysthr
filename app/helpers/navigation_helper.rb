@@ -37,6 +37,7 @@ module NavigationHelper
         (nav_item(t("navigation.feature_flags"), admin_feature_flags_path, controller_path == "admin/feature_flags") if can?(:read, :feature_flags))
       ]),
       nav_group(:billing, [
+        (nav_item(t("navigation.dashboard"), admin_dashboard_path, controller_path == "admin/dashboards") if billing_allowed?(:team_panel)),
         (nav_item(t("navigation.clients"), admin_clients_path, controller_path == "admin/billing_accounts") if billing_allowed?(BillingAccount)),
         (nav_item(t("navigation.invoices"), admin_invoices_path, controller_path == "admin/invoices") if billing_allowed?(Invoice)),
         (nav_item(t("navigation.adjustments"), admin_adjustments_path, controller_path == "admin/billing_adjustments") if billing_allowed?(BillingAdjustment)),
