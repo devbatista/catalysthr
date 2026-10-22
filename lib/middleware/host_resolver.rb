@@ -3,12 +3,12 @@
 # - <slug>.<panel domain> opens that brand's panel;
 # - a slug inside its 90-day redirect answers 301 to the same path on the new slug (D-157);
 # - anything else gets a neutral 404 page, without a brand.
-# The health check answers on any host, so the uptime monitor never depends on a
-# brand (D-573).
+# The health checks answer on any host, so the uptime monitors never depend on a
+# brand (D-573, RN-20-074).
 class HostResolver
   AREA = "catalysthr.area"
   BRAND_ID = "catalysthr.brand_id"
-  HEALTH_CHECK_PATH = "/up"
+  HEALTH_CHECK_PATHS = %w[/up /up/deep].freeze
 
   def initialize(app)
     @app = app
@@ -16,7 +16,7 @@ class HostResolver
 
   def call(env)
     request = ActionDispatch::Request.new(env)
-    return @app.call(env) if request.path == HEALTH_CHECK_PATH
+    return @app.call(env) if HEALTH_CHECK_PATHS.include?(request.path)
 
     host = request.host.to_s.downcase
     return admin(env) if host == config.admin_host

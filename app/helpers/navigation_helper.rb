@@ -34,7 +34,8 @@ module NavigationHelper
         (nav_item(t("navigation.brands"), admin_brands_path, controller_path.in?(%w[admin/brands admin/company_brands admin/brand_email_domains])) if can?(:read, Brand)),
         (nav_item(t("navigation.admin_users"), admin_users_path, controller_path == "admin/users") if can?(:read, User.new)),
         (nav_item(t("navigation.company_transfer"), new_admin_company_transfer_path, controller_path == "admin/company_transfers") if company_transfer_allowed?),
-        (nav_item(t("navigation.feature_flags"), admin_feature_flags_path, controller_path == "admin/feature_flags") if can?(:read, :feature_flags))
+        (nav_item(t("navigation.feature_flags"), admin_feature_flags_path, controller_path == "admin/feature_flags") if can?(:read, :feature_flags)),
+        (nav_item(t("navigation.sidekiq"), admin_sidekiq_web_path, false) if can?(:read, :sidekiq_web))
       ]),
       nav_group(:billing, [
         (nav_item(t("navigation.dashboard"), admin_dashboard_path, controller_path == "admin/dashboards") if billing_allowed?(:team_panel)),

@@ -1,8 +1,12 @@
+require "sidekiq/web"
+
 Rails.application.routes.draw do
   # Paths and route names are in English; only the interface is in Portuguese.
 
   # Health check used by Railway and the uptime monitors (spec 20). Answers on any host (D-573).
   get "up" => "rails/health#show", as: :rails_health_check
+  # The detailed one, with a token: database, Redis and the Sidekiq queues (RN-20-074, D-627).
+  get "up/deep" => "health_checks#show", as: :deep_health_check
 
   # SES events through SNS (spec 15, P-15-24, D-609). Answers on any host, without sign-in;
   # the controller accepts only messages signed by SNS for the app's topic.
@@ -39,6 +43,11 @@ Rails.application.routes.draw do
   constraints ->(request) { request.env[HostResolver::AREA] == :admin } do
     scope module: :admin, as: :admin do
       root "home#index"
+      # Sidekiq Web, for the superadmin and the support with MFA (RN-20-077). Rack app:
+      # the sign-in, the session checks and the ability come from Warden and Devise.
+      authenticate :user, ->(user) { user.mfa_enabled? && PlatformAbility.new(user).can?(:read, :sidekiq_web) } do
+        mount Sidekiq::Web => "/sidekiq", as: :sidekiq_web
+      end
       # The bell (spec 15, RN-15-001).
       resources :notifications, only: %i[index show] do
         get "unread-count", on: :collection, action: :unread_count, as: :unread_count

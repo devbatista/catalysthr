@@ -667,7 +667,7 @@ Itens que ainda precisam de decisão. Nenhuma spec deve assumir uma resposta par
 - Jurídico: validar a transferência internacional de dados (Railway, Sentry, Anthropic, Voyage e Twilio nos EUA) e as cláusulas contratuais (D-500)
 - Railway: confirmar no Trust Center (relatório SOC 2) a criptografia em repouso do banco e dos volumes
 - Roadmap: API pública e webhooks (D-467); layouts de importação além de Domínio, Questor e Alterdata, e AFD de outro REP, conforme os clientes do piloto (D-461)
-- NFS-e: configurar a conta do Asaas no Portal Nacional e confirmar o preço por nota (D-560 a D-562, D-628)
+- NFS-e: configurar a conta do Asaas no Portal Nacional (D-560 a D-562, D-628)
 - IA: contratar a retenção zero com a Anthropic e confirmar se a Voyage AI oferece o mesmo (D-380), antes de entrar em produção
 - Jurídico: base legal e cláusulas para mostrar dados dos colaboradores aos gestores dos clientes de alocação (D-570), que são terceiros em relação à empresa empregadora
 - DP e eSocial: verificar se a alocação em cliente exige informar o tomador em algum evento ou obrigação (por exemplo, trabalho temporário ou cessão de mão de obra), na spec 13 (D-570)

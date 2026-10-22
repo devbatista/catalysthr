@@ -844,6 +844,7 @@ pt-BR:
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
     feature_flags: "Flags"
+    sidekiq: "Filas de jobs"
     clients: "Clientes"
     dashboard: "Indicadores"
     plans: "Planos e preços"
