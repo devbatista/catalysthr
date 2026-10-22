@@ -58,5 +58,7 @@ class PlatformAbility
     # the support (P-19-28). Phase 1 has only Revenue and Clients (D-610).
     can :read, %i[team_panel team_panel_clients]
     can :read, :team_panel_revenue if user.superadmin? || user.finance?
+    # Sidekiq Web, for the superadmin and the support (RN-20-077).
+    can :read, :sidekiq_web if user.superadmin? || user.support?
   end
 end

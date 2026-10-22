@@ -46,11 +46,12 @@
   - regime de apuração pelo Simples Nacional; regime especial "0 - Nenhum"
   - série da DPS: **1**, só para o Asaas (faixa de 00001 a 49999, para API), começando do número 1. A Contabilizei usa outra série, sem conflito. As notas do Asaas entram sozinhas na plataforma da Contabilizei, para a conferência mensal
 - [x] **Asaas:** conta da DevBatista aberta, com o cadastro aprovado em 2026-10-13
+- [ ] **Contador e Asaas:** a lista de códigos de serviço do Asaas não tem o **02798** (conferido em 2026-10-22). A opção mais próxima é o 02800, "Licenciamento ou cessão de direito de uso de programas de computação, inclusive distribuição" (item 1.05). Confirmar com o contador qual usar, o código de tributação nacional e o código NBS. Não escolher antes da resposta
 - [ ] **Asaas:** configurar a emissão no Portal Nacional (`fiscalInfo/municipalOptions` diz o método de autenticação: certificado, usuário e senha do portal ou token). Se for o e-CNPJ, ele vence todo ano: renovar antes, ou as notas param
 - [ ] **Asaas:** criar a conta do sandbox, para o desenvolvimento do 19i
 - [ ] Antes da primeira nota pelo Asaas: confirmar no Portal Nacional que a série 1 não foi usada por outro canal
 - [ ] Risco: o IBS e a CBS passam a valer para o Simples em 2027-01-01. Conferir com o contador e no Asaas o que muda na nota
-- [ ] **Asaas:** confirmar o preço por nota (a página cita R$ 0,49, a confirmar)
+- [x] **Asaas:** preço por nota confirmado na conta em 2026-10-22: **R$ 0,49 por nota emitida** (Minha conta → Taxas e prazos → Serviços de gestão). As notificações do Asaas por e-mail e SMS custam R$ 0,99 por cobrança paga; como não há cobrança no Asaas (D-561), não deveriam incidir
 - [ ] **Asaas:** criar a chave de API e configurar o webhook de notas
 - [ ] **Asaas:** desligar o envio de e-mail das notas pelo Asaas (D-564)
 

@@ -36,6 +36,22 @@
 - [x] **[você]** Criar o primeiro monitor externo para `/up` pelo painel, porque a API pública do Sentry não cria monitores externos: `https://health.painel.catalysthr.com.br/up`, a cada minuto, timeout de 10 s, issue depois de 3 falhas, alerta por e-mail. O endereço do Railway foi recusado pelo Sentry (limite de 1.000 monitores por domínio no `railway.app`), e o Hobby não aceita um terceiro domínio no `web` (D-573, 2026-10-14)
 - [x] **[Claude]** Conferir nos logs do Railway que o `SentryUptimeBot` chega e recebe 200 (2026-10-14)
 
+### Níveis de alerta (bloco 20b, RN-20-075, D-627)
+
+No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `pg-dump-diario`, do 20a). O que a RN-20-075 prevê e ainda não tem monitor fica marcado como lacuna até a revisão do plano, antes do primeiro cliente.
+
+- [ ] **[você]** `HEALTH_CHECK_TOKEN` no serviço `web`: gere um valor aleatório longo (por exemplo, `openssl rand -hex 32` no seu terminal) e cole direto no Railway, sem passar pelo chat. Sem ele, o `/up/deep` responde 404
+- **Crítico** (plantão, com o reenvio do 20c, e e-mail da equipe):
+  - [x] sistema fora do ar: monitor externo do `/up`, por e-mail
+  - [ ] **[você]** pg_dump com falha ou que não rodou: alerta do monitor `pg-dump-diario` por e-mail, depois do primeiro envio (`aws-arquivos.md`, passo 7.3)
+  - [ ] lacuna: fila `time` atrasada mais de 2 minutos. O `/up/deep` já responde 503 nesse caso, mas precisa de um monitor externo próprio. Alternativa sem custo: trocar o monitor do `/up` pelo `/up/deep`, que confere também o banco e o Redis, se o monitor do Sentry aceitar o cabeçalho `Authorization` (não confirmado)
+  - [ ] lacuna: disco do banco acima de 85% e certificado vencendo em 7 dias (conferir os alertas de uso do Railway e se o monitor externo do Sentry avisa o certificado)
+- **Alto** (e-mail da equipe):
+  - [ ] **[você]** Em Alerts → Create Alert → Issues, uma regra "erros em massa": uma issue com mais de 50 eventos em 1 hora, ou uma issue nova de nível `error` em produção, com e-mail para a equipe. As falhas de e-mail (SES) e do Mercado Pago já chegam como erro. O disjuntor da IA e o eSocial entram com as specs 14 e 13
+- **Informativo** (resumo semanal):
+  - [x] versões novas de dependências: os PRs semanais do Dependabot
+  - [ ] uso de recursos: a revisão mensal dos limites do Railway (RN-20-083)
+
 ## 4. AWS em São Paulo (sa-east-1 — D-501)
 
 **Segurança da conta**

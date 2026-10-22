@@ -144,8 +144,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
   - Em 3 PRs (D-627):
-    - [ ] 20a. pg_dump diário pelo serviço `backup` (cliente 18 do PGDG, SSE-KMS num envio único), `backup_runs`, monitor `pg-dump-diario` no Sentry, ensaio de restauração com roteiro em `docs/runbooks/restauracao.md` e lembrete trimestral (RN-20-041, RN-20-046, CA-20-003, CA-20-008). Depois do merge: usuários IAM e serviço no Railway (`aws-arquivos.md`, passo 7)
-    - [ ] 20b. `/up/deep`, Sidekiq Web no admin e níveis de alerta (RN-20-074, RN-20-075, RN-20-077)
+    - [x] 20a. pg_dump diário pelo serviço `backup` (cliente 18 do PGDG, SSE-KMS num envio único), `backup_runs`, monitor `pg-dump-diario` no Sentry, ensaio de restauração com roteiro em `docs/runbooks/restauracao.md` e lembrete trimestral (RN-20-041, RN-20-046, CA-20-003, CA-20-008). Depois do merge: usuários IAM e serviço no Railway (`aws-arquivos.md`, passo 7)
+    - [x] 20b. `/up/deep` com token (banco, Redis e atraso das filas, com a `time` acima de 2 minutos como falha), Sidekiq Web no admin para o superadmin e o suporte com MFA, e os níveis de alerta configurados no Sentry (`contas-infraestrutura.md`), com as lacunas do plano gratuito (RN-20-074, RN-20-075, RN-20-077)
     - [ ] 20c. Cadastro do plantão e `/internal/alerts`, com o envio pela Twilio desligado até a aprovação (RN-20-076)
   - Ficam para antes do primeiro cliente: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e a faixa de incidente (RN-20-078, fase 2)
 
