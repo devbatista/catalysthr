@@ -85,3 +85,10 @@ billing_dunning:
   cron: "0 3 * * * America/Sao_Paulo"           # after the PIX check
   class: "Billing::DunningJob"
   queue: "default"
+
+# Reminds the superadmins of the quarterly restore drill (spec 20, RN-20-046, D-627). The
+# daily pg_dump is the Railway `backup` service, not a Sidekiq job (RN-20-041).
+infra_restore_drill_reminder:
+  cron: "0 9 1 1,4,7,10 * America/Sao_Paulo"
+  class: "Infra::RestoreDrillReminderJob"
+  queue: "default"

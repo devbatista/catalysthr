@@ -1,7 +1,7 @@
 # 20 — Infraestrutura
 
 > Status: aprovado (transferência internacional e criptografia do Railway a confirmar) · Última atualização: 2026-10-13
-> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614 ([decisoes.md](decisoes.md))
+> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627 ([decisoes.md](decisoes.md))
 > Os itens **[P-20-nn]** foram todos aprovados sem ajuste (D-515, seção 10).
 
 ## 1. Objetivo
@@ -128,10 +128,11 @@ Definir **onde e como o CatalystHR roda**:
 
 - **RN-20-040** — **PITR** do Railway ligado no Postgres: recuperação a qualquer momento das últimas 4 semanas, para uma réplica nova. Garante a perda máxima de **5 minutos**.
 - **RN-20-041** — **pg_dump diário**, às 3h (horário de Brasília), pelo serviço `backup` **[P-20-16]**:
-  - formato custom do Postgres, criptografado com uma chave do KMS antes do envio;
+  - formato custom do Postgres, criptografado pelo SSE-KMS do bucket com a chave dos backups, num envio único que só pede `kms:GenerateDataKey` (D-627);
   - num bucket S3 próprio de São Paulo (`catalysthr-backups`), com uma regra de ciclo de vida que apaga aos **35 dias** (D-223);
   - gravado por um usuário IAM que **só pode gravar**, e não ler nem apagar;
   - com o resultado registrado e monitorado no Sentry (monitor de cron). Falha gera alerta crítico.
+  - O pg_dump é o do PostgreSQL 18, pelo repositório oficial do PostgreSQL na imagem, porque o do Debian 13 é o 17 (D-627).
 - **RN-20-042** — Os backups mensais e semanais do Railway ficam **desligados**, para nada passar de 35 dias. O PITR do Railway guarda cerca de 4 semanas, o que fica dentro do ciclo (D-502).
 - **RN-20-043** — **S3 dos arquivos:** versionamento ligado, com as versões antigas apagadas aos 35 dias. Exclusões definitivas (RN-08-083, encerramento) apagam também as versões antigas **[P-20-17]**.
 - **RN-20-044** — **Redis:** com AOF, um reinício não perde as filas. Se o Redis se perder por completo, os jobs agendados voltam pelo sidekiq-cron, e os jobs são escritos para poder rodar de novo sem duplicar (idempotentes) **[P-20-18]**.
@@ -164,7 +165,7 @@ Definir **onde e como o CatalystHR roda**:
 - **RN-20-072** — **Logs** (D-510): JSON pelo `lograge`, enviados pela aplicação e pelo Sidekiq ao **Sentry Logs**, com 30 dias de retenção. Cada linha leva o ID da requisição, da empresa e do usuário, nunca dados pessoais.
 - **RN-20-073** — **Monitores do Sentry** (D-512) **[P-20-26]**:
   - **externos**, a cada minuto: tela de login, portal, `/up` da API do ponto e do totem, e admin. O `/up` geral é conferido em `health.painel.catalysthr.com.br`, e não no endereço do Railway (D-573);
-  - **de jobs agendados:** pg_dump, foto diária, geração e cobrança de faturas, régua de inadimplência, prazos do eSocial, fim do período de leitura, liberação dos avisos retidos.
+  - **de jobs agendados:** pg_dump, foto diária, geração e cobrança de faturas, régua de inadimplência, prazos do eSocial, fim do período de leitura, liberação dos avisos retidos. No plano gratuito do Sentry, só o pg_dump tem monitor; os outros, e os externos além do `/up`, entram ao rever o plano (D-627).
 - **RN-20-074** — **Saúde detalhada:** `/up/deep`, protegido por token, confere o banco, o Redis, o ClamAV e o atraso das filas do Sidekiq. É usado pelos monitores externos **[P-20-27]**.
 - **RN-20-075** — **Níveis de alerta** **[P-20-28]**:
 

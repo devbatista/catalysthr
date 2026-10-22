@@ -4,10 +4,17 @@
 ARG RUBY_VERSION=4.0.7
 FROM docker.io/library/ruby:$RUBY_VERSION-slim
 
-# The same system packages as production, plus what builds the gems.
+# The same system packages as production, plus what builds the gems. The PostgreSQL client
+# comes from the official PostgreSQL repository, as in production (D-627).
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev \
-      pkg-config postgresql-client 7zip && \
+    apt-get install --no-install-recommends -y ca-certificates curl && \
+    install -d /usr/share/postgresql-common/pgdg && \
+    curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" \
+      > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips libyaml-dev \
+      pkg-config postgresql-client-18 7zip && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 WORKDIR /rails

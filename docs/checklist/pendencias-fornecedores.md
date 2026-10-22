@@ -14,6 +14,7 @@
   - 2026-10-22, chat de atendimento (caso 490500571): os atendentes Misael e Lorena receberam o pedido, com o valor variável, a tarifa e o prazo da análise. Primeiro a Lorena indicou o portal de desenvolvedores, depois responder no WCS-54705 pedindo o encaminhamento ao comercial. Por fim, encaminhou o caso à equipe especializada para abrir um chamado novo, com contato **por e-mail**. Aguardando esse e-mail
   - 2026-10-22, chamado **WCS-55670** aberto pelo assistente do portal de desenvolvedores, com status "Pendente". Pede o encaminhamento ao comercial, e não ao suporte técnico, e o vínculo ao caso 490500571 e ao WCS-54705. Repete o valor variável, a recusa das Assinaturas, produção e teste, a tarifa e o prazo da análise. Nenhum prazo de retorno foi informado
   - 2026-10-22, resposta ao WCS-55670: o fluxo depende de habilitação comercial específica, que não pode ser ativada nem pedida pelo suporte técnico. Não há habilitação ativa na conta. Tarifa, prazo e liberação não são tratados por esse canal. O suporte diz agora que o `/quero-usar/` não é uma referência válida, o que contradiz a resposta ao WCS-54705. Nenhum canal comercial foi indicado
+  - 2026-10-22, outra resposta do Mercado Pago, que considera o WCS-54705 e o WCS-55670 (o canal não foi registrado; deve ser o retorno do caso 490500571): a API de Orders aceita pagamentos automáticos e cartão salvo quando o recurso está disponível para o país, a conta e o meio de pagamento. A habilitação depende de análise comercial. O atendimento **não confirmou** que um pedido comercial foi aberto, não achou um consultor e **não tem um canal comercial válido** para indicar. O valor variável, a tarifa e o prazo só seriam confirmados depois da aprovação comercial. Reconheceu que o `/quero-usar/` cai no blog. Falta tentar o SAC por telefone
   - Canais: chamados do portal de desenvolvedores em [Central de chamados](https://www.mercadopago.com.br/developers/pt/support/center/tickets?status=all#from=/mp_wcs/list_all_tickets); chat pela conta logada, em "Contato" e depois "Inicie um chat"; SAC por telefone com o código gerado na conta ([canais](https://www.mercadopago.com.br/sac-pin/public-info))
   - O CatalystHR ainda não tem site público. Se o comercial exigir um, perguntar o que aceitam no lugar
   - Se o comercial não liberar: avaliar outro fornecedor para o cartão (começando pelo Asaas), as Assinaturas do Mercado Pago (revisa a D-496 e a D-497) ou o cartão pago a cada fatura. Decisão do responsável
@@ -30,16 +31,25 @@
   - retenções: **nenhuma** (federais não se aplicam ao Simples; ISS não retido no item 01.05)
   - emissão depois da confirmação do pagamento é aceita, **desde que a competência esteja certa**
   - valor: o total cobrado, com os descontos; tarifas do Mercado Pago não são deduzidas; faturas zeradas ficam sem nota
-  - sistema: **NFS-e Paulistana**; o Asaas emite com o **e-CNPJ** da DevBatista, que já existe
+  - sistema: **NFS-e Paulistana** (substituída pelo Portal Nacional em 2026-10-22, D-628); o Asaas emite com o **e-CNPJ** da DevBatista, que já existe
   - descrição: "Licenciamento de software CatalystHR por assinatura - Competência MM/AAAA" e a menção de optante pelo Simples Nacional
   - cancelamento: até 6 meses, desde que o DAS da competência não tenha sido pago
   - reforma tributária: nada muda em 2026 para o Simples
   - o CatalystOps pode ser faturado pelo mesmo CNPJ, com o produto identificado na descrição
   - rotina da Contabilizei: notas e extratos conferidos na plataforma deles até o dia 5 do mês seguinte, como já é feito hoje
-- [ ] **Contador (com um especialista):** qual competência usar numa fatura que junta a mensalidade do ciclo que começa e o excedente do ciclo anterior, com ciclo que não começa no dia 1 (RN-19-040). Pode mudar a regra de uma nota por fatura (RN-19-100)
-- [ ] **Contador (com um especialista):** se a alíquota efetiva do Simples, que muda todo mês, precisa aparecer na nota, e quem informa o valor de cada mês
-- [ ] **Contador (com um especialista):** confirmar que o código 02798 está habilitado no CCM da empresa
-- [ ] **Asaas:** abrir a conta da DevBatista e configurar a emissão na NFS-e Paulistana com o e-CNPJ (`fiscalInfo/municipalOptions`). O certificado vence todo ano: renovar antes, ou as notas param
+- [x] **Contador (especialista Mariana F.):** respostas recebidas em 2026-10-22 e registradas na D-628:
+  - uma nota por fatura, com a mensalidade e o excedente discriminados na descrição
+  - competência: o mês em que começa o ciclo da fatura, mesmo com pagamento atrasado; o excedente e o proporcional do ciclo anterior entram na mesma nota, com o período da medição
+  - a alíquota do Simples não vai na nota (hoje 6,00%: 3,99% federal e 2,01% de ISS; variação mensal no painel da Contabilizei, em "Minhas alíquotas")
+  - inscrição municipal (CCM) **18721206**, com o código 02798 (item 01.05) ativo e ligado ao CNAE 6202-3/00
+  - sistema: **Portal Nacional da NFS-e**, obrigatório para o Simples desde 2026-11-01 (comunicado da Prefeitura de São Paulo de 2026-08-13). A NFS-e Paulistana fica só para consulta e emissão retroativa
+  - regime de apuração pelo Simples Nacional; regime especial "0 - Nenhum"
+  - série da DPS: **1**, só para o Asaas (faixa de 00001 a 49999, para API), começando do número 1. A Contabilizei usa outra série, sem conflito. As notas do Asaas entram sozinhas na plataforma da Contabilizei, para a conferência mensal
+- [x] **Asaas:** conta da DevBatista aberta, com o cadastro aprovado em 2026-10-13
+- [ ] **Asaas:** configurar a emissão no Portal Nacional (`fiscalInfo/municipalOptions` diz o método de autenticação: certificado, usuário e senha do portal ou token). Se for o e-CNPJ, ele vence todo ano: renovar antes, ou as notas param
+- [ ] **Asaas:** criar a conta do sandbox, para o desenvolvimento do 19i
+- [ ] Antes da primeira nota pelo Asaas: confirmar no Portal Nacional que a série 1 não foi usada por outro canal
+- [ ] Risco: o IBS e a CBS passam a valer para o Simples em 2027-01-01. Conferir com o contador e no Asaas o que muda na nota
 - [ ] **Asaas:** confirmar o preço por nota (a página cita R$ 0,49, a confirmar)
 - [ ] **Asaas:** criar a chave de API e configurar o webhook de notas
 - [ ] **Asaas:** desligar o envio de e-mail das notas pelo Asaas (D-564)

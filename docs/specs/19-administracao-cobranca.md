@@ -1,7 +1,7 @@
 # 19 — Administração e cobrança
 
-> Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas com configuração fiscal a definir com o contador · Última atualização: 2026-10-13
-> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-626 ([decisoes.md](decisoes.md))
+> Status: aprovado (habilitação de pagamentos automáticos no Mercado Pago a confirmar); NFS-e pelo Asaas no Portal Nacional, com a configuração fiscal definida com o contador (D-628) · Última atualização: 2026-10-22
+> Decisões: D-092, D-101, D-111 a D-116, D-120 a D-127, D-161, D-222, D-312, D-384, D-407, D-447, D-480 a D-498, D-560 a D-566, D-610 a D-613, D-616, D-618 a D-626, D-628 ([decisoes.md](decisoes.md))
 > Os itens **[P-19-01]** a **[P-19-29]** foram aprovados (D-498). O modelo de cobrança foi ajustado pelo usuário: gestão da plataforma, cobrança executada pelo Mercado Pago (D-496, D-497). Os itens **[P-19-30]** a **[P-19-38]**, da NFS-e pelo Asaas, foram aprovados sem ajuste (D-566).
 
 ## 1. Objetivo
@@ -184,22 +184,24 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**. Os acessos são os logins já gravados em `access_events`, pela marca do contrato (D-626).
 - **RN-19-092** — O custo da IA em dólares (spec 14) é convertido pela cotação do dia, guardada junto do custo **[P-19-27]**.
 
-### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565)
+### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565, D-628)
 
 - **RN-19-100** — A plataforma emite pelo **Asaas** as NFS-e do **CatalystHR** para os **parceiros e as empresas diretas**, uma por fatura paga (D-560). Notas de parceiros para os clientes deles continuam fora da plataforma (D-482).
 - **RN-19-101** — O Asaas é usado **só para notas**. A cobrança continua no Mercado Pago (D-561). A nota é emitida como **nota avulsa ligada ao cliente** no Asaas, sem cobrança no Asaas.
 - **RN-19-102** — **Configuração fiscal**, na área admin (Cobrança), mantida pelo superadmin e pelo financeiro **[P-19-30]**:
-  - a conta do Asaas do CatalystHR, com os dados fiscais e a configuração da prefeitura (ou do Portal Nacional), conforme as exigências do município (`fiscalInfo/municipalOptions`);
-  - o código do serviço municipal e a alíquota de ISS;
+  - a conta do Asaas do CatalystHR, com os dados fiscais e a configuração do **Portal Nacional da NFS-e**, conforme as exigências do município (`fiscalInfo/municipalOptions`) (D-628);
+  - o código do serviço;
+  - o regime de apuração (Simples Nacional) e o regime especial ("0 - Nenhum");
+  - a série da DPS (série 1, só para o Asaas) e o próximo número;
   - o texto padrão da descrição;
   - as retenções, se houver.
 
-  Os valores fiscais são definidos com o **contador da CatalystHR** (item em aberto).
+  A alíquota do Simples não vai na nota. Os valores fiscais são definidos com o **contador da DevBatista** (D-628).
 - **RN-19-103** — **Cliente no Asaas:** na primeira nota, a plataforma cadastra o contrato como cliente no Asaas (CNPJ, razão social, endereço, e-mail de cobrança) e guarda o identificador. Mudanças nesses dados são enviadas ao Asaas antes da nota seguinte **[P-19-31]**.
-- **RN-19-104** — **Momento** (D-562): quando o pagamento da fatura é confirmado pelo Mercado Pago (RN-19-046), a plataforma agenda a nota no Asaas, com emissão imediata. O momento do fato gerador do ISS deve ser confirmado pelo contador da CatalystHR, porque depende da prefeitura (item em aberto).
+- **RN-19-104** — **Momento** (D-562): quando o pagamento da fatura é confirmado pelo Mercado Pago (RN-19-046), a plataforma agenda a nota no Asaas, com emissão imediata. A **competência** da nota é o mês em que começa o ciclo da fatura, mesmo quando o pagamento e a emissão acontecem depois (D-628).
 - **RN-19-105** — **Conteúdo da nota** **[P-19-32]**:
   - valor: o **total pago** da fatura, com os descontos e créditos já aplicados;
-  - descrição: o texto padrão, o período do ciclo e as linhas da fatura (plano, módulos, adicionais, excedentes);
+  - descrição: o texto padrão, o período do ciclo e as linhas da fatura (plano, módulos, adicionais, excedentes). O excedente e o proporcional do ciclo anterior entram na mesma nota, com o período da medição (D-628);
   - faturas de **valor zero** (100% de desconto ou crédito) não geram nota **[P-19-36]**.
 - **RN-19-106** — **Status da nota** na fatura: agendada, autorizada, com erro ou cancelada. A nota só conta como emitida quando o Asaas avisa que a prefeitura autorizou, pelo webhook de nota autorizada. O webhook é recebido num endpoint que confere o token do Asaas, e um job diário confere as notas sem retorno direto na API **[P-19-33]**.
 - **RN-19-107** — **Entrega** (D-564): autorizada a nota, o PDF e o XML ficam na fatura, e o responsável financeiro recebe o aviso `billing.nfse_issued` com o link. O envio de e-mail pelo próprio Asaas fica **desligado**, para a comunicação sair com a marca da plataforma.
