@@ -68,8 +68,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ### Pré-requisitos
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
 - [x] Contador da DevBatista: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
-- [ ] Contador da DevBatista: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista)
-- [ ] Asaas: conta configurada na prefeitura ou no Portal Nacional
+- [x] Contador da DevBatista: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista) (2026-10-22, D-628)
+- [ ] Asaas: conta configurada no Portal Nacional (D-628)
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Railway: criptografia em repouso confirmada no Trust Center
@@ -140,9 +140,14 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
       - [x] 19f-2. Cancelamento pelo cliente, com senha e motivo, desfazível até o fim do ciclo, e o aviso às empresas da carteira (RN-19-062, RN-19-063)
     - [x] 19g. Painel da equipe CatalystHR: Receita e Clientes, com o risco de cancelamento pelos logins já gravados (RN-19-090, RN-19-091, D-626). A cotação do dólar (RN-19-092) entra com o bloco Custos, na spec 14
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
-    - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015). Trava: conta no Asaas e respostas do contador
+    - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015, D-628). Trava: conta no Asaas, com o sandbox
   - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
+  - Em 3 PRs (D-627):
+    - [ ] 20a. pg_dump diário pelo serviço `backup` (cliente 18 do PGDG, SSE-KMS num envio único), `backup_runs`, monitor `pg-dump-diario` no Sentry, ensaio de restauração com roteiro em `docs/runbooks/restauracao.md` e lembrete trimestral (RN-20-041, RN-20-046, CA-20-003, CA-20-008). Depois do merge: usuários IAM e serviço no Railway (`aws-arquivos.md`, passo 7)
+    - [ ] 20b. `/up/deep`, Sidekiq Web no admin e níveis de alerta (RN-20-074, RN-20-075, RN-20-077)
+    - [ ] 20c. Cadastro do plantão e `/internal/alerts`, com o envio pela Twilio desligado até a aprovação (RN-20-076)
+  - Ficam para antes do primeiro cliente: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e a faixa de incidente (RN-20-078, fase 2)
 
 ### Pronto quando
 - [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)

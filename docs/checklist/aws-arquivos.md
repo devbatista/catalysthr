@@ -164,7 +164,7 @@ Console: **IAM → Usuários → Criar usuário**.
 ```
 
 - [x] Aba **Credenciais de segurança → Criar chave de acesso** (criada em 2026-10-16, descrição `railway-producao`) → caso de uso **Aplicação em execução fora da AWS** (o nome exato pode variar um pouco no console). Deixe a página aberta: o segredo só aparece uma vez.
-- [ ] As permissões de SES entram no bloco 2c (passo 6). As de SNS entram com os eventos de e-mail (spec 15). Os usuários de backup e de restauração entram com o pg_dump diário (spec 20).
+- [ ] As permissões de SES entram no bloco 2c (passo 6). As de SNS entram com os eventos de e-mail (spec 15). Os usuários de backup e de restauração entram com o pg_dump diário (spec 20, passo 7).
 
 ## 4. Variáveis no Railway
 
@@ -233,3 +233,84 @@ O `Deny` impede que a aplicação apague ou altere a identidade `catalysthr.com.
 - [ ] Política em linha `catalysthr-app-email` criada.
 - [ ] Nenhuma variável nova no Railway: a região, as chaves e o configuration set (`catalysthr-padrao`, padrão no código) já bastam.
 - [ ] Enquanto o SES estiver no sandbox, só saem e-mails para endereços verificados no SES. Os outros falham e aparecem no Sentry.
+
+## 7. Backup diário e restauração (spec 20, bloco 20a)
+
+Decisão: D-627. Regras: RN-20-041, RN-20-046, RN-20-051. O serviço `backup` do Railway roda o pg_dump todo dia às 3h e grava no bucket `catalysthr-backups` com a chave `catalysthr-backups` (SSE-KMS). Dois usuários IAM novos, cada um com o mínimo, e nenhuma permissão nova no `catalysthr-app`. Faça os passos 7.1 a 7.3 **depois do merge do 20a**, que traz o pg_dump 18 na imagem.
+
+### 7.1 Usuário do backup: só grava
+
+Console: **IAM → Usuários → Criar usuário**, nome `catalysthr-backup`, **sem** acesso ao console, sem grupos. Depois, **Permissões → Criar política em linha → JSON**, nome `catalysthr-backup-gravar`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SoGravarBackups",
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::catalysthr-backups/daily/*"
+    },
+    {
+      "Sid": "CriptografarComAChaveDosBackups",
+      "Effect": "Allow",
+      "Action": "kms:GenerateDataKey",
+      "Resource": "arn:aws:kms:sa-east-1:464986173446:key/0692876d-247d-49c2-8e22-d96b3caad0e0"
+    }
+  ]
+}
+```
+
+Sem `s3:GetObject`, `s3:ListBucket`, `s3:DeleteObject` nem `kms:Decrypt`: esse usuário não lê nem apaga backups. O envio é num pedido só (`PutObject`), que pede só o `kms:GenerateDataKey`. O envio em partes (multipart) pediria também o `kms:Decrypt` ([documentação do S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html)).
+
+- [ ] Usuário `catalysthr-backup` e política `catalysthr-backup-gravar` criados
+- [ ] Chave de acesso criada (caso de uso **Aplicação em execução fora da AWS**, descrição `railway-backup`)
+
+### 7.2 Usuário da restauração: só lê
+
+Mesmo caminho, nome `catalysthr-restore`, política em linha `catalysthr-restore-ler`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListarBackups",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::catalysthr-backups"
+    },
+    {
+      "Sid": "LerBackups",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::catalysthr-backups/*"
+    },
+    {
+      "Sid": "DescriptografarBackups",
+      "Effect": "Allow",
+      "Action": "kms:Decrypt",
+      "Resource": "arn:aws:kms:sa-east-1:464986173446:key/0692876d-247d-49c2-8e22-d96b3caad0e0"
+    }
+  ]
+}
+```
+
+- [ ] Usuário `catalysthr-restore` e política `catalysthr-restore-ler` criados
+- [ ] **Sem** chave de acesso por enquanto: a chave é criada no dia do ensaio ou da recuperação e desativada depois (`docs/runbooks/restauracao.md`)
+
+### 7.3 Serviço `backup` no Railway
+
+No projeto `catalyst_hr`, **New → GitHub Repo** com o mesmo repositório, nome `backup` (D-606):
+
+- [ ] **Settings → Deploy → Custom Start Command:** `bin/rails backup:daily_dump`
+- [ ] **Settings → Deploy → Cron Schedule:** `0 6 * * *`. O Railway lê o cron em UTC, e 6h UTC são 3h em Brasília. Confira o texto do campo no painel.
+- [ ] **Sem** pre-deploy command: as migrações rodam só no `web` (RN-20-014)
+- [ ] **Variables:** as mesmas do `web` para o Rails subir (`DATABASE_URL` como referência ao Postgres, `RAILS_MASTER_KEY` ou `SECRET_KEY_BASE`, `SENTRY_DSN`, `AWS_REGION` = `sa-east-1`), mais:
+  - [ ] `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` do `catalysthr-backup`, **não** as do `catalysthr-app` (RN-20-050)
+  - [ ] `BACKUPS_KMS_KEY_ID` = `0692876d-247d-49c2-8e22-d96b3caad0e0`
+  - [ ] `BACKUPS_BUCKET` = `catalysthr-backups` (é o padrão do código; pode ficar sem)
+- [ ] Rodar uma vez à mão (**Deployments → Run now**, ou o próximo horário) e me avisar. Eu confiro o objeto no S3 e o monitor `pg-dump-diario` no Sentry, que o primeiro envio cria (CA-20-003)
+- [ ] Depois do primeiro sucesso: no Sentry, ligar o alerta do monitor `pg-dump-diario` para falha e para "não rodou", por e-mail
+

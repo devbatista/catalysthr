@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -132,6 +132,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_180000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "document"], name: "index_allocation_clients_on_company_id_and_document", unique: true, where: "(document IS NOT NULL)"
     t.index ["company_id"], name: "index_allocation_clients_on_company_id"
+  end
+
+  create_table "backup_runs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.string "kind", null: false
+    t.string "status", null: false
+    t.datetime "started_at", null: false
+    t.datetime "finished_at"
+    t.integer "duration_seconds"
+    t.bigint "size_bytes"
+    t.string "s3_key"
+    t.jsonb "checks", default: {}, null: false
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "started_at"], name: "index_backup_runs_on_kind_and_started_at"
   end
 
   create_table "bank_accounts", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|

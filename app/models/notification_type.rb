@@ -75,5 +75,8 @@ NotificationType::CATALOG = [
     roles: %w[hr_admin]),
   # The CatalystHR team: an adjustment above 20% waiting for the superadmin (RN-19-071, D-621).
   NotificationType.new(code: "platform.adjustment_pending", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin]),
+  # The quarterly restore drill, to the superadmins (RN-20-046, D-627).
+  NotificationType.new(code: "platform.restore_drill_due", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[superadmin])
 ].index_by(&:code).freeze

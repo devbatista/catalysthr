@@ -2074,6 +2074,15 @@ pt-BR:
         hint: "Quando o financeiro lança um ajuste acima de 20% da próxima fatura."
         title: "Ajuste de %{name} aguardando aprovação"
         body: "%{by} lançou %{adjustment} para %{name}, acima de 20% da próxima fatura. O ajuste só vale depois da sua aprovação."
+      restore_drill_due:
+        name: "Ensaio de restauração"
+        hint: "A cada 3 meses, para restaurar o último backup num banco temporário."
+        since:
+          title: "Hora do ensaio de restauração do backup"
+          body: "O último ensaio foi em %{date}. Siga o roteiro em docs/runbooks/restauracao.md e registre o resultado com a tarefa backup:restore_drill."
+        never:
+          title: "Hora do ensaio de restauração do backup"
+          body: "Nenhum ensaio foi registrado ainda. Siga o roteiro em docs/runbooks/restauracao.md e registre o resultado com a tarefa backup:restore_drill."
   notification_mailer:
     footer: "Você recebeu este e-mail porque tem uma conta em %{brand}."
     footer_bell: "Você recebeu este e-mail porque tem uma conta em %{brand}. O aviso também fica no sino, dentro do sistema."
