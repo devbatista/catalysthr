@@ -655,6 +655,7 @@ A apresentação (`prototype/CatalystRH_visual_identity/CatalystHR MVP.dc.html`,
 
 Itens que ainda precisam de decisão. Nenhuma spec deve assumir uma resposta para eles.
 
+- Cobrança e encerramento: a fatura do ciclo que começa no dia em que o contrato entra em `closing` sai 3 dias antes, ainda em `read_only` (RN-19-041). Como a régua para em `closing` (D-624), ela fica `open` mesmo vencida, fora do valor de inadimplência do painel da equipe (D-626), e continua aberta se o cliente não voltar. A reativação exige pagá-la (RN-19-053). Decidir com o encerramento da spec 05 (fase 2): cancelar as faturas abertas ao entrar em `closing`, marcá-las como vencidas também em `closing` ou não emitir o ciclo que começa no `closing` (achado do teste de ponta a ponta da régua, 2026-10-23)
 - REP-P: confirmar com o jurídico o CatalystHR como fabricante (D-310), a assinatura com o certificado do empregador (D-319), se o bloqueio pela cerca é permitido (spec 10, RN-10-022) e os layouts oficiais de AFD, AEJ e comprovante
 - Roadmap: quando entra o app mobile nativo (pré-requisito do reconhecimento facial, D-311)
 - Roadmap: CNAB e integração bancária para pagamento (D-356)

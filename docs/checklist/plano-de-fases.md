@@ -154,7 +154,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Eles configuram a marca e convidam o RH, que entra com MFA
 - [ ] Contratam um plano e pagam por cartão e por PIX
 - [ ] A NFS-e sai pelo Asaas e aparece na fatura
-- [ ] A régua de inadimplência roda de ponta a ponta com datas simuladas
+- [x] A régua de inadimplência roda de ponta a ponta com datas simuladas (`spec/requests/dunning_end_to_end_spec.rb`, 2026-10-23): duas faturas vencidas, somente leitura, pagamento por PIX que reativa, encerramento e reativação pelo superadmin
 - [ ] Os critérios de aceite das specs 01 a 05 e 19 passam: 55 de 70 com teste, e as outras dependem de fases seguintes ou do 19i (`criterios-de-aceite-fase-1.md`, 2026-10-23)
 
 ---
