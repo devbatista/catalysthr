@@ -15,12 +15,7 @@
 <% end %>
 
 <% content_for :content do %>
-  <% subtitle = case panel_context
-     when :partner then partner_membership&.organization&.name
-     when :firm then firm_membership&.organization&.name
-     else Current.company&.name
-     end %>
-  <%= render layout: "shared/app_shell", locals: { navigation: panel_navigation, subtitle: subtitle } do %>
+  <%= render layout: "shared/app_shell", locals: { navigation: panel_navigation, subtitle: area_organization_name } do %>
     <%= yield %>
   <% end %>
 <% end %>

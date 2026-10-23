@@ -112,3 +112,35 @@ LegalDocument::KINDS.each do |kind|
   LegalDocument.create!(kind: kind, published_by: author,
     body: "Texto fictício de desenvolvimento. Os textos reais são publicados pelo superadmin em /legal-documents.")
 end
+
+# Fictional employees with an employment, a dependent and a bank account, to see the
+# records with data (spec 04). Valid fictional CPFs; found by CPF on later runs.
+[
+  [ serra_azul, "98765432100", "Operador de máquinas", "784105", [
+    [ "Bruno Reis", "39813716070", "3.200,00", Date.new(2025, 8, 4) ],
+    [ "Lúcia Andrade", "61839152036", "4.850,00", Date.new(2024, 2, 19) ]
+  ] ],
+  [ Company.find_by!(document: "12ABC345"), "12345678909", "Padeiro", "848305", [
+    [ "Tiago Moura", "07217628083", "2.400,00", Date.new(2026, 1, 12) ],
+    [ "Renata Prado", "84730531094", "2.650,00", Date.new(2025, 11, 3) ]
+  ] ]
+].each do |company, hr_cpf, position_name, cbo_code, people|
+  hr = User.find_by!(cpf: hr_cpf)
+  CboOccupation.find_or_create_by!(code: cbo_code) { |occupation| occupation.title = position_name }
+  ActsAsTenant.with_tenant(company) do
+    position = Position.find_or_create_by!(name: position_name) { |new_position| new_position.cbo_code = cbo_code }
+    people.each do |name, cpf, salary, started_on|
+      next if WorkerProfile.joins(:user).exists?(users: { cpf: cpf })
+
+      registration = EmployeeRegistration.new(name: name, cpf: cpf, email: "#{cpf}@example.com", started_on: started_on,
+        registration_number: company.reload.suggested_registration_number, position_id: position.id,
+        unit_id: company.headquarters.id, salary: salary)
+      raise registration.errors.full_messages.to_sentence unless registration.save(company: company, by: hr)
+
+      profile = registration.profile
+      profile.dependents.create!(name: "Filha de #{name.split.first}", birth_date: Date.new(2018, 5, 10), relationship_type: "child")
+      BankAccounts::Register.call(profile: profile, primary: true, by: hr,
+        attributes: { bank_code: "341", branch: "0001", account_number: "12345-6", account_type: "checking" })
+    end
+  end
+end

@@ -13,8 +13,8 @@
     <thead>
       <tr>
         <th><%= t(".name") %></th>
-        <th><%= t(".registration") %></th>
-        <th><%= t(".city") %></th>
+        <th class="hidden sm:table-cell"><%= t(".registration") %></th>
+        <th class="hidden md:table-cell"><%= t(".city") %></th>
         <th><%= t(".status") %></th>
       </tr>
     </thead>
@@ -25,8 +25,8 @@
             <%= link_to unit.name, unit_path(unit), class: "link-button" %>
             <% if unit.headquarters? %><span class="pill pill-info ml-2"><%= t(".headquarters") %></span><% end %>
           </td>
-          <td class="font-mono text-xs text-ink-soft"><%= unit_registration(unit) %></td>
-          <td class="text-ink-soft"><%= [ unit.city, unit.state ].compact_blank.join(" / ").presence || "—" %></td>
+          <td class="hidden font-mono text-xs text-ink-soft sm:table-cell"><%= unit_registration(unit) %></td>
+          <td class="hidden text-ink-soft md:table-cell"><%= [ unit.city, unit.state ].compact_blank.join(" / ").presence || "—" %></td>
           <td><span class="pill <%= unit.active? ? "pill-ok" : "pill-mute" %>"><%= t("units.statuses.#{unit.status}") %></span></td>
         </tr>
       <% end %>
