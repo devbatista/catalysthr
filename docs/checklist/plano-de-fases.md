@@ -149,7 +149,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam para antes do primeiro cliente: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627), o reenvio ao plantão (RN-20-076, com o plano pago do Sentry e a Twilio, D-629) e a faixa de incidente (RN-20-078, fase 2)
 
 ### Pronto quando
-- [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
+- [x] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598). Conferência de 2026-10-23: 93 telas de 5 perfis em 1440, 1920 e 390 px, sem rolagem horizontal nem erro de console, com a página 403 na base visual, as tabelas largas ajustadas no celular e a ficha sem vazar a largura
 - [ ] O superadmin cria um parceiro e uma empresa direta em teste
 - [ ] Eles configuram a marca e convidam o RH, que entra com MFA
 - [ ] Contratam um plano e pagam por cartão e por PIX

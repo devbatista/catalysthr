@@ -1,0 +1,9 @@
+<%# Access denied (RN-03-003), in the area's layout (D-597). %>
+<% content_for :title, t("authorization.title") %>
+
+<h1 class="page-title"><%= t("authorization.title") %></h1>
+
+<div class="card card-body mt-6 max-w-xl">
+  <p class="text-sm text-ink-soft"><%= t("authorization.forbidden") %>.</p>
+  <p class="mt-4"><%= link_to t("authorization.back"), "/", class: "btn btn-secondary" %></p>
+</div>

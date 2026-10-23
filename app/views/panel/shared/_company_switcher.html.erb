@@ -1,4 +1,5 @@
-<%# The current company, and the selector when the person has more than one (RN-01-004, RN-01-005) %>
+<%# The current company, and the selector when the person has more than one (RN-01-004, RN-01-005);
+    in the partner's and the accounting firm's areas, their name (D-597) %>
 <div class="flex min-w-0 flex-1 flex-wrap items-center gap-3">
   <% if (company_logo = alongside_company_logo_path) %>
     <%= image_tag company_logo, alt: Current.company.brand.commercial_name, class: "h-7 w-auto" %>
@@ -12,7 +13,7 @@
         class: "rounded-lg border border-line bg-white px-3 py-1.5 text-sm font-bold text-ink-strong" %>
       <%= form.submit t("panel.shared.header.switch"), class: "btn btn-secondary btn-sm" %>
     <% end %>
-  <% elsif Current.company %>
-    <span class="text-sm font-bold text-ink-strong"><%= Current.company.name %></span>
+  <% elsif (area_name = area_organization_name) %>
+    <span class="text-sm font-bold text-ink-strong"><%= area_name %></span>
   <% end %>
 </div>

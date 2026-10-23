@@ -17,6 +17,16 @@ module NavigationHelper
     end
   end
 
+  # The organization of the area the person is in: the partner, the accounting firm or the
+  # current company.
+  def area_organization_name
+    case panel_context
+    when :partner then partner_membership&.organization&.name
+    when :firm then firm_membership&.organization&.name
+    else Current.company&.name
+    end
+  end
+
   def panel_navigation
     groups = case panel_context
     when :partner then partner_navigation

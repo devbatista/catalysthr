@@ -21,9 +21,9 @@
       <thead>
         <tr>
           <th><%= t(".name") %></th>
-          <th><%= t(".kind") %></th>
+          <th class="hidden sm:table-cell"><%= t(".kind") %></th>
           <th><%= t(".price") %></th>
-          <th><%= t(".since") %></th>
+          <th class="hidden sm:table-cell"><%= t(".since") %></th>
           <th><%= t(".status") %></th>
         </tr>
       </thead>
@@ -35,9 +35,9 @@
               <%= link_to plan.name, admin_plan_path(plan), class: "link-button" %>
               <% if plan.private? %><span class="pill pill-info ml-2"><%= t(".private", client: plan.billing_account.name) %></span><% end %>
             </td>
-            <td class="text-ink-soft"><%= t("billing.kinds.#{plan.kind}") %></td>
+            <td class="hidden text-ink-soft sm:table-cell"><%= t("billing.kinds.#{plan.kind}") %></td>
             <td class="text-ink-soft"><%= plan_price_summary(current || plan.latest_version) %></td>
-            <td class="whitespace-nowrap text-ink-soft">
+            <td class="hidden whitespace-nowrap text-ink-soft sm:table-cell">
               <%= current ? l(current.valid_from) : t(".starts", date: l(plan.latest_version.valid_from)) %>
             </td>
             <td><span class="pill <%= plan.active? ? "pill-ok" : "pill-mute" %>"><%= t("billing.plan_statuses.#{plan.status}") %></span></td>

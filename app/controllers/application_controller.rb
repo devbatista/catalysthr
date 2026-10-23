@@ -201,7 +201,12 @@ class ApplicationController < ActionController::Base
 
   # RN-03-006: denied inside the scope answers 403. Outside the scope the record is
   # not found and the answer is 404 (RN-01-013).
+  # In the area's layout, like any page (D-597); other formats get only the status.
   def forbidden
-    render plain: t("authorization.forbidden"), status: :forbidden
+    if request.format.html?
+      render "shared/forbidden", status: :forbidden
+    else
+      head :forbidden
+    end
   end
 end

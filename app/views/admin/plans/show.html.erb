@@ -44,7 +44,7 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th><%= t(".version") %></th>
+        <th class="hidden sm:table-cell"><%= t(".version") %></th>
         <th><%= t(".valid_from") %></th>
         <th><%= t(".price") %></th>
         <th class="hidden sm:table-cell"><%= t(".registered") %></th>
@@ -54,7 +54,7 @@
     <tbody>
       <% @plan.plan_versions.reverse_each do |version| %>
         <tr>
-          <td><%= version.version %></td>
+          <td class="hidden sm:table-cell"><%= version.version %></td>
           <td class="whitespace-nowrap"><%= l(version.valid_from) %></td>
           <td class="text-ink-soft"><%= plan_price_summary(version) %></td>
           <td class="hidden text-ink-soft sm:table-cell"><%= t(".registered_by", name: version.created_by.name, date: l(version.created_at, format: :short)) %></td>

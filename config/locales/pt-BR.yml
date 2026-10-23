@@ -30,12 +30,8 @@ pt-BR:
       index:
         title: "CatalystHR"
         greeting: "Olá, %{name}."
-        subtitle: "As telas da área administrativa estão em construção."
-        legal_documents: "Termos de uso e política de privacidade da CatalystHR"
-        impersonate: "Ver como um usuário (impersonate)"
-        support_access: "Entrar numa empresa direta (suporte)"
-        users: "Contato e verificação em duas etapas de usuários"
-        brands: "Marcas"
+        subtitle: "Administração da CatalystHR: clientes, cobrança, suporte e textos legais."
+        account: "Sua conta"
     impersonations:
       new:
         title: "Ver como um usuário"
@@ -2225,7 +2221,9 @@ pt-BR:
       action: "Desbloquear o acesso"
       ignore: "Se não foi você que tentou entrar, desbloqueie o acesso e troque a senha."
   authorization:
+    title: "Acesso negado"
     forbidden: "Você não tem permissão para esta ação"
+    back: "Voltar para o início"
   contract_lock:
     refused: "A conta está em somente leitura: nada novo pode ser criado ou alterado."
     read_only: "Você pode consultar tudo, mas nada novo pode ser criado ou alterado."

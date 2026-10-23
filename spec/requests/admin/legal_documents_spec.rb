@@ -44,7 +44,7 @@ RSpec.describe "CatalystHR legal texts", type: :request do
 
     post "/legal-documents", params: { legal_document: { kind: "terms", body: "Texto" } }
     expect(response).to have_http_status(:forbidden)
-    expect(response.body).to eq("Você não tem permissão para esta ação")
+    expect(response.body).to include("Acesso negado", "Você não tem permissão para esta ação")
 
     get "/legal-documents"
     expect(response).to have_http_status(:forbidden)
