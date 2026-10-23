@@ -1,7 +1,7 @@
 # 20 — Infraestrutura
 
 > Status: aprovado (transferência internacional e criptografia do Railway a confirmar) · Última atualização: 2026-10-13
-> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627 ([decisoes.md](decisoes.md))
+> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627, D-629 ([decisoes.md](decisoes.md))
 > Os itens **[P-20-nn]** foram todos aprovados sem ajuste (D-515, seção 10).
 
 ## 1. Objetivo
@@ -175,7 +175,7 @@ Definir **onde e como o CatalystHR roda**:
   | **Alto** | Erros em massa; disjuntor da IA (RN-14-123); falhas de comunicação com o eSocial; entregas de e-mail falhando | E-mail da equipe |
   | **Informativo** | Novas versões de dependências, uso de recursos | Resumo semanal por e-mail |
 
-- **RN-20-076** — **Reenvio ao plantão** (D-512): os alertas críticos do Sentry chamam um endpoint interno (`/internal/alerts`, com assinatura conferida), que manda WhatsApp ou SMS pela Twilio aos plantonistas cadastrados na área admin (seção Equipe). Se o WhatsApp falhar, vai por SMS. O mesmo alerta não se repete por 15 minutos **[P-20-29]**.
+- **RN-20-076** — **Reenvio ao plantão** (D-512): os alertas críticos do Sentry chamam um endpoint interno (`/internal/alerts`, com assinatura conferida), que manda WhatsApp ou SMS pela Twilio aos plantonistas cadastrados na área admin (seção Equipe). Se o WhatsApp falhar, vai por SMS. O mesmo alerta não se repete por 15 minutos **[P-20-29]**. Entra antes do primeiro cliente, com o plano pago do Sentry e a Twilio (D-629).
 - **RN-20-077** — **Sidekiq Web** na área admin, só para o superadmin e o suporte **[P-20-30]**.
 - **RN-20-078** — Sem página pública de status (D-513). Incidentes são comunicados por e-mail ao responsável de cada contrato e por uma faixa no sistema, publicada pela área admin **[P-20-31]**.
 
