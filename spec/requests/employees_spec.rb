@@ -35,6 +35,18 @@ RSpec.describe "Employees", type: :request do
   describe "for the HR administrator" do
     before { sign_in_as(hr_admin, "98765432100") }
 
+    it "answers 404 for a person of another company, even one the HR administrator also manages (CA-01-004)" do
+      other_company = create(:company, name: "Padaria Pão Quente")
+      create(:membership, user: hr_admin, organization: other_company, roles: %w[hr_admin])
+      outsider = register_employee(other_company, by: hr_admin, position: create_position(other_company), name: "Rita Souza")
+
+      get "/employees/#{outsider.id}"
+      expect(response).to have_http_status(:not_found)
+
+      get "/employees"
+      expect(response.body).not_to include("Rita Souza")
+    end
+
     it "registers someone who already works in the company and lists them (RN-04-040, D-600)" do
       get "/employees/new"
       expect(response.body).to include('value="1"', "Novo colaborador")
@@ -188,7 +200,7 @@ RSpec.describe "Employees", type: :request do
       end
     end
 
-    it "sees the people of their units, without pay unless the payroll module is released" do
+    it "sees the people of their units, without pay unless the payroll module is released (CA-03-001)" do
       mine = register_employee(company, by: hr_admin, position: position, name: "Bruno Reis", unit: branch)
       other = register_employee(company, by: hr_admin, position: position, name: "Ana Lima")
       sign_in_as(analyst, "11144477735")
@@ -214,7 +226,7 @@ RSpec.describe "Employees", type: :request do
     let!(:carlos) { enable_mfa(create(:user, name: "Carlos Mendes", cpf: "11144477735")) }
     let!(:carlos_membership) { create(:membership, user: carlos, organization: company, roles: %w[manager], status: "active") }
 
-    it "sees the team's basic data only" do
+    it "sees the team's basic data only (CA-03-002)" do
       production = in_company { Department.create!(unit: company.headquarters, name: "Produção") }
       in_company { production.department_managers.create!(membership: carlos_membership) }
       team = register_employee(company, by: hr_admin, position: position, name: "Bruno Reis", department: production)

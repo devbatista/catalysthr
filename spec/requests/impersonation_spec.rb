@@ -120,6 +120,40 @@ RSpec.describe "Impersonation", type: :request do
     expect(member.reload.roles).to eq(%w[hr_analyst])
   end
 
+  describe "on an employee's record" do
+    let(:employee) do
+      register_employee(company, by: hr_admin, position: create_position(company), name: "Bruno Reis", salary: "3.200,00")
+    end
+
+    it "simulates the edit of an employee: the record does not change and no job leaves (CA-02-012)" do
+      start_impersonation
+
+      perform_enqueued_jobs do
+        patch "/employees/#{employee.id}", params: { worker_profile: { city: "Caxias do Sul", state: "RS" } }
+      end
+      follow_redirect! while response.redirect?
+
+      expect(response.body).to include("Simulação: nada foi salvo")
+      expect(ActsAsTenant.with_tenant(company) { employee.reload.city }).to be_nil
+      expect(ActionMailer::Base.deliveries).to be_empty
+    end
+
+    it "masks the salary on the record, also when the section is asked for (CA-02-013, D-592)" do
+      start_impersonation
+
+      get "/employees/#{employee.id}"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("•••••• por mês")
+      expect(response.body).not_to include("3.200,00", "?reveal")
+
+      get "/employees/#{employee.id}", params: { reveal: %w[pay] }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("R$ •••• por mês")
+      expect(response.body).not_to include("3.200,00")
+      expect(AccessEvent.where(kind: "sensitive_read")).to be_empty
+    end
+  end
+
   it "keeps the person's security pages closed (RN-02-087)" do
     start_impersonation
 
@@ -128,7 +162,7 @@ RSpec.describe "Impersonation", type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
-  it "ends by itself after 30 minutes (RN-02-081)" do
+  it "ends by itself after 30 minutes (RN-02-081, CA-02-014)" do
     start_impersonation
 
     travel 31.minutes do
@@ -160,7 +194,7 @@ RSpec.describe "Impersonation", type: :request do
     expect(ImpersonationSession.sole.ended_reason).to eq("manual")
   end
 
-  it "requires a reason" do
+  it "requires a reason (CA-02-015)" do
     on_admin
     sign_in_with_mfa("52998224725", support)
 
