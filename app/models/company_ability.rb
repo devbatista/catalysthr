@@ -31,9 +31,22 @@ class CompanyAbility
     end
     manager(company, membership) if roles.include?("manager")
     client_manager(company, membership) if roles.include?("client_manager")
+    # A read-only membership still reads its modules (D-090).
+    modules(membership&.roles || [], membership, consultant, support_at?(user, company, support_access), contracted)
   end
 
   private
+
+  # The modules the person operates, which the menu shows (spec 03, section 2.3, D-191):
+  # the HR analyst and the consultant only those released to them, the support every one
+  # contracted; the HR administrator and the managers are not restricted (P-03-04).
+  def modules(roles, membership, consultant, support, contracted)
+    released = if (roles & %w[hr_admin manager client_manager]).any? then Membership::RELEASABLE_MODULES
+    else
+      [ (membership.enabled_modules if roles.include?("hr_analyst")), consultant&.enabled_modules, (contracted if support) ].flatten.compact
+    end
+    released.uniq.each { |code| can :use_module, code.to_sym }
+  end
 
   def support_at?(user, company, support_access)
     support_access&.running? && support_access.company_id == company.id && support_access.support_user_id == user.id

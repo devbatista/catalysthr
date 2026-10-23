@@ -11,9 +11,19 @@ module ComingSoon
   # Features that are contracted modules (D-616): they show only when the contract has
   # them, and time tracking waits for the contract during the trial (CA-19-003).
   CONTRACT_MODULES = { "payroll" => "folha", "time-tracking" => "ponto" }.freeze
+  # Features that are modules released by membership (spec 03, section 2.3): an HR
+  # analyst or a consultant sees them only when released to them (CA-03-001).
+  RELEASED_MODULES = { "admissions" => "admissao", "documents" => "documentos", "requests" => "solicitacoes",
+    "payroll" => "folha", "time-tracking" => "ponto", "performance" => "avaliacao" }.freeze
   PARTNER_FEATURES = %w[process-templates].freeze
 
   module_function
+
+  # A module released by membership only for who operates it (CA-03-001).
+  def released?(feature, ability)
+    code = RELEASED_MODULES[feature]
+    code.nil? || ability.can?(:use_module, code.to_sym)
+  end
 
   def translation_key(feature)
     "navigation.features.#{feature.underscore}"

@@ -21,6 +21,13 @@ RSpec.describe "Navigation", type: :request do
     post "/sign-in", params: { user: { login: "12345678909", password: "Catalyst#2026" } }
   end
 
+  # Changing the roles ends the open sessions (RN-02-063); the HR roles sign in with MFA.
+  def sign_in_again
+    reset!
+    host! "aurora.painel.catalysthr.com.br"
+    sign_in_with_mfa("12345678909", enable_mfa(user))
+  end
+
   describe "in a company" do
     let!(:subscription) { contract_for(partner) }
 
@@ -79,6 +86,31 @@ RSpec.describe "Navigation", type: :request do
       get "/"
       expect(response.body).not_to include("Folha de pagamento", "Ponto eletrônico")
       expect(response.body).to include("Integrações contábeis")
+    end
+
+    it "shows the HR analyst only the modules released to them, and does not open the others (CA-03-001)" do
+      Membership.find_by!(user: user).update!(roles: %w[hr_analyst], enabled_modules: %w[documentos])
+      sign_in_again
+
+      get "/"
+      expect(response.body).to include("Documentos", "Assistente")
+      expect(response.body).not_to include("Folha de pagamento", "Ponto eletrônico", "Admissões")
+
+      get "/soon/payroll"
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "does not restrict the HR administrator by released modules, only by the contract (CA-03-007)" do
+      Membership.find_by!(user: user).update!(roles: %w[hr_admin])
+      sign_in_again
+
+      get "/"
+      expect(response.body).to include("Folha de pagamento", "Ponto eletrônico", "Admissões")
+
+      subscription.items.find_by!(module: "folha").update!(ends_on: Date.yesterday, starts_on: Date.yesterday)
+      get "/"
+      expect(response.body).not_to include("Folha de pagamento")
+      expect(response.body).to include("Ponto eletrônico")
     end
 
     it "shows time tracking as available after the contract during the trial (CA-19-003, RN-19-031)" do

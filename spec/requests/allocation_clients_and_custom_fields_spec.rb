@@ -123,5 +123,28 @@ RSpec.describe "Allocation clients and custom fields", type: :request do
       get "/clients"
       expect(response).to have_http_status(:forbidden)
     end
+
+    it "loses the access when the HR inactivates their only client, and the open session is refused (CA-02-018)" do
+      company.update!(uses_allocation_clients: true)
+      hospital = in_company { AllocationClient.create!(name: "Hospital Bom Pastor") }
+      membership = create(:membership, user: rita, organization: company, roles: %w[client_manager])
+      in_company { hospital.allocation_client_managers.create!(membership: membership) }
+      sign_in_as(rita, "52998224725")
+      get "/employees"
+      expect(response).to have_http_status(:ok)
+      rita_cookies = cookies.to_hash
+
+      reset!
+      host! "serraazul.painel.catalysthr.com.br"
+      sign_in_as(hr_admin, "98765432100")
+      patch "/clients/#{hospital.id}", params: { allocation_client: { status: "inactive" } }
+      expect(membership.reload.status).to eq("revoked")
+
+      reset!
+      host! "serraazul.painel.catalysthr.com.br"
+      rita_cookies.each { |name, value| cookies[name] = value }
+      get "/employees"
+      expect(response).to redirect_to("/sign-in")
+    end
   end
 end

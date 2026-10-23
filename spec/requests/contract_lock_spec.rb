@@ -31,7 +31,7 @@ RSpec.describe "Contract read only", type: :request do
       host! "aurora.painel.catalysthr.com.br"
     end
 
-    it "shows the client company's HR the limited access, without amounts, and refuses anything new" do
+    it "shows the client company's HR the limited access, without amounts, and refuses anything new (CA-03-006)" do
       sign_in_member(company, brand, %w[hr_admin])
       post "/current-company", params: { company_id: company.id }
 

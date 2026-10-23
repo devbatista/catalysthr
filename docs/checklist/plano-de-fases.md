@@ -155,7 +155,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Contratam um plano e pagam por cartão e por PIX
 - [ ] A NFS-e sai pelo Asaas e aparece na fatura
 - [ ] A régua de inadimplência roda de ponta a ponta com datas simuladas
-- [ ] Os critérios de aceite das specs 01 a 05 e 19 passam
+- [ ] Os critérios de aceite das specs 01 a 05 e 19 passam: 55 de 70 com teste, e as outras dependem de fases seguintes ou do 19i (`criterios-de-aceite-fase-1.md`, 2026-10-23)
 
 ---
 

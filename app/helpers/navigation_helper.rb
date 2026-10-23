@@ -90,7 +90,7 @@ module NavigationHelper
     groups = soon.to_h do |group, features|
       items = features.filter_map do |feature|
         state = ComingSoon.state(feature, company)
-        soon_item(feature, coming_soon_path(feature), state) if state
+        soon_item(feature, coming_soon_path(feature), state) if state && ComingSoon.released?(feature, current_ability)
       end
       [ group, items ]
     end

@@ -77,7 +77,7 @@ RSpec.describe "Sign-in", type: :request do
     end
   end
 
-  it "answers a person of another brand as invalid credentials (RN-01-002, P-01-03)" do
+  it "answers a person of another brand as invalid credentials (RN-01-002, P-01-03, CA-01-002)" do
     sign_in_with("12345678909", "Errada#2026")
     wrong_password = response.body[/CPF, e-mail ou senha inválidos[^<]*/]
 
