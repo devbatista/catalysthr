@@ -116,7 +116,7 @@ No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `
 - [x] **[Claude]** Adicionar o Redis (só para o Sidekiq), com AOF e `noeviction`
 - [x] **[Claude]** Criar os serviços vazios `web`, `worker` e `worker-time`, **sem** ligar ao GitHub, porque o deploy é feito pelo nosso workflow (`railway up`), e não a cada push
 - [x] **[Claude]** Colocar todos na região **US East (Virgínia)** (o Postgres e o Redis nasceram em US West e foram movidos)
-- [x] **[Claude]** Definir as variáveis: `RAILS_MASTER_KEY` (de `config/master.key`, sem passar pelo chat), `DATABASE_URL` e `REDIS_URL` (referências do Railway), `SIDEKIQ_ROLE=time` só no `worker-time`, `APP_HOST`
+- [x] **[Claude]** Definir as variáveis: `RAILS_MASTER_KEY` (de `config/master.key`, sem passar pelo chat; trocado pelo `SECRET_KEY_BASE` em 2026-10-26, D-630), `DATABASE_URL` e `REDIS_URL` (referências do Railway), `SIDEKIQ_ROLE=time` só no `worker-time`, `APP_HOST`
 - [x] **[Claude]** Definir pela API o início dos workers (`bundle exec sidekiq`), o pre-deploy e o health check do `web` e as réplicas. O `railway.json` foi descontinuado pelo Railway, então a configuração ficou documentada no README (D-517)
 - [x] **[você]** Criar o token de projeto no painel do Railway (projeto `catalyst_hr` → Settings → Tokens, ambiente `production`). O login da CLI não tem permissão para criar tokens pela API
 - [x] **[você]** Gravar o token como secret no GitHub: `gh secret set RAILWAY_TOKEN --repo devbatista/catalysthr` (o comando pede o valor sem mostrar na tela)

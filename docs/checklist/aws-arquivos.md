@@ -312,7 +312,7 @@ No projeto `catalyst_hr`, **New → Empty Service**, nome `backup`. Como o `web`
 - [x] **Settings → Deploy → Cron Schedule:** `0 6 * * *`. O Railway lê o cron em UTC, e 6h UTC são 3h em Brasília.
 - [x] **Sem** pre-deploy command: as migrações rodam só no `web` (RN-20-014). A política de reinício fica `NEVER`, que o Railway põe nos crons.
 - [x] **Variables** (2026-10-26), só as que o pg_dump usa. As referências evitam copiar segredos e acompanham as trocas no `web`:
-  - [x] `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`, `RAILS_MASTER_KEY` = `${{web.RAILS_MASTER_KEY}}`, `SENTRY_DSN` = `${{web.SENTRY_DSN}}`, `AWS_REGION` = `sa-east-1`
+  - [x] `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`, `SECRET_KEY_BASE` = `${{web.SECRET_KEY_BASE}}` (no lugar do `RAILS_MASTER_KEY`, D-630), `SENTRY_DSN` = `${{web.SENTRY_DSN}}`, `AWS_REGION` = `sa-east-1`
   - [x] `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` do `catalysthr-backup`, **não** as do `catalysthr-app` (RN-20-050)
   - [x] `BACKUPS_KMS_KEY_ID` = `0692876d-247d-49c2-8e22-d96b3caad0e0`
   - `BACKUPS_BUCKET` fica sem: o padrão do código é `catalysthr-backups`

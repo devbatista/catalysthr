@@ -63,7 +63,7 @@ aws sesv2 get-account --region sa-east-1 --profile catalysthr
 
 Estas ficam abertas, para trocar quando os deploys voltarem. Hoje não são riscos aceitos, só bloqueados pela pausa.
 
-- [ ] `RAILS_MASTER_KEY` / `secret_key_base`: **risco alto**, porque permite forjar o cookie de sessão. Gerar um novo e publicar, o que derruba as sessões abertas
+- [x] `RAILS_MASTER_KEY` / `secret_key_base`: **risco alto**, porque permite forjar o cookie de sessão. Gerar um novo e publicar, o que derruba as sessões abertas. Feito em 2026-10-26 (D-630): um `SECRET_KEY_BASE` novo, gerado direto no Railway sem passar pelo chat, no `web` e por referência nos outros serviços; o `RAILS_MASTER_KEY` saiu dos quatro serviços e o `config/credentials.yml.enc`, que só guardava o `secret_key_base` antigo, saiu do repositório. Conferido: o Rails usa a chave nova, o login com MFA funcionou e o backup rodou
 - [ ] Senhas do Postgres e do Redis (`DATABASE_URL`, `REDIS_URL`): os dois estão só na rede privada. Trocar pelo painel do Railway
 - [ ] `ACTIVE_RECORD_ENCRYPTION_*`: trocar com a rotação do Rails, mantendo as chaves antigas para leitura
 - [ ] `SENTRY_DSN`: baixo risco. Gerar uma nova chave do projeto no Sentry
