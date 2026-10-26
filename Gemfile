@@ -27,8 +27,9 @@ gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.2"
-# image_processing 2 no longer brings it; Active Storage analyzes uploaded images with it
-gem "ruby-vips", "~> 2.3"
+# image_processing 2 no longer brings it; Active Storage analyzes uploaded images with it.
+# Loaded on demand, as before, so booting does not need libvips (the CI runner has none).
+gem "ruby-vips", "~> 2.3", require: false
 
 # Background jobs and schedules (D-108, spec 20)
 gem "sidekiq"
