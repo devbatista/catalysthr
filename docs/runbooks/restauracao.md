@@ -16,8 +16,8 @@
 ## Passos do ensaio
 
 1. **Banco temporário:** no projeto do Railway, **New → Database → PostgreSQL**, com o nome `restore-drill`. Precisa ser a mesma versão de produção (18) e ter a extensão `vector`: use o mesmo modelo do serviço `Postgres` (pgvector).
-2. **Serviço temporário:** **New → GitHub Repo**, com o mesmo repositório e o nome `restore-drill-runner`, sem cron e sem pre-deploy. Variáveis:
-   - as do `web` para o Rails subir (`DATABASE_URL` de produção, onde o resultado é registrado, `RAILS_MASTER_KEY` ou `SECRET_KEY_BASE`, `AWS_REGION` = `sa-east-1`);
+2. **Serviço temporário:** **New → Empty Service**, com o nome `restore-drill-runner`, sem cron e sem pre-deploy, publicado da `main` com `railway up --ci --service restore-drill-runner` (sem ligar ao GitHub, D-575). Variáveis:
+   - as do `web` para o Rails subir (`DATABASE_URL` de produção, onde o resultado é registrado, `SECRET_KEY_BASE` = `${{web.SECRET_KEY_BASE}}` (D-630), `AWS_REGION` = `sa-east-1`);
    - `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` do `catalysthr-restore`;
    - `RESTORE_DATABASE_URL`: a URL privada do `restore-drill`.
 3. **Rodar:** **Custom Start Command** `bin/rails backup:restore_drill`. A tarefa:
