@@ -297,8 +297,8 @@ Mesmo caminho, nome `catalysthr-restore`, política em linha `catalysthr-restore
 }
 ```
 
-- [ ] Usuário `catalysthr-restore` e política `catalysthr-restore-ler` criados
-- [ ] **Sem** chave de acesso por enquanto: a chave é criada no dia do ensaio ou da recuperação e desativada depois (`docs/runbooks/restauracao.md`)
+- [x] Usuário `catalysthr-restore` e política `catalysthr-restore-ler` criados (2026-10-26, pela CLI, com o JSON acima)
+- [x] **Sem** chave de acesso por enquanto: a chave é criada no dia do ensaio ou da recuperação e desativada depois (`docs/runbooks/restauracao.md`)
 
 ### 7.3 Serviço `backup` no Railway
 
@@ -317,7 +317,7 @@ No projeto `catalyst_hr`, **New → Empty Service**, nome `backup`. Como o `web`
   - [x] `BACKUPS_KMS_KEY_ID` = `0692876d-247d-49c2-8e22-d96b3caad0e0`
   - `BACKUPS_BUCKET` fica sem: o padrão do código é `catalysthr-backups`
   - Sem `REDIS_URL` e sem as chaves da criptografia de campos: o dump copia o texto já criptografado
-- [ ] **Settings → Source → Disconnect:** o serviço foi ligado ao GitHub em 2026-10-26, por uma versão anterior deste passo. Desligar depois do merge que põe o `backup` no workflow Deploy
-- [ ] Rodar uma vez à mão (**Cron Runs → Run now**) e me avisar. Eu confiro o objeto no S3 e o monitor `pg-dump-diario` no Sentry, que o primeiro envio cria (CA-20-003)
-- [ ] Depois do primeiro sucesso: no Sentry, ligar o alerta do monitor `pg-dump-diario` para falha e para "não rodou", por e-mail
+- [x] **Settings → Source → Disconnect:** o serviço foi ligado ao GitHub em 2026-10-26, por uma versão anterior deste passo, e desligado no mesmo dia, depois do merge que o pôs no workflow Deploy (#70)
+- [x] Rodar uma vez à mão (**Cron Runs → Run now**) e me avisar. Eu confiro o objeto no S3 e o monitor `pg-dump-diario` no Sentry, que o primeiro envio cria (CA-20-003). Conferido em 2026-10-26: `daily/2026/10/26/catalysthr-20261026T161347Z.dump`, 279.834 bytes, SSE-KMS com a chave dos backups, `backup_runs` com `succeeded` e o check-in OK no monitor
+- [x] Depois do primeiro sucesso: no Sentry, ligar o alerta do monitor `pg-dump-diario` para falha e para "não rodou", por e-mail. Quem avisa é a regra padrão do projeto, "Send a notification for high priority issues", que já disparou com a falha de 2026-10-26; nela entrou a condição "A resolved issue regresses", para uma falha que reabre a issue resolvida também avisar
 
