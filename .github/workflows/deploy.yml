@@ -102,3 +102,4 @@ jobs:
           railway up --ci --service web
           railway up --ci --service worker
           railway up --ci --service worker-time
+          railway up --ci --service backup
