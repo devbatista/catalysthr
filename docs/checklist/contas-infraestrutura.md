@@ -43,7 +43,7 @@ No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `
 - [ ] **[você]** `HEALTH_CHECK_TOKEN` no serviço `web`: gere um valor aleatório longo (por exemplo, `openssl rand -hex 32` no seu terminal) e cole direto no Railway, sem passar pelo chat. Sem ele, o `/up/deep` responde 404
 - **Crítico** (plantão, com o reenvio do 20c, e e-mail da equipe):
   - [x] sistema fora do ar: monitor externo do `/up`, por e-mail
-  - [ ] **[você]** pg_dump com falha ou que não rodou: alerta do monitor `pg-dump-diario` por e-mail, depois do primeiro envio (`aws-arquivos.md`, passo 7.3)
+  - [x] **[você]** pg_dump com falha ou que não rodou: alerta do monitor `pg-dump-diario` por e-mail, depois do primeiro envio (`aws-arquivos.md`, passo 7.3). Pela regra padrão "Send a notification for high priority issues", com a condição "A resolved issue regresses" acrescentada em 2026-10-26
   - [ ] lacuna: fila `time` atrasada mais de 2 minutos. O `/up/deep` já responde 503 nesse caso, mas precisa de um monitor externo próprio. Alternativa sem custo: trocar o monitor do `/up` pelo `/up/deep`, que confere também o banco e o Redis, se o monitor do Sentry aceitar o cabeçalho `Authorization` (não confirmado)
   - [ ] lacuna: disco do banco acima de 85% e certificado vencendo em 7 dias (conferir os alertas de uso do Railway e se o monitor externo do Sentry avisa o certificado)
 - **Alto** (e-mail da equipe):
