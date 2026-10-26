@@ -105,10 +105,11 @@ Projeto `catalyst_hr`, ambiente `production`, região **US East (Virgínia)** em
 | `web` | `Dockerfile` | padrão do Dockerfile (Thruster na porta 80, Puma na 3000) | `bin/rails db:migrate` | `/up`, 120 s | 2 | `PORT=80`, para o Railway rotear e fazer o health check na porta do Thruster |
 | `worker` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | — |
 | `worker-time` | `Dockerfile` | `bundle exec sidekiq` | — | — | 1 | `SIDEKIQ_ROLE=time` (só a fila do ponto) |
+| `backup` | `Dockerfile` | `bin/rails backup:daily_dump`, pelo cron `0 6 * * *` (3h em Brasília) | — | — | 1 | Só as que o pg_dump usa: `DATABASE_URL`, `RAILS_MASTER_KEY` e `SENTRY_DSN` (referências), `AWS_REGION`, `BACKUPS_KMS_KEY_ID` e a chave do usuário IAM `catalysthr-backup` (RN-20-050). Sem `REDIS_URL` nem as chaves da criptografia de campos |
 | `Postgres` | template do Railway (Postgres 18 com pgvector) | — | — | — | 1 | Sem endereço público |
 | `Redis` | template do Railway (Redis 8) | `redis-server` com `--appendonly yes --maxmemory-policy noeviction` | — | — | 1 | Sem endereço público |
 
-Os serviços `clamav` e `backup` entram na fase 1. Os três serviços da aplicação usam a política de reinício `ON_FAILURE`.
+Nenhum serviço é ligado ao GitHub: todos são publicados pelo workflow **Deploy**, para que nenhum suba sem o CI verde ou no pico do ponto. O serviço `clamav` entra com a pasta de documentos (D-606). Os três serviços da aplicação usam a política de reinício `ON_FAILURE`; o `backup` usa `NEVER`, para uma falha não repetir o dump nem o alerta.
 
 Variáveis comuns aos três serviços da aplicação: `DATABASE_URL` (referência `${{Postgres.DATABASE_URL}}`), `REDIS_URL` (referência `${{Redis.REDIS_URL}}`), `RAILS_MASTER_KEY` e `APP_HOST`. O `SENTRY_DSN` (organização e projeto `catalysthr` no Sentry, região EUA) também está nos três serviços. Segredos nunca entram no repositório.
 

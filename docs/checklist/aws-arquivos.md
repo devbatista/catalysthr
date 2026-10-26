@@ -264,8 +264,8 @@ Console: **IAM → Usuários → Criar usuário**, nome `catalysthr-backup`, **s
 
 Sem `s3:GetObject`, `s3:ListBucket`, `s3:DeleteObject` nem `kms:Decrypt`: esse usuário não lê nem apaga backups. O envio é num pedido só (`PutObject`), que pede só o `kms:GenerateDataKey`. O envio em partes (multipart) pediria também o `kms:Decrypt` ([documentação do S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html)).
 
-- [ ] Usuário `catalysthr-backup` e política `catalysthr-backup-gravar` criados
-- [ ] Chave de acesso criada (caso de uso **Aplicação em execução fora da AWS**, descrição `railway-backup`)
+- [x] Usuário `catalysthr-backup` e política `catalysthr-backup-gravar` criados (2026-10-26)
+- [x] Chave de acesso criada (caso de uso **Aplicação em execução fora da AWS**, descrição `railway-backup`)
 
 ### 7.2 Usuário da restauração: só lê
 
@@ -302,15 +302,22 @@ Mesmo caminho, nome `catalysthr-restore`, política em linha `catalysthr-restore
 
 ### 7.3 Serviço `backup` no Railway
 
-No projeto `catalyst_hr`, **New → GitHub Repo** com o mesmo repositório, nome `backup` (D-606):
+Antes, confira que o `web` já publicou o 20a: o pre-deploy dele cria a tabela `backup_runs`, e sem ela o dump falha com `ActiveRecord::StatementInvalid` (aconteceu em 2026-10-26, com os deploys parados desde o incidente da R-001).
 
-- [ ] **Settings → Deploy → Custom Start Command:** `bin/rails backup:daily_dump`
-- [ ] **Settings → Deploy → Cron Schedule:** `0 6 * * *`. O Railway lê o cron em UTC, e 6h UTC são 3h em Brasília. Confira o texto do campo no painel.
-- [ ] **Sem** pre-deploy command: as migrações rodam só no `web` (RN-20-014)
-- [ ] **Variables:** as mesmas do `web` para o Rails subir (`DATABASE_URL` como referência ao Postgres, `RAILS_MASTER_KEY` ou `SECRET_KEY_BASE`, `SENTRY_DSN`, `AWS_REGION` = `sa-east-1`), mais:
-  - [ ] `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` do `catalysthr-backup`, **não** as do `catalysthr-app` (RN-20-050)
-  - [ ] `BACKUPS_KMS_KEY_ID` = `0692876d-247d-49c2-8e22-d96b3caad0e0`
-  - [ ] `BACKUPS_BUCKET` = `catalysthr-backups` (é o padrão do código; pode ficar sem)
-- [ ] Rodar uma vez à mão (**Deployments → Run now**, ou o próximo horário) e me avisar. Eu confiro o objeto no S3 e o monitor `pg-dump-diario` no Sentry, que o primeiro envio cria (CA-20-003)
+No projeto `catalyst_hr`, **New → Empty Service**, nome `backup`. Como o `web` e os workers, ele **não** é ligado ao GitHub: quem publica é o workflow **Deploy** (`railway up --ci --service backup`), com o CI verde e fora do pico do ponto (RN-20-032, D-575).
+
+- [x] **Settings → Build → Builder:** Dockerfile, caminho `Dockerfile` (é a imagem com o pg_dump 18)
+- [x] **Settings → Deploy → Region:** US East, a mesma do Postgres (D-500)
+- [x] **Settings → Deploy → Custom Start Command:** `bin/rails backup:daily_dump`
+- [x] **Settings → Deploy → Cron Schedule:** `0 6 * * *`. O Railway lê o cron em UTC, e 6h UTC são 3h em Brasília.
+- [x] **Sem** pre-deploy command: as migrações rodam só no `web` (RN-20-014). A política de reinício fica `NEVER`, que o Railway põe nos crons.
+- [x] **Variables** (2026-10-26), só as que o pg_dump usa. As referências evitam copiar segredos e acompanham as trocas no `web`:
+  - [x] `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`, `RAILS_MASTER_KEY` = `${{web.RAILS_MASTER_KEY}}`, `SENTRY_DSN` = `${{web.SENTRY_DSN}}`, `AWS_REGION` = `sa-east-1`
+  - [x] `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` do `catalysthr-backup`, **não** as do `catalysthr-app` (RN-20-050)
+  - [x] `BACKUPS_KMS_KEY_ID` = `0692876d-247d-49c2-8e22-d96b3caad0e0`
+  - `BACKUPS_BUCKET` fica sem: o padrão do código é `catalysthr-backups`
+  - Sem `REDIS_URL` e sem as chaves da criptografia de campos: o dump copia o texto já criptografado
+- [ ] **Settings → Source → Disconnect:** o serviço foi ligado ao GitHub em 2026-10-26, por uma versão anterior deste passo. Desligar depois do merge que põe o `backup` no workflow Deploy
+- [ ] Rodar uma vez à mão (**Cron Runs → Run now**) e me avisar. Eu confiro o objeto no S3 e o monitor `pg-dump-diario` no Sentry, que o primeiro envio cria (CA-20-003)
 - [ ] Depois do primeiro sucesso: no Sentry, ligar o alerta do monitor `pg-dump-diario` para falha e para "não rodou", por e-mail
 
