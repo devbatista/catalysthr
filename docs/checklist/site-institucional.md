@@ -9,10 +9,10 @@
 
 - [x] **[Claude]** Página inicial com as cenas guiadas pela rolagem, termos de uso, política de privacidade e 404, conferidas no computador (1440 px) e no celular (390 px) (2026-10-27)
 - [x] **[Claude]** Repositório privado `devbatista/catalysthr-site` criado
-- [ ] **[você]** Endereço da sede da DevBatista, para os termos de uso (item 1.1)
-- [ ] **[você]** Foro dos termos de uso (item 13)
-- [ ] **[você]** Nome do encarregado de dados, para a política de privacidade (item 9)
-- [ ] **[Claude]** Preencher os três campos e montar sem o aviso `⟦A PREENCHER⟧`
+- [x] **[você]** Endereço da sede da DevBatista, para os termos de uso (item 1.1): Rua Padre Fernando Pedreira de Castro, 30, Jurubatuba, São Paulo/SP, CEP 04696-180 (2026-10-27)
+- [x] **[você]** Foro dos termos de uso (item 13): Comarca de São Paulo/SP (2026-10-27)
+- [x] **[você]** Nome do encarregado de dados, para a política de privacidade (item 9): Rafael Batista (2026-10-27)
+- [x] **[Claude]** Preencher os três campos nas páginas legais (2026-10-27)
 
 Os termos saem sem a cláusula de limitação de responsabilidade (11.3 da minuta), que depende do jurídico.
 
@@ -21,7 +21,7 @@ Os termos saem sem a cláusula de limitação de responsabilidade (11.3 da minut
 - [ ] **[você]** HostGator: cadastrar `catalysthr.com.br` no cPanel (domínio adicional) e anotar a pasta e o IP do servidor
 - [ ] **[você]** Cloudflare: registros `A` de `catalysthr.com.br` e de `www` para o IP da HostGator, **sem proxy** (D-503). Não mexer nos registros do SES (DKIM, `bounce`, DMARC) nem no `admin` e no `*.painel`
 - [ ] **[você]** HostGator: SSL (AutoSSL) emitido para `catalysthr.com.br` e `www`
-- [ ] **[você]** Enviar o conteúdo de `dist/` (com o `.htaccess`) para a pasta do domínio
+- [ ] **[você]** Enviar os arquivos do repositório (com o `.htaccess`, sem `ferramentas/`, `README.md` e `.git/`) para a pasta do domínio
 - [ ] **[Claude]** Conferir no ar: HTTPS, redirecionamento para `www`, URLs sem `.html`, 404, cabeçalhos de segurança e as páginas legais
 
 ## 3. SES
