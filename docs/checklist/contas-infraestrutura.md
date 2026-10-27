@@ -40,14 +40,14 @@
 
 No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `pg-dump-diario`, do 20a). O que a RN-20-075 prevê e ainda não tem monitor fica marcado como lacuna até a revisão do plano, antes do primeiro cliente.
 
-- [ ] **[você]** `HEALTH_CHECK_TOKEN` no serviço `web`: gere um valor aleatório longo (por exemplo, `openssl rand -hex 32` no seu terminal) e cole direto no Railway, sem passar pelo chat. Sem ele, o `/up/deep` responde 404
+- [x] **[Claude]** `HEALTH_CHECK_TOKEN` no serviço `web`: um valor aleatório longo (`openssl rand -hex 32`), gravado direto no Railway, sem passar pelo chat. Sem ele, o `/up/deep` responde 404. Feito em 2026-10-27; conferido: 404 sem o token ou com um errado, e 200 com o banco, o Redis e as filas ok com ele. Para um monitor, o valor está no painel do Railway (`web` → Variables)
 - **Crítico** (plantão, com o reenvio do 20c, e e-mail da equipe):
   - [x] sistema fora do ar: monitor externo do `/up`, por e-mail
   - [x] **[você]** pg_dump com falha ou que não rodou: alerta do monitor `pg-dump-diario` por e-mail, depois do primeiro envio (`aws-arquivos.md`, passo 7.3). Pela regra padrão "Send a notification for high priority issues", com a condição "A resolved issue regresses" acrescentada em 2026-10-26
   - [ ] lacuna: fila `time` atrasada mais de 2 minutos. O `/up/deep` já responde 503 nesse caso, mas precisa de um monitor externo próprio. Alternativa sem custo: trocar o monitor do `/up` pelo `/up/deep`, que confere também o banco e o Redis, se o monitor do Sentry aceitar o cabeçalho `Authorization` (não confirmado)
   - [ ] lacuna: disco do banco acima de 85% e certificado vencendo em 7 dias (conferir os alertas de uso do Railway e se o monitor externo do Sentry avisa o certificado)
 - **Alto** (e-mail da equipe):
-  - [ ] **[você]** Em Alerts → Create Alert → Issues, uma regra "erros em massa": uma issue com mais de 50 eventos em 1 hora, ou uma issue nova de nível `error` em produção, com e-mail para a equipe. As falhas de e-mail (SES) e do Mercado Pago já chegam como erro. O disjuntor da IA e o eSocial entram com as specs 14 e 13
+  - [x] **[você]** Em Alerts → Create Alert → Issues, uma regra "erros em massa": uma issue com mais de 50 eventos em 1 hora, ou uma issue nova de nível `error` em produção, com e-mail para a equipe. Feito em 2026-10-27, em duas regras, porque o filtro de frequência só funciona com o gatilho "An event or issue activity is captured" ([documentação](https://docs.sentry.io/product/monitors-and-alerts/alerts/create-alerts/)): "Erros em massa" (a cada evento, nível ≥ `error` e mais de 50 eventos na issue em 1 hora) e "Erros novos em produção" (issue nova, que escala ou que volta, nível ≥ `error`), as duas em `production`, por e-mail e no máximo uma vez por hora por issue. Conferidas pela API. As falhas de e-mail (SES) e do Mercado Pago já chegam como erro. O disjuntor da IA e o eSocial entram com as specs 14 e 13
 - **Informativo** (resumo semanal):
   - [x] versões novas de dependências: os PRs semanais do Dependabot
   - [ ] uso de recursos: a revisão mensal dos limites do Railway (RN-20-083)
