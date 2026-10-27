@@ -60,7 +60,8 @@
 
 - [x] Pedir a saída do **sandbox do SES** em São Paulo (sa-east-1). Sem isso, só é possível mandar e-mail para endereços verificados. Enviado em 2026-10-14, em análise
 - [x] Verificar o domínio `catalysthr.com.br` no SES (DKIM, SPF, DMARC) (2026-10-14)
-- [ ] Resposta da AWS ao pedido de saída do sandbox
+- [x] Resposta da AWS ao pedido de saída do sandbox: **recusado** em 2026-10-27 (caso 179201169800267), sem motivo informado. Hipótese: o site do pedido (`admin.catalysthr.com.br`) só mostrava a tela de login, sem site público nem política de privacidade
+- [ ] Novo pedido, com o site institucional no ar (`site-institucional.md`, D-631)
 - [ ] Na fase 1: chaves do KMS dos arquivos e dos backups, com rotação anual, e usuários IAM por finalidade (P-20-21, P-20-22). A chave do A1 fica para a fase 3
 
 ## WhatsApp pela Twilio — trava a fase 2 (convites por WhatsApp já na fase 1)
