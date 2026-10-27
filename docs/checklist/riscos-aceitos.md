@@ -54,17 +54,18 @@ aws sesv2 get-account --region sa-east-1 --profile catalysthr
 
 ### Como fechar
 
-- [ ] **[você]** Decidir desativar a chave. Desativar não apaga, e dá para reativar. **[Claude]** pode rodar `aws iam update-access-key --status Inactive` com o seu OK
-- [ ] **[Claude]** Quando os deploys voltarem: criar uma chave nova para o `catalysthr-app`
-- [ ] **[você]** Pôr a chave nova no Railway (`AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`) e publicar
-- [ ] **[Claude]** Conferir que a produção usa a chave nova e apagar a antiga
+- [x] **[você]** Decidir desativar a chave. Desativar não apaga, e dá para reativar. **[Claude]** pode rodar `aws iam update-access-key --status Inactive` com o seu OK
+- [x] **[Claude]** Quando os deploys voltarem: criar uma chave nova para o `catalysthr-app` (2026-10-27)
+- [x] **[Claude]** Pôr a chave nova no Railway (`AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`) e publicar: gravada no `web` direto da AWS, sem passar pelo chat, e por referência no `worker` e no `worker-time`
+- [x] **[Claude]** Conferir que a produção usa a chave nova: com a antiga já desativada, o `web` e o `worker` acessam o bucket de arquivos (2026-10-27). A antiga nunca foi usada ("None")
+- [ ] **[Claude]** Apagar a chave antiga (`AKIAWYQ2…` de 2026-10-16, inativa), depois de alguns dias sem reclamação
 
 ### Outras variáveis do Railway no mesmo incidente
 
 Estas ficam abertas, para trocar quando os deploys voltarem. Hoje não são riscos aceitos, só bloqueados pela pausa.
 
 - [x] `RAILS_MASTER_KEY` / `secret_key_base`: **risco alto**, porque permite forjar o cookie de sessão. Gerar um novo e publicar, o que derruba as sessões abertas. Feito em 2026-10-26 (D-630): um `SECRET_KEY_BASE` novo, gerado direto no Railway sem passar pelo chat, no `web` e por referência nos outros serviços; o `RAILS_MASTER_KEY` saiu dos quatro serviços e o `config/credentials.yml.enc`, que só guardava o `secret_key_base` antigo, saiu do repositório. Conferido: o Rails usa a chave nova, o login com MFA funcionou e o backup rodou
-- [ ] Senhas do Postgres e do Redis (`DATABASE_URL`, `REDIS_URL`): os dois estão só na rede privada. Trocar pelo painel do Railway
-- [ ] `ACTIVE_RECORD_ENCRYPTION_*`: trocar com a rotação do Rails, mantendo as chaves antigas para leitura
+- [x] Senhas do Postgres e do Redis (`DATABASE_URL`, `REDIS_URL`): os dois estão só na rede privada. Trocadas em 2026-10-27, geradas direto no Railway. O Redis lê a `REDIS_PASSWORD` no início; no Postgres, um `ALTER ROLE CURRENT_USER` pelo `web` e a `POSTGRES_PASSWORD` gravada em seguida, com volta pronta. Conferido: conexões novas ao banco, os dois Sidekiq no Redis, as filas intactas e o backup com a senha nova
+- [x] `ACTIVE_RECORD_ENCRYPTION_*`: trocadas em 2026-10-27, com as três chaves novas. Havia um só registro criptografado (o CPF e o segredo do MFA do único usuário), recifrado num processo só, lendo com as chaves antigas e gravando com as novas, sem a rotação do Rails. Conferido: o CPF e o MFA são lidos e a busca pelo CPF funciona. As chaves antigas e as novas foram salvas num arquivo local, com permissão só do responsável, para ele levar ao cofre de senhas e apagar o arquivo; **as antigas são necessárias para ler os backups até 2026-12-01**, quando o último backup feito com elas expira (D-223)
 - [ ] `SENTRY_DSN`: baixo risco. Gerar uma nova chave do projeto no Sentry
-- [ ] `RAILWAY_TOKEN` no GitHub: gerar um novo e atualizar o secret do workflow de deploy
+- [x] `RAILWAY_TOKEN` no GitHub: gerar um novo e atualizar o secret do workflow de deploy (2026-10-26; o antigo já não valia)
