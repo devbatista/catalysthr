@@ -18,11 +18,11 @@ Os termos saem sem a cláusula de limitação de responsabilidade (11.3 da minut
 
 ## 2. Publicação
 
-- [ ] **[você]** HostGator: cadastrar `catalysthr.com.br` no cPanel (domínio adicional) e anotar a pasta e o IP do servidor
-- [ ] **[você]** Cloudflare: registros `A` de `catalysthr.com.br` e de `www` para o IP da HostGator, **sem proxy** (D-503). Não mexer nos registros do SES (DKIM, `bounce`, DMARC) nem no `admin` e no `*.painel`
-- [ ] **[você]** HostGator: SSL (AutoSSL) emitido para `catalysthr.com.br` e `www`
-- [ ] **[você]** Enviar os arquivos do repositório (com o `.htaccess`, sem `ferramentas/`, `README.md` e `.git/`) para a pasta do domínio
-- [ ] **[Claude]** Conferir no ar: HTTPS, redirecionamento para `www`, URLs sem `.html`, 404, cabeçalhos de segurança e as páginas legais
+- [x] **[você]** HostGator: `catalysthr.com.br` cadastrado no cPanel (domínio adicional), pasta `/home1/raf32916/catalysthr.com.br`, IP 69.6.212.238 (2026-10-27)
+- [x] **[você]** Cloudflare: registros `A` de `catalysthr.com.br` e de `www` para o IP da HostGator, **sem proxy** (D-503). Não mexer nos registros do SES (DKIM, `bounce`, DMARC) nem no `admin` e no `*.painel` (2026-10-27)
+- [x] **[você]** HostGator: SSL (AutoSSL, Let's Encrypt) emitido para `catalysthr.com.br` e `www`, válido até 2027-01-25 e renovado pela HostGator (2026-10-27)
+- [x] **[você]** Publicação por FTP a cada push na `main` do `catalysthr-site` (GitHub Actions, `FTP-Deploy-Action`, sem `ferramentas/` e `README.md`) (2026-10-27)
+- [x] **[Claude]** Conferido no ar: HTTPS válido, `http` e domínio sem `www` redirecionam para `https://www.catalysthr.com.br`, URLs sem `.html`, 404, cabeçalhos de segurança (CSP, HSTS, `X-Frame-Options`), cache, páginas legais preenchidas e arquivos internos com 404 (2026-10-27)
 
 ## 3. SES
 
