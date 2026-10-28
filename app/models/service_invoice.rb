@@ -9,8 +9,15 @@ class ServiceInvoice < ApplicationRecord
   STATUSES = %w[pending scheduled authorized error cancelled].freeze
 
   belongs_to :invoice
+  # The authorized note's files, in the private bucket (RN-19-107).
+  has_one_attached :pdf
+  has_one_attached :xml
 
   enum :status, STATUSES.index_by(&:itself), validate: true
+
+  def files_missing?
+    !(pdf.attached? && xml.attached?)
+  end
 
   validates :amount_cents, numericality: { only_integer: true, greater_than: 0 }
   validates :competence_on, presence: true

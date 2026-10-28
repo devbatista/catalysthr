@@ -65,6 +65,8 @@ module CatalystHr
     # Asaas, only for the NFS-e (spec 19, D-633): the API key, whose prefix says sandbox or
     # production. Without it, no note is issued.
     config.x.asaas_api_key = ENV["ASAAS_API_KEY"].presence
+    # The token Asaas sends with each notice, set on the webhook in Asaas's panel.
+    config.x.asaas_webhook_token = ENV["ASAAS_WEBHOOK_TOKEN"].presence
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

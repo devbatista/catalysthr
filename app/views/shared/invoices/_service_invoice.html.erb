@@ -1,4 +1,4 @@
-<%# The invoice's NFS-e (RN-19-106, RN-19-108, RN-19-111, D-633). locals: note; team: the
+<%# The invoice's NFS-e (RN-19-106 to RN-19-108, RN-19-111, D-633). locals: note; team: the
     CatalystHR team's view, with the error, "Emitir de novo" and the history. The client
     sees only where the note is: a refusal is the team's to fix. %>
 <div class="card card-body mt-6 space-y-4">
@@ -11,6 +11,25 @@
     <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.scheduled_for", date: l(note.effective_on)) %></p>
   <% elsif !team && (note.pending? || note.error?) %>
     <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.processing_hint") %></p>
+  <% end %>
+
+  <% if note.authorized? %>
+    <dl class="details-list">
+      <div><dt><%= t("shared.invoices.service_invoice.number") %></dt><dd><%= note.number.presence || "—" %></dd></div>
+      <div><dt><%= t("shared.invoices.service_invoice.verification_code") %></dt><dd><%= note.verification_code.presence || "—" %></dd></div>
+      <div><dt><%= t("shared.invoices.service_invoice.authorized_at") %></dt><dd><%= l(note.authorized_at.to_date) %></dd></div>
+    </dl>
+    <% if note.pdf.attached? || note.xml.attached? %>
+      <div class="flex flex-wrap gap-3">
+        <% %i[pdf xml].select { |kind| note.public_send(kind).attached? }.each do |kind| %>
+          <%= link_to t("shared.invoices.service_invoice.download.#{kind}"), service_invoice_file_path(note, kind, team: team),
+            class: "btn btn-secondary" %>
+        <% end %>
+      </div>
+    <% end %>
+    <% if note.files_missing? %>
+      <p class="field-hint"><%= t("shared.invoices.service_invoice.files_pending") %></p>
+    <% end %>
   <% end %>
 
   <% if team %>

@@ -2128,6 +2128,11 @@ pt-BR:
         hint: "Quando a fatura do mês é emitida, 3 dias antes do vencimento."
         title: "Fatura %{number} de %{name}: %{total}"
         body: "A fatura do período de %{period_start} a %{period_end} vence em %{due}. Veja o detalhamento de cada item na plataforma."
+      nfse_issued:
+        name: "Nota fiscal emitida"
+        hint: "Quando a prefeitura autoriza a nota fiscal de uma fatura paga."
+        title: "Nota fiscal da fatura %{number} emitida"
+        body: "A NFS-e %{nfse} da fatura %{number} de %{name}, no valor de %{total}, foi autorizada pela prefeitura. O PDF e o XML estão na fatura."
       price_change:
         name: "Mudança de preço do plano"
         hint: "Com 30 dias de antecedência, quando o preço do plano muda."
@@ -2333,6 +2338,13 @@ pt-BR:
         reissue: "Emitir de novo"
         reissue_hint: "Corrija antes o que a mensagem aponta (dados do cliente ou configuração fiscal)."
         history: "Histórico da nota"
+        number: "Número da NFS-e"
+        verification_code: "Código de verificação"
+        authorized_at: "Autorizada em"
+        download:
+          pdf: "Baixar PDF"
+          xml: "Baixar XML"
+        files_pending: "Os arquivos da nota ainda estão sendo baixados da prefeitura e aparecem aqui em breve."
         statuses:
           pending: "Aguardando envio"
           scheduled: "Agendada"
@@ -2471,6 +2483,7 @@ pt-BR:
         no_document: "O cliente não tem CNPJ ou CPF cadastrado (no parceiro, ou na sede da empresa)."
         refused: "O Asaas recusou a nota, sem informar o motivo."
         unavailable: "O Asaas ficou fora do ar nas 4 tentativas de envio."
+        city: "A prefeitura recusou a nota, sem informar o motivo."
     adjustments:
       discount: "Desconto"
       discount_percent: "Desconto de %{percent}%"

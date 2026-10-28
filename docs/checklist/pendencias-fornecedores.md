@@ -53,7 +53,7 @@
 - [ ] Antes da primeira nota pelo Asaas: confirmar com o contador a série da DPS. A documentação do Asaas põe a série do acesso por usuário e senha entre 80000 e 89999, contra a série 1 da D-628 (D-633). Confirmar também no Portal Nacional que a série escolhida não foi usada por outro canal
 - [ ] Reforma tributária, para 2027: escolher o regime de IBS e CBS com a Contabilizei (o estudo prévio recomendou o Simples tradicional) e confirmar com um especialista humano o prazo da opção (o assistente disse "até o último dia útil de janeiro de 2027") e o cClassTrib (indicou 000001). Conferir no Asaas como mandar o IBS, a CBS e o cClassTrib, obrigatórios na nota a partir de 2027-01-01 (D-632)
 - [x] **Asaas:** preço por nota confirmado na conta em 2026-10-22: **R$ 0,49 por nota emitida** (Minha conta → Taxas e prazos → Serviços de gestão). As notificações do Asaas por e-mail e SMS custam R$ 0,99 por cobrança paga; como não há cobrança no Asaas (D-561), não deveriam incidir
-- [ ] **Asaas:** criar a chave de API e configurar o webhook de notas
+- [ ] **Asaas:** na produção, criar a chave de API e o webhook de notas (D-633): URL `https://admin.catalysthr.com.br/webhooks/asaas`, eventos de nota fiscal, com o token gerado no painel do Asaas. A chave vai no `ASAAS_API_KEY` e o token no `ASAAS_WEBHOOK_TOKEN` do Railway (serviços `web` e `worker`), sem passar pelo chat. Na primeira nota real, conferir se o PDF e o XML baixam sem a chave
 - [ ] **Asaas:** desligar o envio de e-mail das notas pelo Asaas (D-564)
 
 ## AWS — trava a fase 1 (conta `catalysthr`, D-574)

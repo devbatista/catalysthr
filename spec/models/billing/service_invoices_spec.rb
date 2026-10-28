@@ -192,4 +192,95 @@ RSpec.describe Billing::ServiceInvoices do
       expect(note.reload).to have_attributes(status: "pending", error_message: nil, asaas_invoice_id: nil)
     end
   end
+
+  describe ".sync" do
+    let(:admin) { create(:user, cpf: "39053344705") }
+    let(:note) do
+      perform_enqueued_jobs(only: []) { pay }.tap do |record|
+        record.update!(status: "scheduled", asaas_invoice_id: "inv_000000000001", effective_on: Date.new(2026, 11, 1))
+      end
+    end
+
+    before do
+      create(:membership, user: admin, organization: partner, roles: %w[partner_admin])
+      account.update!(responsible_user: admin)
+      note
+    end
+
+    it "counts the note as issued only on the city's authorization, with its files and the notice (RN-19-106, RN-19-107)" do
+      stub_asaas_files
+
+      described_class.sync(asaas_invoice(id: "inv_000000000001"))
+
+      expect(note.reload).to have_attributes(status: "authorized", number: "202600000000001", verification_code: "ABCD-1234",
+        authorized_at: Time.current)
+      expect(note.pdf.download).to eq("%PDF-1.7 nota")
+      expect(note.xml.download).to eq("<NFSe/>")
+      notice = Notification.where(notification_type: "billing.nfse_issued").sole
+      expect(notice).to have_attributes(recipient_user: admin, path: "/partner/invoices/#{invoice.id}")
+    end
+
+    it "changes nothing when the same authorization comes again" do
+      stub_asaas_files
+      described_class.sync(asaas_invoice(id: "inv_000000000001"))
+
+      expect { described_class.sync(asaas_invoice(id: "inv_000000000001")) }.not_to change(Notification, :count)
+      expect(a_request(:get, "https://sandbox.asaas.com/nfse/pdf/inv_000000000001")).to have_been_made.once
+    end
+
+    it "authorizes the note even when its files cannot be fetched yet, and reports it" do
+      stub_request(:get, %r{https://sandbox.asaas.com/nfse/}).to_return(status: 500)
+      allow(Rails.error).to receive(:report)
+
+      described_class.sync(asaas_invoice(id: "inv_000000000001"))
+
+      expect(note.reload).to be_authorized
+      expect(note).to be_files_missing
+      expect(Rails.error).to have_received(:report).twice
+    end
+
+    it "takes the city's refusal as an error, with its message, for the team (RN-19-108, CA-19-013)" do
+      described_class.sync(asaas_invoice(id: "inv_000000000001", status: "ERROR", statusDescription: "Inscrição municipal inválida."))
+
+      expect(note.reload).to have_attributes(status: "error", error_message: "Inscrição municipal inválida.")
+      expect(Notification.where(notification_type: "platform.nfse_error").map(&:recipient_user)).to include(finance)
+    end
+
+    it "leaves alone a note of an old try and one that is not ours" do
+      note.update!(asaas_invoice_id: "inv_000000000002")
+
+      expect(described_class.sync(asaas_invoice(id: "inv_000000000001"))).to be_nil
+      expect(note.reload).to be_scheduled
+    end
+  end
+
+  describe ".reconcile" do
+    let(:note) { perform_enqueued_jobs(only: []) { pay } }
+
+    it "reads the notes whose day passed and fetches the missing files, in case a notice was lost" do
+      note.update!(status: "scheduled", asaas_invoice_id: "inv_000000000001", effective_on: Date.new(2026, 10, 28))
+      stub_asaas_invoice(asaas_invoice(id: "inv_000000000001"))
+      stub_asaas_files
+
+      described_class.reconcile
+
+      expect(note.reload).to be_authorized
+      expect(note).not_to be_files_missing
+    end
+
+    it "leaves the notes of today and later for the city" do
+      note.update!(status: "scheduled", asaas_invoice_id: "inv_000000000001", effective_on: Date.current)
+
+      described_class.reconcile
+
+      expect(a_request(:get, "#{AsaasStub::BASE_URL}/invoices/inv_000000000001")).not_to have_been_made
+    end
+
+    it "sends again a note left pending for an hour, whose job was lost" do
+      note
+      travel 2.hours
+
+      expect { described_class.reconcile }.to have_enqueued_job(Billing::IssueServiceInvoiceJob).with(note)
+    end
+  end
 end

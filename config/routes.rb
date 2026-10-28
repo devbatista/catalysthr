@@ -16,6 +16,10 @@ Rails.application.routes.draw do
   # sign-in; the controller accepts only a notice signed with the account's secret.
   post "webhooks/mercado-pago", to: "mercado_pago_webhooks#create", as: :mercado_pago_webhooks
 
+  # Asaas's notices about the NFS-e (spec 19, RN-19-106, D-633). Answers on any host,
+  # without sign-in; the controller accepts only a notice with the webhook's token.
+  post "webhooks/asaas", to: "asaas_webhooks#create", as: :asaas_webhooks
+
   # Sign-in, recovery and unlock (spec 02), on the admin host and on every brand's
   # subdomain. Who may sign in depends on the host (RN-02-004, RN-01-002).
   devise_for :users, path: "", controllers: { sessions: "users/sessions" },
@@ -109,8 +113,9 @@ Rails.application.routes.draw do
       end
       # The contracts' invoices (RN-19-040, RN-19-041, D-619).
       resources :invoices, only: %i[index show] do
-        # Sending again a refused NFS-e (RN-19-108).
+        # Sending again a refused NFS-e (RN-19-108) and its PDF and XML (RN-19-107).
         post "service-invoice/reissue", to: "service_invoices#reissue", as: :reissue_service_invoice
+        get "service-invoice/:kind", action: :service_invoice_file, on: :member, as: :service_invoice_file, kind: /pdf|xml/
       end
       # The NFS-e's fiscal settings (RN-19-102, D-633).
       resource :fiscal_settings, only: %i[show edit update], path: "fiscal-settings"
@@ -165,8 +170,10 @@ Rails.application.routes.draw do
       # The company's settings and units (spec 04, RN-04-002 to RN-04-014, D-601).
       resource :company_settings, path: "settings", only: %i[edit update]
       # The direct company's invoices (spec 19, RN-19-041, D-619) and its contracting during
-      # the trial or after it (RN-19-033, D-622).
-      resources :invoices, only: %i[index show]
+      # the trial or after it (RN-19-033, D-622), with the NFS-e's PDF and XML (RN-19-107).
+      resources :invoices, only: %i[index show] do
+        get "service-invoice/:kind", action: :service_invoice_file, on: :member, as: :service_invoice_file, kind: /pdf|xml/
+      end
       resource :contract, only: %i[new create]
       # The cancellation by the client and its undo (RN-19-062, D-625).
       resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
@@ -259,7 +266,9 @@ Rails.application.routes.draw do
         # The portfolio's usage and its CSV (spec 19, RN-19-024), the contract's invoices (D-619)
         # and the contracting during the trial or after it (RN-19-033, D-622).
         resource :usage, only: :show
-        resources :invoices, only: %i[index show]
+        resources :invoices, only: %i[index show] do
+          get "service-invoice/:kind", action: :service_invoice_file, on: :member, as: :service_invoice_file, kind: /pdf|xml/
+        end
         resource :contract, only: %i[new create]
         # The cancellation by the client and its undo (RN-19-062, RN-19-063, D-625).
         resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
