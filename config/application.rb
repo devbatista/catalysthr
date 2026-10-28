@@ -62,6 +62,9 @@ module CatalystHr
     # secret signature, from Suas integrações. Without the token, no PIX is generated.
     config.x.mercado_pago_access_token = ENV["MERCADO_PAGO_ACCESS_TOKEN"].presence
     config.x.mercado_pago_webhook_secret = ENV["MERCADO_PAGO_WEBHOOK_SECRET"].presence
+    # Asaas, only for the NFS-e (spec 19, D-633): the API key, whose prefix says sandbox or
+    # production. Without it, no note is issued.
+    config.x.asaas_api_key = ENV["ASAAS_API_KEY"].presence
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

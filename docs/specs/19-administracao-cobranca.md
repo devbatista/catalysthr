@@ -184,21 +184,18 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**. Os acessos são os logins já gravados em `access_events`, pela marca do contrato (D-626).
 - **RN-19-092** — O custo da IA em dólares (spec 14) é convertido pela cotação do dia, guardada junto do custo **[P-19-27]**.
 
-### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565, D-628, D-632)
+### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565, D-628, D-632, D-633)
 
 - **RN-19-100** — A plataforma emite pelo **Asaas** as NFS-e do **CatalystHR** para os **parceiros e as empresas diretas**, uma por fatura paga (D-560). Notas de parceiros para os clientes deles continuam fora da plataforma (D-482).
 - **RN-19-101** — O Asaas é usado **só para notas**. A cobrança continua no Mercado Pago (D-561). A nota é emitida como **nota avulsa ligada ao cliente** no Asaas, sem cobrança no Asaas.
-- **RN-19-102** — **Configuração fiscal**, na área admin (Cobrança), mantida pelo superadmin e pelo financeiro **[P-19-30]**:
-  - a conta do Asaas do CatalystHR, com os dados fiscais e a configuração do **Portal Nacional da NFS-e**, conforme as exigências do município (`fiscalInfo/municipalOptions`) (D-628);
-  - os códigos do serviço: o código de tributação nacional, o NBS, o indicador de operação (cIndOp) e o código municipal que o Asaas pede (D-632);
-  - o regime de apuração (Simples Nacional) e o regime especial ("0 - Nenhum");
-  - a série da DPS (série 1, só para o Asaas) e o próximo número;
-  - o texto padrão da descrição;
+- **RN-19-102** — **Configuração fiscal**, na área admin (Cobrança), mantida pelo superadmin e pelo financeiro **[P-19-30]**, com o que vai em cada nota (D-633):
+  - o código e o nome do serviço, o NBS (com os pontos, como `1.1506.21.00`) e o indicador de operação (cIndOp) (D-632);
+  - o texto padrão da descrição e as observações;
   - as retenções, se houver.
 
-  A alíquota do Simples não vai na nota. Os valores fiscais são definidos com o **contador da DevBatista** (D-628).
-- **RN-19-103** — **Cliente no Asaas:** na primeira nota, a plataforma cadastra o contrato como cliente no Asaas (CNPJ, razão social, endereço, e-mail de cobrança) e guarda o identificador. Mudanças nesses dados são enviadas ao Asaas antes da nota seguinte **[P-19-31]**.
-- **RN-19-104** — **Momento** (D-562): quando o pagamento da fatura é confirmado pelo Mercado Pago (RN-19-046), a plataforma agenda a nota no Asaas, com emissão imediata. A **competência** da nota é o mês em que começa o ciclo da fatura, mesmo quando o pagamento e a emissão acontecem depois (D-628).
+  A **conta do Asaas** do CatalystHR é configurada no **painel do Asaas**, e nenhuma credencial passa pela plataforma: o **Portal Nacional da NFS-e** ligado, as credenciais de acesso exigidas pelo município (`fiscalInfo/municipalOptions`), o regime de apuração (Simples Nacional), o regime especial ("0 - Nenhum"), a série e o próximo número da DPS e a inscrição municipal (D-628, D-633). A tela mostra essa configuração, lida no Asaas, só para leitura. A alíquota do Simples não vai na nota. Os valores fiscais são definidos com o **contador da DevBatista** (D-628).
+- **RN-19-103** — **Cliente no Asaas:** na primeira nota, a plataforma cadastra o contrato como cliente no Asaas (CNPJ e razão social; a empresa direta também com o endereço da sede) e guarda o identificador. O cliente vai **sem e-mail** e com as notificações do Asaas desligadas, para o Asaas não escrever ao cliente (D-564, D-633). Mudanças nesses dados são enviadas ao Asaas antes da nota seguinte **[P-19-31]**.
+- **RN-19-104** — **Momento** (D-562): quando o pagamento da fatura é confirmado pelo Mercado Pago (RN-19-046), a plataforma agenda a nota no Asaas. A **competência** da nota é o mês em que começa o ciclo da fatura (D-628). Como o Asaas só recebe a data de emissão, a nota é agendada para o **maior** entre o dia da confirmação e o primeiro dia do ciclo: paga antes do ciclo, ela sai no primeiro dia do ciclo; paga depois, sai na hora (D-633).
 - **RN-19-105** — **Conteúdo da nota** **[P-19-32]**:
   - valor: o **total pago** da fatura, com os descontos e créditos já aplicados;
   - descrição: o texto padrão, o período do ciclo e as linhas da fatura (plano, módulos, adicionais, excedentes). O excedente e o proporcional do ciclo anterior entram na mesma nota, com o período da medição (D-628);
@@ -311,9 +308,9 @@ service_invoices                                     -- NFS-e pelo Asaas
   pdf (Active Storage), xml (Active Storage), error_message, attempts,
   cancel_reason, cancelled_at
 
-fiscal_settings                                      -- configuração fiscal (P-19-30)
-  id, municipal_service_code, municipal_service_id, iss_rate, description_template,
-  retentions (jsonb), updated_by_id
+fiscal_settings                                      -- configuração fiscal (P-19-30, D-633), uma linha
+  id, service_code, service_name, nbs_code, operation_indicator_code, description,
+  observations, retain_iss, pis_rate, cofins_rate, csll_rate, inss_rate, ir_rate, updated_by_id
 ```
 
 ## 8. Jobs e integrações
@@ -335,7 +332,7 @@ fiscal_settings                                      -- configuração fiscal (P
 
 - **Mercado Pago** (D-496, D-622): API de Orders (`/v1/orders`) por cliente HTTP próprio, sem a gem oficial, com chave de idempotência por pedido. PIX criado com `payment_method` `pix`/`bank_transfer` e `expiration_time`. Webhook em `POST /webhooks/mercado-pago`, no host do admin, com a assinatura `x-signature` conferida com a assinatura secreta da conta (tópico Order); o aviso só diz qual pedido mudou, e o pedido é lido na API. Cartão: cliente e cartão salvos, cobrados no valor de cada fatura como pagamento automático; o desenho na API de Orders é definido no 19h. **Pré-requisito:** confirmar com o Mercado Pago a habilitação da conta para cobrar o cartão salvo sem o CVV (item em aberto). O Pix Automático pode entrar numa fase seguinte **[P-19-29]**.
 - **Cotação do dólar:** API pública do Banco Central (PTAX) **[P-19-27]**.
-- **Asaas** (D-560): API REST v3 por cliente HTTP próprio (Faraday), com a chave de API nas variáveis de ambiente. Endpoints de clientes, notas fiscais (agendar, emitir, cancelar) e webhooks de notas. Em desenvolvimento, o sandbox do Asaas; nos testes, WebMock **[P-19-37]**.
+- **Asaas** (D-560): API REST v3 por cliente HTTP próprio (`Net::HTTP`, como o do Mercado Pago, D-633), com a chave de API nas variáveis de ambiente (`ASAAS_API_KEY`); o prefixo da chave escolhe o sandbox ou a produção. Endpoints de clientes, notas fiscais (agendar, emitir, cancelar) e webhooks de notas. Em desenvolvimento, o sandbox do Asaas; nos testes, WebMock **[P-19-37]**.
 - **Avisos novos** no catálogo da spec 15, para o responsável financeiro: `billing.invoice_issued`, `billing.price_change` (D-620), `billing.payment_failed`, `billing.trial_ending`, `billing.trial_expired`, `billing.cancel_scheduled`, `billing.contract_closing` e `billing.nfse_issued` (obrigatórios, sino e e-mail). Para o financeiro e o superadmin: `platform.nfse_error` (S E) **[P-19-38]**. Para o superadmin: `platform.adjustment_pending` (S E, D-621). Para o RH administrador das empresas da carteira: `billing.partner_read_only` e `billing.partner_cancelled` (obrigatórios, sino e e-mail).
 
 ## 9. Critérios de aceite
@@ -401,5 +398,5 @@ fiscal_settings                                      -- configuração fiscal (P
 | P-19-34 | Três novas tentativas em falhas temporárias (1, 5 e 15 minutos) |
 | P-19-35 | Erro no cancelamento automático avisa o financeiro e o superadmin |
 | P-19-36 | Fatura de valor zero não gera nota |
-| P-19-37 | Integração por HTTP próprio (Faraday), sandbox em desenvolvimento e WebMock nos testes |
+| P-19-37 | Integração por HTTP próprio (`Net::HTTP`, D-633), sandbox em desenvolvimento e WebMock nos testes |
 | P-19-38 | Avisos `billing.nfse_issued` e `platform.nfse_error` |

@@ -1,0 +1,23 @@
+{
+  "object": "customerFiscalInfo",
+  "simplesNacional": true,
+  "rpsSerie": "80001",
+  "rpsNumber": 1,
+  "loteNumber": null,
+  "username": null,
+  "passwordSent": false,
+  "accessTokenSent": false,
+  "certificateSent": false,
+  "specialTaxRegime": "0",
+  "email": "notas@catalysthr.test",
+  "serviceListItem": null,
+  "cnae": "6202300",
+  "culturalProjectsPromoter": false,
+  "municipalInscription": "99999999",
+  "useNationalPortal": true,
+  "nationalPortalTaxCalculationRegime": "1",
+  "aedf": null,
+  "nbsCode": "1.1506.21.00",
+  "nbsDescription": "1.1506.21.00 - Serviços de hospedagem de aplicativos e programas software como serviço (SaaS)",
+  "serviceProvisionCityDefaultType": null
+}
