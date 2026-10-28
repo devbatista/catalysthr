@@ -60,6 +60,24 @@ RSpec.describe Billing::Asaas do
     end
   end
 
+  describe ".download" do
+    it "fetches a note's file from Asaas's domain, without the key" do
+      stub = stub_request(:get, "https://sandbox.asaas.com/nfse/pdf/inv_1").to_return(status: 200, body: "%PDF")
+
+      expect(described_class.download("https://sandbox.asaas.com/nfse/pdf/inv_1")).to eq("%PDF")
+      expect(stub.with { |request| !request.headers.key?("Access-Token") }).to have_been_requested
+    end
+
+    it "refuses another domain, plain HTTP and a file over the limit" do
+      expect { described_class.download("https://evil.example/asaas.com/x") }.to raise_error(described_class::Error, /refused/)
+      expect { described_class.download("https://asaas.com.evil.example/x") }.to raise_error(described_class::Error, /refused/)
+      expect { described_class.download("http://sandbox.asaas.com/x") }.to raise_error(described_class::Error, /refused/)
+
+      stub_request(:get, "https://www.asaas.com/big").to_return(status: 200, body: "x" * (described_class::FILE_LIMIT + 1))
+      expect { described_class.download("https://www.asaas.com/big") }.to raise_error(described_class::Error, /too large/)
+    end
+  end
+
   it "refuses to call without a key" do
     expect { described_class.fiscal_info }.to raise_error(described_class::Error, "Asaas API key is not configured")
   end

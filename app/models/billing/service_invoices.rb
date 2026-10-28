@@ -10,6 +10,8 @@ module Billing
   # created, since Asaas accepts duplicates.
   module ServiceInvoices
     TIME_ZONE = "America/Sao_Paulo".freeze
+    # How long the daily check keeps fetching an authorized note's missing files.
+    FILES_WINDOW = 30.days
 
     module_function
 
@@ -135,6 +137,75 @@ module Billing
           dedup_key: "platform.nfse_error/#{note.id}/#{note.errors_count}", name: account.name, number: note.invoice.display_number)
       end
       note
+    end
+
+    # Applies a note read in Asaas's API (RN-19-106): authorized, with its number, files and
+    # the client's notice; refused by the city, as an error (RN-19-108). Other statuses
+    # change nothing here; the cancellation comes with the refund (block 19i-4). A note of
+    # an old try, replaced by "Emitir de novo", is not ours any more and is left alone.
+    def sync(data, now: Time.current)
+      note = ServiceInvoice.find_by(asaas_invoice_id: data["id"]) if data["id"].present?
+      return unless note
+
+      case data["status"]
+      when "AUTHORIZED" then authorize(note, data, now)
+      when "ERROR" then fail!(note, data["statusDescription"].presence || I18n.t("billing.service_invoices.errors.city")) if note.scheduled?
+      end
+      note
+    end
+
+    # The city authorized the note: it counts as issued only now (RN-19-106). The files
+    # that cannot be fetched yet are fetched by the daily check.
+    def authorize(note, data, now)
+      newly = note.with_lock do
+        next false unless note.scheduled? || note.error?
+
+        note.update!(status: "authorized", number: data["number"], verification_code: data["validationCode"], authorized_at: now,
+          error_message: nil)
+      end
+      attach_files(note, data) if note.authorized?
+      notify_issued(note) if newly
+    end
+
+    def attach_files(note, data)
+      { pdf: [ data["pdfUrl"], "application/pdf" ], xml: [ data["xmlUrl"], "application/xml" ] }.each do |kind, (url, type)|
+        next if url.blank? || note.public_send(kind).attached?
+
+        note.public_send(kind).attach(io: StringIO.new(Asaas.download(url)), filename: "nfse-#{note.number || note.id}.#{kind}",
+          content_type: type)
+      rescue Asaas::Error => e
+        Rails.error.report(e, context: { service_invoice_id: note.id, file: kind })
+      end
+    end
+
+    # The contract's responsible is told, with the link to the invoice (RN-19-107, D-564).
+    def notify_issued(note)
+      invoice = note.invoice
+      account = invoice.billing_account
+      path = account.partner? ? "/partner/invoices/#{invoice.id}" : "/invoices/#{invoice.id}"
+      account.notice_recipients.each do |membership|
+        Notifications.notify!("billing.nfse_issued", user: membership.user, membership: membership, subject: note, path: path,
+          name: account.name, number: invoice.display_number, nfse: note.number.presence || "—",
+          total: "R$ #{MoneyCents.format(note.amount_cents)}")
+      end
+    end
+
+    # The daily check (RN-19-106, P-19-33): every note whose day has passed, and
+    # every authorized one still without its files, is read in the API, in case a notice
+    # was lost; a note still pending an hour later lost its job and is sent again. A
+    # failure of one does not stop the others; it is reported and read again the next day.
+    def reconcile(now: Time.current)
+      today = now.in_time_zone(TIME_ZONE).to_date
+      ServiceInvoice.pending.where(updated_at: ...(now - 1.hour)).find_each { |note| IssueServiceInvoiceJob.perform_later(note) }
+
+      notes = ServiceInvoice.scheduled.where(effective_on: ..(today - 1)).or(ServiceInvoice.authorized.where(authorized_at: (now - FILES_WINDOW)..))
+      notes.where.not(asaas_invoice_id: nil).find_each do |note|
+        next if note.authorized? && !note.files_missing?
+
+        sync(Asaas.invoice(note.asaas_invoice_id), now: now)
+      rescue Asaas::Error => e
+        Rails.error.report(e, context: { service_invoice_id: note.id })
+      end
     end
 
     # "Emitir de novo" (RN-19-108): a note with an error goes back to pending and is sent

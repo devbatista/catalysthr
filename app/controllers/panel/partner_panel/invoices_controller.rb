@@ -4,6 +4,7 @@ module Panel
     # responsible (RN-19-044, D-619).
     class InvoicesController < BaseController
       include InvoicePix
+      include ServiceInvoiceFiles
 
       before_action :require_billing_feature
 
@@ -16,6 +17,12 @@ module Panel
         authorize! :read_invoices, partner
         @invoice = invoices.includes(:lines).find(params[:id])
         load_pix(@invoice)
+      end
+
+      # The NFS-e's PDF or XML (RN-19-107).
+      def service_invoice_file
+        authorize! :read_invoices, partner
+        send_service_invoice_file(invoices.find(params[:id]))
       end
 
       private

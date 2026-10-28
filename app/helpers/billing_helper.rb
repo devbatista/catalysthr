@@ -77,6 +77,18 @@ module BillingHelper
     tag.span(label, class: "pill #{SERVICE_INVOICE_PILLS.fetch(status)}")
   end
 
+  # The note's PDF or XML, in the area of who reads the invoice (RN-19-107).
+  def service_invoice_file_path(note, kind, team:)
+    invoice = note.invoice
+    if team
+      service_invoice_file_admin_invoice_path(invoice, kind: kind)
+    elsif invoice.billing_account.partner?
+      service_invoice_file_partner_invoice_path(invoice, kind: kind)
+    else
+      service_invoice_file_invoice_path(invoice, kind: kind)
+    end
+  end
+
   # Each status the note went through, with when (RN-19-111), from its PaperTrail versions.
   def service_invoice_history(note)
     note.versions.sort_by(&:created_at).filter_map do |version|

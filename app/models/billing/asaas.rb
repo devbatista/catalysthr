@@ -14,6 +14,9 @@ module Billing
     KEY_PREFIXES = { "$aact_hmlg_" => :sandbox, "$aact_prod_" => :production }.freeze
     TIMEOUT = 15
     USER_AGENT = "CatalystHR".freeze
+    # The note's files: only from Asaas's domain, and at most 10 MB.
+    FILE_HOST = /\A([a-z0-9-]+\.)*asaas\.com\z/
+    FILE_LIMIT = 10.megabytes
 
     # A failed call: the HTTP status (0 without an answer) and Asaas's first error, whose
     # description is in Portuguese and is shown to the finance team.
@@ -85,6 +88,30 @@ module Billing
     # city's authorization, which comes by the webhook (RN-19-106).
     def schedule_invoice(body)
       request(Net::HTTP::Post, "/invoices", body: body)
+    end
+
+    # GET /invoices/{id}: the note as it is now, with its number and files once authorized.
+    def invoice(id)
+      request(Net::HTTP::Get, "/invoices/#{ERB::Util.url_encode(id)}")
+    end
+
+    # The note's PDF or XML, from the address Asaas gives on the note. Only an HTTPS address
+    # of Asaas's own domain is fetched, and nothing beyond FILE_LIMIT. Whether the address
+    # asks for the key is not documented: it goes without it, to be checked on the first
+    # real note (D-633).
+    def download(url)
+      uri = URI(url.to_s)
+      raise Error, "Asaas file address refused" unless uri.is_a?(URI::HTTPS) && uri.host.to_s.match?(FILE_HOST)
+
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: TIMEOUT, read_timeout: TIMEOUT) do |http|
+        http.request(Net::HTTP::Get.new(uri, "User-Agent" => USER_AGENT))
+      end
+      raise Error.new("Asaas file answered #{response.code}", status: response.code.to_i) unless response.is_a?(Net::HTTPSuccess)
+      raise Error, "Asaas file too large" if response.body.to_s.bytesize > FILE_LIMIT
+
+      response.body
+    rescue URI::InvalidURIError, Timeout::Error, SystemCallError, SocketError, IOError, OpenSSL::SSL::SSLError => e
+      raise Error, "Asaas file unavailable (#{e.class})"
     end
 
     def matching(path, reference)

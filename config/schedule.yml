@@ -74,6 +74,12 @@ billing_reconcile:
   class: "Billing::ReconcileJob"
   queue: "default"
 
+# Reads in Asaas the NFS-e without an answer, for a lost webhook (spec 19, RN-19-106, D-633)
+billing_service_invoice_reconcile:
+  cron: "40 2 * * * America/Sao_Paulo"          # after the PIX check, which may pay invoices
+  class: "Billing::ServiceInvoiceReconcileJob"
+  queue: "default"
+
 # The cancellations that take effect, and the portfolios' notice (spec 19, RN-19-062, RN-19-063, D-625)
 billing_cancellation:
   cron: "50 2 * * * America/Sao_Paulo"          # before the dunning
