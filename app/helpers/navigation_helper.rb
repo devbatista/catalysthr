@@ -53,7 +53,8 @@ module NavigationHelper
         (nav_item(t("navigation.invoices"), admin_invoices_path, controller_path == "admin/invoices") if billing_allowed?(Invoice)),
         (nav_item(t("navigation.adjustments"), admin_adjustments_path, controller_path == "admin/billing_adjustments") if billing_allowed?(BillingAdjustment)),
         (nav_item(t("navigation.plans"), admin_plans_path,
-          controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan))
+          controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan)),
+        (nav_item(t("navigation.fiscal_settings"), admin_fiscal_settings_path, controller_path == "admin/fiscal_settings") if nfse_allowed?)
       ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),
@@ -78,6 +79,11 @@ module NavigationHelper
 
   def billing_allowed?(action = :read, subject)
     FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(action, subject)
+  end
+
+  # The NFS-e's screens, behind their own flag (D-633).
+  def nfse_allowed?
+    FeatureFlags.enabled?(FeatureFlags::NFSE) && billing_allowed?(FiscalSetting)
   end
 
   # "Contratar", while the contract is in its trial or in the 30 days after it (RN-19-033).

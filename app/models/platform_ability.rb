@@ -51,6 +51,8 @@ class PlatformAbility
       can :approve, BillingAdjustment if user.superadmin?
       # Only the superadmin reactivates a contract in closing (RN-19-053, P-19-18, D-624).
       can :reactivate, BillingAccount if user.superadmin?
+      # The NFS-e's fiscal settings (RN-19-102, D-633).
+      can %i[read update], FiscalSetting
     end
     # The support reads the billing (spec 19, section 6).
     can :read, [ BillingAccount, Invoice, BillingAdjustment ] if user.support?

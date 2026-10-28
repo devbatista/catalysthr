@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_28_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -459,6 +459,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
     t.datetime "created_at", null: false
     t.index ["changed_by_id"], name: "index_feature_flag_changes_on_changed_by_id"
     t.index ["flag", "created_at"], name: "index_feature_flag_changes_on_flag_and_created_at"
+  end
+
+  create_table "fiscal_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.boolean "singleton", default: true, null: false
+    t.string "service_code", null: false
+    t.string "service_name", null: false
+    t.string "nbs_code", null: false
+    t.string "operation_indicator_code", null: false
+    t.text "description", null: false
+    t.text "observations", null: false
+    t.boolean "retain_iss", default: false, null: false
+    t.decimal "pis_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "cofins_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "csll_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "inss_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "ir_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.uuid "updated_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["singleton"], name: "index_fiscal_settings_on_singleton", unique: true
+    t.index ["updated_by_id"], name: "index_fiscal_settings_on_updated_by_id"
   end
 
   create_table "flipper_features", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1078,6 +1099,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
   add_foreign_key "employments", "companies"
   add_foreign_key "employments", "worker_profiles"
   add_foreign_key "feature_flag_changes", "users", column: "changed_by_id"
+  add_foreign_key "fiscal_settings", "users", column: "updated_by_id"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"

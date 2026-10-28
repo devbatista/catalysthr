@@ -1,0 +1,64 @@
+{
+  "authenticationType": "USER_AND_PASSWORD",
+  "supportsCancellation": true,
+  "usesSpecialTaxRegimes": true,
+  "usesServiceListItem": false,
+  "usesStateInscription": false,
+  "specialTaxRegimesList": [
+    {
+      "value": "0",
+      "label": "Nenhum"
+    },
+    {
+      "value": "1",
+      "label": "Ato Cooperado (Cooperativa)"
+    },
+    {
+      "value": "2",
+      "label": "Estimativa"
+    },
+    {
+      "value": "3",
+      "label": "Microempresa Municipal"
+    },
+    {
+      "value": "4",
+      "label": "Notário ou Registrador"
+    },
+    {
+      "value": "5",
+      "label": "Profissional Autônomo"
+    },
+    {
+      "value": "6",
+      "label": "Sociedade de Profissionais"
+    }
+  ],
+  "nationalPortalTaxCalculationRegimeList": [
+    {
+      "value": "0",
+      "label": "Nenhum"
+    },
+    {
+      "value": "1",
+      "label": "Regime de apuração dos tributos federais e municipal pelo SN"
+    },
+    {
+      "value": "2",
+      "label": "Regime de apuração dos tributos federais pelo SN e ISSQN por fora do SN conforme respectiva legislação municipal do tributo"
+    },
+    {
+      "value": "3",
+      "label": "Regime de apuração dos tributos federais e municipal por fora do SN conforme respectivas legislações federal e municipal de cada tributo"
+    }
+  ],
+  "nationalPortalTaxCalculationRegimeHelp": "Isso identifica o regime de apuração tributária pelo Simples Nacional de sua empresa, se desejar deixar sem nenhuma opção marcada selecione a opção \"Nenhum\". Deve ser preenchido somente por empresas enquadradas como ME ou EPP optantes do Simples Nacional. Consulte a necessidade desta informação com a sua prefeitura ou a sua contabilidade.",
+  "municipalInscriptionHelp": "A inscrição municipal da empresa deve conter de 8 dígitos (com formatação).\r\n\r\nExemplo válido: 14.05.01",
+  "specialTaxRegimeHelp": "Isso identifica o regime de tributação de sua empresa",
+  "serviceListItemHelp": "",
+  "digitalCertificatedHelp": "Sua prefeitura exige a utilização de certificado digital, portanto, inclua aqui o arquivo de seu certificado A1.",
+  "accessTokenHelp": null,
+  "municipalServiceCodeHelp": "Este código identifica o serviço prestado e é formado por 8 dígitos (com formatação). Exemplos válidos: 01.01.01 ou 14.05.01. Utilize apenas números, mas mantendo o caracter de formatação (.).",
+  "usesAedf": false,
+  "usesNbs": true
+}

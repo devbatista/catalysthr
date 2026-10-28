@@ -1,0 +1,56 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <h1 class="page-title"><%= t(".title") %></h1>
+    <p class="page-subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <% if can?(:update, FiscalSetting) %>
+    <%= link_to t(".edit"), edit_admin_fiscal_settings_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<h2 class="section-title mt-8"><%= t(".note_title") %></h2>
+<% if @setting.persisted? %>
+  <div class="card card-body mt-3">
+    <dl class="details-list">
+      <div><dt><%= t(".service_code") %></dt><dd><%= @setting.service_code %></dd></div>
+      <div><dt><%= t(".service_name") %></dt><dd><%= @setting.service_name %></dd></div>
+      <div><dt><%= t(".nbs_code") %></dt><dd><%= @setting.nbs_code %></dd></div>
+      <div><dt><%= t(".operation_indicator_code") %></dt><dd><%= @setting.operation_indicator_code %></dd></div>
+      <div><dt><%= t(".description") %></dt><dd><%= @setting.description %></dd></div>
+      <div><dt><%= t(".observations") %></dt><dd><%= @setting.observations %></dd></div>
+      <div><dt><%= t(".retentions") %></dt><dd><%= fiscal_retentions(@setting) %></dd></div>
+      <div><dt><%= t(".updated") %></dt><dd><%= t(".updated_by", name: @setting.updated_by.name, date: l(@setting.updated_at, format: :short)) %></dd></div>
+    </dl>
+  </div>
+<% else %>
+  <p class="alert-info mt-3"><%= t(".missing") %></p>
+<% end %>
+
+<h2 class="section-title mt-8"><%= t(".asaas_title") %></h2>
+<div class="card card-body mt-3 space-y-4">
+  <p class="text-sm text-slate"><%= t(".asaas_hint") %></p>
+  <% case @asaas[:status] %>
+  <% when :not_configured %>
+    <p class="alert-bad"><%= t(".asaas_not_configured") %></p>
+  <% when :unavailable %>
+    <p class="alert-bad"><%= t(".asaas_unavailable") %></p>
+  <% else %>
+    <% info = @asaas[:fiscal_info] %>
+    <dl class="details-list">
+      <div><dt><%= t(".environment") %></dt><dd><span class="pill <%= @asaas[:environment] == :production ? "pill-ok" : "pill-warn" %>"><%= t(".environments.#{@asaas[:environment]}") %></span></dd></div>
+      <% if info %>
+        <div><dt><%= t(".national_portal") %></dt><dd><%= yes_no(info["useNationalPortal"]) %></dd></div>
+        <div><dt><%= t(".credentials") %></dt><dd><%= yes_no(info.values_at("passwordSent", "certificateSent", "accessTokenSent").any?) %></dd></div>
+        <div><dt><%= t(".series") %></dt><dd><%= info["rpsSerie"].presence || "—" %> · <%= t(".next_number", number: info["rpsNumber"].presence || "—") %></dd></div>
+        <div><dt><%= t(".regime") %></dt><dd><%= info["simplesNacional"] ? t(".simples") : t(".not_simples") %></dd></div>
+        <div><dt><%= t(".municipal_inscription") %></dt><dd><%= info["municipalInscription"].presence || "—" %></dd></div>
+        <div><dt><%= t(".asaas_nbs") %></dt><dd><%= info["nbsCode"].presence || "—" %></dd></div>
+      <% end %>
+    </dl>
+    <% unless info %>
+      <p class="alert-bad"><%= t(".asaas_missing_fiscal_info") %></p>
+    <% end %>
+  <% end %>
+</div>

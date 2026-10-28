@@ -66,4 +66,15 @@ module BillingHelper
   def plan_version_pill(state)
     tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
   end
+
+  # "ISS retido · PIS 0,65%" or "Nenhuma" (RN-19-102).
+  def fiscal_retentions(setting)
+    parts = []
+    parts << t("billing.retentions.iss") if setting.retain_iss?
+    FiscalSetting::RATES.each do |rate|
+      value = setting.public_send(rate)
+      parts << t("billing.retentions.#{rate}", value: number_to_percentage(value, precision: 2, separator: ",", strip_insignificant_zeros: true)) if value.positive?
+    end
+    parts.any? ? parts.join(" · ") : t("billing.retentions.none")
+  end
 end

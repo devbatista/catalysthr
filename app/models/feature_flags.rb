@@ -9,8 +9,11 @@ module FeatureFlags
   COMPANY_TRANSFER = :company_transfer
   # Plans, contracts, usage, invoices and payments (spec 19), off until the launch (D-610).
   BILLING = :billing
+  # The NFS-e through Asaas (spec 19, section 4.11, D-633), on its own so the billing can
+  # launch before the notes are ready.
+  NFSE = :nfse
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING ].freeze
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

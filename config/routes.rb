@@ -109,6 +109,8 @@ Rails.application.routes.draw do
       end
       # The contracts' invoices (RN-19-040, RN-19-041, D-619).
       resources :invoices, only: %i[index show]
+      # The NFS-e's fiscal settings (RN-19-102, D-633).
+      resource :fiscal_settings, only: %i[show edit update], path: "fiscal-settings"
       resources :users, only: :index do
         member do
           patch :contact

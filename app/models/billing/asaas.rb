@@ -1,0 +1,82 @@
+require "net/http"
+
+module Billing
+  # Asaas's API v3, through our own client like Mercado Pago's (spec 19, section 8, P-19-37,
+  # D-633): Asaas is used only for the NFS-e. The key says the environment: a sandbox key
+  # ("$aact_hmlg_") talks to the sandbox, a production one ("$aact_prod_") to production, so
+  # the two never mix. Nothing here logs a request or a response: they carry the client's
+  # registration data.
+  module Asaas
+    BASE_URLS = {
+      sandbox: "https://api-sandbox.asaas.com/v3",
+      production: "https://api.asaas.com/v3"
+    }.freeze
+    KEY_PREFIXES = { "$aact_hmlg_" => :sandbox, "$aact_prod_" => :production }.freeze
+    TIMEOUT = 15
+    USER_AGENT = "CatalystHR".freeze
+
+    # A failed call: the HTTP status (0 without an answer) and Asaas's first error, whose
+    # description is in Portuguese and is shown to the finance team.
+    class Error < StandardError
+      attr_reader :status, :code, :description
+
+      def initialize(message, status: 0, code: nil, description: nil)
+        super(message)
+        @status = status
+        @code = code
+        @description = description
+      end
+    end
+
+    module_function
+
+    def configured?
+      environment.present?
+    end
+
+    def api_key
+      Rails.configuration.x.asaas_api_key
+    end
+
+    # :sandbox or :production, by the key's prefix; nil without a valid key.
+    def environment
+      key = api_key.to_s
+      KEY_PREFIXES.find { |prefix, _| key.start_with?(prefix) }&.last
+    end
+
+    # GET /fiscalInfo: the account's fiscal setup, or nil while there is none (404).
+    def fiscal_info
+      request(Net::HTTP::Get, "/fiscalInfo/")
+    rescue Error => e
+      raise unless e.status == 404
+    end
+
+    # GET /fiscalInfo/municipalOptions: what the account's city asks (authentication,
+    # cancellation, NBS).
+    def municipal_options
+      request(Net::HTTP::Get, "/fiscalInfo/municipalOptions")
+    end
+
+    def request(method, path, body: nil)
+      raise Error, "Asaas API key is not configured" unless configured?
+
+      uri = URI("#{BASE_URLS.fetch(environment)}#{path}")
+      request = method.new(uri, "access_token" => api_key, "User-Agent" => USER_AGENT, "Accept" => "application/json")
+      if body
+        request["Content-Type"] = "application/json"
+        request.body = body.to_json
+      end
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: TIMEOUT, read_timeout: TIMEOUT,
+        write_timeout: TIMEOUT) { |http| http.request(request) }
+      data = response.body.present? ? JSON.parse(response.body) : {}
+      return data if response.is_a?(Net::HTTPSuccess)
+
+      error = data["errors"]&.first if data.is_a?(Hash)
+      error = {} unless error.is_a?(Hash)
+      raise Error.new("Asaas answered #{response.code} (#{error["code"]})", status: response.code.to_i, code: error["code"],
+        description: error["description"])
+    rescue JSON::ParserError, Timeout::Error, SystemCallError, SocketError, IOError, OpenSSL::SSL::SSLError => e
+      raise Error, "Asaas unavailable (#{e.class})"
+    end
+  end
+end
