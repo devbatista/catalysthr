@@ -1,0 +1,36 @@
+<%# The invoice's NFS-e (RN-19-106, RN-19-108, RN-19-111, D-633). locals: note; team: the
+    CatalystHR team's view, with the error, "Emitir de novo" and the history. The client
+    sees only where the note is: a refusal is the team's to fix. %>
+<div class="card card-body mt-6 space-y-4">
+  <div class="flex flex-wrap items-center gap-3">
+    <h2 class="card-title"><%= t("shared.invoices.service_invoice.title") %></h2>
+    <%= service_invoice_pill(note, team: team) %>
+  </div>
+
+  <% if note.scheduled? && note.effective_on %>
+    <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.scheduled_for", date: l(note.effective_on)) %></p>
+  <% elsif !team && (note.pending? || note.error?) %>
+    <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.processing_hint") %></p>
+  <% end %>
+
+  <% if team %>
+    <% if note.error? %>
+      <div class="alert-bad">
+        <p class="font-bold"><%= t("shared.invoices.service_invoice.error_title") %></p>
+        <p class="mt-1"><%= note.error_message %></p>
+      </div>
+      <% if can?(:reissue, note) %>
+        <%= button_to t("shared.invoices.service_invoice.reissue"), admin_invoice_reissue_service_invoice_path(note.invoice),
+          class: "btn btn-primary" %>
+        <p class="field-hint"><%= t("shared.invoices.service_invoice.reissue_hint") %></p>
+      <% end %>
+    <% end %>
+
+    <h3 class="field-label"><%= t("shared.invoices.service_invoice.history") %></h3>
+    <ol class="space-y-1 text-sm">
+      <% service_invoice_history(note).each do |time, status| %>
+        <li><span class="text-slate"><%= l(time, format: :short) %></span> · <%= t("shared.invoices.service_invoice.statuses.#{status}") %></li>
+      <% end %>
+    </ol>
+  <% end %>
+</div>

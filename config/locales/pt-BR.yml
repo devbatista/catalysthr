@@ -292,6 +292,10 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Mensalidade de pré-ativação registrada, a partir de %{date}."
+    service_invoices:
+      reissue:
+        sent: "Nota enviada de novo ao Asaas."
+        not_in_error: "Só uma nota com erro pode ser emitida de novo."
     fiscal_settings:
       show:
         title: "Notas fiscais"
@@ -2130,6 +2134,11 @@ pt-BR:
         title: "O preço do plano %{plan} muda em %{date}"
         body: "A partir do ciclo que começa em %{date}, o contrato de %{name} passa a valer %{price}. Até lá, nada muda. Dúvidas? Fale com a equipe da CatalystHR."
     platform:
+      nfse_error:
+        name: "Nota fiscal com erro"
+        hint: "Quando o Asaas ou a prefeitura recusam uma NFS-e."
+        title: "A nota fiscal da fatura %{number} de %{name} não foi emitida"
+        body: "Veja o motivo na fatura, corrija os dados do cliente ou a configuração fiscal e clique em Emitir de novo."
       adjustment_pending:
         name: "Ajuste aguardando aprovação"
         hint: "Quando o financeiro lança um ajuste acima de 20% da próxima fatura."
@@ -2316,6 +2325,25 @@ pt-BR:
         due_on: "Vencimento"
         total: "Total"
         status: "Situação"
+      service_invoice:
+        title: "Nota fiscal (NFS-e)"
+        scheduled_for: "Emissão agendada para %{date}, o início do ciclo."
+        processing_hint: "A nota está sendo emitida e aparece aqui assim que a prefeitura autorizar."
+        error_title: "A nota não foi emitida"
+        reissue: "Emitir de novo"
+        reissue_hint: "Corrija antes o que a mensagem aponta (dados do cliente ou configuração fiscal)."
+        history: "Histórico da nota"
+        statuses:
+          pending: "Aguardando envio"
+          scheduled: "Agendada"
+          authorized: "Emitida"
+          error: "Com erro"
+          cancelled: "Cancelada"
+        client_statuses:
+          pending: "Em processamento"
+          scheduled: "Agendada"
+          authorized: "Emitida"
+          cancelled: "Cancelada"
       invoice:
         back: "Voltar para as faturas"
         title: "Fatura %{number}"
@@ -2435,6 +2463,14 @@ pt-BR:
       paid: "Paga"
       overdue: "Vencida"
       void: "Cancelada"
+    service_invoices:
+      description: "%{text} - Competência %{competence}. Período de %{from} a %{to}. %{lines}."
+      errors:
+        no_setting: "A configuração fiscal não foi preenchida. Preencha em Cobrança > Notas fiscais e emita de novo."
+        no_asaas: "A chave da API do Asaas não está configurada."
+        no_document: "O cliente não tem CNPJ ou CPF cadastrado (no parceiro, ou na sede da empresa)."
+        refused: "O Asaas recusou a nota, sem informar o motivo."
+        unavailable: "O Asaas ficou fora do ar nas 4 tentativas de envio."
     adjustments:
       discount: "Desconto"
       discount_percent: "Desconto de %{percent}%"

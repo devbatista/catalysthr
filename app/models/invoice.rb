@@ -12,8 +12,13 @@ class Invoice < ApplicationRecord
   belongs_to :billing_account
   has_many :lines, -> { order(:position) }, class_name: "InvoiceLine", inverse_of: :invoice, dependent: :restrict_with_exception
   has_many :payments, dependent: :restrict_with_exception
+  has_one :service_invoice, dependent: :restrict_with_exception
 
   enum :status, STATUSES.index_by(&:itself), validate: true
+
+  # The NFS-e, once the payment is confirmed (RN-19-104, D-562). An invoice born paid has
+  # nothing to charge and gets no note (RN-19-105, CA-19-015).
+  after_update_commit -> { Billing::ServiceInvoices.request(self) }, if: -> { saved_change_to_status?(to: "paid") }
 
   validates :number, :period_start, :period_end, :due_on, :total_cents, :issued_at, presence: true
 

@@ -26,6 +26,11 @@ module Billing
         @code = code
         @description = description
       end
+
+      # Worth trying again: no answer, too many requests or Asaas's own failure (RN-19-109).
+      def transient?
+        status.zero? || status == 429 || status >= 500
+      end
     end
 
     module_function
@@ -55,6 +60,37 @@ module Billing
     # cancellation, NBS).
     def municipal_options
       request(Net::HTTP::Get, "/fiscalInfo/municipalOptions")
+    end
+
+    # The customer or the note with our reference, if one was already created: Asaas
+    # accepts duplicates, so a call repeated after a failure looks first.
+    def find_customer(reference)
+      matching("/customers", reference).first
+    end
+
+    def create_customer(body)
+      request(Net::HTTP::Post, "/customers", body: body)
+    end
+
+    def update_customer(id, body)
+      request(Net::HTTP::Put, "/customers/#{ERB::Util.url_encode(id)}", body: body)
+    end
+
+    # A note refused or cancelled does not count: issuing again creates another.
+    def find_invoice(reference)
+      matching("/invoices", reference).find { |note| !note["status"].in?(%w[ERROR CANCELED]) }
+    end
+
+    # POST /invoices: schedules the note for its effectiveDate. The answer is not the
+    # city's authorization, which comes by the webhook (RN-19-106).
+    def schedule_invoice(body)
+      request(Net::HTTP::Post, "/invoices", body: body)
+    end
+
+    def matching(path, reference)
+      Array(request(Net::HTTP::Get, "#{path}?#{URI.encode_www_form(externalReference: reference)}")["data"]).select do |item|
+        item["externalReference"] == reference && !item["deleted"]
+      end
     end
 
     def request(method, path, body: nil)

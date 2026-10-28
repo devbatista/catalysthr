@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_28_180100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -179,6 +179,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_130000) do
     t.integer "cycle_day", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "asaas_customer_id"
+    t.index ["asaas_customer_id"], name: "index_billing_accounts_on_asaas_customer_id", unique: true
     t.index ["owner_type", "owner_id"], name: "index_billing_accounts_on_owner", unique: true
     t.index ["responsible_user_id"], name: "index_billing_accounts_on_responsible_user_id"
   end
@@ -787,6 +789,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_130000) do
     t.index ["slug"], name: "index_reserved_slugs_on_slug", unique: true
   end
 
+  create_table "service_invoices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "invoice_id", null: false
+    t.string "status", null: false
+    t.bigint "amount_cents", null: false
+    t.date "competence_on", null: false
+    t.date "effective_on"
+    t.text "service_description"
+    t.string "service_code"
+    t.string "asaas_invoice_id"
+    t.string "number"
+    t.string "verification_code"
+    t.datetime "authorized_at"
+    t.text "error_message"
+    t.integer "errors_count", default: 0, null: false
+    t.string "cancel_reason"
+    t.datetime "cancelled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asaas_invoice_id"], name: "index_service_invoices_on_asaas_invoice_id", unique: true
+    t.index ["invoice_id"], name: "index_service_invoices_on_invoice_id", unique: true
+    t.index ["status"], name: "index_service_invoices_on_status"
+  end
+
   create_table "solid_cache_entries", force: :cascade do |t|
     t.binary "key", null: false
     t.binary "value", null: false
@@ -1131,6 +1156,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_130000) do
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
   add_foreign_key "prorations", "billing_accounts"
   add_foreign_key "prorations", "users", column: "created_by_id"
+  add_foreign_key "service_invoices", "invoices"
   add_foreign_key "subscription_items", "add_on_prices"
   add_foreign_key "subscription_items", "subscriptions"
   add_foreign_key "subscriptions", "billing_accounts"

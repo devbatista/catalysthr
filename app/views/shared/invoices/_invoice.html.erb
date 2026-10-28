@@ -1,5 +1,6 @@
-<%# An invoice with every line (RN-19-041, D-619) and how to pay it (D-622). locals: invoice;
-    back: the list's path; payer: whether the viewer pays it; pix: its valid PIX, if any. %>
+<%# An invoice with every line (RN-19-041, D-619), how to pay it (D-622) and its NFS-e
+    (D-633). locals: invoice; back: the list's path; payer: whether the viewer pays it; pix:
+    its valid PIX, if any; team: the CatalystHR team's view. %>
 <p class="text-sm"><%= link_to t("shared.invoices.invoice.back"), back, class: "link-button" %></p>
 <div class="mt-3 flex flex-wrap items-center gap-3">
   <h1 class="page-title"><%= t("shared.invoices.invoice.title", number: invoice.display_number) %></h1>
@@ -46,3 +47,6 @@
   </table>
 </div>
 <%= render "shared/invoices/payment", invoice: invoice, payer: local_assigns.fetch(:payer, false), pix: local_assigns[:pix] %>
+<% if FeatureFlags.enabled?(FeatureFlags::NFSE) && invoice.service_invoice %>
+  <%= render "shared/invoices/service_invoice", note: invoice.service_invoice, team: local_assigns.fetch(:team, false) %>
+<% end %>

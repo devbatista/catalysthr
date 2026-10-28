@@ -67,6 +67,24 @@ module BillingHelper
     tag.span(t("billing.version_states.#{state}"), class: "pill #{VERSION_STATE_PILLS.fetch(state)}")
   end
 
+  SERVICE_INVOICE_PILLS = { "pending" => "pill-info", "scheduled" => "pill-info", "authorized" => "pill-ok", "error" => "pill-bad",
+    "cancelled" => "pill-mute" }.freeze
+
+  # The NFS-e's status (RN-19-106). The client sees a refusal as still being processed.
+  def service_invoice_pill(note, team:)
+    status = !team && note.error? ? "pending" : note.status
+    label = team ? t("shared.invoices.service_invoice.statuses.#{status}") : t("shared.invoices.service_invoice.client_statuses.#{status}")
+    tag.span(label, class: "pill #{SERVICE_INVOICE_PILLS.fetch(status)}")
+  end
+
+  # Each status the note went through, with when (RN-19-111), from its PaperTrail versions.
+  def service_invoice_history(note)
+    note.versions.sort_by(&:created_at).filter_map do |version|
+      status = version.changeset["status"]&.last
+      [ version.created_at, status ] if status.present?
+    end
+  end
+
   # "ISS retido · PIS 0,65%" or "Nenhuma" (RN-19-102).
   def fiscal_retentions(setting)
     parts = []
