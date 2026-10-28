@@ -9,22 +9,22 @@
 
 - [x] **[Claude]** Página inicial com as cenas guiadas pela rolagem, termos de uso, política de privacidade e 404, conferidas no computador (1440 px) e no celular (390 px) (2026-10-27)
 - [x] **[Claude]** Repositório privado `devbatista/catalysthr-site` criado
-- [ ] **[você]** Endereço da sede da DevBatista, para os termos de uso (item 1.1)
-- [ ] **[você]** Foro dos termos de uso (item 13)
-- [ ] **[você]** Nome do encarregado de dados, para a política de privacidade (item 9)
-- [ ] **[Claude]** Preencher os três campos e montar sem o aviso `⟦A PREENCHER⟧`
+- [x] **[você]** Endereço da sede da DevBatista, para os termos de uso (item 1.1): Rua Padre Fernando Pedreira de Castro, 30, Jurubatuba, São Paulo/SP, CEP 04696-180 (2026-10-27)
+- [x] **[você]** Foro dos termos de uso (item 13): Comarca de São Paulo/SP (2026-10-27)
+- [x] **[você]** Nome do encarregado de dados, para a política de privacidade (item 9): Rafael Batista (2026-10-27)
+- [x] **[Claude]** Preencher os três campos nas páginas legais (2026-10-27)
 
 Os termos saem sem a cláusula de limitação de responsabilidade (11.3 da minuta), que depende do jurídico.
 
 ## 2. Publicação
 
-- [ ] **[você]** HostGator: cadastrar `catalysthr.com.br` no cPanel (domínio adicional) e anotar a pasta e o IP do servidor
-- [ ] **[você]** Cloudflare: registros `A` de `catalysthr.com.br` e de `www` para o IP da HostGator, **sem proxy** (D-503). Não mexer nos registros do SES (DKIM, `bounce`, DMARC) nem no `admin` e no `*.painel`
-- [ ] **[você]** HostGator: SSL (AutoSSL) emitido para `catalysthr.com.br` e `www`
-- [ ] **[você]** Enviar o conteúdo de `dist/` (com o `.htaccess`) para a pasta do domínio
-- [ ] **[Claude]** Conferir no ar: HTTPS, redirecionamento para `www`, URLs sem `.html`, 404, cabeçalhos de segurança e as páginas legais
+- [x] **[você]** HostGator: `catalysthr.com.br` cadastrado no cPanel (domínio adicional), pasta `/home1/raf32916/catalysthr.com.br`, IP 69.6.212.238 (2026-10-27)
+- [x] **[você]** Cloudflare: registros `A` de `catalysthr.com.br` e de `www` para o IP da HostGator, **sem proxy** (D-503). Não mexer nos registros do SES (DKIM, `bounce`, DMARC) nem no `admin` e no `*.painel` (2026-10-27)
+- [x] **[você]** HostGator: SSL (AutoSSL, Let's Encrypt) emitido para `catalysthr.com.br` e `www`, válido até 2027-01-25 e renovado pela HostGator (2026-10-27)
+- [x] **[você]** Publicação por FTP a cada push na `main` do `catalysthr-site` (GitHub Actions, `FTP-Deploy-Action`, sem `ferramentas/` e `README.md`) (2026-10-27)
+- [x] **[Claude]** Conferido no ar: HTTPS válido, `http` e domínio sem `www` redirecionam para `https://www.catalysthr.com.br`, URLs sem `.html`, 404, cabeçalhos de segurança (CSP, HSTS, `X-Frame-Options`), cache, páginas legais preenchidas e arquivos internos com 404 (2026-10-27)
 
 ## 3. SES
 
-- [ ] **[Claude]** Novo pedido de saída do sandbox (resposta ao caso 179201169800267 ou pedido novo), com o site, a política de privacidade, um exemplo de e-mail (o convite) e o volume previsto
+- [x] **[você]** Caso 179201169800267 reaberto com a resposta: o site público, a política de privacidade, os termos de uso e a empresa, que faltavam no pedido anterior (só a tela de login em `admin`), e o resumo do uso (transacional, destinatários, autenticação, devoluções e reclamações, menos de 1.000 e-mails por mês). Os detalhes e o exemplo de e-mail continuam na resposta de 2026-10-21 (2026-10-27)
 - [ ] Resposta da AWS
