@@ -140,7 +140,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
       - [x] 19f-2. Cancelamento pelo cliente, com senha e motivo, desfazível até o fim do ciclo, e o aviso às empresas da carteira (RN-19-062, RN-19-063)
     - [x] 19g. Painel da equipe CatalystHR: Receita e Clientes, com o risco de cancelamento pelos logins já gravados (RN-19-090, RN-19-091, D-626). A cotação do dólar (RN-19-092) entra com o bloco Custos, na spec 14
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
-    - [ ] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015, D-628, D-632). Sandbox do Asaas pronto (2026-10-28)
+    - [x] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015, D-628, D-632, D-633), em quatro PRs, atrás da flag `nfse` (2026-10-28). Na produção, falta configurar o Asaas e conferir a primeira nota real (`pendencias-fornecedores.md`)
   - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
 - [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
   - Em 2 PRs (D-627, D-629):
@@ -155,7 +155,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Contratam um plano e pagam por cartão e por PIX
 - [ ] A NFS-e sai pelo Asaas e aparece na fatura
 - [x] A régua de inadimplência roda de ponta a ponta com datas simuladas (`spec/requests/dunning_end_to_end_spec.rb`, 2026-10-23): duas faturas vencidas, somente leitura, pagamento por PIX que reativa, encerramento e reativação pelo superadmin
-- [ ] Os critérios de aceite das specs 01 a 05 e 19 passam: 55 de 70 com teste, e as outras dependem de fases seguintes ou do 19i (`criterios-de-aceite-fase-1.md`, 2026-10-23)
+- [ ] Os critérios de aceite das specs 01 a 05 e 19 passam: 59 de 70 com teste, e as outras dependem de fases seguintes (`criterios-de-aceite-fase-1.md`, 2026-10-28)
 
 ---
 

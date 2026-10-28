@@ -68,11 +68,14 @@ module BillingHelper
   end
 
   SERVICE_INVOICE_PILLS = { "pending" => "pill-info", "scheduled" => "pill-info", "authorized" => "pill-ok", "error" => "pill-bad",
-    "cancelled" => "pill-mute" }.freeze
+    "cancelling" => "pill-warn", "cancelled" => "pill-mute", "cancel_denied" => "pill-bad" }.freeze
+  # What the client sees of the team's statuses: a refusal as still being processed, and a
+  # refused cancellation as the note it still is.
+  CLIENT_SERVICE_INVOICE_STATUSES = { "error" => "pending", "cancel_denied" => "authorized" }.freeze
 
-  # The NFS-e's status (RN-19-106). The client sees a refusal as still being processed.
+  # The NFS-e's status (RN-19-106, RN-19-110).
   def service_invoice_pill(note, team:)
-    status = !team && note.error? ? "pending" : note.status
+    status = team ? note.status : CLIENT_SERVICE_INVOICE_STATUSES.fetch(note.status, note.status)
     label = team ? t("shared.invoices.service_invoice.statuses.#{status}") : t("shared.invoices.service_invoice.client_statuses.#{status}")
     tag.span(label, class: "pill #{SERVICE_INVOICE_PILLS.fetch(status)}")
   end

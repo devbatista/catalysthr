@@ -1,4 +1,4 @@
-<%# The invoice's NFS-e (RN-19-106 to RN-19-108, RN-19-111, D-633). locals: note; team: the
+<%# The invoice's NFS-e (RN-19-106 to RN-19-108, RN-19-110, RN-19-111, D-633). locals: note; team: the
     CatalystHR team's view, with the error, "Emitir de novo" and the history. The client
     sees only where the note is: a refusal is the team's to fix. %>
 <div class="card card-body mt-6 space-y-4">
@@ -13,7 +13,7 @@
     <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.processing_hint") %></p>
   <% end %>
 
-  <% if note.authorized? %>
+  <% if note.authorized_at %>
     <dl class="details-list">
       <div><dt><%= t("shared.invoices.service_invoice.number") %></dt><dd><%= note.number.presence || "—" %></dd></div>
       <div><dt><%= t("shared.invoices.service_invoice.verification_code") %></dt><dd><%= note.verification_code.presence || "—" %></dd></div>
@@ -27,12 +27,23 @@
         <% end %>
       </div>
     <% end %>
-    <% if note.files_missing? %>
+    <% if note.authorized? && note.files_missing? %>
       <p class="field-hint"><%= t("shared.invoices.service_invoice.files_pending") %></p>
     <% end %>
   <% end %>
 
+  <% if note.cancel_reason.present? && (note.cancelling? || note.cancelled? || team) %>
+    <p class="text-sm text-slate"><%= t("shared.invoices.service_invoice.cancel_reason", reason: note.cancel_reason) %></p>
+  <% end %>
+
   <% if team %>
+    <% if note.cancel_denied? %>
+      <div class="alert-bad">
+        <p class="font-bold"><%= t("shared.invoices.service_invoice.cancel_denied_title") %></p>
+        <p class="mt-1"><%= note.error_message %></p>
+        <p class="mt-1"><%= t("shared.invoices.service_invoice.cancel_denied_hint") %></p>
+      </div>
+    <% end %>
     <% if note.error? %>
       <div class="alert-bad">
         <p class="font-bold"><%= t("shared.invoices.service_invoice.error_title") %></p>

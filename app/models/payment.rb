@@ -17,6 +17,9 @@ class Payment < ApplicationRecord
 
   scope :pix, -> { where(payment_method: "pix") }
 
+  # A refund cancels the invoice's NFS-e (RN-19-110, D-565).
+  after_update_commit -> { Billing::ServiceInvoices.cancel_for(invoice) }, if: -> { saved_change_to_status?(to: "refunded") }
+
   # Still payable at `time`: pending, with its QR code, before it expires.
   def live?(time = Time.current)
     pending? && qr_code.present? && expires_at.present? && expires_at > time
