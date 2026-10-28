@@ -47,11 +47,11 @@
   - regime de apuração pelo Simples Nacional; regime especial "0 - Nenhum"
   - série da DPS: **1**, só para o Asaas (faixa de 00001 a 49999, para API), começando do número 1. A Contabilizei usa outra série, sem conflito. As notas do Asaas entram sozinhas na plataforma da Contabilizei, para a conferência mensal
 - [x] **Asaas:** conta da DevBatista aberta, com o cadastro aprovado em 2026-10-13
-- [ ] **Contador e Asaas:** a lista de códigos de serviço do Asaas não tem o **02798** (conferido em 2026-10-22). A opção mais próxima é o 02800, "Licenciamento ou cessão de direito de uso de programas de computação, inclusive distribuição" (item 1.05). Confirmar com o contador qual usar, o código de tributação nacional e o código NBS. Não escolher antes da resposta
+- [x] **Contador e Asaas:** códigos da nota respondidos pela Contabilizei em 2026-10-27 (D-632): tributação nacional 010501, NBS 115062100, cIndOp 100501 e, no Asaas, o código municipal 02800, sem mudança no CCM. Resposta do assistente "Contador Inteligente", não de um especialista humano; conferir na primeira nota
 - [ ] **Asaas:** configurar a emissão no Portal Nacional (`fiscalInfo/municipalOptions` diz o método de autenticação: certificado, usuário e senha do portal ou token). Se for o e-CNPJ, ele vence todo ano: renovar antes, ou as notas param
 - [ ] **Asaas:** criar a conta do sandbox, para o desenvolvimento do 19i
 - [ ] Antes da primeira nota pelo Asaas: confirmar no Portal Nacional que a série 1 não foi usada por outro canal
-- [ ] Risco: o IBS e a CBS passam a valer para o Simples em 2027-01-01. Conferir com o contador e no Asaas o que muda na nota
+- [ ] Reforma tributária, para 2027: escolher o regime de IBS e CBS com a Contabilizei (o estudo prévio recomendou o Simples tradicional) e confirmar com um especialista humano o prazo da opção (o assistente disse "até o último dia útil de janeiro de 2027") e o cClassTrib (indicou 000001). Conferir no Asaas como mandar o IBS, a CBS e o cClassTrib, obrigatórios na nota a partir de 2027-01-01 (D-632)
 - [x] **Asaas:** preço por nota confirmado na conta em 2026-10-22: **R$ 0,49 por nota emitida** (Minha conta → Taxas e prazos → Serviços de gestão). As notificações do Asaas por e-mail e SMS custam R$ 0,99 por cobrança paga; como não há cobrança no Asaas (D-561), não deveriam incidir
 - [ ] **Asaas:** criar a chave de API e configurar o webhook de notas
 - [ ] **Asaas:** desligar o envio de e-mail das notas pelo Asaas (D-564)
@@ -61,7 +61,8 @@
 - [x] Pedir a saída do **sandbox do SES** em São Paulo (sa-east-1). Sem isso, só é possível mandar e-mail para endereços verificados. Enviado em 2026-10-14, em análise
 - [x] Verificar o domínio `catalysthr.com.br` no SES (DKIM, SPF, DMARC) (2026-10-14)
 - [x] Resposta da AWS ao pedido de saída do sandbox: **recusado** em 2026-10-27 (caso 179201169800267), sem motivo informado. Hipótese: o site do pedido (`admin.catalysthr.com.br`) só mostrava a tela de login, sem site público nem política de privacidade
-- [ ] Novo pedido, com o site institucional no ar (`site-institucional.md`, D-631)
+- [x] Novo pedido, com o site institucional no ar: caso 179201169800267 reaberto em 2026-10-27 (`site-institucional.md`, D-631)
+- [ ] Resposta da AWS ao novo pedido
 - [ ] Na fase 1: chaves do KMS dos arquivos e dos backups, com rotação anual, e usuários IAM por finalidade (P-20-21, P-20-22). A chave do A1 fica para a fase 3
 
 ## WhatsApp pela Twilio — trava a fase 2 (convites por WhatsApp já na fase 1)

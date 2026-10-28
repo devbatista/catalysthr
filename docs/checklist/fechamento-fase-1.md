@@ -1,6 +1,6 @@
 # Fechamento da fase 1 (checklist)
 
-> Última atualização: 2026-10-23
+> Última atualização: 2026-10-27
 > O que falta para fechar a fase 1 (`plano-de-fases.md`). O desenvolvimento que não depende de terceiros está pronto.
 
 ## Com você
@@ -16,7 +16,7 @@
 - [ ] **Mercado Pago:** liberação dos Pagamentos Automáticos (cartão salvo sem CVV). Libera o 19h. Próximo passo: o SAC por telefone (`pendencias-fornecedores.md`)
 - [ ] **Asaas:** conta de sandbox. Libera o desenvolvimento do 19i
 - [ ] **Asaas:** emissão configurada no Portal Nacional, antes da primeira nota em produção
-- [ ] **AWS:** saída do sandbox do SES. Recusada em 2026-10-27; novo pedido depois do site institucional no ar (`site-institucional.md`, D-631)
+- [ ] **AWS:** saída do sandbox do SES. Recusada em 2026-10-27; caso reaberto no mesmo dia, com o site institucional no ar. Aguardando a resposta (`site-institucional.md`, D-631)
 - [ ] **Railway:** confirmar a criptografia em repouso no Trust Center
 
 ## Depois, comigo
