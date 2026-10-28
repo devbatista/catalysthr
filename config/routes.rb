@@ -108,7 +108,10 @@ Rails.application.routes.draw do
         end
       end
       # The contracts' invoices (RN-19-040, RN-19-041, D-619).
-      resources :invoices, only: %i[index show]
+      resources :invoices, only: %i[index show] do
+        # Sending again a refused NFS-e (RN-19-108).
+        post "service-invoice/reissue", to: "service_invoices#reissue", as: :reissue_service_invoice
+      end
       # The NFS-e's fiscal settings (RN-19-102, D-633).
       resource :fiscal_settings, only: %i[show edit update], path: "fiscal-settings"
       resources :users, only: :index do

@@ -76,6 +76,10 @@ NotificationType::CATALOG = [
   # The CatalystHR team: an adjustment above 20% waiting for the superadmin (RN-19-071, D-621).
   NotificationType.new(code: "platform.adjustment_pending", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[superadmin]),
+  # The CatalystHR team: an NFS-e refused, to the finance team and the superadmins
+  # (RN-19-108, P-19-38, D-633).
+  NotificationType.new(code: "platform.nfse_error", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin finance]),
   # The quarterly restore drill, to the superadmins (RN-20-046, D-627).
   NotificationType.new(code: "platform.restore_drill_due", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[superadmin])
