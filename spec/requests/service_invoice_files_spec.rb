@@ -59,6 +59,34 @@ RSpec.describe "Service invoice files", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "shows the partner a note being cancelled with the reason, and a refused cancellation as the valid note (RN-19-110)" do
+    note = invoice.service_invoice
+    note.update!(status: "cancelling", cancel_reason: "Estorno da fatura #{invoice.display_number}")
+    sign_in_partner_admin
+
+    get "/partner/invoices/#{invoice.id}"
+    expect(response.body).to include("Em cancelamento", "Motivo do cancelamento: Estorno da fatura #{invoice.display_number}.")
+
+    note.update!(status: "cancel_denied", error_message: "Prazo de cancelamento expirado.")
+    get "/partner/invoices/#{invoice.id}"
+    expect(response.body).to include("Emitida", "Baixar PDF")
+    expect(response.body).not_to include("Prazo de cancelamento expirado.", "Estorno da fatura")
+  end
+
+  it "shows the team the refused cancellation, to settle with the accountant (P-19-35)" do
+    invoice.service_invoice.update!(status: "cancel_denied", error_message: "Prazo de cancelamento expirado.",
+      cancel_reason: "Estorno da fatura #{invoice.display_number}")
+    host! "admin.catalysthr.com.br"
+    user = enable_mfa(create(:user, platform_role: "finance", cpf: "52998224725"))
+    sign_in_with_mfa("52998224725", user)
+
+    get "/invoices/#{invoice.id}"
+
+    expect(response.body).to include("Cancelamento recusado", "O cancelamento da nota foi recusado", "Prazo de cancelamento expirado.",
+      "Trate o cancelamento com o contador", "Motivo do cancelamento")
+    expect(response.body).not_to include("Emitir de novo")
+  end
+
   it "hands the team the files too, and nothing for an invoice without a note" do
     host! "admin.catalysthr.com.br"
     user = enable_mfa(create(:user, platform_role: "support", cpf: "52998224725"))

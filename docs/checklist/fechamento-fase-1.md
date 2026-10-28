@@ -22,5 +22,5 @@
 ## Depois, comigo
 
 - [ ] 19h: cartão salvo e novas tentativas
-- [ ] 19i: NFS-e pelo Asaas
+- [x] 19i: NFS-e pelo Asaas, atrás da flag `nfse` (2026-10-28). Na produção: chave, webhook e a primeira nota real (`pendencias-fornecedores.md`)
 - [ ] Teste de ponta a ponta da fase 1: cadastrar, configurar a marca, convidar o RH com MFA, contratar e pagar por cartão e PIX, e ver a NFS-e na fatura

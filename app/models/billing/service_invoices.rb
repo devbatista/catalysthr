@@ -41,8 +41,14 @@ module Billing
 
       body = invoice_body(note, setting, customer_id, today)
       answer = Asaas.find_invoice(note.id) || Asaas.schedule_invoice(body)
-      note.update!(status: "scheduled", asaas_invoice_id: answer["id"], effective_on: answer["effectiveDate"] || body[:effectiveDate],
-        service_description: body[:serviceDescription], service_code: body[:municipalServiceCode], error_message: nil)
+      sent = { asaas_invoice_id: answer["id"], effective_on: answer["effectiveDate"] || body[:effectiveDate],
+        service_description: body[:serviceDescription], service_code: body[:municipalServiceCode], error_message: nil }
+      # A refund that came while the note was being sent cancels it in Asaas too (RN-19-110).
+      refunded = note.with_lock do
+        note.update!(sent.merge(status: note.pending? ? "scheduled" : "cancelling"))
+        note.cancelling?
+      end
+      CancelServiceInvoiceJob.perform_later(note) if refunded
     rescue Asaas::Error => e
       raise if e.transient?
 
@@ -131,17 +137,66 @@ module Billing
     # finance team and the superadmins, once per failure.
     def fail!(note, message)
       note.update!(status: "error", error_message: message, errors_count: note.errors_count + 1)
+      notify_team(note)
+    end
+
+    # A refused cancellation (RN-19-110, P-19-35): the note stays valid, the invoice shows
+    # the reason, and the team settles it with the accountant.
+    def deny_cancel!(note, message)
+      note.update!(status: "cancel_denied", error_message: message, errors_count: note.errors_count + 1)
+      notify_team(note, variant: "cancel_denied")
+    end
+
+    # The finance team and the superadmins, once per failure (`platform.nfse_error`, P-19-38).
+    def notify_team(note, variant: nil)
       account = note.invoice.billing_account
       User.active.where(platform_role: %w[superadmin finance]).find_each do |user|
         Notifications.notify!("platform.nfse_error", user: user, area: "admin", subject: note, path: "/invoices/#{note.invoice_id}",
-          dedup_key: "platform.nfse_error/#{note.id}/#{note.errors_count}", name: account.name, number: note.invoice.display_number)
+          dedup_key: "platform.nfse_error/#{note.id}/#{note.errors_count}", variant: variant, name: account.name,
+          number: note.invoice.display_number)
       end
       note
     end
 
+    # A refund in Mercado Pago cancels the note (RN-19-110, D-565, CA-19-014), with the
+    # reason "estorno da fatura <número>", kept here since Asaas takes none. A note not yet
+    # in Asaas is just cancelled; one scheduled or authorized is cancelled in Asaas by a job.
+    def cancel_for(invoice)
+      note = invoice.service_invoice
+      return unless note && FeatureFlags.enabled?(FeatureFlags::NFSE)
+
+      reason = I18n.t("billing.service_invoices.cancel_reason", number: invoice.display_number)
+      in_asaas = note.with_lock do
+        case note.status
+        when "pending", "error"
+          note.update!(status: "cancelled", cancel_reason: reason, cancelled_at: Time.current)
+          false
+        when "scheduled", "authorized"
+          note.update!(status: "cancelling", cancel_reason: reason)
+        else
+          false
+        end
+      end
+      CancelServiceInvoiceJob.perform_later(note) if in_asaas
+      note
+    end
+
+    # Asks Asaas to cancel the note. A transient failure raises, for the job to try again;
+    # a refusal is a denied cancellation.
+    def cancel(note)
+      return unless note.cancelling? && note.asaas_invoice_id
+
+      sync(Asaas.cancel_invoice(note.asaas_invoice_id))
+    rescue Asaas::Error => e
+      raise if e.transient?
+
+      deny_cancel!(note, e.description.presence || I18n.t("billing.service_invoices.errors.cancel_refused"))
+    end
+
     # Applies a note read in Asaas's API (RN-19-106): authorized, with its number, files and
-    # the client's notice; refused by the city, as an error (RN-19-108). Other statuses
-    # change nothing here; the cancellation comes with the refund (block 19i-4). A note of
+    # the client's notice; refused by the city, as an error (RN-19-108); cancelled, being
+    # cancelled or with the cancellation refused (RN-19-110), also when the team cancels it
+    # in Asaas's panel. A note of
     # an old try, replaced by "Emitir de novo", is not ours any more and is left alone.
     def sync(data, now: Time.current)
       note = ServiceInvoice.find_by(asaas_invoice_id: data["id"]) if data["id"].present?
@@ -150,8 +205,20 @@ module Billing
       case data["status"]
       when "AUTHORIZED" then authorize(note, data, now)
       when "ERROR" then fail!(note, data["statusDescription"].presence || I18n.t("billing.service_invoices.errors.city")) if note.scheduled?
+      when "PROCESSING_CANCELLATION" then note.update!(status: "cancelling") if note.scheduled? || note.authorized?
+      when "CANCELED" then cancelled(note, now)
+      when "CANCELLATION_DENIED"
+        deny_cancel!(note, data["statusDescription"].presence || I18n.t("billing.service_invoices.errors.cancel_refused")) if note.cancelling?
       end
       note
+    end
+
+    def cancelled(note, now)
+      note.with_lock do
+        next unless note.status.in?(%w[scheduled authorized cancelling cancel_denied])
+
+        note.update!(status: "cancelled", cancelled_at: now, error_message: nil)
+      end
     end
 
     # The city authorized the note: it counts as issued only now (RN-19-106). The files
@@ -190,15 +257,17 @@ module Billing
       end
     end
 
-    # The daily check (RN-19-106, P-19-33): every note whose day has passed, and
-    # every authorized one still without its files, is read in the API, in case a notice
-    # was lost; a note still pending an hour later lost its job and is sent again. A
-    # failure of one does not stop the others; it is reported and read again the next day.
+    # The daily check (RN-19-106, P-19-33): every note whose day has passed, every one
+    # being cancelled and every authorized one still without its files is read in the API,
+    # in case a notice was lost; a note still pending an hour later lost its job and is
+    # sent again. A failure of one does not stop the others; it is reported and read again
+    # the next day.
     def reconcile(now: Time.current)
       today = now.in_time_zone(TIME_ZONE).to_date
       ServiceInvoice.pending.where(updated_at: ...(now - 1.hour)).find_each { |note| IssueServiceInvoiceJob.perform_later(note) }
 
-      notes = ServiceInvoice.scheduled.where(effective_on: ..(today - 1)).or(ServiceInvoice.authorized.where(authorized_at: (now - FILES_WINDOW)..))
+      notes = ServiceInvoice.scheduled.where(effective_on: ..(today - 1)).or(ServiceInvoice.cancelling)
+        .or(ServiceInvoice.authorized.where(authorized_at: (now - FILES_WINDOW)..))
       notes.where.not(asaas_invoice_id: nil).find_each do |note|
         next if note.authorized? && !note.files_missing?
 

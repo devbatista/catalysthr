@@ -90,6 +90,12 @@ module Billing
       request(Net::HTTP::Post, "/invoices", body: body)
     end
 
+    # POST /invoices/{id}/cancel: cancels the note in the city too. The answer is not the
+    # city's word, which comes by the webhook (RN-19-110).
+    def cancel_invoice(id)
+      request(Net::HTTP::Post, "/invoices/#{ERB::Util.url_encode(id)}/cancel", body: {})
+    end
+
     # GET /invoices/{id}: the note as it is now, with its number and files once authorized.
     def invoice(id)
       request(Net::HTTP::Get, "/invoices/#{ERB::Util.url_encode(id)}")

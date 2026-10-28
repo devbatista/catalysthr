@@ -2141,9 +2141,12 @@ pt-BR:
     platform:
       nfse_error:
         name: "Nota fiscal com erro"
-        hint: "Quando o Asaas ou a prefeitura recusam uma NFS-e."
+        hint: "Quando o Asaas ou a prefeitura recusam uma NFS-e ou o cancelamento dela."
         title: "A nota fiscal da fatura %{number} de %{name} não foi emitida"
         body: "Veja o motivo na fatura, corrija os dados do cliente ou a configuração fiscal e clique em Emitir de novo."
+        cancel_denied:
+          title: "O cancelamento da nota fiscal da fatura %{number} de %{name} foi recusado"
+          body: "A fatura foi estornada, mas a prefeitura não cancelou a nota. Veja o motivo na fatura e trate o cancelamento com o contador."
       adjustment_pending:
         name: "Ajuste aguardando aprovação"
         hint: "Quando o financeiro lança um ajuste acima de 20% da próxima fatura."
@@ -2350,12 +2353,18 @@ pt-BR:
           scheduled: "Agendada"
           authorized: "Emitida"
           error: "Com erro"
+          cancelling: "Em cancelamento"
           cancelled: "Cancelada"
+          cancel_denied: "Cancelamento recusado"
         client_statuses:
           pending: "Em processamento"
           scheduled: "Agendada"
           authorized: "Emitida"
+          cancelling: "Em cancelamento"
           cancelled: "Cancelada"
+        cancel_reason: "Motivo do cancelamento: %{reason}."
+        cancel_denied_title: "O cancelamento da nota foi recusado"
+        cancel_denied_hint: "A nota continua válida. Trate o cancelamento com o contador da DevBatista."
       invoice:
         back: "Voltar para as faturas"
         title: "Fatura %{number}"
@@ -2484,6 +2493,9 @@ pt-BR:
         refused: "O Asaas recusou a nota, sem informar o motivo."
         unavailable: "O Asaas ficou fora do ar nas 4 tentativas de envio."
         city: "A prefeitura recusou a nota, sem informar o motivo."
+        cancel_refused: "A prefeitura recusou o cancelamento, sem informar o motivo."
+        cancel_unavailable: "O Asaas ficou fora do ar nas 4 tentativas de cancelamento."
+      cancel_reason: "Estorno da fatura %{number}"
     adjustments:
       discount: "Desconto"
       discount_percent: "Desconto de %{percent}%"

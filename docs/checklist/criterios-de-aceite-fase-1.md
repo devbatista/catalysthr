@@ -1,9 +1,9 @@
 # Critérios de aceite das specs 01 a 05 e 19 (checklist)
 
-> Última atualização: 2026-10-23
+> Última atualização: 2026-10-28
 > Para o item "os critérios de aceite das specs 01 a 05 e 19 passam" da fase 1 (`plano-de-fases.md`). Uma CA marcada tem um exemplo do RSpec que a cita e testa o comportamento. A suíte roda no CI a cada PR.
 
-Resumo: **70** CAs. **55** com teste e **15** que dependem de módulos de fases seguintes ou do bloco 19i.
+Resumo: **70** CAs. **59** com teste e **11** que dependem de módulos de fases seguintes.
 
 
 ## Spec 01 — Multiempresa e white label
@@ -86,7 +86,7 @@ Resumo: **70** CAs. **55** com teste e **15** que dependem de módulos de fases 
 - [x] **CA-19-009** Dado um ajuste de 25% lançado pelo financeiro, quando ele salva, então o ajuste fica aguardando a aprovação… Teste: `spec/models/billing/adjustments_spec.rb`, `spec/requests/admin/billing_adjustments_spec.rb`
 - [x] **CA-19-010** Dado o parceiro, quando baixa o relatório de outubro, então o CSV tem uma linha por empresa com o pico de… Teste: `spec/requests/partner_usage_spec.rb`
 - [ ] **CA-19-011** Dado um contrato com custo de IA maior que o cobrado, quando o superadmin abre o painel, então o contrato… Fica para: Fase 2: bloco Custos do painel (D-610)
-- [ ] **CA-19-012** Dada uma fatura paga por PIX, quando o webhook do Mercado Pago confirma o pagamento, então a nota é agendada… Fica para: Fase 1, bloco 19i: NFS-e pelo Asaas
-- [ ] **CA-19-013** Dada uma nota recusada pela prefeitura, quando o webhook de erro chega, então a fatura mostra a mensagem, o… Fica para: Fase 1, bloco 19i: NFS-e pelo Asaas
-- [ ] **CA-19-014** Dado um estorno no Mercado Pago de uma fatura com nota autorizada, quando o webhook chega, então a plataforma… Fica para: Fase 1, bloco 19i: NFS-e pelo Asaas
-- [ ] **CA-19-015** Dada uma fatura de valor zero por crédito, quando é marcada como paga, então nenhuma nota é emitida. Fica para: Fase 1, bloco 19i: NFS-e pelo Asaas
+- [x] **CA-19-012** Dada uma fatura paga por PIX, quando o webhook do Mercado Pago confirma o pagamento, então a nota é agendada… Teste: `spec/requests/service_invoice_end_to_end_spec.rb`, `spec/requests/service_invoice_files_spec.rb`
+- [x] **CA-19-013** Dada uma nota recusada pela prefeitura, quando o webhook de erro chega, então a fatura mostra a mensagem, o… Teste: `spec/models/billing/service_invoices_spec.rb`, `spec/requests/service_invoices_spec.rb`
+- [x] **CA-19-014** Dado um estorno no Mercado Pago de uma fatura com nota autorizada, quando o webhook chega, então a plataforma… Teste: `spec/models/billing/service_invoices_spec.rb`, `spec/requests/service_invoice_files_spec.rb`
+- [x] **CA-19-015** Dada uma fatura de valor zero por crédito, quando é marcada como paga, então nenhuma nota é emitida. Teste: `spec/models/billing/service_invoices_spec.rb`

@@ -282,5 +282,92 @@ RSpec.describe Billing::ServiceInvoices do
 
       expect { described_class.reconcile }.to have_enqueued_job(Billing::IssueServiceInvoiceJob).with(note)
     end
+
+    it "reads the notes being cancelled, in case the city's answer was lost" do
+      note.update!(status: "cancelling", asaas_invoice_id: "inv_000000000001", cancel_reason: "Estorno da fatura 000001")
+      stub_asaas_invoice(asaas_invoice(id: "inv_000000000001", status: "CANCELED"))
+
+      described_class.reconcile
+
+      expect(note.reload).to have_attributes(status: "cancelled", cancelled_at: Time.current)
+    end
+  end
+
+  describe "cancelling on a refund (RN-19-110, CA-19-014)" do
+    let(:note) { perform_enqueued_jobs(only: []) { pay } }
+    let(:payment) do
+      invoice.payments.create!(payment_method: "pix", status: "approved", amount_cents: invoice.total_cents, idempotency_key: SecureRandom.uuid)
+    end
+
+    def refund
+      payment.update!(status: "refunded")
+    end
+
+    it "asks Asaas to cancel an authorized note, with the reason kept here, and follows the city's answer" do
+      note.update!(status: "authorized", asaas_invoice_id: "inv_000000000001", authorized_at: Time.current)
+
+      expect { refund }.to have_enqueued_job(Billing::CancelServiceInvoiceJob).with(note)
+      expect(note.reload).to have_attributes(status: "cancelling", cancel_reason: "Estorno da fatura #{invoice.display_number}")
+
+      cancel = stub_asaas(:post, "/invoices/inv_000000000001/cancel",
+        body: asaas_invoice(id: "inv_000000000001", status: "PROCESSING_CANCELLATION"))
+      perform_enqueued_jobs(only: Billing::CancelServiceInvoiceJob)
+      expect(cancel).to have_been_requested
+      expect(note.reload).to be_cancelling
+
+      described_class.sync(asaas_invoice(id: "inv_000000000001", status: "CANCELED"))
+      expect(note.reload).to have_attributes(status: "cancelled", cancelled_at: Time.current)
+    end
+
+    it "just cancels a note not yet in Asaas" do
+      note
+
+      expect { refund }.not_to have_enqueued_job(Billing::CancelServiceInvoiceJob)
+      expect(note.reload).to have_attributes(status: "cancelled", cancel_reason: "Estorno da fatura #{invoice.display_number}")
+    end
+
+    it "cancels in Asaas a note that was being sent when the refund came" do
+      note
+      stub_customer_lookup
+      stub_create_customer
+      stub_note_lookup(note)
+      stub_schedule
+      allow(Billing::Asaas).to receive(:schedule_invoice).and_wrap_original do |original, body|
+        refund
+        original.call(body)
+      end
+
+      expect { described_class.issue(note) }.to have_enqueued_job(Billing::CancelServiceInvoiceJob).with(note)
+      expect(note.reload).to have_attributes(status: "cancelling", asaas_invoice_id: "inv_000001")
+    end
+
+    it "shows a refused cancellation to the team, who settles it with the accountant (P-19-35)" do
+      note.update!(status: "authorized", asaas_invoice_id: "inv_000000000001", authorized_at: Time.current)
+      refund
+      stub_asaas(:post, "/invoices/inv_000000000001/cancel", status: 400,
+        body: { errors: [ { code: "invalid_action", description: "Prazo de cancelamento expirado." } ] })
+
+      perform_enqueued_jobs(only: Billing::CancelServiceInvoiceJob)
+
+      expect(note.reload).to have_attributes(status: "cancel_denied", error_message: "Prazo de cancelamento expirado.")
+      notice = Notification.where(notification_type: "platform.nfse_error").find_by(recipient_user: finance)
+      expect(notice.title).to include("cancelamento", "foi recusado")
+    end
+
+    it "takes the city's refusal of the cancellation, by the notice, as refused" do
+      note.update!(status: "cancelling", asaas_invoice_id: "inv_000000000001")
+
+      described_class.sync(asaas_invoice(id: "inv_000000000001", status: "CANCELLATION_DENIED", statusDescription: "Nota já escriturada."))
+
+      expect(note.reload).to have_attributes(status: "cancel_denied", error_message: "Nota já escriturada.")
+    end
+
+    it "does nothing while the notes are off (D-633)" do
+      note.update!(status: "authorized", asaas_invoice_id: "inv_000000000001")
+      Flipper.disable(FeatureFlags::NFSE)
+
+      expect { refund }.not_to have_enqueued_job(Billing::CancelServiceInvoiceJob)
+      expect(note.reload).to be_authorized
+    end
   end
 end
