@@ -184,13 +184,13 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
 - **RN-19-091** — **Risco de cancelamento:** alto quando há pelo menos dois sinais entre queda de 30% nos acessos em 30 dias, atraso de pagamento, cancelamento de módulo, ou nenhum acesso do RH administrador em 14 dias **[P-19-26]**. Os acessos são os logins já gravados em `access_events`, pela marca do contrato (D-626).
 - **RN-19-092** — O custo da IA em dólares (spec 14) é convertido pela cotação do dia, guardada junto do custo **[P-19-27]**.
 
-### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565, D-628)
+### 4.11 Nota fiscal de serviço (NFS-e) pelo Asaas (D-560 a D-565, D-628, D-632)
 
 - **RN-19-100** — A plataforma emite pelo **Asaas** as NFS-e do **CatalystHR** para os **parceiros e as empresas diretas**, uma por fatura paga (D-560). Notas de parceiros para os clientes deles continuam fora da plataforma (D-482).
 - **RN-19-101** — O Asaas é usado **só para notas**. A cobrança continua no Mercado Pago (D-561). A nota é emitida como **nota avulsa ligada ao cliente** no Asaas, sem cobrança no Asaas.
 - **RN-19-102** — **Configuração fiscal**, na área admin (Cobrança), mantida pelo superadmin e pelo financeiro **[P-19-30]**:
   - a conta do Asaas do CatalystHR, com os dados fiscais e a configuração do **Portal Nacional da NFS-e**, conforme as exigências do município (`fiscalInfo/municipalOptions`) (D-628);
-  - o código do serviço;
+  - os códigos do serviço: o código de tributação nacional, o NBS, o indicador de operação (cIndOp) e o código municipal que o Asaas pede (D-632);
   - o regime de apuração (Simples Nacional) e o regime especial ("0 - Nenhum");
   - a série da DPS (série 1, só para o Asaas) e o próximo número;
   - o texto padrão da descrição;
