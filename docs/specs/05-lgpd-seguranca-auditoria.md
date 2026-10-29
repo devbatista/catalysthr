@@ -195,7 +195,7 @@ O CPF da pessoa é dado pessoal comum, mas fica criptografado (D-086) e é masca
 |---|---|
 | Transporte | Somente HTTPS, com HSTS (`config.force_ssl`) **[P-05-28]** |
 | Cabeçalhos | CSP restritiva sem script inline, compatível com JS via importmap; `X-Frame-Options: DENY`; `Referrer-Policy` **[P-05-29]**. Entra no fim da fase 1 (D-606) |
-| Uploads | Validação do tipo real do arquivo (não só da extensão), tamanho máximo, varredura de vírus (ClamAV ou similar) antes de liberar o arquivo **[P-05-30]**. A varredura entra com a pasta de documentos (spec 08, D-606) |
+| Uploads | Validação do tipo real do arquivo (não só da extensão), tamanho máximo, varredura de vírus (ClamAV ou similar) antes de liberar o arquivo **[P-05-30]**. A varredura entra com os materiais dos modelos de processo (spec 06, bloco 06b, D-638), e a pasta de documentos (spec 08) reaproveita |
 | Dependências e código | `brakeman` e `bundler-audit` no CI. A build falha com vulnerabilidade alta **[P-05-31]** |
 | Segredos | Variáveis de ambiente do Railway. Nenhum segredo no repositório. As chaves são trocadas quando alguém da equipe sai **[P-05-32]** |
 | Logs da aplicação | `filter_parameters` cobre CPF, senha, token, salário, conta, PIX e campos de saúde. Logs nunca têm dado sensível **[P-05-33]** |

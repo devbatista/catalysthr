@@ -92,6 +92,7 @@ Para cada item: **correto**, **incorreto** (com a regra certa e o fundamento) ou
   - créditos com vencimento, e débitos consumindo os créditos mais antigos;
   - no vencimento, o saldo positivo é pago como extra, e o negativo é descontado (se o acordo permitir) ou zerado.
 - [ ] **3.7 Ponto facultativo** é dia normal, a menos que a empresa dispense o trabalho.
+- [ ] **3.8 Feriados nacionais** usados nos prazos em dias úteis e no ponto: 1/1, 21/4, 1/5, 7/9, 12/10, 2/11, 15/11, 20/11 (Lei 14.759/2023) e 25/12, mais a Sexta-feira da Paixão, que é feriado religioso municipal (Lei 9.093/1995), mas entra como nacional, e o RH pode desmarcá-la na unidade. Carnaval e Corpus Christi ficam fora, como ponto facultativo. Está correto? Falta algum?
 
 ## 4. Folha — prioridade C
 

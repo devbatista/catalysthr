@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -115,7 +115,8 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
 - **RN-06-026** — Dias úteis excluem sábados, domingos, feriados nacionais e os feriados da unidade da pessoa (D-236). O calendário de feriados é o mesmo do ponto ([spec 11](11-jornada-banco-de-horas.md)).
 - **RN-06-029** — Origem dos feriados (D-242):
   - a equipe CatalystHR carrega os feriados nacionais, os estaduais e os municipais das cidades onde há unidades de clientes;
-  - o RH complementa com feriados e pontos facultativos de cada unidade.
+  - o RH complementa com feriados e pontos facultativos de cada unidade;
+  - os nacionais vêm da BrasilAPI e só valem depois da revisão da equipe (RN-11-020, D-638).
 - **RN-06-027** — Se a data de referência mudar (por exemplo, o início foi adiado), os prazos dos itens ainda não concluídos são recalculados. Prazos editados à mão pelo RH não mudam **[P-06-08]**.
 - **RN-06-028** — Item vencido aparece como **atrasado** nas telas e nos painéis, e o responsável e o RH são avisados (spec 15). O atraso não bloqueia nada **[P-06-09]**.
 
@@ -152,7 +153,7 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
 
 ### Leitura e aceite
 
-- **RN-06-060** — O material é um PDF enviado no modelo ou um material do assistente (spec 14). O aceite guarda a versão do material, a data, a hora e o IP. Se o material mudar, aceites antigos continuam válidos para a versão que foi lida **[P-06-17]**.
+- **RN-06-060** — O material é um PDF enviado no modelo, que passa pela varredura de vírus antes de ficar disponível (P-05-30, D-638), ou um material do assistente (spec 14). O aceite guarda a versão do material, a data, a hora e o IP. Se o material mudar, aceites antigos continuam válidos para a versão que foi lida **[P-06-17]**.
 
 ### Encaminhamento
 
