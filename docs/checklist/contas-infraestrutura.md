@@ -1,6 +1,6 @@
 # Contas e infraestrutura — roteiro (checklist)
 
-> Última atualização: 2026-10-14
+> Última atualização: 2026-10-27
 > Ordem sugerida: o domínio primeiro, porque o certificado wildcard, o e-mail (SES) e a Cloudflare dependem dele. Railway e Sentry podem andar em paralelo.
 > Legenda: **[você]** = feito por você no navegador (cadastro, pagamento, verificação de identidade); **[Claude]** = posso rodar pela linha de comando depois que você liberar o acesso, sempre mostrando o comando antes.
 
