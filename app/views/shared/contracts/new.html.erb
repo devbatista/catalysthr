@@ -39,6 +39,17 @@
     </div>
   </div>
 
+  <% if @address_needed %>
+    <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+      <legend class="text-sm font-bold text-ink-strong"><%= t("shared.billing_address.title") %></legend>
+      <p class="field-hint"><%= t("shared.billing_address.checkout_hint") %></p>
+      <%= render "panel/employees/errors", record: @account %>
+      <%= fields_for :billing_account, @account do |address_form| %>
+        <%= render "shared/billing_address/fields", form: address_form, scope: "billing_account", lookup_url: billing_address_lookup_url %>
+      <% end %>
+    </fieldset></div>
+  <% end %>
+
   <% if @pre_activation_price %>
     <p class="alert-info"><%= t("shared.contracts.form.pre_activation", price: reais(@pre_activation_price.monthly_price_cents)) %></p>
   <% end %>

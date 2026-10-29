@@ -179,6 +179,8 @@ Rails.application.routes.draw do
         get "service-invoice/:kind", action: :service_invoice_file, on: :member, as: :service_invoice_file, kind: /pdf|xml/
       end
       resource :contract, only: %i[new create]
+      # The contract's billing address, the NFS-e's customer at Asaas (D-635).
+      resource :billing_address, path: "contract/billing-address", only: %i[edit update]
       # The cancellation by the client and its undo (RN-19-062, D-625).
       resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
@@ -274,6 +276,9 @@ Rails.application.routes.draw do
           get "service-invoice/:kind", action: :service_invoice_file, on: :member, as: :service_invoice_file, kind: /pdf|xml/
         end
         resource :contract, only: %i[new create]
+        # The contract's billing address, with the address by CEP (D-215, D-635).
+        resource :billing_address, path: "contract/billing-address", only: %i[edit update]
+        get "address-lookup/:postal_code", to: "address_lookups#show", as: :address_lookup
         # The cancellation by the client and its undo (RN-19-062, RN-19-063, D-625).
         resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
         resources :companies, only: %i[new create] do

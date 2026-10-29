@@ -52,6 +52,18 @@ class BillingAccount < ApplicationRecord
     REQUIRED_ADDRESS_FIELDS.all? { |field| public_send(field).present? }
   end
 
+  # The direct company's form comes filled with the headquarters' address while the
+  # contract has none; the two stay apart afterwards (D-635). Assigns, without saving.
+  def suggest_headquarters_address
+    return self if ADDRESS_FIELDS.any? { |field| public_send(field).present? } || partner?
+
+    headquarters = owner.headquarters
+    return self unless headquarters&.postal_code
+
+    assign_attributes(ADDRESS_FIELDS.index_with { |field| headquarters.public_send(field) })
+    self
+  end
+
   # "Rua Padre Fernando Pedreira de Castro, 30 - Jurubatuba - São Paulo/SP - CEP 04696-180"
   def billing_address_line
     return unless billing_address_complete?
