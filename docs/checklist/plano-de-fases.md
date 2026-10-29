@@ -12,7 +12,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 |---|---|---|---|
 | 0 | Preparação | 2 a 3 semanas | Começar a desenvolver |
 | 1 | Fundação e cobrança | 12 a 16 semanas | Cadastrar parceiros e empresas, cobrar, administrar |
-| 2 | Núcleo de RH, com a IA de documentos | 16 a 22 semanas | **Primeiro cliente**, sem ponto e sem folha |
+| 2 | Núcleo de RH, com a IA de documentos | 16 a 22 semanas | Núcleo de RH pronto, testado com dados fictícios |
+| V | Validação: fornecedores, jurídico, especialista em DP e teste de ponta a ponta (D-637) | Depende dos terceiros | **Primeiro cliente**, sem ponto e sem folha |
 | 3 | Ponto (REP-P) e jornada | 12 a 16 semanas | Vender o módulo de ponto |
 | 4 | Folha e eSocial | 22 a 30 semanas | Vender o módulo de folha |
 | 5 | IA restante, recrutamento, avaliação e relatórios | 12 a 16 semanas | MVP completo |
@@ -33,11 +34,9 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ## Fase 0 — Preparação (2 a 3 semanas)
 
 ### Fora do desenvolvimento
-- [ ] Enviar o `pacote-juridico.md` ao jurídico
-- [ ] Enviar o `pacote-especialista-dp.md` ao especialista em DP
 - [x] Abrir os pedidos da `pendencias-fornecedores.md` (2026-10-14): Mercado Pago (chamado WCS-54705, aguardando o comercial), contador (respondido em parte), AWS SES (saída do sandbox em análise) e Meta (empresa já verificada). Reagendados de propósito: Anthropic na metade da fase 1, Voyage na fase 5, Railway antes do primeiro cliente, número do WhatsApp antes da fase 2
-- [ ] Redigir as minutas jurídicas em `juridico/` (termos de uso, política de privacidade, aviso do recrutamento, contrato de tratamento de dados) e mandar ao jurídico para revisão
-- [ ] Começar a procurar um parceiro piloto
+- [x] Redigir as minutas jurídicas em `juridico/` (termos de uso, política de privacidade, aviso do recrutamento, contrato de tratamento de dados) (2026-10-13)
+- O envio dos pacotes ao jurídico e ao especialista em DP e a procura do piloto passaram para a fase de validação (D-637)
 
 ### Desenvolvimento
 - [x] `rails new` com a stack da spec 20: Postgres com pgvector, Redis, Sidekiq, Tailwind, importmap, Dockerfile com jemalloc, YJIT e 7-Zip (Ruby 4.0.7, Rails 8.1.4)
@@ -66,13 +65,11 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ## Fase 1 — Fundação e cobrança (12 a 16 semanas)
 
 ### Pré-requisitos
-- [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
 - [x] Contador da DevBatista: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
 - [x] Contador da DevBatista: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista) (2026-10-22, D-628)
 - [x] Asaas: conta configurada no Portal Nacional (D-628, D-634, 2026-10-29)
-- [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
-- [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [x] Railway: criptografia em repouso confirmada no Trust Center (relatório SOC 2, 2026-10-29)
+- O Mercado Pago (cartão salvo sem o CVV) e o SES (saída do sandbox e escolha do plano) passaram para a fase de validação (D-637)
 
 ### Entregas
 - [x] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Os usuários do backup e da restauração entraram com o pg_dump diário (20a, 2026-10-26)
@@ -151,46 +148,70 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Pronto quando
 - [x] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598). Conferência de 2026-10-23: 93 telas de 5 perfis em 1440, 1920 e 390 px, sem rolagem horizontal nem erro de console, com a página 403 na base visual, as tabelas largas ajustadas no celular e a ficha sem vazar a largura
-- [ ] O superadmin cria um parceiro e uma empresa direta em teste
-- [ ] Eles configuram a marca e convidam o RH, que entra com MFA
-- [ ] Contratam um plano e pagam por cartão e por PIX
-- [ ] A NFS-e sai pelo Asaas e aparece na fatura
 - [x] A régua de inadimplência roda de ponta a ponta com datas simuladas (`spec/requests/dunning_end_to_end_spec.rb`, 2026-10-23): duas faturas vencidas, somente leitura, pagamento por PIX que reativa, encerramento e reativação pelo superadmin
-- [ ] Os critérios de aceite das specs 01 a 05 e 19 passam: 59 de 70 com teste, e as outras dependem de fases seguintes (`criterios-de-aceite-fase-1.md`, 2026-10-28)
+- [x] Os critérios de aceite das specs 01 a 05 e 19 do escopo da fase 1 passam: 59 de 70 com teste, e as outras 11 dependem de módulos das fases 2 e 4 (`criterios-de-aceite-fase-1.md`, 2026-10-28)
+- O teste de ponta a ponta (cadastro, marca, convite com MFA, pagamento por cartão e PIX e a NFS-e na fatura), o bloco 19h e a primeira nota real passaram para a fase de validação (D-637). A fase 1 fica encerrada para o desenvolvimento
 
 ---
 
-## Fase 2 — Núcleo de RH (16 a 22 semanas) · primeiro cliente
+## Fase 2 — Núcleo de RH (16 a 22 semanas)
+
+> O desenvolvimento segue sem esperar os terceiros, e as pendências vão para a fase de validação, antes do primeiro cliente (D-637). A exceção é o que muda o desenho do código: essas partes só são construídas depois da resposta, na leva 2.
 
 ### Pré-requisitos
-- [ ] Anthropic: retenção zero contratada. Criar a organização e pedir ao comercial lá pela metade da fase 1, umas 6 a 8 semanas antes da fase 2, porque o prazo de resposta não é documentado. Organização DevBatista criada e pedido enviado em 2026-10-20; falta a confirmação por escrito
-- [ ] Jurídico: prazos de retenção e transferência internacional validados; minutas de termos de uso, política de privacidade e contrato de tratamento de dados revisadas
-- [ ] WhatsApp pela Twilio: empresa verificada na Meta, remetente registrado e modelos aprovados
-- [ ] Especialista em DP: spec 09 conferida, menos as férias
-- [ ] Parceiro ou empresa piloto definido
 - [ ] Railway: nunca usar limite rígido de gasto em produção, só o alerta por e-mail. O limite rígido derruba todos os serviços, inclusive o ponto, o que contraria a D-116 e a RN-10-006
-- [ ] Sentry: rever o plano antes do primeiro cliente (D-627, D-629). O gratuito tem 1 usuário, 1 monitor de job e 1 externo, e só alerta por e-mail. Com o pago, entram os monitores que faltam da RN-20-073 e o reenvio ao plantão (RN-20-076, com a Twilio)
-- [ ] Railway: rever o plano Hobby antes do primeiro cliente (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508, que a documentação do Railway não cita em nenhum plano; limite de 2 domínios próprios por serviço, já usados por `*.painel` e `admin`) e decidir sobre um workspace separado para o CatalystHR antes do upgrade, porque o Pro vale para o workspace inteiro
 
 ### Entregas
+
+**Leva 1, sem depender de terceiros:**
 - [ ] **Spec 06:** motor de modelos de processo. Incluir a cópia dos modelos usados pela empresa no serviço de transferência, com teste (RN-01-053, D-599)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
-- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável, varredura de vírus dos uploads com o serviço `clamav` no Railway (P-05-30, D-606)
-- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Quando entrarem os materiais do assistente e as perguntas e respostas, incluir a cópia deles no serviço de transferência, com teste (RN-01-053, D-599). Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
-- [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4)
-- [ ] **Spec 15 (resto):** WhatsApp, push, horário de silêncio, resumo diário por e-mail, mural
+- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável, varredura de vírus dos uploads com o serviço `clamav` no Railway (P-05-30, D-606). O texto da ciência eletrônica segue a resposta do jurídico (itens 3.1 e 3.2), sem mudar o mecanismo
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe"
+- [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
-- [ ] **Spec 05 (resto):** anonimização, retenção por processo, direitos do titular, encerramento de contrato
+
+**Leva 2, cada uma depois da resposta que muda o desenho:**
+- [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4). Depois da conferência do especialista em DP
+- [ ] **Spec 14 (parte):** leitura de documentos e lote, com créditos, teto, falhas e retenção zero. Depois da retenção zero confirmada por escrito e da base legal do jurídico (item 2.1); antes disso, só com dados fictícios. Quando entrarem os materiais do assistente e as perguntas e respostas, incluir a cópia deles no serviço de transferência, com teste (RN-01-053, D-599). Nenhum dado pessoal nos esquemas JSON das saídas estruturadas (nomes de campo, `enum`, padrões): a Anthropic guarda o esquema por até 24 horas, mesmo com a retenção zero
+- [ ] **Spec 05 (resto):** anonimização, retenção por processo, direitos do titular, encerramento de contrato. Depois dos prazos de retenção e do encerramento validados pelo jurídico (itens 1.1, 1.9 e 1.10)
+- [ ] **Spec 15 (WhatsApp):** depois do remetente e dos modelos aprovados na Twilio e da resposta do jurídico sobre o convite e a desconexão (itens 3.6 e 3.7)
 
 ### Pronto quando
 - [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
+- [ ] Admissões com documentos lidos pela IA e revisados pelo RH, com dados fictícios
+- [ ] As solicitações fluem com aprovação e escalada
+- [ ] Os critérios de aceite das specs 06, 07, 08, 09, 15 e 16 passam
+
+---
+
+## Fase de validação — antes do primeiro cliente (D-637)
+
+> Junta o que depende de terceiros e o teste de ponta a ponta. Não trava o desenvolvimento da fase 3; trava o primeiro cliente. Os pedidos podem sair antes, para a validação não virar um tempo parado.
+
+### Pendências da fase 1
+- [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV, e o bloco 19h (cartão salvo e novas tentativas)
+- [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14, recusado e reaberto em 2026-10-27)
+- [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
+- [ ] Asaas: a primeira NFS-e real, com a flag `nfse` ligada (`pendencias-fornecedores.md`)
+- [ ] Teste de ponta a ponta da fase 1: o superadmin cria um parceiro e uma empresa direta em teste; eles configuram a marca e convidam o RH, que entra com MFA; contratam um plano e pagam por cartão e por PIX; a NFS-e sai pelo Asaas e aparece na fatura
+- [ ] Spec 20: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e o reenvio ao plantão (RN-20-076, com o plano pago do Sentry e a Twilio, D-629)
+
+### Terceiros
+- [ ] Anthropic: retenção zero confirmada por escrito (pedido enviado em 2026-10-20)
+- [ ] Jurídico: enviar o `pacote-juridico.md` (etapa 1: seções 1, 2, 3 sem o 3.5 e 6) e as minutas de `juridico/`, incluindo a política e os termos já publicados no site; prazos de retenção e transferência internacional validados; minutas revisadas; contrato comercial redigido
+- [ ] Especialista em DP: enviar o `pacote-especialista-dp.md`; spec 09 conferida, menos as férias
+- [ ] WhatsApp pela Twilio: empresa verificada na Meta, remetente registrado e modelos aprovados
+- [ ] Sentry: rever o plano (D-627, D-629). O gratuito tem 1 usuário, 1 monitor de job e 1 externo, e só alerta por e-mail. Com o pago, entram os monitores que faltam da RN-20-073 e o reenvio ao plantão (RN-20-076, com a Twilio)
+- [ ] Railway: rever o plano Hobby (8 GB de RAM e 8 vCPU contra os tamanhos da spec 20; PITR para a D-508, que a documentação do Railway não cita em nenhum plano; limite de 2 domínios próprios por serviço, já usados por `*.painel` e `admin`) e decidir sobre um workspace separado para o CatalystHR antes do upgrade, porque o Pro vale para o workspace inteiro
+- [ ] Parceiro ou empresa piloto definido
+
+### Pronto quando
+- [ ] Todos os itens acima estão resolvidos, ou aceitos como risco em `riscos-aceitos.md`
 - [ ] O piloto é implantado pela planilha
 - [ ] Admissões reais com documentos lidos pela IA e revisados pelo RH
 - [ ] Os colaboradores usam o portal no celular
-- [ ] As solicitações fluem com aprovação e escalada
-- [ ] Os critérios de aceite das specs 06, 07, 08, 09, 15 e 16 passam
 
 ---
 
