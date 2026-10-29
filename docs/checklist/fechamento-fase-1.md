@@ -2,6 +2,8 @@
 
 > Última atualização: 2026-10-29
 > O que falta para fechar a fase 1 (`plano-de-fases.md`). O desenvolvimento que não depende de terceiros está pronto.
+>
+> **Desde 2026-10-29 (D-637):** a fase 1 está encerrada para o desenvolvimento. Os itens abertos abaixo passaram para a **fase de validação** do `plano-de-fases.md`, que trava o primeiro cliente, e são acompanhados lá.
 
 ## Com você
 
