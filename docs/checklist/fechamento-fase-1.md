@@ -17,7 +17,7 @@
 - [x] **Asaas:** conta de sandbox. Libera o desenvolvimento do 19i (2026-10-28)
 - [ ] **Asaas:** emissão configurada no Portal Nacional, antes da primeira nota em produção
 - [ ] **AWS:** saída do sandbox do SES. Recusada em 2026-10-27; caso reaberto no mesmo dia, com o site institucional no ar. Aguardando a resposta (`site-institucional.md`, D-631)
-- [ ] **Railway:** confirmar a criptografia em repouso no Trust Center
+- [x] **Railway:** criptografia em repouso confirmada no relatório SOC 2 do Trust Center (2026-10-29), com ressalvas (`pendencias-fornecedores.md`)
 
 ## Depois, comigo
 
