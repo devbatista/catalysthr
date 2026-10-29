@@ -72,7 +72,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Asaas: conta configurada no Portal Nacional (D-628)
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
-- [ ] Railway: criptografia em repouso confirmada no Trust Center
+- [x] Railway: criptografia em repouso confirmada no Trust Center (relatório SOC 2, 2026-10-29)
 
 ### Entregas
 - [ ] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Faltam os usuários do backup e da restauração, com o pg_dump diário

@@ -116,7 +116,8 @@
 
 ## Railway — antes do primeiro cliente
 
-- [ ] Ler no Trust Center o relatório SOC 2 e confirmar a **criptografia em repouso** do banco e dos volumes
+- [x] **Criptografia em repouso** confirmada em 2026-10-29 pelo relatório SOC 2 Tipo 2 do Trust Center (Sensiba, período de 2025-01-22 a 2025-04-22): controle CC6.7.2, "Customer data at rest is encrypted", testado sem exceções; backups criptografados com chaves do KMS no Google Cloud. A carta de continuidade de 2026-09-25 cita um relatório mais novo (2026-08-25, de 2025-04-23 a 2026-04-22), sem mudança relevante nos controles. O relatório é confidencial e não entra no repositório. Ressalvas: o relatório não cita volumes nem Postgres pelo nome nem o algoritmo, e a infraestrutura nova do Railway (colocation e servidores dedicados) só entra na próxima auditoria. Os dados sensíveis já são criptografados pela aplicação (D-086) e os arquivos ficam no S3 com KMS
+- [ ] Opcional: pedir ao team@railway.com o relatório de 2026 e a confirmação, por escrito, para os volumes do Postgres
 - [ ] Confirmar o plano que permite PITR, réplicas e os tamanhos da spec 20
 - [x] Configurar o domínio wildcard e acompanhar a emissão do certificado (2026-10-14)
 - [ ] Plano Hobby: só 2 domínios próprios por serviço, já usados por `*.painel` e `admin` (D-573)
