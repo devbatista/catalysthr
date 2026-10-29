@@ -8,6 +8,10 @@ class BillingAccount < ApplicationRecord
 
   OWNER_TYPES = %w[Partner Company].freeze
   LAST_CYCLE_DAY = 28
+  # The billing address, the NFS-e's customer at Asaas (RN-19-103, D-635): required at the
+  # registration and before the first payment; the complement is optional.
+  ADDRESS_FIELDS = %i[postal_code street street_number complement district city state].freeze
+  REQUIRED_ADDRESS_FIELDS = (ADDRESS_FIELDS - %i[complement]).freeze
 
   belongs_to :owner, polymorphic: true
   belongs_to :responsible_user, class_name: "User", optional: true
@@ -17,8 +21,14 @@ class BillingAccount < ApplicationRecord
   has_many :billing_adjustments, dependent: :restrict_with_exception
 
   normalizes :billing_email, with: ->(email) { email.to_s.strip.downcase.presence }
+  normalizes :postal_code, with: ->(code) { code.to_s.gsub(/\D/, "").presence }
+  normalizes :street, :street_number, :complement, :district, :city, with: ->(value) { value.to_s.squish.presence }
+  normalizes :state, with: ->(state) { state.to_s.strip.upcase.presence }
 
   validates :owner_type, inclusion: { in: OWNER_TYPES }
+  validates :postal_code, format: { with: Unit::POSTAL_CODE_FORMAT }, allow_nil: true
+  validates :state, inclusion: { in: Unit::STATES }, allow_nil: true
+  validates(*REQUIRED_ADDRESS_FIELDS, presence: true, on: :billing_address)
   validates :owner_id, uniqueness: { scope: :owner_type }
   validates :cycle_day, numericality: { only_integer: true, in: 1..LAST_CYCLE_DAY }
   validates :billing_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
@@ -36,6 +46,18 @@ class BillingAccount < ApplicationRecord
 
   def name
     owner.name
+  end
+
+  def billing_address_complete?
+    REQUIRED_ADDRESS_FIELDS.all? { |field| public_send(field).present? }
+  end
+
+  # "Rua Padre Fernando Pedreira de Castro, 30 - Jurubatuba - São Paulo/SP - CEP 04696-180"
+  def billing_address_line
+    return unless billing_address_complete?
+
+    [ [ street, street_number, complement ].compact.join(", "), district, "#{city}/#{state}",
+      "CEP #{postal_code.sub(/\A(\d{5})(\d{3})\z/, '\1-\2')}" ].join(" - ")
   end
 
   def brand

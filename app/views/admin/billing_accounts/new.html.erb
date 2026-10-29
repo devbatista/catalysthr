@@ -38,6 +38,12 @@
   </fieldset>
 
   <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
+    <legend class="text-sm font-bold text-ink-strong"><%= t("shared.billing_address.title") %></legend>
+    <p class="field-hint"><%= t("shared.billing_address.hint") %></p>
+    <%= render "shared/billing_address/fields", form: form, scope: "client", lookup_url: admin_address_lookup_path(postal_code: "CEP") %>
+  </fieldset></div>
+
+  <div class="border-t border-line-soft pt-5"><fieldset class="space-y-4">
     <legend class="text-sm font-bold text-ink-strong"><%= t(".offer") %></legend>
     <div class="form-grid">
       <% if plans.empty? %>

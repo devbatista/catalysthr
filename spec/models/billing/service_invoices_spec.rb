@@ -69,7 +69,7 @@ RSpec.describe Billing::ServiceInvoices do
   describe ".issue" do
     let(:note) { perform_enqueued_jobs(only: []) { pay } }
 
-    it "registers the partner as a customer, without e-mail, and schedules the note for the cycle's first day" do
+    it "registers the partner as a customer, with the billing address and without e-mail, and schedules the note for the cycle's first day" do
       stub_customer_lookup
       customer = stub_create_customer
       stub_note_lookup(note)
@@ -80,7 +80,8 @@ RSpec.describe Billing::ServiceInvoices do
       expect(customer.with { |request|
         body = JSON.parse(request.body)
         body == { "name" => "Aurora Gestão de Pessoas Ltda", "cpfCnpj" => partner.cnpj, "externalReference" => account.id,
-          "notificationDisabled" => true }
+          "notificationDisabled" => true, "postalCode" => "04696180", "address" => "Rua Padre Fernando Pedreira de Castro",
+          "addressNumber" => "30", "province" => "Jurubatuba" }
       }).to have_been_requested
       expect(schedule.with { |request|
         body = JSON.parse(request.body)
@@ -135,17 +136,29 @@ RSpec.describe Billing::ServiceInvoices do
       expect(account.reload.asaas_customer_id).to eq("cus_000009")
     end
 
-    it "registers a direct company by the headquarters' CNPJ and address" do
+    it "registers a direct company by the headquarters' CNPJ and the contract's billing address (D-635)" do
       company = Company.create_with_cnpj!(cnpj: "11222333000181", name: "Serra Azul", legal_name: "Metalúrgica Serra Azul Ltda")
-      ActsAsTenant.with_tenant(company) do
-        company.headquarters.update!(postal_code: "04696-180", street: "Rua Padre Fernando Pedreira de Castro", street_number: "30",
-          district: "Jurubatuba", city: "São Paulo", state: "SP")
-      end
+      ActsAsTenant.with_tenant(company) { company.headquarters.update!(postal_code: "01310100", street: "Avenida Paulista") }
       direct = contract_for(company).billing_account
+      direct.update!(complement: "Sala 4")
 
       expect(described_class.customer_body(direct)).to eq(name: "Metalúrgica Serra Azul Ltda", cpfCnpj: "11222333000181",
         externalReference: direct.id, notificationDisabled: true, postalCode: "04696180",
+        address: "Rua Padre Fernando Pedreira de Castro", addressNumber: "30", complement: "Sala 4", province: "Jurubatuba")
+    end
+
+    it "registers a partner with its billing address too (D-635)" do
+      expect(described_class.customer_body(account)).to include(cpfCnpj: partner.cnpj, postalCode: "04696180",
         address: "Rua Padre Fernando Pedreira de Castro", addressNumber: "30", province: "Jurubatuba")
+    end
+
+    it "refuses to send a contract without the complete billing address, without calling Asaas (D-635)" do
+      account.update_columns(street_number: nil)
+
+      described_class.issue(note)
+
+      expect(note.reload).to have_attributes(status: "error", error_message: /endereço de cobrança completo/)
+      expect(a_request(:any, /#{Regexp.escape(AsaasStub::BASE_URL)}/)).not_to have_been_made
     end
 
     it "shows Asaas's refusal on the note and tells the finance team and the superadmins (RN-19-108)" do

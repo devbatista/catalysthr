@@ -103,7 +103,11 @@ Rails.application.routes.draw do
         end
         # Manual adjustments of the next invoices (RN-19-070, D-621).
         resources :adjustments, only: %i[new create], controller: "billing_adjustments"
+        # The contract's billing address, the NFS-e's customer at Asaas (RN-19-103, D-635).
+        resource :billing_address, path: "billing-address", only: %i[edit update]
       end
+      # Address by CEP, for the client's billing address (D-215, D-635).
+      get "address-lookup/:postal_code", to: "address_lookups#show", as: :address_lookup
       # Adjustments waiting for the superadmin, and the latest ones (RN-19-071, D-621).
       resources :adjustments, only: :index, controller: "billing_adjustments" do
         member do

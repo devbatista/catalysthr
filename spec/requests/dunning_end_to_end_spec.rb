@@ -53,9 +53,9 @@ RSpec.describe "Dunning end to end", type: :request do
   def register_client
     sign_in_admin
     perform_enqueued_jobs(only: Billing::CreatePixJob) do
-      post "/clients", params: { client: { kind: "direct", mode: "contract", legal_name: "Metalúrgica Serra Azul Ltda",
+      post "/clients", params: { client: BillingHelpers::BILLING_ADDRESS.merge(kind: "direct", mode: "contract", legal_name: "Metalúrgica Serra Azul Ltda",
         commercial_name: "Serra Azul", cnpj: "11.222.333/0001-81", slug: "serraazul", plan_id: Plan.sole.id, modules: [],
-        admin_name: "Juliana Ribeiro", admin_cpf: "111.444.777-35", admin_email: "juliana@serraazul.example" } }
+        admin_name: "Juliana Ribeiro", admin_cpf: "111.444.777-35", admin_email: "juliana@serraazul.example") }
     end
     # The administrator accepts the invitation (spec 02, tested apart).
     Membership.find_by!(user: hr_admin).update!(status: "active")

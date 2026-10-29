@@ -1,10 +1,14 @@
 # Contracts for the specs (spec 19): a subscription with modules for a direct company or
 # a partner, and the modules a partner turned on for a company (D-616).
 module BillingHelpers
+  # The contract's billing address, which the NFS-e needs (D-635).
+  BILLING_ADDRESS = { postal_code: "04696180", street: "Rua Padre Fernando Pedreira de Castro", street_number: "30",
+    district: "Jurubatuba", city: "São Paulo", state: "SP" }.freeze
+
   def contract_for(owner, modules: PlanModule::MODULES, status: "active")
     plan = owner.is_a?(Partner) ? create(:plan) : create(:plan, :direct)
     version = create(:plan_version, plan: plan)
-    account = BillingAccount.create!(owner: owner, cycle_day: BillingAccount.cycle_day_for(Date.current))
+    account = BillingAccount.create!(owner: owner, cycle_day: BillingAccount.cycle_day_for(Date.current), **BILLING_ADDRESS)
     trial = status.in?(CompanyModules::TRIAL_STATUSES)
     subscription = Subscription.create!(billing_account: account, plan_version: version, created_by: version.created_by,
       status: status, started_on: Date.current, trial_ends_on: (Date.current + Subscription::TRIAL_DAYS if trial),

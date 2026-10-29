@@ -30,11 +30,11 @@ RSpec.describe "Invoices", type: :request do
       create(:pre_activation_price, monthly_price_cents: 1_990)
       sign_in("finance")
 
-      post "/clients", params: { client: {
+      post "/clients", params: { client: BillingHelpers::BILLING_ADDRESS.merge(
         kind: "partner", mode: "contract", legal_name: "Aurora Gestão de Pessoas Ltda", commercial_name: "Aurora RH",
         cnpj: "11.222.333/0001-81", slug: "aurora", plan_id: partner_plan.id, modules: [ "ponto" ],
         admin_name: "Ana Prado", admin_cpf: "111.444.777-35", admin_email: "ana@aurora.example"
-      } }
+      ) }
 
       invoice = Invoice.sole
       expect(invoice).to have_attributes(due_on: Date.new(2026, 10, 15), period_start: Date.new(2026, 10, 15), total_cents: 1_990)

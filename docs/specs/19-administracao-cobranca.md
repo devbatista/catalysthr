@@ -166,7 +166,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
   | Implantação | Importação assistida | 18 |
   | Equipe | Usuários CatalystHR (superadmin, suporte, financeiro), com MFA obrigatório | 02 |
 
-- **RN-19-081** — O **cadastro** de parceiro ou empresa direta pede: razão social, CNPJ, nome comercial, slug (spec 01), plano, módulos, teste ou contrato, data de início, e o e-mail e o CPF do primeiro administrador. O sistema cria o subdomínio, a marca e o convite (D-484).
+- **RN-19-081** — O **cadastro** de parceiro ou empresa direta pede: razão social, CNPJ, nome comercial, slug (spec 01), o **endereço de cobrança** (CEP, logradouro, número, complemento, bairro, município e UF, que vai na NFS-e, D-635), plano, módulos, teste ou contrato, data de início, e o e-mail e o CPF do primeiro administrador. O sistema cria o subdomínio, a marca e o convite (D-484).
 
 ### 4.10 Painel da equipe CatalystHR (D-447, D-490)
 
@@ -194,7 +194,7 @@ Definir **como o CatalystHR é vendido, cobrado e administrado**:
   - as retenções, se houver.
 
   A **conta do Asaas** do CatalystHR é configurada no **painel do Asaas**, e nenhuma credencial passa pela plataforma: o **Portal Nacional da NFS-e** ligado, as credenciais de acesso exigidas pelo município (`fiscalInfo/municipalOptions`), o regime de apuração (Simples Nacional), o regime especial ("0 - Nenhum"), a série e o próximo número da DPS e a inscrição municipal (D-628, D-633). Em produção: acesso por usuário e senha e série 80000 (D-634). A tela mostra essa configuração, lida no Asaas, só para leitura. A alíquota do Simples não vai na nota. Os valores fiscais são definidos com o **contador da DevBatista** (D-628).
-- **RN-19-103** — **Cliente no Asaas:** na primeira nota, a plataforma cadastra o contrato como cliente no Asaas (CNPJ e razão social; a empresa direta também com o endereço da sede) e guarda o identificador. O cliente vai **sem e-mail** e com as notificações do Asaas desligadas, para o Asaas não escrever ao cliente (D-564, D-633). Mudanças nesses dados são enviadas ao Asaas antes da nota seguinte **[P-19-31]**.
+- **RN-19-103** — **Cliente no Asaas:** na primeira nota, a plataforma cadastra o contrato como cliente no Asaas (CNPJ e razão social, com o **endereço de cobrança do contrato**, para o parceiro e para a empresa direta, D-635) e guarda o identificador. O cliente vai **sem e-mail** e com as notificações do Asaas desligadas, para o Asaas não escrever ao cliente (D-564, D-633). Mudanças nesses dados são enviadas ao Asaas antes da nota seguinte **[P-19-31]**.
 - **RN-19-104** — **Momento** (D-562): quando o pagamento da fatura é confirmado pelo Mercado Pago (RN-19-046), a plataforma agenda a nota no Asaas. A **competência** da nota é o mês em que começa o ciclo da fatura (D-628). Como o Asaas só recebe a data de emissão, a nota é agendada para o **maior** entre o dia da confirmação e o primeiro dia do ciclo: paga antes do ciclo, ela sai no primeiro dia do ciclo; paga depois, sai na hora (D-633).
 - **RN-19-105** — **Conteúdo da nota** **[P-19-32]**:
   - valor: o **total pago** da fatura, com os descontos e créditos já aplicados;
@@ -260,7 +260,8 @@ add_on_prices                                        -- versões do preço (D-61
 billing_accounts
   id, owner_type ('Partner'|'Company'), owner_id, billing_email, responsible_user_id,
   mercado_pago_customer_id, mercado_pago_card_id, payment_method ('card'|'pix'),
-  card_brand, card_last4, card_expires_on, cycle_day, asaas_customer_id
+  card_brand, card_last4, card_expires_on, cycle_day, asaas_customer_id,
+  postal_code, street, street_number, complement, district, city, state  -- endereço de cobrança (D-635)
 
 subscriptions
   id, billing_account_id, plan_version_id, status, trial_ends_at,
