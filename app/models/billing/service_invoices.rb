@@ -36,6 +36,8 @@ module Billing
       return fail!(note, I18n.t("billing.service_invoices.errors.no_asaas")) unless Asaas.configured?
 
       invoice = note.invoice
+      return fail!(note, I18n.t("billing.service_invoices.errors.no_address")) unless invoice.billing_account.billing_address_complete?
+
       customer_id = ensure_customer(invoice.billing_account)
       return fail!(note, I18n.t("billing.service_invoices.errors.no_document")) unless customer_id
 
@@ -55,9 +57,10 @@ module Billing
       fail!(note, e.description.presence || I18n.t("billing.service_invoices.errors.refused"))
     end
 
-    # The contract as Asaas's customer (RN-19-103, D-633): updated before every note, so a
-    # change reaches Asaas before the next one; without e-mail and with Asaas's notices
-    # off, so Asaas never writes to the client (D-564). Nil without the document.
+    # The contract as Asaas's customer (RN-19-103, D-633, D-635): updated before every note,
+    # so a change reaches Asaas before the next one; with the contract's billing address,
+    # which Asaas requires to issue; without e-mail and with Asaas's notices off, so Asaas
+    # never writes to the client (D-564). Nil without the document.
     def ensure_customer(account)
       body = customer_body(account)
       return unless body
@@ -76,8 +79,9 @@ module Billing
       document = account.partner? ? owner.cnpj : company_document(owner)
       return if document.blank?
 
-      body = { name: owner.legal_name, cpfCnpj: document, externalReference: account.id, notificationDisabled: true }
-      account.partner? ? body : body.merge(company_address(owner))
+      { name: owner.legal_name, cpfCnpj: document, externalReference: account.id, notificationDisabled: true,
+        postalCode: account.postal_code, address: account.street, addressNumber: account.street_number,
+        complement: account.complement, province: account.district }.compact_blank
     end
 
     # A person employer goes by the CPF; a company by the headquarters' full CNPJ.
@@ -86,14 +90,6 @@ module Billing
 
       headquarters = company.headquarters
       headquarters.registration_number if headquarters&.cnpj?
-    end
-
-    def company_address(company)
-      headquarters = company.headquarters
-      return {} unless headquarters
-
-      { postalCode: headquarters.postal_code, address: headquarters.street, addressNumber: headquarters.street_number,
-        complement: headquarters.complement, province: headquarters.district }.compact_blank
     end
 
     # The note (RN-19-105, D-632, D-633): the amount paid, the codes of the fiscal settings

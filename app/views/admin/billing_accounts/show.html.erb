@@ -14,6 +14,19 @@
   <dl class="details-list mt-4">
     <div><dt><%= t(".address") %></dt><dd class="font-mono text-sm"><% slug = @account.brand&.active_subdomain&.slug %><%= slug ? "#{slug}.#{Rails.configuration.x.panel_domain}" : "—" %></dd></div>
     <div><dt><%= t(".responsible") %></dt><dd><%= @account.responsible_user&.name || "—" %></dd></div>
+    <div class="field-wide">
+      <dt><%= t("shared.billing_address.title") %></dt>
+      <dd>
+        <% if @account.billing_address_complete? %>
+          <%= @account.billing_address_line %>
+        <% else %>
+          <span class="text-bad"><%= t("shared.billing_address.missing") %></span>
+        <% end %>
+        <% if can?(:update_billing_address, @account) %>
+          · <%= link_to t(".edit_billing_address"), edit_admin_client_billing_address_path(@account), class: "link-button" %>
+        <% end %>
+      </dd>
+    </div>
     <% if subscription %>
       <div>
         <dt><%= t(".plan") %></dt>

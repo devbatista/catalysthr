@@ -24,8 +24,11 @@ module Billing
     attribute :admin_name, :string
     attribute :admin_cpf, :string
     attribute :admin_email, :string
+    # The contract's billing address, the NFS-e's customer at Asaas (RN-19-103, D-635).
+    BillingAccount::ADDRESS_FIELDS.each { |field| attribute field, :string }
 
     validates :kind, inclusion: { in: KINDS }
+    validates(*BillingAccount::REQUIRED_ADDRESS_FIELDS, presence: true)
     validates :mode, inclusion: { in: MODES }
     validates :legal_name, :commercial_name, :slug, :admin_name, :admin_email, presence: true
     validates :cnpj, presence: true, cnpj: true
@@ -89,7 +92,7 @@ module Billing
 
       today = Date.current
       @billing_account = BillingAccount.create!(owner: owner, responsible_user: invitation.membership.user,
-        cycle_day: BillingAccount.cycle_day_for(today))
+        cycle_day: BillingAccount.cycle_day_for(today), **billing_address)
       subscription = Subscription.create!(billing_account: @billing_account, plan_version: plan_version, created_by: by,
         status: mode == "trial" ? "trialing" : "active", started_on: today,
         trial_ends_on: (today + Subscription::TRIAL_DAYS if mode == "trial"),
@@ -100,6 +103,10 @@ module Billing
       # The first cycle's invoice, due today (RN-19-033, D-619).
       Invoicing.issue_due(subscription, today, lead: 0) if mode == "contract"
       invitation
+    end
+
+    def billing_address
+      BillingAccount::ADDRESS_FIELDS.index_with { |field| public_send(field) }
     end
 
     def create_partner

@@ -503,6 +503,14 @@ pt-BR:
             late_payment: "fatura vencida"
             module_cancelled: "módulo cancelado"
             admin_away: "administrador sem acessar"
+    billing_addresses:
+      edit:
+        back: "Voltar para %{name}"
+        next_note: "A mudança vai para o Asaas antes da próxima nota."
+        submit: "Salvar endereço"
+        cancel: "Cancelar"
+      update:
+        updated: "Endereço de cobrança salvo."
     billing_accounts:
       index:
         title: "Clientes"
@@ -591,6 +599,7 @@ pt-BR:
         remove_confirm: "Retirar? Vale depois do último dia já faturado."
         remove_module_confirm: "Retirar o módulo? Vale depois do último dia já faturado. Os dados continuam guardados e em leitura, e o AFD e os XMLs do eSocial ficam na exportação."
       show:
+        edit_billing_address: "Editar"
         back: "Voltar para clientes"
         adjustments: "Ajustes"
         new_adjustment: "Lançar ajuste"
@@ -2324,6 +2333,20 @@ pt-BR:
     formats:
       month_year: "%B de %Y"
   shared:
+    billing_address:
+      title: "Endereço de cobrança"
+      hint: "Vai na nota fiscal de serviço (NFS-e) como o endereço do cliente."
+      missing: "Não informado. Sem ele, a nota fiscal não é emitida."
+      postal_code: "CEP"
+      lookup: "Buscar CEP"
+      postal_code_invalid: "Informe um CEP com 8 números."
+      postal_code_not_found: "CEP não encontrado. Preencha o endereço."
+      street: "Logradouro"
+      street_number: "Número"
+      complement: "Complemento"
+      district: "Bairro"
+      city: "Município"
+      state: "UF"
     invoices:
       table:
         empty: "Nenhuma fatura emitida ainda."
@@ -2490,6 +2513,7 @@ pt-BR:
         no_setting: "A configuração fiscal não foi preenchida. Preencha em Cobrança > Notas fiscais e emita de novo."
         no_asaas: "A chave da API do Asaas não está configurada."
         no_document: "O cliente não tem CNPJ ou CPF cadastrado (no parceiro, ou na sede da empresa)."
+        no_address: "O contrato não tem o endereço de cobrança completo. Preencha o endereço no cadastro do cliente e emita de novo."
         refused: "O Asaas recusou a nota, sem informar o motivo."
         unavailable: "O Asaas ficou fora do ar nas 4 tentativas de envio."
         city: "A prefeitura recusou a nota, sem informar o motivo."
@@ -2616,6 +2640,13 @@ pt-BR:
         owner: "Cliente"
         billing_email: "E-mail de cobrança"
         cycle_day: "Dia do ciclo"
+        postal_code: "CEP"
+        street: "Logradouro"
+        street_number: "Número"
+        complement: "Complemento"
+        district: "Bairro"
+        city: "Cidade"
+        state: "UF"
       subscription:
         plan_version: "Plano"
         pre_activation_price: "Mensalidade de pré-ativação"
@@ -3147,6 +3178,13 @@ pt-BR:
         admin_name: "Nome do administrador"
         admin_cpf: "CPF do administrador"
         admin_email: "E-mail do administrador"
+        postal_code: "CEP"
+        street: "Logradouro"
+        street_number: "Número"
+        complement: "Complemento"
+        district: "Bairro"
+        city: "Cidade"
+        state: "UF"
       billing/portfolio_company_registration:
         legal_name: "Razão social"
         commercial_name: "Nome comercial"

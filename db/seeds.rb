@@ -96,7 +96,8 @@ direct_plan = seed_plan.call("direct", "Empresa direta", price_per_employee_cent
   next if owner.billing_account
 
   account = BillingAccount.create!(owner: owner, responsible_user: User.find_by!(cpf: responsible_cpf),
-    cycle_day: BillingAccount.cycle_day_for(Date.current))
+    cycle_day: BillingAccount.cycle_day_for(Date.current), postal_code: "01310100", street: "Avenida Paulista",
+    street_number: "1000", district: "Bela Vista", city: "São Paulo", state: "SP")
   subscription = Subscription.create!(billing_account: account, plan_version: version, created_by: author,
     started_on: Date.current, **status)
   PlanModule::MODULES.each { |code| subscription.items.create!(kind: "module", module: code, starts_on: Date.current) }

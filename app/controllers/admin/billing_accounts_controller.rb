@@ -45,7 +45,7 @@ module Admin
 
     def registration_params
       attributes = params.expect(client: [ :kind, :mode, :legal_name, :commercial_name, :cnpj, :slug, :plan_id,
-        :admin_name, :admin_cpf, :admin_email, { modules: [], add_on_codes: [] } ])
+        :admin_name, :admin_cpf, :admin_email, *BillingAccount::ADDRESS_FIELDS, { modules: [], add_on_codes: [] } ])
       attributes.merge(kind: known_kind(attributes[:kind]))
     end
   end

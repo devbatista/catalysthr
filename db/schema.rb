@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_180100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -180,6 +180,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_180100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "asaas_customer_id"
+    t.string "postal_code"
+    t.string "street"
+    t.string "street_number"
+    t.string "complement"
+    t.string "district"
+    t.string "city"
+    t.string "state"
     t.index ["asaas_customer_id"], name: "index_billing_accounts_on_asaas_customer_id", unique: true
     t.index ["owner_type", "owner_id"], name: "index_billing_accounts_on_owner", unique: true
     t.index ["responsible_user_id"], name: "index_billing_accounts_on_responsible_user_id"

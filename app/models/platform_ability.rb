@@ -45,6 +45,9 @@ class PlatformAbility
       # Plan, modules, add-ons and price migration of a contract (RN-19-014, RN-19-060,
       # RN-19-061, D-620). The client's own changes come with block 19e.
       can :change_contract, BillingAccount
+      # The contract's billing address, with the address by CEP (RN-19-103, D-635).
+      can :update_billing_address, BillingAccount
+      can :lookup, :address
       # Manual adjustments; above 20% of the next invoice, the finance team's wait for the
       # superadmin (RN-19-070, RN-19-071, D-621).
       can %i[read create cancel], BillingAdjustment

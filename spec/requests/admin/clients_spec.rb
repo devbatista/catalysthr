@@ -25,7 +25,9 @@ RSpec.describe "Clients and contracts", type: :request do
     {
       kind: "partner", mode: "trial", legal_name: "Aurora Gestão de Pessoas Ltda", commercial_name: "Aurora RH",
       cnpj: "11.222.333/0001-81", slug: "aurora", plan_id: partner_plan.id, modules: [ "ponto" ],
-      admin_name: "Ana Prado", admin_cpf: "111.444.777-35", admin_email: "ana@aurora.example"
+      admin_name: "Ana Prado", admin_cpf: "111.444.777-35", admin_email: "ana@aurora.example",
+      postal_code: "04696-180", street: "Rua Padre Fernando Pedreira de Castro", street_number: "30", complement: "",
+      district: "Jurubatuba", city: "São Paulo", state: "SP"
     }.merge(overrides)
   end
 
@@ -44,7 +46,9 @@ RSpec.describe "Clients and contracts", type: :request do
     partner = account.owner
     expect(partner).to have_attributes(class: Partner, name: "Aurora RH", legal_name: "Aurora Gestão de Pessoas Ltda", cnpj: "11222333000181")
     expect(partner.brand.active_subdomain.slug).to eq("aurora")
-    expect(account).to have_attributes(cycle_day: 19, responsible_user: User.find_by!(email: "ana@aurora.example"))
+    expect(account).to have_attributes(cycle_day: 19, responsible_user: User.find_by!(email: "ana@aurora.example"),
+      postal_code: "04696180", street: "Rua Padre Fernando Pedreira de Castro", street_number: "30", complement: nil,
+      district: "Jurubatuba", city: "São Paulo", state: "SP")
 
     subscription = account.subscription
     expect(subscription).to have_attributes(status: "trialing", started_on: Date.new(2026, 10, 19), trial_ends_on: Date.new(2026, 11, 2),
@@ -55,7 +59,46 @@ RSpec.describe "Clients and contracts", type: :request do
     expect(membership).to have_attributes(roles: [ "partner_admin" ], status: "invited")
 
     get "/clients/#{account.id}"
-    expect(response.body).to include("Aurora RH", "aurora.painel.catalysthr.com.br", "Em teste", "02/11/2026", "Ana Prado")
+    expect(response.body).to include("Aurora RH", "aurora.painel.catalysthr.com.br", "Em teste", "02/11/2026", "Ana Prado",
+      "Rua Padre Fernando Pedreira de Castro, 30 - Jurubatuba - São Paulo/SP - CEP 04696-180")
+  end
+
+  it "requires the billing address at the registration, which goes to Asaas with the NFS-e (D-635)" do
+    sign_in("finance")
+
+    post "/clients", params: { client: client_params(street_number: "", state: "") }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include("Número", "UF")
+    expect(BillingAccount.count).to eq(0)
+  end
+
+  it "lets the finance team change the billing address, and only a complete one (D-635)" do
+    sign_in("finance")
+    post "/clients", params: { client: client_params }
+    account = BillingAccount.sole
+
+    get "/clients/#{account.id}/billing-address/edit"
+    expect(response).to have_http_status(:ok)
+
+    patch "/clients/#{account.id}/billing-address", params: { billing_account: { street: "" } }
+    expect(response).to have_http_status(:unprocessable_content)
+
+    patch "/clients/#{account.id}/billing-address", params: { billing_account: { postal_code: "01310-100", street: "Avenida Paulista",
+      street_number: "1000", complement: "Conj. 12", district: "Bela Vista", city: "São Paulo", state: "SP" } }
+    expect(response).to redirect_to("/clients/#{account.id}")
+    expect(account.reload.billing_address_line).to eq("Avenida Paulista, 1000, Conj. 12 - Bela Vista - São Paulo/SP - CEP 01310-100")
+  end
+
+  it "looks the address up by CEP for the team (D-215)" do
+    sign_in("finance")
+    allow(Addresses::PostalCodeLookup).to receive(:call).with("04696180")
+      .and_return(Addresses::PostalCodeLookup::Result.new(postal_code: "04696180", street: "Rua Padre Fernando Pedreira de Castro", district: "Jurubatuba",
+        city: "São Paulo", state: "SP", ibge_city_code: "3550308"))
+
+    get "/address-lookup/04696180"
+
+    expect(response.parsed_body).to include("street" => "Rua Padre Fernando Pedreira de Castro", "state" => "SP")
   end
 
   it "registers a direct company under contract, with the CNPJ root and the headquarters (RN-04-001, D-600)" do

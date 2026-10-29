@@ -1,0 +1,43 @@
+<%# The contract's billing address, the NFS-e's customer at Asaas (RN-19-103, D-635), with
+    the address by CEP of the unit's form (D-215). locals: form; scope: the params' key;
+    lookup_url: the CEP lookup, with "CEP" in place of the code. %>
+<div class="space-y-4" data-unit-form data-address-scope="<%= scope %>">
+  <div class="flex flex-wrap items-end gap-3">
+    <div>
+      <%= form.label :postal_code, t("shared.billing_address.postal_code"), class: "field-label" %>
+      <%= form.text_field :postal_code, required: true, inputmode: "numeric", autocomplete: "postal-code", maxlength: 9,
+        class: "input w-40 font-mono", data: { postal_code: true } %>
+    </div>
+    <button type="button" class="btn btn-secondary" data-postal-code-lookup data-url="<%= lookup_url %>"
+      data-not-found="<%= t("shared.billing_address.postal_code_not_found") %>" data-invalid="<%= t("shared.billing_address.postal_code_invalid") %>">
+      <%= t("shared.billing_address.lookup") %>
+    </button>
+  </div>
+  <p class="field-hint" data-lookup-status aria-live="polite"></p>
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= form.label :street, t("shared.billing_address.street"), class: "field-label" %>
+      <%= form.text_field :street, required: true, maxlength: 200, autocomplete: "address-line1", class: "input", data: { address_field: "street" } %>
+    </div>
+    <div>
+      <%= form.label :street_number, t("shared.billing_address.street_number"), class: "field-label" %>
+      <%= form.text_field :street_number, required: true, maxlength: 20, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :complement, t("shared.billing_address.complement"), class: "field-label" %>
+      <%= form.text_field :complement, maxlength: 120, autocomplete: "address-line2", class: "input" %>
+    </div>
+    <div>
+      <%= form.label :district, t("shared.billing_address.district"), class: "field-label" %>
+      <%= form.text_field :district, required: true, maxlength: 120, class: "input", data: { address_field: "district" } %>
+    </div>
+    <div>
+      <%= form.label :city, t("shared.billing_address.city"), class: "field-label" %>
+      <%= form.text_field :city, required: true, maxlength: 120, autocomplete: "address-level2", class: "input", data: { address_field: "city" } %>
+    </div>
+    <div>
+      <%= form.label :state, t("shared.billing_address.state"), class: "field-label" %>
+      <%= form.select :state, Unit::STATES, { include_blank: true }, required: true, class: "input", data: { address_field: "state" } %>
+    </div>
+  </div>
+</div>
