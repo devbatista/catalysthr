@@ -69,7 +69,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] Mercado Pago: conta habilitada para cobrar o cartão salvo sem o CVV
 - [x] Contador da DevBatista: código do serviço (item 01.05, código municipal 02798), ISS no DAS do Simples, sem retenções, emissão depois do pagamento aceita (2026-10-14)
 - [x] Contador da DevBatista: competência da fatura que junta dois ciclos, alíquota do Simples na nota e código 02798 no CCM (com um especialista) (2026-10-22, D-628)
-- [ ] Asaas: conta configurada no Portal Nacional (D-628)
+- [x] Asaas: conta configurada no Portal Nacional (D-628, D-634, 2026-10-29)
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [x] Railway: criptografia em repouso confirmada no Trust Center (relatório SOC 2, 2026-10-29)
