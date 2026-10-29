@@ -57,10 +57,11 @@ module Billing
       fail!(note, e.description.presence || I18n.t("billing.service_invoices.errors.refused"))
     end
 
-    # The contract as Asaas's customer (RN-19-103, D-633, D-635): updated before every note,
-    # so a change reaches Asaas before the next one; with the contract's billing address,
-    # which Asaas requires to issue; without e-mail and with Asaas's notices off, so Asaas
-    # never writes to the client (D-564). Nil without the document.
+    # The contract as Asaas's customer (RN-19-103, D-633, D-635, D-636): updated before every
+    # note, so a change reaches Asaas before the next one; with the billing address and the
+    # contact e-mail, which Asaas requires to issue. Asaas's notices go off here, and its NFS-e
+    # e-mail is off in the account itself, so Asaas never writes to the client (D-564). Nil
+    # without the document.
     def ensure_customer(account)
       body = customer_body(account)
       return unless body
@@ -79,7 +80,7 @@ module Billing
       document = account.partner? ? owner.cnpj : company_document(owner)
       return if document.blank?
 
-      { name: owner.legal_name, cpfCnpj: document, externalReference: account.id, notificationDisabled: true,
+      { name: owner.legal_name, cpfCnpj: document, email: account.contact_email, externalReference: account.id, notificationDisabled: true,
         postalCode: account.postal_code, address: account.street, addressNumber: account.street_number,
         complement: account.complement, province: account.district }.compact_blank
     end

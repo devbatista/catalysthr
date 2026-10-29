@@ -76,6 +76,12 @@ class BillingAccount < ApplicationRecord
     owner.brand
   end
 
+  # The billing e-mail (RN-19-044), or the responsible's: the PIX payer and the NFS-e's
+  # customer at Asaas (D-636).
+  def contact_email
+    billing_email || responsible_user&.email || notice_recipients.first&.user&.email
+  end
+
   # Who gets the contract's notices: the responsible (RN-19-044), even before accepting the
   # invitation; when they no longer have access to the owner, its administrators.
   def notice_recipients
