@@ -57,6 +57,14 @@ Rails.application.routes.draw do
         get "unread-count", on: :collection, action: :unread_count, as: :unread_count
       end
       resources :legal_documents, only: %i[index new create], path: "legal-documents"
+      # The holidays: the national ones' review and the state and city ones (RN-11-020, D-638).
+      resources :holidays, except: :show do
+        member do
+          patch :publish
+          patch :reject
+        end
+        post :import, on: :collection
+      end
       # The feature flags (RN-20-030, D-617).
       resources :feature_flags, path: "feature-flags", param: :name, only: %i[index update destroy] do
         post :declare, on: :collection
@@ -186,7 +194,10 @@ Rails.application.routes.draw do
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
-      resources :units, except: :destroy
+      resources :units, except: :destroy do
+        # The unit's holidays and optional days, and Good Friday turned off (RN-06-029, D-638).
+        resources :holidays, only: %i[create destroy], controller: "unit_holidays"
+      end
       resources :departments, except: :destroy
       resources :positions, except: :destroy
       # Custom fields and allocation clients (spec 04, RN-04-080 to RN-04-096, D-605).

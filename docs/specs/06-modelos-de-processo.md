@@ -223,9 +223,14 @@ process_items
 process_item_dependencies
   item_id, depends_on_item_id
 
-holidays                                               -- compartilhado com a spec 11
-  id, scope ('national'|'state'|'city'|'unit'), state, ibge_city_code,
-  unit_id (nullable), company_id (nullable), date, name
+holidays                                     -- compartilhado com a spec 11; sem empresa (D-638)
+  id, level ('national'|'state'|'city'), state, ibge_city_code, city_name, date, name,
+  status ('pending'|'published'|'rejected'), source ('manual'|'brasil_api'),
+  unit_opt_out (bool, só nacional), reviewed_by_id, reviewed_at
+
+unit_holidays                                -- da empresa, com acts_as_tenant (D-638)
+  id, company_id, unit_id, kind ('holiday'|'optional_day'|'opt_out'), date, name,
+  holiday_id (só no opt_out), created_by_id
 ```
 
 Modelos da biblioteca e do parceiro não têm `company_id` e ficam fora do acts_as_tenant, com acesso pelo ponto único de consultas entre organizações (P-01-06) **[P-06-19]**.

@@ -14,8 +14,12 @@ module Panel
       @units = Unit.accessible_by(current_ability).ordered
     end
 
+    # With the year's holidays that reach the unit and its own days (RN-06-029, D-638).
     def show
       authorize! :read, @unit
+      year = params[:year].to_i
+      @year = year.between?(2000, Date.current.year + 5) ? year : Date.current.year
+      @holidays = Holidays::Calendar.new(@unit).entries(@year)
     end
 
     def new

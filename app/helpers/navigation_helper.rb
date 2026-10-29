@@ -56,6 +56,10 @@ module NavigationHelper
           controller_path.in?(%w[admin/plans admin/plan_versions admin/add_on_prices admin/pre_activation_prices])) if billing_allowed?(Plan)),
         (nav_item(t("navigation.fiscal_settings"), admin_fiscal_settings_path, controller_path == "admin/fiscal_settings") if nfse_allowed?)
       ]),
+      # The content every company uses (RN-19-080): for now, the holidays (D-638).
+      nav_group(:content, [
+        (nav_item(t("navigation.holidays"), admin_holidays_path, controller_path == "admin/holidays") if can?(:read, Holiday))
+      ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),
         (nav_item(t("navigation.support_access"), new_admin_support_access_path, controller_path == "admin/support_accesses") if can?(:create, SupportAccess))

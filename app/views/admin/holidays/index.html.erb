@@ -1,0 +1,119 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Holiday) %>
+    <%= link_to t(".new"), new_admin_holiday_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<div class="mt-6 flex flex-wrap items-end justify-between gap-4">
+  <%= form_with url: admin_holidays_path, method: :get, class: "flex flex-wrap items-end gap-3" do |form| %>
+    <div>
+      <%= form.label :year, t(".year"), class: "field-label" %>
+      <%= form.select :year, ([ @year ] + ((Date.current.year - 1)..(Date.current.year + 2)).to_a).uniq.sort, { selected: @year },
+        class: "input w-32" %>
+    </div>
+    <div>
+      <%= form.label :state, t(".state"), class: "field-label" %>
+      <%= form.select :state, Unit::STATES, { include_blank: t(".all_states"), selected: @state }, class: "input w-40" %>
+    </div>
+    <%= form.submit t(".filter"), class: "btn btn-secondary", name: nil %>
+  <% end %>
+
+  <% if can?(:import, Holiday) %>
+    <%= button_to t(".import", year: @year), import_admin_holidays_path, params: { year: @year }, class: "btn btn-secondary",
+      form: { data: { confirm: t(".import_confirm", year: @year) } } %>
+  <% end %>
+</div>
+
+<% pending = @holidays.fetch("pending", []) %>
+<% if pending.any? %>
+  <section class="card card-body mt-6 space-y-4">
+    <div>
+      <h2 class="card-title"><%= t(".pending_title", count: pending.size) %></h2>
+      <p class="field-hint"><%= t(".pending_hint") %></p>
+    </div>
+    <ul class="divide-y divide-line-soft">
+      <% pending.each do |holiday| %>
+        <li class="flex flex-wrap items-center justify-between gap-3 py-3">
+          <div>
+            <p class="text-sm font-bold text-ink-strong"><%= holiday.name %></p>
+            <p class="text-xs text-ink-soft"><%= holiday_date(holiday.date) %> · <%= holiday_place(holiday) %></p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <%= form_with url: publish_admin_holiday_path(holiday), method: :patch, class: "flex flex-wrap items-center gap-3" do |form| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= form.check_box :unit_opt_out, checked: holiday.unit_opt_out, id: "unit_opt_out_#{holiday.id}" %>
+                <%= t(".unit_opt_out") %>
+              </label>
+              <%= form.submit t(".publish"), class: "btn btn-primary btn-sm" %>
+            <% end %>
+            <%= button_to t(".reject"), reject_admin_holiday_path(holiday), method: :patch, class: "btn btn-secondary btn-sm" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<% published = @holidays.fetch("published", []) %>
+<% if published.empty? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty", year: @year) %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".date") %></th>
+          <th><%= t(".name") %></th>
+          <th class="hidden sm:table-cell"><%= t(".place") %></th>
+          <th class="hidden md:table-cell"><%= t(".source") %></th>
+          <th><span class="sr-only"><%= t(".actions") %></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% published.each do |holiday| %>
+          <tr>
+            <td class="whitespace-nowrap"><%= holiday_date(holiday.date) %></td>
+            <td>
+              <%= holiday.name %>
+              <% if holiday.unit_opt_out %><span class="pill pill-info ml-2"><%= t(".opt_out_allowed") %></span><% end %>
+              <p class="text-xs text-ink-soft sm:hidden"><%= holiday_place(holiday) %></p>
+            </td>
+            <td class="hidden sm:table-cell"><%= holiday_place(holiday) %></td>
+            <td class="hidden text-ink-soft md:table-cell"><%= t("holidays.sources.#{holiday.source}") %></td>
+            <td class="text-right">
+              <div class="flex flex-wrap justify-end gap-2">
+                <% if can?(:update, holiday) %>
+                  <%= link_to t(".edit"), edit_admin_holiday_path(holiday), class: "btn btn-secondary btn-sm" %>
+                <% end %>
+                <% if can?(:destroy, holiday) %>
+                  <%= button_to t(".destroy"), admin_holiday_path(holiday), method: :delete, class: "btn btn-danger btn-sm",
+                    form: { data: { confirm: t(".destroy_confirm", name: holiday.name) } } %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% rejected = @holidays.fetch("rejected", []) %>
+<% if rejected.any? %>
+  <details class="card card-body mt-6">
+    <summary class="cursor-pointer text-sm font-bold text-ink-strong"><%= t(".rejected_title", count: rejected.size) %></summary>
+    <p class="field-hint mt-2"><%= t(".rejected_hint") %></p>
+    <ul class="mt-3 divide-y divide-line-soft">
+      <% rejected.each do |holiday| %>
+        <li class="flex flex-wrap items-center justify-between gap-3 py-2">
+          <span class="text-sm"><%= holiday_date(holiday.date) %> · <%= holiday.name %></span>
+          <%= button_to t(".publish"), publish_admin_holiday_path(holiday), method: :patch, class: "btn btn-secondary btn-sm" %>
+        </li>
+      <% end %>
+    </ul>
+  </details>
+<% end %>

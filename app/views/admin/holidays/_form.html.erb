@@ -1,0 +1,49 @@
+<%# A holiday by hand (RN-11-020, D-336): national, state or city. The level is chosen only
+    when it is created. Without JavaScript, the place fields stay visible with their hints. %>
+<%= form_with model: holiday, url: url, method: method, class: "card card-body mt-6 space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ holiday ] %>
+
+  <div class="form-grid">
+    <div>
+      <%= form.label :level, t("admin.holidays.form.level"), class: "field-label" %>
+      <% if holiday.persisted? %>
+        <p class="input bg-canvas"><%= t("holidays.levels.#{holiday.level}") %></p>
+      <% else %>
+        <%= form.select :level, Holiday::LEVELS.map { |level| [ t("holidays.levels.#{level}"), level ] }, {}, class: "input" %>
+      <% end %>
+    </div>
+    <div>
+      <%= form.label :date, t("admin.holidays.form.date"), class: "field-label" %>
+      <%= form.date_field :date, required: true, class: "input" %>
+    </div>
+    <div class="field-wide">
+      <%= form.label :name, t("admin.holidays.form.name"), class: "field-label" %>
+      <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :state, t("admin.holidays.form.state"), class: "field-label" %>
+      <%= form.select :state, Unit::STATES, { include_blank: true }, class: "input" %>
+      <p class="field-hint"><%= t("admin.holidays.form.state_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :city_name, t("admin.holidays.form.city_name"), class: "field-label" %>
+      <%= form.text_field :city_name, maxlength: 120, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :ibge_city_code, t("admin.holidays.form.ibge_city_code"), class: "field-label" %>
+      <%= form.text_field :ibge_city_code, inputmode: "numeric", maxlength: 7, class: "input font-mono" %>
+      <p class="field-hint"><%= t("admin.holidays.form.ibge_city_code_hint") %></p>
+    </div>
+  </div>
+
+  <label class="flex items-center gap-2 text-sm">
+    <%= form.check_box :unit_opt_out %>
+    <%= t("admin.holidays.form.unit_opt_out") %>
+  </label>
+  <p class="field-hint -mt-3"><%= t("admin.holidays.form.unit_opt_out_hint") %></p>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("admin.holidays.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("admin.holidays.form.cancel"), admin_holidays_path(year: holiday.date&.year), class: "link-button text-sm" %>
+  </div>
+<% end %>

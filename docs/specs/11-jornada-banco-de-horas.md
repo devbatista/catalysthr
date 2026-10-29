@@ -196,7 +196,7 @@ rosters / roster_entries
 
 employment_revisions (spec 04) + work_schedule_id, cycle_start_index
 
-holidays (spec 06) + company_day_off (bool, para ponto facultativo dispensado)
+holidays e unit_holidays (spec 06, D-638) + o ponto facultativo dispensado pela empresa (RN-11-022), a desenhar com esta spec
 
 time_periods
   id, company_id, starts_on, ends_on, status, closed_at, closed_by_id,

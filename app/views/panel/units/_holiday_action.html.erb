@@ -1,0 +1,10 @@
+<%# A holiday's action on the unit's page: delete the unit's own day, turn a national
+    holiday on again, or turn it off where the team allows it (D-638). %>
+<% if entry.unit_holiday && can?(:destroy, entry.unit_holiday) %>
+  <% action = entry.opted_out ? "restore" : "destroy" %>
+  <%= button_to t("panel.units.holidays.#{action}"), unit_holiday_path(unit, entry.unit_holiday), method: :delete,
+    class: "btn btn-secondary btn-sm", form: { data: { confirm: t("panel.units.holidays.#{action}_confirm", name: entry.name) } } %>
+<% elsif entry.holiday&.unit_opt_out && can?(:create, UnitHoliday) %>
+  <%= button_to t("panel.units.holidays.opt_out"), unit_holidays_path(unit), params: { holiday_id: entry.holiday.id, year: year },
+    class: "btn btn-secondary btn-sm", form: { data: { confirm: t("panel.units.holidays.opt_out_confirm", name: entry.name) } } %>
+<% end %>
