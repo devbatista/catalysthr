@@ -1,6 +1,6 @@
 # Fechamento da fase 1 (checklist)
 
-> Última atualização: 2026-10-28
+> Última atualização: 2026-10-29
 > O que falta para fechar a fase 1 (`plano-de-fases.md`). O desenvolvimento que não depende de terceiros está pronto.
 
 ## Com você

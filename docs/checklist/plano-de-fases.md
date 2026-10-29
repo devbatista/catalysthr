@@ -1,6 +1,6 @@
 # Plano de fases — CatalystHR (checklist)
 
-> Última atualização: 2026-10-18
+> Última atualização: 2026-10-29
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
@@ -75,7 +75,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [x] Railway: criptografia em repouso confirmada no Trust Center (relatório SOC 2, 2026-10-29)
 
 ### Entregas
-- [ ] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Faltam os usuários do backup e da restauração, com o pg_dump diário
+- [x] **AWS (spec 20):** criar no bloco 2b da spec 01 (D-595). KMS com as chaves dos arquivos e dos backups, buckets S3 `catalysthr-files` e `catalysthr-backups`, e usuários IAM da aplicação, do backup e da restauração. Criar antes da primeira função que grava arquivo em produção (o logo da marca, na spec 01) ou do pg_dump diário, o que vier primeiro. Custo a partir daí: cerca de US$ 2 por mês nas chaves, mais o uso. Criados em 2026-10-16: as duas chaves KMS, os dois buckets e o usuário `catalysthr-app` (PR #29). Os usuários do backup e da restauração entraram com o pg_dump diário (20a, 2026-10-26)
 - [x] **Spec 01:** tenant pelo host, subdomínios e redirecionamento, marcas e modos de marca, domínio de e-mail no SES, transferência de empresa. O `/up` continua respondendo em `health.painel` sem tenant, login nem redirecionamento, senão o monitor externo dispara (D-573)
   - [x] Parte 1: base do tenant (`acts_as_tenant` com `require_tenant`, jobs com a empresa), parceiros, empresas, marcas, subdomínios com reservados e redirecionamento de 90 dias, resolução pelo host com cache, tema por variáveis CSS com contraste mínimo, manifest do PWA, CNPJ numérico e alfanumérico, Flipper instalado
   - [x] Parte 2, depois das specs 02 e 03: login por marca, empresa atual e seletor (adiantados para o bloco 4a das specs 02 e 03), ponto único de consulta entre empresas, edição da marca com permissões e modos, transferência, domínio de e-mail no SES, prefixo por empresa no S3. Em 4 PRs (D-594):
@@ -140,9 +140,10 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
       - [x] 19f-2. Cancelamento pelo cliente, com senha e motivo, desfazível até o fim do ciclo, e o aviso às empresas da carteira (RN-19-062, RN-19-063)
     - [x] 19g. Painel da equipe CatalystHR: Receita e Clientes, com o risco de cancelamento pelos logins já gravados (RN-19-090, RN-19-091, D-626). A cotação do dólar (RN-19-092) entra com o bloco Custos, na spec 14
     - [ ] 19h. Cartão salvo pelo Mercado Pago e novas tentativas (RN-19-042, RN-19-043). Trava: liberação dos Pagamentos Automáticos
-    - [x] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015, D-628, D-632, D-633), em quatro PRs, atrás da flag `nfse` (2026-10-28). Na produção, falta configurar o Asaas e conferir a primeira nota real (`pendencias-fornecedores.md`)
+    - [x] 19i. NFS-e pelo Asaas (RN-19-100 a RN-19-111, CA-19-012 a CA-19-015, D-628, D-632, D-633), em quatro PRs, atrás da flag `nfse` (2026-10-28). Asaas de produção configurado em 2026-10-29 (D-634); falta conferir a primeira nota real (`pendencias-fornecedores.md`)
+    - [x] 19j. Endereço de cobrança no contrato, pedido no cadastro pelo admin e na contratação, editável pelo cliente e pelo financeiro, e enviado ao Asaas com a NFS-e (RN-19-033, RN-19-081, RN-19-103, D-635), e o e-mail de cobrança, depois que o Asaas desligou o envio da nota por e-mail na conta de produção (D-636), em três PRs (PR #91, #92 e 19j-3, 2026-10-29)
   - Ficam para a fase 2 (D-610): a exportação e a exclusão do teste vencido e do encerramento (CA-19-004), os blocos Custos e Operação do painel (CA-19-011) e a adoção
-- [ ] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
+- [x] **Spec 20:** pg_dump diário, PITR, monitores de jobs, níveis de alerta, reenvio ao plantão pela Twilio
   - Em 2 PRs (D-627, D-629):
     - [x] 20a. pg_dump diário pelo serviço `backup` (cliente 18 do PGDG, SSE-KMS num envio único), `backup_runs`, monitor `pg-dump-diario` no Sentry, ensaio de restauração com roteiro em `docs/runbooks/restauracao.md` e lembrete trimestral (RN-20-041, RN-20-046, CA-20-003, CA-20-008). Depois do merge: usuários IAM e serviço no Railway (`aws-arquivos.md`, passo 7)
     - [x] 20b. `/up/deep` com token (banco, Redis e atraso das filas, com a `time` acima de 2 minutos como falha), Sidekiq Web no admin para o superadmin e o suporte com MFA, e os níveis de alerta configurados no Sentry (`contas-infraestrutura.md`), com as lacunas do plano gratuito (RN-20-074, RN-20-075, RN-20-077)

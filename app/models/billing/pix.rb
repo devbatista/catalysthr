@@ -54,15 +54,10 @@ module Billing
         processing_mode: "automatic",
         total_amount: amount,
         external_reference: payment.id,
-        payer: { email: payer_email(invoice.billing_account) },
+        payer: { email: invoice.billing_account.contact_email },
         transactions: { payments: [ { amount: amount, payment_method: { id: "pix", type: "bank_transfer" },
           expiration_time: ActiveSupport::Duration.build(duration.to_i).iso8601 } ] }
       }
-    end
-
-    # The billing e-mail (RN-19-044), or the responsible's.
-    def payer_email(account)
-      account.billing_email || account.responsible_user&.email || account.notice_recipients.first&.user&.email
     end
 
     def raw_status(order)

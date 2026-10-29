@@ -69,7 +69,8 @@ RSpec.describe Billing::ServiceInvoices do
   describe ".issue" do
     let(:note) { perform_enqueued_jobs(only: []) { pay } }
 
-    it "registers the partner as a customer, with the billing address and without e-mail, and schedules the note for the cycle's first day" do
+    it "registers the partner as a customer, with the billing address and e-mail, and schedules the note for the cycle's first day" do
+      account.update!(billing_email: "financeiro@aurora.example")
       stub_customer_lookup
       customer = stub_create_customer
       stub_note_lookup(note)
@@ -79,7 +80,8 @@ RSpec.describe Billing::ServiceInvoices do
 
       expect(customer.with { |request|
         body = JSON.parse(request.body)
-        body == { "name" => "Aurora Gestão de Pessoas Ltda", "cpfCnpj" => partner.cnpj, "externalReference" => account.id,
+        body == { "name" => "Aurora Gestão de Pessoas Ltda", "cpfCnpj" => partner.cnpj, "email" => "financeiro@aurora.example",
+          "externalReference" => account.id,
           "notificationDisabled" => true, "postalCode" => "04696180", "address" => "Rua Padre Fernando Pedreira de Castro",
           "addressNumber" => "30", "province" => "Jurubatuba" }
       }).to have_been_requested
@@ -136,14 +138,14 @@ RSpec.describe Billing::ServiceInvoices do
       expect(account.reload.asaas_customer_id).to eq("cus_000009")
     end
 
-    it "registers a direct company by the headquarters' CNPJ and the contract's billing address (D-635)" do
+    it "registers a direct company by the headquarters' CNPJ, the contract's billing address and the responsible's e-mail (D-635, D-636)" do
       company = Company.create_with_cnpj!(cnpj: "11222333000181", name: "Serra Azul", legal_name: "Metalúrgica Serra Azul Ltda")
       ActsAsTenant.with_tenant(company) { company.headquarters.update!(postal_code: "01310100", street: "Avenida Paulista") }
       direct = contract_for(company).billing_account
-      direct.update!(complement: "Sala 4")
+      direct.update!(complement: "Sala 4", responsible_user: create(:user, email: "rh@serraazul.example"))
 
       expect(described_class.customer_body(direct)).to eq(name: "Metalúrgica Serra Azul Ltda", cpfCnpj: "11222333000181",
-        externalReference: direct.id, notificationDisabled: true, postalCode: "04696180",
+        email: "rh@serraazul.example", externalReference: direct.id, notificationDisabled: true, postalCode: "04696180",
         address: "Rua Padre Fernando Pedreira de Castro", addressNumber: "30", complement: "Sala 4", province: "Jurubatuba")
     end
 

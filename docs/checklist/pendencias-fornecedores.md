@@ -1,6 +1,6 @@
 # Pendências com fornecedores (checklist)
 
-> Última atualização: 2026-10-22
+> Última atualização: 2026-10-29
 > Para uso interno da equipe CatalystHR. Cada item informa o que pedir ou fazer, por que, que fase ele trava (`plano-de-fases.md`) e a referência.
 
 ## Mercado Pago — trava a fase 1
