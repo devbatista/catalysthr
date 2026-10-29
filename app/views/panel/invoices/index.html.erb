@@ -1,6 +1,8 @@
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
+<%= render "shared/billing_address/summary", account: Current.company.billing_account, edit_path: edit_billing_address_path %>
+
 <div class="mt-6">
   <%= render "shared/invoices/table", invoices: @invoices, path: ->(invoice) { invoice_path(invoice) } %>
 </div>

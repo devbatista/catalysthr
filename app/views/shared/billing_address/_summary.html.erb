@@ -1,0 +1,18 @@
+<%# The contract's billing address on the client's invoices (D-635), with the change for the
+    financial responsible. locals: account; edit_path. %>
+<% if account %>
+  <div class="card card-body mt-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="field-label"><%= t("shared.billing_address.title") %></h2>
+      <% if account.billing_address_complete? %>
+        <p class="mt-1 text-sm"><%= account.billing_address_line %></p>
+      <% else %>
+        <p class="mt-1 text-sm text-bad"><%= t("shared.billing_address.missing") %></p>
+      <% end %>
+    </div>
+    <% if can?(:update_billing_address, account.owner) %>
+      <%= link_to t(account.billing_address_complete? ? "shared.billing_address.change" : "shared.billing_address.fill"), edit_path,
+        class: "btn btn-secondary btn-sm" %>
+    <% end %>
+  </div>
+<% end %>

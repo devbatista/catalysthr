@@ -32,7 +32,9 @@ class PartnerAbility
     # The portfolio's usage and its report by company (RN-19-024, spec 19, section 6), and
     # the contract's invoices, as its financial responsible (RN-19-044, D-619); and the
     # contracting during the trial or after it (RN-19-033, D-622).
-    can %i[read_usage read_invoices contract cancel_contract], Partner, id: partner.id
+    # The billing address, the NFS-e's customer at Asaas, with the address by CEP (D-635).
+    can %i[read_usage read_invoices contract cancel_contract update_billing_address], Partner, id: partner.id
+    can :lookup, :address
     # The partner's e-mail domain (spec 01, section 6, D-596). The client companies send
     # from it (P-01-18).
     can :manage_email_domain, Brand, owner_type: "Partner", owner_id: partner.id

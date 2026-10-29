@@ -33,6 +33,10 @@ module Panel
       def checkout_invoice_path(invoice)
         partner_invoice_path(invoice)
       end
+
+      def billing_address_lookup_url
+        partner_address_lookup_path(postal_code: "CEP")
+      end
     end
   end
 end
