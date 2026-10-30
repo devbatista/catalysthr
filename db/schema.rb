@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_29_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -507,6 +507,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
+  create_table "holidays", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.string "level", null: false
+    t.string "state"
+    t.string "ibge_city_code"
+    t.string "city_name"
+    t.date "date", null: false
+    t.string "name", null: false
+    t.string "status", default: "published", null: false
+    t.string "source", default: "manual", null: false
+    t.boolean "unit_opt_out", default: false, null: false
+    t.uuid "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_holidays_on_date"
+    t.index ["level", "state", "ibge_city_code", "date"], name: "index_holidays_on_place_and_date", unique: true, nulls_not_distinct: true
+    t.index ["reviewed_by_id"], name: "index_holidays_on_reviewed_by_id"
+    t.check_constraint "level::text = 'national'::text AND state IS NULL AND ibge_city_code IS NULL OR level::text = 'state'::text AND state IS NOT NULL AND ibge_city_code IS NULL OR level::text = 'city'::text AND state IS NOT NULL AND ibge_city_code IS NOT NULL", name: "holidays_place"
+  end
+
   create_table "impersonation_sessions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "impersonator_id", null: false
     t.uuid "impersonated_user_id", null: false
@@ -912,6 +932,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
     t.index ["user_id"], name: "index_trusted_devices_on_user_id"
   end
 
+  create_table "unit_holidays", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "unit_id", null: false
+    t.string "kind", null: false
+    t.date "date", null: false
+    t.string "name"
+    t.uuid "holiday_id"
+    t.uuid "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "date"], name: "index_unit_holidays_on_company_id_and_date"
+    t.index ["created_by_id"], name: "index_unit_holidays_on_created_by_id"
+    t.index ["holiday_id"], name: "index_unit_holidays_on_holiday_id"
+    t.index ["unit_id", "date"], name: "index_unit_holidays_on_unit_id_and_date", unique: true
+  end
+
   create_table "units", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.string "name", null: false
@@ -1132,6 +1168,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
   add_foreign_key "employments", "worker_profiles"
   add_foreign_key "feature_flag_changes", "users", column: "changed_by_id"
   add_foreign_key "fiscal_settings", "users", column: "updated_by_id"
+  add_foreign_key "holidays", "users", column: "reviewed_by_id"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"
   add_foreign_key "impersonation_sessions", "users", column: "impersonator_id"
@@ -1178,6 +1215,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_140000) do
   add_foreign_key "support_accesses", "companies"
   add_foreign_key "support_accesses", "users", column: "support_user_id"
   add_foreign_key "trusted_devices", "users"
+  add_foreign_key "unit_holidays", "companies"
+  add_foreign_key "unit_holidays", "holidays", on_delete: :cascade
+  add_foreign_key "unit_holidays", "units"
+  add_foreign_key "unit_holidays", "users", column: "created_by_id"
   add_foreign_key "units", "companies"
   add_foreign_key "usage_periods", "billing_accounts"
   add_foreign_key "usage_periods", "companies"

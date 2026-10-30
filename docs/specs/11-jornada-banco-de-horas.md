@@ -1,7 +1,7 @@
 # 11 — Jornada e banco de horas
 
 > Status: aprovado (regras legais pendentes de conferência por especialista em DP) · Última atualização: 2026-10-12
-> Decisões: D-065, D-207, D-236, D-242, D-279, D-291, D-317, D-318, D-330 a D-341 ([decisoes.md](decisoes.md))
+> Decisões: D-065, D-207, D-236, D-242, D-279, D-291, D-317, D-318, D-330 a D-341, D-638 ([decisoes.md](decisoes.md))
 > Os itens **[P-11-nn]** foram todos aprovados sem ajuste (D-341, seção 10).
 > **Atenção:** as regras trabalhistas citadas (CLT, Lei 5.889/73, Lei 605/49, súmulas do TST) devem ser conferidas por especialista em DP. Convenções coletivas podem mudar os padrões, e é por isso que tudo fica em regras configuráveis.
 
@@ -80,7 +80,7 @@ A jornada de cada vínculo vem da **revisão com vigência** (spec 04, D-207). T
 ### 4.3 Feriados (D-236, D-242, D-336)
 
 - **RN-11-020** — Feriados:
-  - **nacionais:** carregados pela equipe CatalystHR a partir da BrasilAPI (gratuita), com revisão manual **[P-11-06]**;
+  - **nacionais:** carregados pela equipe CatalystHR a partir da BrasilAPI (gratuita), com revisão manual **[P-11-06]**. Só valem depois de a equipe publicar: os de lei federal e a Sexta-feira da Paixão, que o RH pode desmarcar na unidade onde ela não for feriado; Carnaval e Corpus Christi ficam fora, como ponto facultativo (D-638);
   - **estaduais e municipais:** cadastrados à mão pela equipe CatalystHR para cada cidade com unidade de cliente (D-336);
   - **da unidade:** feriados e pontos facultativos acrescentados pelo RH (D-242).
 - **RN-11-021** — Quando uma empresa cadastra uma unidade numa cidade ainda sem feriados cadastrados, a equipe CatalystHR recebe uma tarefa na área admin, e o RH vê o aviso "feriados municipais em cadastro" **[P-11-07]**.
@@ -196,7 +196,7 @@ rosters / roster_entries
 
 employment_revisions (spec 04) + work_schedule_id, cycle_start_index
 
-holidays (spec 06) + company_day_off (bool, para ponto facultativo dispensado)
+holidays e unit_holidays (spec 06, D-638) + o ponto facultativo dispensado pela empresa (RN-11-022), a desenhar com esta spec
 
 time_periods
   id, company_id, starts_on, ends_on, status, closed_at, closed_by_id,

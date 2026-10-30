@@ -86,5 +86,8 @@ NotificationType::CATALOG = [
     roles: %w[superadmin finance]),
   # The quarterly restore drill, to the superadmins (RN-20-046, D-627).
   NotificationType.new(code: "platform.restore_drill_due", mandatory: true, urgent: false, channels: %w[system email],
-    roles: %w[superadmin])
+    roles: %w[superadmin]),
+  # The national holidays brought from BrasilAPI, waiting for the team's review (P-11-06, D-638).
+  NotificationType.new(code: "platform.holidays_review", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin support])
 ].index_by(&:code).freeze

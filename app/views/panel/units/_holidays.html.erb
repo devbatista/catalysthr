@@ -1,0 +1,79 @@
+<%# The year's holidays that reach the unit and its own days (RN-06-029, RN-11-020, D-638).
+    The HR administrator adds holidays and optional days, and turns off a national holiday
+    the CatalystHR team allows it for, as Good Friday. %>
+<section id="holidays" class="card card-body mt-6 space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="card-title"><%= t("panel.units.holidays.title", year: year) %></h2>
+    <div class="flex items-center gap-3 text-sm">
+      <%= link_to t("panel.units.holidays.previous", year: year - 1), unit_path(unit, year: year - 1, anchor: "holidays"), class: "link-button" %>
+      <%= link_to t("panel.units.holidays.next", year: year + 1), unit_path(unit, year: year + 1, anchor: "holidays"), class: "link-button" %>
+    </div>
+  </div>
+  <p class="field-hint"><%= t("panel.units.holidays.hint") %></p>
+
+  <% if unit.state.blank? %>
+    <p class="alert-info"><%= t("panel.units.holidays.no_state") %></p>
+  <% elsif unit.ibge_city_code.blank? %>
+    <p class="alert-info"><%= t("panel.units.holidays.no_ibge_city_code") %></p>
+  <% end %>
+
+  <% if entries.empty? %>
+    <p class="text-sm text-ink-soft"><%= t("panel.units.holidays.empty", year: year) %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t("panel.units.holidays.date") %></th>
+            <th><%= t("panel.units.holidays.name") %></th>
+            <th class="hidden sm:table-cell"><%= t("panel.units.holidays.origin") %></th>
+            <th class="hidden sm:table-cell"><span class="sr-only"><%= t("panel.units.holidays.actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% entries.each do |entry| %>
+            <tr>
+              <td class="sm:whitespace-nowrap <%= "text-ink-muted line-through" if entry.opted_out %>"><%= holiday_date(entry.date) %></td>
+              <td>
+                <span class="<%= "text-ink-muted line-through" if entry.opted_out %>"><%= entry.name %></span>
+                <% if entry.kind == "optional_day" || entry.opted_out %>
+                  <span class="mt-1 flex flex-wrap gap-1 sm:mt-0 sm:ml-2 sm:inline-flex">
+                    <% if entry.kind == "optional_day" %><span class="pill pill-mute"><%= t("unit_holidays.kinds.optional_day") %></span><% end %>
+                    <% if entry.opted_out %><span class="pill pill-warn"><%= t("panel.units.holidays.opted_out") %></span><% end %>
+                  </span>
+                <% end %>
+                <p class="text-xs text-ink-soft sm:hidden"><%= entry.holiday ? holiday_place(entry.holiday) : t("panel.units.holidays.own") %></p>
+                <div class="mt-2 sm:hidden"><%= render "holiday_action", unit: unit, year: year, entry: entry %></div>
+              </td>
+              <td class="hidden text-ink-soft sm:table-cell"><%= entry.holiday ? holiday_place(entry.holiday) : t("panel.units.holidays.own") %></td>
+              <td class="hidden text-right sm:table-cell"><%= render "holiday_action", unit: unit, year: year, entry: entry %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if can?(:create, UnitHoliday) %>
+    <%= form_with scope: :unit_holiday, url: unit_holidays_path(unit), class: "border-t border-line-soft pt-4" do |form| %>
+      <%= hidden_field_tag :year, year, id: "unit_holiday_year" %>
+      <h3 class="text-sm font-bold text-ink-strong"><%= t("panel.units.holidays.new") %></h3>
+      <div class="form-grid mt-3">
+        <div>
+          <%= form.label :date, t("panel.units.holidays.date"), class: "field-label" %>
+          <%= form.date_field :date, required: true, class: "input" %>
+        </div>
+        <div class="field-wide">
+          <%= form.label :name, t("panel.units.holidays.name"), class: "field-label" %>
+          <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+        </div>
+        <div>
+          <%= form.label :kind, t("panel.units.holidays.kind"), class: "field-label" %>
+          <%= form.select :kind, %w[holiday optional_day].map { |kind| [ t("unit_holidays.kinds.#{kind}"), kind ] }, {}, class: "input" %>
+        </div>
+      </div>
+      <p class="field-hint mt-2"><%= t("panel.units.holidays.optional_day_hint") %></p>
+      <%= form.submit t("panel.units.holidays.submit"), class: "btn btn-primary mt-4" %>
+    <% end %>
+  <% end %>
+</section>

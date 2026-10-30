@@ -1,5 +1,69 @@
 pt-BR:
   admin:
+    holidays:
+      index:
+        title: "Feriados"
+        subtitle: "Feriados nacionais, estaduais e municipais, usados nos prazos em dias úteis de todas as empresas. O RH de cada empresa acrescenta os da unidade."
+        new: "Novo feriado"
+        year: "Ano"
+        state: "UF"
+        all_states: "Todas"
+        filter: "Filtrar"
+        import: "Buscar nacionais de %{year} na BrasilAPI"
+        import_confirm: "Buscar na BrasilAPI os feriados nacionais de %{year}? Os novos ficam aguardando revisão e só valem depois de publicados."
+        pending_title:
+          one: "1 feriado nacional aguardando revisão"
+          other: "%{count} feriados nacionais aguardando revisão"
+        pending_hint: "Publique os feriados de lei federal (1/1, 21/4, 1/5, 7/9, 12/10, 2/11, 15/11, 20/11 e 25/12) e a Sexta-feira da Paixão, que o RH pode desmarcar na unidade. Rejeite o Carnaval, a Páscoa e o Corpus Christi, que não são feriados nacionais (D-638)."
+        unit_opt_out: "O RH pode desmarcar na unidade"
+        publish: "Publicar"
+        reject: "Rejeitar"
+        empty: "Nenhum feriado publicado em %{year}."
+        date: "Data"
+        name: "Feriado"
+        place: "Abrangência"
+        source: "Origem"
+        actions: "Ações"
+        opt_out_allowed: "Desmarcável na unidade"
+        edit: "Editar"
+        destroy: "Excluir"
+        destroy_confirm: "Excluir o feriado %{name}? Os prazos já calculados não mudam."
+        rejected_title:
+          one: "1 feriado rejeitado"
+          other: "%{count} feriados rejeitados"
+        rejected_hint: "Os rejeitados não voltam na próxima busca da BrasilAPI."
+      new:
+        title: "Novo feriado"
+        back: "Voltar para Feriados"
+        subtitle: "Cadastre os feriados estaduais e municipais das cidades com unidades de clientes. Os nacionais vêm da BrasilAPI."
+      edit:
+        title: "Editar %{name}"
+        back: "Voltar para Feriados"
+      create:
+        created: "Feriado cadastrado."
+      update:
+        updated: "Feriado salvo."
+      destroy:
+        destroyed: "Feriado excluído."
+      publish:
+        published: "%{name} publicado."
+      reject:
+        rejected: "%{name} rejeitado."
+      import:
+        enqueued: "Buscando os feriados nacionais de %{year}. Os novos aparecem aqui para revisão em instantes."
+      form:
+        level: "Abrangência"
+        date: "Data"
+        name: "Nome do feriado"
+        state: "UF"
+        state_hint: "Para feriado estadual ou municipal."
+        city_name: "Município"
+        ibge_city_code: "Código IBGE do município"
+        ibge_city_code_hint: "7 números. É o código que liga o feriado às unidades do município."
+        unit_opt_out: "O RH pode desmarcar este feriado na unidade"
+        unit_opt_out_hint: "Só para feriado nacional que não vale em todo o país, como a Sexta-feira da Paixão."
+        submit: "Salvar"
+        cancel: "Cancelar"
     company_transfers:
       new:
         title: "Transferir empresa"
@@ -640,6 +704,22 @@ pt-BR:
       cno: "CNO"
       caepf: "CAEPF"
     uses_headquarters: "Usa a inscrição da matriz"
+  # Holidays (spec 06, RN-06-029; spec 11, RN-11-020; D-638).
+  holidays:
+    levels:
+      national: "Nacional"
+      state: "Estadual"
+      city: "Municipal"
+      state_of: "Estadual (%{state})"
+      city_of: "%{city} / %{state}"
+    sources:
+      manual: "Cadastro manual"
+      brasil_api: "BrasilAPI"
+  unit_holidays:
+    kinds:
+      holiday: "Feriado"
+      optional_day: "Ponto facultativo"
+      opt_out: "Desmarcado na unidade"
   # The person's record (spec 04, RN-04-041). The system's own values; the eSocial codes come with spec 13 (D-602).
   worker_profiles:
     sexes:
@@ -894,6 +974,7 @@ pt-BR:
       platform: "Plataforma"
       billing: "Cobrança"
       support: "Suporte"
+      content: "Conteúdo"
       legal: "Jurídico"
     home: "Painel"
     users: "Usuários"
@@ -921,6 +1002,7 @@ pt-BR:
     dashboard: "Indicadores"
     plans: "Planos e preços"
     fiscal_settings: "Notas fiscais"
+    holidays: "Feriados"
     units: "Unidades"
     departments: "Departamentos"
     positions: "Cargos"
@@ -940,6 +1022,15 @@ pt-BR:
       accounting_integrations: "Integrações contábeis"
       process_templates: "Modelos de processo"
   panel:
+    unit_holidays:
+      create:
+        holiday: "Feriado incluído na unidade."
+        optional_day: "Ponto facultativo incluído na unidade."
+        opt_out: "O feriado deixou de valer nesta unidade."
+      destroy:
+        holiday: "Feriado excluído da unidade."
+        optional_day: "Ponto facultativo excluído da unidade."
+        opt_out: "O feriado voltou a valer nesta unidade."
     invoices:
       index:
         title: "Faturas"
@@ -979,6 +1070,30 @@ pt-BR:
         created: "Unidade cadastrada."
       update:
         updated: "Unidade salva."
+      holidays:
+        title: "Feriados de %{year}"
+        previous: "← %{year}"
+        next: "%{year} →"
+        hint: "Os feriados contam nos prazos em dias úteis desta unidade. Os nacionais, estaduais e municipais são mantidos pela equipe CatalystHR; acrescente os da unidade."
+        no_state: "A unidade não tem UF: só os feriados nacionais valem para ela. Edite a unidade para incluir o endereço."
+        no_ibge_city_code: "A unidade não tem o código IBGE do município: os feriados municipais não valem para ela. Edite a unidade para incluir o código."
+        empty: "Nenhum feriado em %{year}."
+        date: "Data"
+        name: "Nome"
+        origin: "Abrangência"
+        actions: "Ações"
+        own: "Da unidade"
+        opted_out: "Não é feriado nesta unidade"
+        opt_out: "Não é feriado aqui"
+        opt_out_confirm: "%{name} deixa de ser feriado nesta unidade, e os prazos novos passam a contar esse dia como útil. Confirma?"
+        restore: "Voltar a considerar"
+        restore_confirm: "%{name} volta a ser feriado nesta unidade. Confirma?"
+        destroy: "Excluir"
+        destroy_confirm: "Excluir %{name}? Os prazos já calculados não mudam."
+        new: "Incluir feriado ou ponto facultativo"
+        kind: "Tipo"
+        optional_day_hint: "Ponto facultativo é dia normal nos prazos; só o feriado deixa de contar como dia útil."
+        submit: "Incluir"
       form:
         identification: "Identificação"
         name: "Nome da unidade"
@@ -2161,6 +2276,11 @@ pt-BR:
         hint: "Quando o financeiro lança um ajuste acima de 20% da próxima fatura."
         title: "Ajuste de %{name} aguardando aprovação"
         body: "%{by} lançou %{adjustment} para %{name}, acima de 20% da próxima fatura. O ajuste só vale depois da sua aprovação."
+      holidays_review:
+        name: "Feriados para revisar"
+        hint: "Quando os feriados nacionais do ano chegam da BrasilAPI e esperam a revisão."
+        title: "Feriados nacionais de %{year} aguardando revisão"
+        body: "Chegaram da BrasilAPI os feriados nacionais de %{year}: %{count} para revisar. Eles só valem nos prazos depois de publicados; confira em Conteúdo → Feriados."
       restore_drill_due:
         name: "Ensaio de restauração"
         hint: "A cada 3 meses, para restaurar o último backup num banco temporário."
@@ -2332,6 +2452,7 @@ pt-BR:
   date:
     formats:
       month_year: "%B de %Y"
+      with_weekday: "%d/%m/%Y (%a)"
   shared:
     billing_address:
       title: "Endereço de cobrança"
@@ -2631,7 +2752,24 @@ pt-BR:
       subscription: "Assinatura"
       subscription_item: "Item da assinatura"
       pre_activation_price: "Mensalidade de pré-ativação"
+      holiday: "Feriado"
+      unit_holiday: "Feriado da unidade"
     attributes:
+      holiday:
+        level: "Abrangência"
+        state: "UF"
+        ibge_city_code: "Código IBGE do município"
+        city_name: "Município"
+        date: "Data"
+        name: "Nome"
+        status: "Situação"
+        unit_opt_out: "O RH pode desmarcar na unidade"
+      unit_holiday:
+        kind: "Tipo"
+        date: "Data"
+        name: "Nome"
+        holiday: "Feriado nacional"
+        unit: "Unidade"
       fiscal_setting:
         service_code: "Código do serviço"
         service_name: "Nome do serviço"
@@ -2982,6 +3120,18 @@ pt-BR:
             document:
               invalid_cnpj_root: "precisa ser a raiz do CNPJ, com 8 caracteres"
               invalid_cpf: "não é um CPF válido"
+        holiday:
+          attributes:
+            date:
+              taken: "já tem um feriado neste lugar"
+            unit_opt_out:
+              only_national: "só vale para feriado nacional"
+        unit_holiday:
+          attributes:
+            date:
+              taken: "já tem um dia cadastrado nesta unidade"
+            holiday:
+              no_opt_out: "não pode ser desmarcado na unidade"
         unit:
           attributes:
             registration_type:

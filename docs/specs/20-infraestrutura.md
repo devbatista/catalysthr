@@ -78,7 +78,7 @@ Definir **onde e como o CatalystHR roda**:
   | `worker` | Sidekiq com as demais filas e o sidekiq-cron | 2 vCPU, 2 GB |
   | `postgres` | PostgreSQL com a extensão pgvector, PITR ligado | 2 vCPU, 4 GB, 50 GB de disco |
   | `redis` | Redis só para o Sidekiq (D-511), com persistência AOF e `maxmemory-policy noeviction` | 512 MB |
-  | `clamav` | clamd e freshclam, só na rede privada, porta 3310 | 1 vCPU, 3 GB |
+  | `clamav` | clamd e freshclam, só na rede privada, porta 3310. Criado na fase de validação, antes do primeiro upload real (D-638) | 1 vCPU, 3 GB |
   | `backup` | Serviço de cron do Railway com o pg_dump (RN-20-041) | Sob demanda |
 
   Toda tabela tem chave primária UUIDv7, gerada pelo banco (`uuidv7()`, Postgres 18), e toda referência é UUID; só a `solid_cache_entries` tem id numérico (D-614).

@@ -28,3 +28,5 @@
     <p class="mt-5 border-t border-line-soft pt-4"><%= link_to t(".edit"), edit_unit_path(@unit), class: "btn btn-secondary" %></p>
   <% end %>
 </div>
+
+<%= render "holidays", unit: @unit, year: @year, entries: @holidays %>

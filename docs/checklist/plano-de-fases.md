@@ -163,11 +163,14 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 
 ### Entregas
 
-**Leva 1, sem depender de terceiros:**
-- [ ] **Spec 06:** motor de modelos de processo. Incluir a cópia dos modelos usados pela empresa no serviço de transferência, com teste (RN-01-053, D-599)
-- [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
-- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável, varredura de vírus dos uploads com o serviço `clamav` no Railway (P-05-30, D-606). O texto da ciência eletrônica segue a resposta do jurídico (itens 3.1 e 3.2), sem mudar o mecanismo
+**Leva 1, sem depender de terceiros, nesta ordem: 06, 08, 16 e 07, depois 15, 17 e 18 (D-638):**
+- [ ] **Spec 06:** motor de modelos de processo, em 3 PRs (D-638):
+  - [x] 06a. Feriados: importação anual da BrasilAPI para revisão e publicação pela equipe, estaduais e municipais à mão no admin, feriados e pontos facultativos da unidade pelo RH (com a Sexta-feira da Paixão desmarcável) e o cálculo de dias úteis (RN-06-026, RN-06-029, RN-11-020, P-06-20, CA-06-003) (PR #97). Depois do deploy: buscar no admin os nacionais de 2026 e 2027 e publicá-los
+  - [ ] 06b. Modelos na biblioteca, no parceiro e na empresa, editor, adoção, padrão por tipo e modelo do cargo, condições, dependências sem ciclo, materiais em PDF com a varredura de vírus (clamav no Docker Compose; o serviço no Railway fica para a validação) e a cópia dos modelos no serviço de transferência, com teste (RN-06-001 a RN-06-042, RN-01-053, P-05-30, D-599, CA-06-001, CA-06-002, CA-06-008)
+  - [ ] 06c. Processo: início, responsáveis, prazos, bloqueio, ajustes com histórico, dispensa, conclusão, recálculo, troca de cliente, jobs, avisos e a tela genérica do processo (RN-06-050 a RN-06-066, CA-06-004 a CA-06-007, CA-06-009, CA-06-010)
+- [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável. A varredura de vírus vem do 06b (D-638). O texto da ciência eletrônica segue a resposta do jurídico (itens 3.1 e 3.2), sem mudar o mecanismo
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe"
+- [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
 - [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
@@ -196,6 +199,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Asaas: a primeira NFS-e real, com a flag `nfse` ligada (`pendencias-fornecedores.md`)
 - [ ] Teste de ponta a ponta da fase 1: o superadmin cria um parceiro e uma empresa direta em teste; eles configuram a marca e convidam o RH, que entra com MFA; contratam um plano e pagam por cartão e por PIX; a NFS-e sai pelo Asaas e aparece na fatura
+- [ ] Serviço `clamav` no Railway (1 vCPU, 3 GB, de US$ 12 a 24 por mês), antes de ligar a flag de qualquer módulo com upload para um cliente (D-638)
 - [ ] Spec 20: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e o reenvio ao plantão (RN-20-076, com o plano pago do Sentry e a Twilio, D-629)
 
 ### Terceiros

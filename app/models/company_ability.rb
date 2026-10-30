@@ -65,7 +65,7 @@ class CompanyAbility
   # the payroll module (P-03-16). A past employment counts by its last unit.
   # units: the analyst's membership, whose units count, or :all.
   def hr_analyst(company, units:, modules:)
-    can :read, [ Unit, Department, Position, AllocationClient ], company_id: company.id
+    can :read, [ Unit, UnitHoliday, Department, Position, AllocationClient ], company_id: company.id
     # The CEP for the person's address; the unit's position on the map is the HR
     # administrator's (D-216).
     can :lookup, :address
@@ -119,6 +119,8 @@ class CompanyAbility
     # The billing address, the NFS-e's customer at Asaas (D-635).
     can %i[read_invoices contract cancel_contract update_billing_address], Company, id: company.id if company.direct?
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
+    # The unit's holidays and optional days, and turning off Good Friday (RN-06-029, D-638).
+    can %i[read create destroy], UnitHoliday, company_id: company.id
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator

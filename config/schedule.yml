@@ -92,6 +92,13 @@ billing_dunning:
   class: "Billing::DunningJob"
   queue: "default"
 
+# The next year's national holidays from BrasilAPI, for the team's review (spec 06, P-06-20,
+# spec 11, P-11-06, D-638). Two months ahead, so they are published before the year starts.
+holidays_import_national:
+  cron: "0 4 1 11 * America/Sao_Paulo"         # every November 1st
+  class: "Holidays::ImportNationalJob"
+  queue: "default"
+
 # Reminds the superadmins of the quarterly restore drill (spec 20, RN-20-046, D-627). The
 # daily pg_dump is the Railway `backup` service, not a Sidekiq job (RN-20-041).
 infra_restore_drill_reminder:

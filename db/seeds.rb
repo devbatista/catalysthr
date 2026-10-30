@@ -56,7 +56,7 @@ Flipper.enable(FeatureFlags::SIGN_IN)
 
 [
   # CatalystHR team, at http://admin.localhost:3300
-  [ "Paulo Lima", "52998224725", "paulo@catalysthr.example", { platform_role: "superadmin" }, nil, nil ],
+  [ "Rafael Batista", "39932899860", "rafael@catalysthr.example", { platform_role: "superadmin" }, nil, nil ],
   # Partner's administrator and consultant, and a client company's HR, at http://aurora.painel.localhost:3300
   [ "Beatriz Nunes", "39053344705", "beatriz@aurora.example", {}, aurora, %w[partner_admin] ],
   [ "Ana Ribeiro", "11144477735", "ana@aurora.example", {}, aurora, %w[consultant] ],
