@@ -65,6 +65,16 @@ Rails.application.routes.draw do
         end
         post :import, on: :collection
       end
+      # The CatalystHR library of models of process (spec 06, D-126, D-639).
+      resources :process_templates, path: "process-templates", except: :destroy do
+        member do
+          patch :activate
+          patch :archive
+        end
+        resources :items, controller: "process_template_items", except: %i[index show] do
+          patch :move, on: :member
+        end
+      end
       # The feature flags (RN-20-030, D-617).
       resources :feature_flags, path: "feature-flags", param: :name, only: %i[index update destroy] do
         post :declare, on: :collection
@@ -202,6 +212,19 @@ Rails.application.routes.draw do
       resources :positions, except: :destroy
       # Custom fields and allocation clients (spec 04, RN-04-080 to RN-04-096, D-605).
       resources :custom_fields, path: "custom-fields", only: %i[index new create edit update]
+      # The company's models of process (spec 06, D-240, D-639): adopting the partner's and the
+      # library's (P-06-01) and the default of each kind (RN-06-003).
+      resources :process_templates, path: "process-templates", except: :destroy do
+        member do
+          patch :activate
+          patch :archive
+          patch :default
+        end
+        post :adopt, on: :collection
+        resources :items, controller: "process_template_items", except: %i[index show] do
+          patch :move, on: :member
+        end
+      end
       resources :allocation_clients, path: "clients", except: :destroy do
         member do
           patch :managers
@@ -268,8 +291,17 @@ Rails.application.routes.draw do
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do
         root "home#index"
-        get "soon/:feature", to: "coming_soon#show", as: :coming_soon,
-          constraints: { feature: Regexp.union(ComingSoon::PARTNER_FEATURES) }
+        # The partner's models of process, adopting the library's (spec 06, D-126, D-232, D-639).
+        resources :process_templates, path: "process-templates", except: :destroy do
+          member do
+            patch :activate
+            patch :archive
+          end
+          post :adopt, on: :collection
+          resources :items, controller: "process_template_items", except: %i[index show] do
+            patch :move, on: :member
+          end
+        end
         resource :brand, only: %i[edit update] do
           resource :email_domain, only: %i[create destroy], path: "email-domain", controller: "brand_email_domains"
         end

@@ -10,6 +10,7 @@
   <dl class="details-list">
     <div class="sm:col-span-2"><dt><%= t(".cbo") %></dt><dd><%= @position.cbo_occupation&.label || @position.cbo_code %></dd></div>
     <div><dt><%= t(".salary_range") %></dt><dd><%= salary_range(@position) %></dd></div>
+    <div><dt><%= t(".admission_template") %></dt><dd><%= @position.admission_template&.name || t(".default_admission_template") %></dd></div>
     <div class="sm:col-span-2"><dt><%= t(".description") %></dt><dd><%= simple_format(@position.description.presence || "—", class: "mb-1") %></dd></div>
     <div class="sm:col-span-2"><dt><%= t(".requirements") %></dt><dd><%= simple_format(@position.requirements.presence || "—", class: "mb-1") %></dd></div>
   </dl>

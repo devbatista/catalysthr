@@ -15,7 +15,6 @@ module ComingSoon
   # analyst or a consultant sees them only when released to them (CA-03-001).
   RELEASED_MODULES = { "admissions" => "admissao", "documents" => "documentos", "requests" => "solicitacoes",
     "payroll" => "folha", "time-tracking" => "ponto", "performance" => "avaliacao" }.freeze
-  PARTNER_FEATURES = %w[process-templates].freeze
 
   module_function
 

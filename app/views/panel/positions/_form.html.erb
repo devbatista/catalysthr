@@ -52,6 +52,15 @@
       <%= form.text_area :requirements, rows: 3, class: "input" %>
     </div>
 
+    <%# The position's own admission model, ahead of the company's default (D-204, RN-06-003). %>
+    <div class="field-wide">
+      <%= form.label :admission_template_id, t("panel.positions.form.admission_template"), class: "field-label" %>
+      <%= form.select :admission_template_id,
+        ProcessTemplate.admission.where(status: "active").or(ProcessTemplate.where(id: position.admission_template_id)).order(:name).pluck(:name, :id),
+        { include_blank: t("panel.positions.form.default_admission_template") }, class: "input" %>
+      <p class="field-hint"><%= t("panel.positions.form.admission_template_hint") %></p>
+    </div>
+
     <% if position.persisted? %>
       <div>
         <%= form.label :status, t("panel.positions.form.status"), class: "field-label" %>

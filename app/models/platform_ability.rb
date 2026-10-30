@@ -68,6 +68,9 @@ class PlatformAbility
     # The holidays: the review of the national ones and the state and city ones by hand
     # (RN-11-020, P-11-06, D-336, D-638), in the admin's content (RN-19-080).
     can %i[read create update destroy review import], Holiday if user.superadmin? || user.support?
+    # The CatalystHR library of models of process (spec 06, section 6, D-126), in the
+    # admin's content (RN-19-080, D-639).
+    can %i[read create update], SharedProcessTemplate, partner_id: nil if user.superadmin? || user.support?
     # Sidekiq Web, for the superadmin and the support (RN-20-077).
     can :read, :sidekiq_web if user.superadmin? || user.support?
   end

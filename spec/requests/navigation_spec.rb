@@ -144,15 +144,15 @@ RSpec.describe "Navigation", type: :request do
       sign_in_with_mfa("12345678909", user)
     end
 
-    it "shows the partner's menu and its module not built yet" do
+    # The models of process left "Em breve" with block 06b-1 (D-598, D-639).
+    it "shows the partner's menu with the models of process" do
       get "/partner"
 
-      expect(response.body).to include("Carteira", "Equipe", "Marca e domínio", "Modelos de processo")
-      expect(response.body).not_to include("Folha de pagamento")
+      expect(response.body).to include("Carteira", "Equipe", "Marca e domínio", 'href="/partner/process-templates"')
+      expect(response.body).not_to include("Folha de pagamento", "Em breve")
 
       get "/partner/soon/process-templates"
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Modelos de processo", "Em breve")
+      expect(response).to have_http_status(:not_found)
     end
   end
 

@@ -1,0 +1,183 @@
+<%# An item of a model of process (RN-06-010 to RN-06-042): the kind is chosen before and
+    shows only its settings; positions, units and clients are conditions only in the
+    company's models (D-639). Each list sends an empty value, so unchecking everything
+    clears it. %>
+<% company = @template.company_level? %>
+<% offset = @item.due_offset_days.to_i %>
+<%= form_with model: @item, scope: :item, url: url, method: method, class: "mt-6 space-y-6" do |form| %>
+  <%= render "admin/plans/errors", records: [ @item ] %>
+  <%= form.hidden_field :kind if @item.new_record? %>
+
+  <section class="card card-body space-y-4">
+    <div class="flex flex-wrap items-center gap-2">
+      <h2 class="card-title"><%= t("process_templates.items.form.item") %></h2>
+      <span class="pill pill-info"><%= t("process_templates.item_kinds.#{@item.kind}") %></span>
+    </div>
+    <p class="field-hint"><%= t("process_templates.item_hints.#{@item.kind}") %></p>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :title, t("process_templates.items.form.title"), class: "field-label" %>
+        <%= form.text_field :title, required: true, maxlength: 160, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :responsible_role, t("process_templates.items.form.responsible"), class: "field-label" %>
+        <%= form.select :responsible_role, responsible_roles(@template), {}, class: "input" %>
+      </div>
+      <div class="field-full">
+        <%= form.label :instructions, t("process_templates.items.form.instructions"), class: "field-label" %>
+        <%= form.text_area :instructions, rows: 3, maxlength: 4000, class: "input" %>
+      </div>
+    </div>
+    <label class="flex items-center gap-2 text-sm">
+      <%= form.check_box :required %>
+      <%= t("process_templates.items.form.required") %>
+    </label>
+    <p class="field-hint -mt-3"><%= t("process_templates.items.form.required_hint") %></p>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <div>
+      <h2 class="card-title"><%= t("process_templates.items.form.deadline") %></h2>
+      <p class="field-hint"><%= t("process_templates.items.form.deadline_hint") %></p>
+    </div>
+    <div class="form-grid">
+      <div>
+        <%= form.label :due_offset_days, t("process_templates.items.form.days"), class: "field-label" %>
+        <%= form.number_field :due_offset_days, value: (offset.abs if @item.deadline?), min: 0,
+          max: ProcessTemplateItemDefinition::MAX_OFFSET_DAYS, class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "item_due_direction", t("process_templates.items.form.direction"), class: "field-label" %>
+        <%= select_tag "item[due_direction]", options_for_select(%w[after before].map { |direction|
+          [ t("process_templates.items.form.directions.#{direction}"), direction ] }, offset.negative? ? "before" : "after"),
+          id: "item_due_direction", class: "input" %>
+      </div>
+      <div class="field-wide">
+        <%= form.label :due_anchor, t("process_templates.items.form.anchor"), class: "field-label" %>
+        <%= form.select :due_anchor, @item.anchors.map { |anchor| [ t("process_templates.anchors.#{anchor}"), anchor ] },
+          { include_blank: t("process_templates.items.no_deadline") }, class: "input" %>
+      </div>
+    </div>
+    <label class="flex items-center gap-2 text-sm">
+      <%= form.check_box :due_business_days %>
+      <%= t("process_templates.items.form.business_days") %>
+    </label>
+  </section>
+
+  <% if @item.form? %>
+    <section class="card card-body space-y-4">
+      <div>
+        <h2 class="card-title"><%= t("process_templates.items.form.form_fields") %></h2>
+        <p class="field-hint"><%= t("process_templates.items.form.form_fields_hint") %></p>
+      </div>
+      <fieldset>
+        <legend class="field-label"><%= t("process_templates.items.form.groups") %></legend>
+        <%= hidden_field_tag "item[config][groups][]", "", id: nil %>
+        <div class="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+          <% ProcessTemplateItemDefinition::FORM_GROUPS.each do |group| %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag "item[config][groups][]", group, @item.config["groups"]&.include?(group), id: "item_group_#{group}" %>
+              <%= t("process_templates.form_groups.#{group}") %>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+      <% if company %>
+        <% custom_fields = CustomFieldDefinition.where(status: "active").order(:label) %>
+        <fieldset>
+          <legend class="field-label"><%= t("process_templates.items.form.custom_fields") %></legend>
+          <%= hidden_field_tag "item[config][custom_field_keys][]", "", id: nil %>
+          <% if custom_fields.empty? %>
+            <p class="field-hint"><%= t("process_templates.items.form.no_custom_fields") %></p>
+          <% else %>
+            <div class="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+              <% custom_fields.each do |field| %>
+                <label class="flex items-center gap-2 text-sm">
+                  <%= check_box_tag "item[config][custom_field_keys][]", field.key, @item.config["custom_field_keys"]&.include?(field.key),
+                    id: "item_custom_field_#{field.key}" %>
+                  <%= field.label %>
+                </label>
+              <% end %>
+            </div>
+          <% end %>
+        </fieldset>
+      <% end %>
+      <div>
+        <%= label_tag "item_free_fields", t("process_templates.items.form.free_fields"), class: "field-label" %>
+        <%= text_area_tag "item[free_fields]", Array(@item.config["free_fields"]).join("\n"), id: "item_free_fields", rows: 4, class: "input" %>
+        <p class="field-hint"><%= t("process_templates.items.form.free_fields_hint", count: ProcessTemplateItemDefinition::FREE_FIELDS_LIMIT) %></p>
+      </div>
+    </section>
+  <% elsif @item.forward? %>
+    <section class="card card-body space-y-3">
+      <div>
+        <h2 class="card-title"><%= t("process_templates.items.form.forward") %></h2>
+        <p class="field-hint"><%= t("process_templates.items.form.forward_hint") %></p>
+      </div>
+      <% %w[validated_documents record].each do |key| %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= hidden_field_tag "item[config][#{key}]", "0", id: nil %>
+          <%= check_box_tag "item[config][#{key}]", "1", @item.config[key], id: "item_forward_#{key}" %>
+          <%= t("process_templates.items.form.forward_#{key}") %>
+        </label>
+      <% end %>
+    </section>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <div>
+      <h2 class="card-title"><%= t("process_templates.items.form.conditions") %></h2>
+      <p class="field-hint"><%= t("process_templates.items.form.conditions_hint.#{company ? "company" : "shared"}") %></p>
+    </div>
+    <% lists = { "employment_kinds" => Employment::KINDS.map { |kind| [ t("employments.kinds.#{kind}"), kind ] } } %>
+    <% if company %>
+      <% lists["position_ids"] = Position.where(status: "active").order(:name).pluck(:name, :id) %>
+      <% lists["unit_ids"] = Unit.where(status: "active").order(:name).pluck(:name, :id) %>
+      <% lists["allocation_client_ids"] = AllocationClient.where(status: "active").order(:name).pluck(:name, :id) if Current.company.uses_allocation_clients %>
+    <% end %>
+    <% lists.each do |key, options| %>
+      <fieldset>
+        <legend class="field-label"><%= t("process_templates.conditions.#{key}") %></legend>
+        <%= hidden_field_tag "item[conditions][#{key}][]", "", id: nil %>
+        <% if options.empty? %>
+          <p class="field-hint"><%= t("process_templates.items.form.none_registered") %></p>
+        <% else %>
+          <div class="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <% options.each do |label, value| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= check_box_tag "item[conditions][#{key}][]", value, @item.conditions[key]&.include?(value), id: "item_#{key}_#{value}" %>
+                <%= label %>
+              </label>
+            <% end %>
+          </div>
+        <% end %>
+      </fieldset>
+    <% end %>
+  </section>
+
+  <% others = @template.items.reject { |other| other.id.nil? || other.id == @item.id } %>
+  <section class="card card-body space-y-3">
+    <div>
+      <h2 class="card-title"><%= t("process_templates.items.form.dependencies") %></h2>
+      <p class="field-hint"><%= t("process_templates.items.form.dependencies_hint") %></p>
+    </div>
+    <%= hidden_field_tag "item[depends_on_item_ids][]", "", id: nil %>
+    <% if others.empty? %>
+      <p class="field-hint"><%= t("process_templates.items.form.no_other_items") %></p>
+    <% else %>
+      <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <% others.each do |other| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "item[depends_on_item_ids][]", other.id, @item.depends_on_item_ids.include?(other.id), id: "item_depends_on_#{other.id}" %>
+            <%= other.title %>
+          </label>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit t("process_templates.items.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("process_templates.items.form.cancel"), template_route(:template, @template, anchor: "items"), class: "link-button text-sm" %>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_29_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -782,6 +782,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_180000) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "admission_template_id"
+    t.index ["admission_template_id"], name: "index_positions_on_admission_template_id"
     t.index ["company_id"], name: "index_positions_on_company_id"
   end
 
@@ -794,6 +796,47 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_180000) do
     t.datetime "updated_at", null: false
     t.index ["created_by_id"], name: "index_pre_activation_prices_on_created_by_id"
     t.index ["version"], name: "index_pre_activation_prices_on_version", unique: true
+  end
+
+  create_table "process_template_items", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "process_template_id", null: false
+    t.integer "position", null: false
+    t.string "kind", null: false
+    t.string "title", null: false
+    t.text "instructions"
+    t.boolean "required", default: true, null: false
+    t.string "responsible_role", null: false
+    t.string "due_anchor"
+    t.integer "due_offset_days"
+    t.boolean "due_business_days", default: false, null: false
+    t.jsonb "conditions", default: {}, null: false
+    t.jsonb "config", default: {}, null: false
+    t.uuid "depends_on_item_ids", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_process_template_items_on_company_id"
+    t.index ["process_template_id", "position"], name: "idx_on_process_template_id_position_d337fec09d"
+  end
+
+  create_table "process_templates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "partner_id"
+    t.string "kind", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "status", default: "draft", null: false
+    t.boolean "is_default", default: false, null: false
+    t.uuid "source_template_id"
+    t.uuid "onboarding_template_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "kind"], name: "index_process_templates_default", unique: true, where: "is_default"
+    t.index ["company_id"], name: "index_process_templates_on_company_id"
+    t.index ["onboarding_template_id"], name: "index_process_templates_on_onboarding_template_id"
+    t.index ["partner_id"], name: "index_process_templates_on_partner_id"
+    t.index ["source_template_id"], name: "index_process_templates_on_source_template_id"
+    t.check_constraint "company_id IS NULL OR partner_id IS NULL", name: "process_templates_one_owner"
   end
 
   create_table "prorations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1197,7 +1240,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_180000) do
   add_foreign_key "plan_versions", "users", column: "created_by_id"
   add_foreign_key "plans", "billing_accounts"
   add_foreign_key "positions", "companies"
+  add_foreign_key "positions", "process_templates", column: "admission_template_id", on_delete: :nullify
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
+  add_foreign_key "process_template_items", "companies"
+  add_foreign_key "process_template_items", "process_templates", on_delete: :cascade
+  add_foreign_key "process_templates", "companies"
+  add_foreign_key "process_templates", "partners"
+  add_foreign_key "process_templates", "process_templates", column: "onboarding_template_id", on_delete: :nullify
+  add_foreign_key "process_templates", "process_templates", column: "source_template_id", on_delete: :nullify
   add_foreign_key "prorations", "billing_accounts"
   add_foreign_key "prorations", "users", column: "created_by_id"
   add_foreign_key "service_invoices", "invoices"

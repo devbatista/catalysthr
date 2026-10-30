@@ -1,0 +1,39 @@
+<%# A model's name, kind (only when it is created) and description; a company's admission
+    may start an onboarding when it ends (RN-06-004). %>
+<%= form_with model: @template, scope: :process_template, url: url, method: method, class: "card card-body mt-6 space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ @template ] %>
+
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= form.label :name, t("process_templates.form.name"), class: "field-label" %>
+      <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :kind, t("process_templates.form.kind"), class: "field-label" %>
+      <% if @template.persisted? %>
+        <p class="input bg-canvas"><%= t("process_templates.kinds.#{@template.kind}") %></p>
+      <% else %>
+        <%= form.select :kind, ProcessTemplateDefinition::KINDS.map { |kind| [ t("process_templates.kinds.#{kind}"), kind ] }, {}, class: "input" %>
+        <p class="field-hint"><%= t("process_templates.form.kind_hint") %></p>
+      <% end %>
+    </div>
+    <% if @template.company_level? && @template.persisted? && @template.admission? %>
+      <div>
+        <%= form.label :onboarding_template_id, t("process_templates.form.onboarding"), class: "field-label" %>
+        <%= form.select :onboarding_template_id, ProcessTemplate.onboarding.active.order(:name).pluck(:name, :id),
+          { include_blank: t("process_templates.form.no_onboarding") }, class: "input" %>
+        <p class="field-hint"><%= t("process_templates.form.onboarding_hint") %></p>
+      </div>
+    <% end %>
+    <div class="field-full">
+      <%= form.label :description, t("process_templates.form.description"), class: "field-label" %>
+      <%= form.text_area :description, rows: 3, maxlength: 2000, class: "input" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("process_templates.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("process_templates.form.cancel"), @template.persisted? ? template_route(:template, @template) : template_route(:templates),
+      class: "link-button text-sm" %>
+  </div>
+<% end %>

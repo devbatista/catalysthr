@@ -39,7 +39,8 @@ module Panel
     private
 
     def save(template, notice)
-      attributes = params.expect(position: %i[name cbo_code salary_min salary_max description requirements status])
+      attributes = params.expect(position: %i[name cbo_code salary_min salary_max description requirements status admission_template_id])
+      attributes[:admission_template_id] = attributes[:admission_template_id].presence if attributes.key?(:admission_template_id)
       amounts = %i[salary_min salary_max].index_with { |field| MoneyCents.parse(attributes.delete(field)) }
       @position.assign_attributes(attributes.merge(salary_min_cents: nil, salary_max_cents: nil))
       amounts.each do |field, cents|

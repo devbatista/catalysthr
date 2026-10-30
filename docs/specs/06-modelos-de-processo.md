@@ -192,21 +192,20 @@ forward:  pending → sent → received
 ## 7. Modelo de dados
 
 ```
-process_templates
-  id, owner_type ('Platform'|'Partner'|'Company'), owner_id (nullable para Platform),
-  company_id (nullable; preenchido só quando o dono é empresa, para acts_as_tenant),
-  kind, name, description, status, source_template_id, is_default,
-  onboarding_template_id (só para admissão)                      [P-06-04]
+process_templates                            -- ProcessTemplate (empresa) e SharedProcessTemplate (D-639)
+  id, company_id (só nos da empresa, para acts_as_tenant), partner_id (só nos do
+  parceiro; os dois vazios = biblioteca), kind, name, description, status,
+  source_template_id, is_default, onboarding_template_id (só para admissão)   [P-06-04]
 
-process_template_items
-  id, process_template_id, position, kind, title, instructions, required,
-  responsible_role, due_anchor, due_offset_days, due_business_days (bool),
+process_template_items                       -- ProcessTemplateItem e SharedProcessTemplateItem (D-639)
+  id, company_id (só nos da empresa), process_template_id, position, kind, title,
+  instructions, required, responsible_role, due_anchor, due_offset_days (negativo =
+  antes), due_business_days (bool),
   conditions (jsonb: {employment_kinds: [], position_ids: [], unit_ids: [],
               allocation_client_ids: []}),                        [P-06-22]
-  config (jsonb por tipo)
+  config (jsonb por tipo), depends_on_item_ids (uuid[])
 
-process_template_item_dependencies
-  item_id, depends_on_item_id
+positions + admission_template_id                                 (D-204)
 
 process_instances
   id, company_id, process_template_id (origem), kind, subject_type, subject_id

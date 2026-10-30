@@ -1,0 +1,71 @@
+<%# The models of process of an area (spec 06, D-639): the library in the admin, the
+    partner's in its panel and the company's under Empresa, with the active models of the
+    other levels to adopt (P-06-01, P-06-02). %>
+<% content_for :title, t("process_templates.index.title.#{template_area}") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t("process_templates.index.title.#{template_area}") %></h1>
+  <% if can?(:create, template_model) %>
+    <%= link_to t("process_templates.index.new"), template_route(:new_template), class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t("process_templates.index.subtitle.#{template_area}") %></p>
+
+<% if @templates.empty? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t("process_templates.index.empty.#{template_area}") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t("process_templates.index.name") %></th>
+          <th class="hidden sm:table-cell"><%= t("process_templates.index.kind") %></th>
+          <th class="hidden md:table-cell"><%= t("process_templates.index.items") %></th>
+          <th><%= t("process_templates.index.status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @templates.each do |template| %>
+          <tr>
+            <td>
+              <%= link_to template.name, template_route(:template, template), class: "link-button" %>
+              <% if template.is_default %><span class="pill pill-info ml-2"><%= t("process_templates.default") %></span><% end %>
+              <p class="text-xs text-ink-soft sm:hidden"><%= t("process_templates.kinds.#{template.kind}") %></p>
+            </td>
+            <td class="hidden sm:table-cell"><%= t("process_templates.kinds.#{template.kind}") %></td>
+            <td class="hidden text-ink-soft md:table-cell"><%= template.items.size %></td>
+            <td><%= template_status_pill(template) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% if @adoptable.any? %>
+  <section class="card card-body mt-6 space-y-4">
+    <div>
+      <h2 class="card-title"><%= t("process_templates.index.adopt_title") %></h2>
+      <p class="field-hint"><%= t("process_templates.index.adopt_hint") %></p>
+    </div>
+    <ul class="divide-y divide-line-soft">
+      <% @adoptable.each do |source| %>
+        <li class="flex flex-wrap items-start justify-between gap-3 py-3">
+          <details class="min-w-0 flex-1">
+            <summary class="cursor-pointer">
+              <span class="text-sm font-bold text-ink-strong"><%= source.name %></span>
+              <span class="text-xs text-ink-soft">· <%= t("process_templates.kinds.#{source.kind}") %> · <%= template_origin(source) %>
+                · <%= t("process_templates.index.items_count", count: source.items.size) %></span>
+            </summary>
+            <% if source.description %><p class="mt-2 text-sm text-ink-soft"><%= source.description %></p><% end %>
+            <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm">
+              <% source.items.each do |item| %><li><%= item.title %></li><% end %>
+            </ol>
+          </details>
+          <%= button_to t("process_templates.index.adopt"), template_route(:adopt_templates), params: { source_id: source.id },
+            class: "btn btn-secondary btn-sm", form: { data: { confirm: t("process_templates.index.adopt_confirm", name: source.name) } } %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

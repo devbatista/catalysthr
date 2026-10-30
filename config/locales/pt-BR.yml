@@ -704,6 +704,209 @@ pt-BR:
       cno: "CNO"
       caepf: "CAEPF"
     uses_headquarters: "Usa a inscrição da matriz"
+  # Models of process (spec 06, D-639).
+  process_templates:
+    library: "Biblioteca CatalystHR"
+    default: "Padrão"
+    created: "Modelo criado como rascunho. Inclua os itens e ative quando estiver pronto."
+    updated: "Modelo salvo."
+    activated: "Modelo ativado."
+    archived: "Modelo arquivado. Os processos já iniciados não mudam."
+    archived_read_only: "Este modelo está arquivado e não pode ser alterado."
+    adopted: "Cópia de %{name} criada como rascunho. Ela é sua: as mudanças no original não chegam aqui."
+    made_default: "Modelo marcado como padrão do tipo."
+    default_not_active: "Só um modelo ativo pode ser o padrão."
+    statuses:
+      draft: "Rascunho"
+      active: "Ativo"
+      archived: "Arquivado"
+    kinds:
+      admission: "Admissão"
+      onboarding: "Integração"
+      offboarding: "Desligamento"
+      request_flow: "Fluxo de solicitação"
+    item_kinds:
+      task: "Tarefa"
+      document: "Envio de documento"
+      form: "Formulário"
+      acknowledgement: "Leitura e aceite"
+      forward: "Encaminhamento"
+      approval: "Aprovação"
+    item_hints:
+      task: "O responsável faz algo fora do sistema e marca como feito, com um comentário opcional."
+      document: "O responsável envia um arquivo do tipo de documento escolhido, e o RH valida."
+      form: "O responsável preenche os campos. Os da ficha só vão para o cadastro depois que o RH revisa e aplica."
+      acknowledgement: "O responsável lê um material e confirma a leitura."
+      forward: "Os arquivos e dados escolhidos vão para o escritório contábil, que confirma o recebimento. Sem escritório ligado, o RH registra o envio."
+      approval: "O responsável aprova ou reprova, com justificativa na reprovação."
+    roles:
+      employee: "Colaborador"
+      hr: "RH responsável"
+      manager: "Gestores do departamento"
+      upper_manager: "Gestor acima"
+      accountant: "Escritório contábil"
+      client_manager: "Gestores do cliente"
+      initiator: "Quem iniciou"
+    anchors:
+      process_start: "Início do processo"
+      work_start: "Início do trabalho"
+      termination: "Data do desligamento"
+      request_opened: "Abertura da solicitação"
+      request_date: "Data do pedido"
+    anchors_relative:
+      process_start: "do início do processo"
+      work_start: "do início do trabalho"
+      termination: "da data do desligamento"
+      request_opened: "da abertura da solicitação"
+      request_date: "da data do pedido"
+    conditions:
+      employment_kinds: "Vínculo"
+      position_ids: "Cargo"
+      unit_ids: "Unidade"
+      allocation_client_ids: "Cliente"
+    form_groups:
+      identification: "Identificação"
+      birth: "Nascimento"
+      documents: "Documentos"
+      address: "Endereço"
+      foreigner: "Estrangeiro"
+      disability: "Deficiência"
+      contact: "Contato"
+      emergency_contacts: "Contatos de emergência"
+      dependents: "Dependentes"
+      bank_account: "Conta para pagamento"
+    index:
+      title:
+        library: "Biblioteca de modelos"
+        partner: "Modelos de processo"
+        company: "Modelos de processo"
+      subtitle:
+        library: "Modelos da CatalystHR que parceiros e empresas diretas adotam como ponto de partida. A adoção cria uma cópia independente."
+        partner: "Os modelos da sua consultoria. As empresas da carteira adotam uma cópia dos ativos."
+        company: "Os checklists de admissão, integração, desligamento e solicitações da empresa. Os processos só usam os modelos daqui."
+      new: "Novo modelo"
+      empty:
+        library: "Nenhum modelo na biblioteca ainda."
+        partner: "Nenhum modelo ainda. Crie um ou adote um da biblioteca."
+        company: "Nenhum modelo ainda. Crie um ou adote um dos modelos abaixo."
+      name: "Modelo"
+      kind: "Tipo"
+      items: "Itens"
+      status: "Situação"
+      adopt_title: "Adotar um modelo"
+      adopt_hint: "A adoção cria uma cópia em rascunho, que passa a ser sua. Mudanças no original não chegam à cópia."
+      adopt: "Adotar"
+      adopt_confirm: "Criar uma cópia de %{name}?"
+      items_count:
+        one: "1 item"
+        other: "%{count} itens"
+    show:
+      back:
+        library: "Voltar para a biblioteca"
+        partner: "Voltar para Modelos de processo"
+        company: "Voltar para Modelos de processo"
+      kind: "Tipo"
+      source: "Adotado de"
+      onboarding: "Integração ao concluir"
+      no_onboarding: "Nenhuma"
+      description: "Descrição"
+      edit: "Editar"
+      activate: "Ativar"
+      activate_confirm: "Ativar o modelo? Ativo, ele pode ser adotado e iniciar processos."
+      make_default: "Marcar como padrão"
+      make_default_confirm: "Este passa a ser o modelo padrão do tipo, no lugar do atual. Confirma?"
+      archive: "Arquivar"
+      archive_confirm: "Arquivar o modelo? Ele deixa de ser usado em processos novos e não pode mais ser alterado. Os processos já iniciados não mudam."
+      items:
+        one: "1 item"
+        other: "%{count} itens"
+      no_items: "Nenhum item ainda. Escolha abaixo o tipo do primeiro."
+      item: "Item"
+      responsible: "Responsável"
+      deadline: "Prazo"
+      conditions: "Para quem"
+      actions: "Ações"
+      depends_on: "Depende de: %{items}"
+      new_item: "Incluir item"
+      up: "Subir"
+      down: "Descer"
+      edit_item: "Editar"
+      remove_item: "Remover"
+      remove_item_confirm: "Remover o item %{title}? Os itens que dependiam dele deixam de depender."
+    new:
+      title: "Novo modelo"
+      subtitle: "O modelo nasce como rascunho. Inclua os itens e ative quando estiver pronto."
+    edit:
+      title: "Editar %{name}"
+      back: "Voltar para o modelo"
+    form:
+      name: "Nome do modelo"
+      kind: "Tipo"
+      kind_hint: "O tipo define as datas de onde contam os prazos e não muda depois."
+      onboarding: "Integração ao concluir a admissão"
+      no_onboarding: "Nenhuma"
+      onboarding_hint: "Um modelo de integração ativo da empresa, que começa sozinho quando a admissão é concluída."
+      description: "Descrição"
+      submit: "Salvar modelo"
+      cancel: "Cancelar"
+    items:
+      created: "Item incluído."
+      updated: "Item salvo."
+      destroyed: "Item removido."
+      no_deadline: "Sem prazo"
+      on_anchor: "No dia %{anchor}"
+      deadline_before: "%{days} antes %{anchor}"
+      deadline_after: "%{days} depois %{anchor}"
+      days_business:
+        one: "1 dia útil"
+        other: "%{count} dias úteis"
+      days_calendar:
+        one: "1 dia corrido"
+        other: "%{count} dias corridos"
+      required: "Obrigatório"
+      optional: "Opcional"
+      everyone: "Todos"
+      new:
+        title: "Novo item"
+      edit:
+        title: "Editar %{title}"
+      form:
+        item: "Item"
+        title: "Título"
+        responsible: "Responsável"
+        instructions: "Instruções"
+        required: "Obrigatório"
+        required_hint: "O processo só termina com os itens obrigatórios concluídos ou dispensados com justificativa."
+        deadline: "Prazo"
+        deadline_hint: "Conta a partir de uma data do processo. Os dias úteis excluem fins de semana e os feriados da unidade da pessoa."
+        days: "Dias"
+        direction: "Quando"
+        directions:
+          after: "depois"
+          before: "antes"
+        anchor: "Data de referência"
+        business_days: "Contar em dias úteis"
+        form_fields: "Campos do formulário"
+        form_fields_hint: "Escolha grupos da ficha, campos personalizados ou campos livres. As respostas da ficha só vão para o cadastro depois que o RH revisa e aplica."
+        groups: "Grupos da ficha"
+        custom_fields: "Campos personalizados"
+        no_custom_fields: "A empresa não tem campos personalizados ativos."
+        free_fields: "Campos livres"
+        free_fields_hint: "Um por linha, até %{count}. Ficam só no processo, fora da ficha."
+        forward: "O que é encaminhado"
+        forward_hint: "Ao escritório contábil ligado à empresa."
+        forward_validated_documents: "Os documentos validados"
+        forward_record: "A ficha do colaborador"
+        conditions: "Para quem vale"
+        conditions_hint:
+          company: "Sem nada marcado, o item vale para todos. Dentro de cada grupo vale qualquer um dos marcados; grupos diferentes precisam valer juntos."
+          shared: "Sem nada marcado, o item vale para todos. Cargo, unidade e cliente são de cada empresa: ela inclui essas condições depois de adotar o modelo."
+        none_registered: "Nenhum cadastrado."
+        dependencies: "Depende de"
+        dependencies_hint: "O item fica bloqueado até estes estarem concluídos ou dispensados."
+        no_other_items: "Nenhum outro item no modelo."
+        submit: "Salvar item"
+        cancel: "Cancelar"
   # Holidays (spec 06, RN-06-029; spec 11, RN-11-020; D-638).
   holidays:
     levels:
@@ -1003,6 +1206,8 @@ pt-BR:
     plans: "Planos e preços"
     fiscal_settings: "Notas fiscais"
     holidays: "Feriados"
+    process_templates: "Modelos de processo"
+    process_library: "Biblioteca de modelos"
     units: "Unidades"
     departments: "Departamentos"
     positions: "Cargos"
@@ -1020,7 +1225,6 @@ pt-BR:
       performance: "Avaliação de desempenho"
       whatsapp: "WhatsApp"
       accounting_integrations: "Integrações contábeis"
-      process_templates: "Modelos de processo"
   panel:
     unit_holidays:
       create:
@@ -1184,6 +1388,8 @@ pt-BR:
         salary_range: "Faixa salarial"
         description: "Descrição"
         requirements: "Requisitos"
+        admission_template: "Modelo de admissão"
+        default_admission_template: "O padrão da empresa"
         edit: "Editar"
       new:
         title: "Novo cargo"
@@ -1205,6 +1411,9 @@ pt-BR:
         salary_hint: "Opcional. Um salário fora da faixa não é bloqueado: o sistema pede uma justificativa."
         description: "Descrição"
         requirements: "Requisitos"
+        admission_template: "Modelo de admissão"
+        default_admission_template: "Usar o padrão da empresa"
+        admission_template_hint: "Um modelo de admissão ativo da empresa, que vale para este cargo no lugar do padrão."
         status: "Situação"
         submit: "Salvar cargo"
         cancel: "Cancelar"
@@ -2754,6 +2963,10 @@ pt-BR:
       pre_activation_price: "Mensalidade de pré-ativação"
       holiday: "Feriado"
       unit_holiday: "Feriado da unidade"
+      process_template: "Modelo de processo"
+      shared_process_template: "Modelo de processo"
+      process_template_item: "Item do modelo"
+      shared_process_template_item: "Item do modelo"
     attributes:
       holiday:
         level: "Abrangência"
@@ -2764,6 +2977,40 @@ pt-BR:
         name: "Nome"
         status: "Situação"
         unit_opt_out: "O RH pode desmarcar na unidade"
+      process_template:
+        name: "Nome"
+        kind: "Tipo"
+        description: "Descrição"
+        status: "Situação"
+        is_default: "Padrão"
+        onboarding_template: "Integração ao concluir"
+      shared_process_template:
+        name: "Nome"
+        kind: "Tipo"
+        description: "Descrição"
+        status: "Situação"
+        is_default: "Padrão"
+        onboarding_template: "Integração ao concluir"
+      process_template_item:
+        title: "Título"
+        instructions: "Instruções"
+        responsible_role: "Responsável"
+        due_anchor: "Data de referência"
+        due_offset_days: "Dias do prazo"
+        conditions: "Condições"
+        config: "Configuração"
+        depends_on_item_ids: "Dependências"
+        kind: "Tipo"
+      shared_process_template_item:
+        title: "Título"
+        instructions: "Instruções"
+        responsible_role: "Responsável"
+        due_anchor: "Data de referência"
+        due_offset_days: "Dias do prazo"
+        conditions: "Condições"
+        config: "Configuração"
+        depends_on_item_ids: "Dependências"
+        kind: "Tipo"
       unit_holiday:
         kind: "Tipo"
         date: "Data"
@@ -3120,6 +3367,64 @@ pt-BR:
             document:
               invalid_cnpj_root: "precisa ser a raiz do CNPJ, com 8 caracteres"
               invalid_cpf: "não é um CPF válido"
+        process_template:
+          attributes:
+            kind:
+              unchanged: "não muda depois de criado"
+            onboarding_template:
+              only_admission: "só vale para modelo de admissão"
+              invalid: "precisa ser um modelo de integração ativo da empresa"
+            is_default:
+              not_active: "só vale para modelo ativo"
+            base:
+              company_owned: "Um modelo da biblioteca ou do parceiro não pertence a uma empresa"
+        shared_process_template:
+          attributes:
+            kind:
+              unchanged: "não muda depois de criado"
+            onboarding_template:
+              only_admission: "só vale para modelo de admissão"
+              invalid: "precisa ser um modelo de integração ativo da empresa"
+            is_default:
+              not_active: "só vale para modelo ativo"
+            base:
+              company_owned: "Um modelo da biblioteca ou do parceiro não pertence a uma empresa"
+        process_template_item:
+          attributes:
+            due_anchor:
+              inclusion: "não é uma data deste tipo de modelo"
+            due_offset_days:
+              invalid: "precisa ser um número de 0 a %{max}"
+            conditions:
+              invalid: "têm um valor que não existe mais"
+              company_only: "por cargo, unidade ou cliente só valem no modelo da empresa"
+            config:
+              form_empty: "precisa de ao menos um grupo da ficha, um campo personalizado ou um campo livre"
+              too_many_free_fields: "aceita até %{count} campos livres"
+              custom_fields_company_only: "com campos personalizados só vale no modelo da empresa"
+              forward_empty: "precisa encaminhar os documentos validados, a ficha ou os dois"
+              invalid: "tem um campo personalizado que não existe mais"
+            depends_on_item_ids:
+              cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
+              invalid: "só podem ser itens deste modelo"
+        shared_process_template_item:
+          attributes:
+            due_anchor:
+              inclusion: "não é uma data deste tipo de modelo"
+            due_offset_days:
+              invalid: "precisa ser um número de 0 a %{max}"
+            conditions:
+              invalid: "têm um valor que não existe mais"
+              company_only: "por cargo, unidade ou cliente só valem no modelo da empresa"
+            config:
+              form_empty: "precisa de ao menos um grupo da ficha, um campo personalizado ou um campo livre"
+              too_many_free_fields: "aceita até %{count} campos livres"
+              custom_fields_company_only: "com campos personalizados só vale no modelo da empresa"
+              forward_empty: "precisa encaminhar os documentos validados, a ficha ou os dois"
+              invalid: "tem um campo personalizado que não existe mais"
+            depends_on_item_ids:
+              cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
+              invalid: "só podem ser itens deste modelo"
         holiday:
           attributes:
             date:
@@ -3168,6 +3473,8 @@ pt-BR:
             salary_max_cents:
               invalid_amount: "precisa ser um valor em reais, como 2.500,00"
               below_minimum: "não pode ser menor que o salário mínimo da faixa"
+            admission_template:
+              invalid: "precisa ser um modelo de admissão ativo da empresa"
         worker_profile:
           attributes:
             membership:
