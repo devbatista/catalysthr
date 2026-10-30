@@ -5,7 +5,7 @@
     class="fixed inset-0 z-30 hidden cursor-default bg-ink/40 group-data-[sidebar-open=true]/shell:block lg:hidden"></button>
 
   <aside id="sidebar" aria-label="<%= t("navigation.menu") %>"
-    class="fixed inset-y-0 left-0 z-40 flex w-[228px] -translate-x-full flex-col gap-5 overflow-y-auto bg-brand-secondary px-3 py-5 text-brand-on-secondary transition-transform group-data-[sidebar-open=true]/shell:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:translate-x-0">
+    class="fixed top-(--top-banners) bottom-0 left-0 z-40 flex w-[228px] -translate-x-full flex-col gap-5 overflow-y-auto bg-brand-secondary px-3 py-5 text-brand-on-secondary transition-transform group-data-[sidebar-open=true]/shell:translate-x-0 lg:sticky lg:h-[calc(100dvh-var(--top-banners))] lg:shrink-0 lg:translate-x-0">
     <div class="px-1.5"><%= yield :sidebar_brand %></div>
 
     <nav class="flex flex-col gap-5">

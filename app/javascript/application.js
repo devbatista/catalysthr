@@ -25,6 +25,15 @@ window.addEventListener("pageshow", () => {
   document.querySelectorAll("form[data-submitting]").forEach((form) => delete form.dataset.submitting)
 })
 
+// The banners on top of the page (impersonate, support entry, read only) push the sidebar
+// down: it starts below them and fits the rest of the screen, so its footer stays visible.
+const topBanners = document.querySelector("[data-top-banners]")
+if (topBanners) {
+  const measure = () => document.documentElement.style.setProperty("--top-banners", `${topBanners.offsetHeight}px`)
+  new ResizeObserver(measure).observe(topBanners)
+  measure()
+}
+
 // On small screens the sidebar opens as a drawer (D-597).
 const setSidebarOpen = (shell, open) => {
   shell.dataset.sidebarOpen = open

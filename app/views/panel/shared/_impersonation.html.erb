@@ -1,6 +1,6 @@
 <%# Fixed on every page of an impersonate (RN-02-083), with the simulation notice (RN-02-084) %>
 <% impersonation = Current.impersonation %>
-<div class="sticky top-0 z-50 bg-amber-400 text-slate-900" role="status">
+<div class="bg-amber-400 text-slate-900" role="status">
   <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm sm:px-7">
     <p>
       <strong><%= t("impersonations.banner.seeing_as", name: impersonation.impersonated_user.name) %></strong>

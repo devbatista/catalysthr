@@ -36,9 +36,16 @@
   </head>
 
   <body class="min-h-screen">
-    <%= render "panel/shared/impersonation" if impersonating? %>
-    <%= render "panel/shared/support_access" if Current.support_access %>
-    <%= render "panel/shared/contract_lock", lock: contract_lock if defined?(contract_lock) && contract_lock %>
+    <%# The banners stay on top of every page; the sidebar starts below them and fits the
+        rest of the screen (application.js measures them into --top-banners). %>
+    <% lock = contract_lock if defined?(contract_lock) %>
+    <% if impersonating? || Current.support_access || lock %>
+      <div class="sticky top-0 z-50" data-top-banners>
+        <%= render "panel/shared/impersonation" if impersonating? %>
+        <%= render "panel/shared/support_access" if Current.support_access %>
+        <%= render "panel/shared/contract_lock", lock: lock if lock %>
+      </div>
+    <% end %>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

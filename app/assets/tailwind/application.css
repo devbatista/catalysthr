@@ -37,6 +37,12 @@
   --color-brand-on-secondary: var(--brand-on-secondary, #FFFFFF);
 }
 
+/* The height of the banners on top of the page (impersonate, support entry, read only),
+   measured by application.js; the sidebar starts below them. */
+:root {
+  --top-banners: 0px;
+}
+
 /* Fixed tokens of the prototype (docs/prototype/CatalystRH_visual_identity) */
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
