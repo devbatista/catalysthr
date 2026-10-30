@@ -7,6 +7,9 @@ Rails.application.configure do
   # Jobs run in memory in tests, without Redis.
   config.active_job.queue_adapter = :test
 
+  # No test reaches the ClamAV of Docker Compose; the client's tests set their own host.
+  config.x.clamav_host = nil
+
   # Test field encryption keys, public on purpose: never used outside tests.
   config.active_record.encryption.primary_key = "test-primary-key-not-secret"
   config.active_record.encryption.deterministic_key = "test-deterministic-key-not-secret"

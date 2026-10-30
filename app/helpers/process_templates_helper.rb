@@ -2,6 +2,7 @@
 # D-639).
 module ProcessTemplatesHelper
   STATUS_PILLS = { "draft" => "pill-warn", "active" => "pill-ok", "archived" => "pill-mute" }.freeze
+  SCAN_PILLS = { "scanning" => "pill-warn", "clean" => "pill-ok", "infected" => "pill-bad" }.freeze
 
   def template_status_pill(template)
     tag.span(t("process_templates.statuses.#{template.status}"), class: "pill #{STATUS_PILLS.fetch(template.status)}")
@@ -10,6 +11,30 @@ module ProcessTemplatesHelper
   # Where an adoptable model comes from: the library or the partner (P-06-02).
   def template_origin(template)
     template.partner_id ? template.partner.name : t("process_templates.library")
+  end
+
+  # The virus scan of a version of the PDF (P-05-30, D-640).
+  def material_scan_pill(material)
+    tag.span(t("process_templates.materials.scan.#{material.scan_status}"), class: "pill #{SCAN_PILLS.fetch(material.scan_status)}")
+  end
+
+  # The PDF of an acknowledgement item: the version in use, with its link, and the newest
+  # one while it is scanning or once refused (RN-06-060, D-640).
+  def item_material(item)
+    in_use = item.material_in_use
+    latest = item.latest_material
+    parts = [ in_use ? material_link(item.template, in_use) : tag.span(t("process_templates.materials.none"), class: "pill pill-warn") ]
+    if latest && latest != in_use
+      parts << tag.span(t("process_templates.materials.latest.#{latest.scan_status}", version: latest.version),
+        class: "pill #{SCAN_PILLS.fetch(latest.scan_status)}")
+    end
+    tag.span(safe_join(parts), class: "mt-1 flex flex-wrap items-center gap-2 text-xs")
+  end
+
+  # Opens the PDF in a new tab; only a clean version has it (D-640).
+  def material_link(template, material, label: t("process_templates.materials.in_use", version: material.version))
+    link_to(label, template_route(:template_material, template, material_id: material.id), class: "link-button", target: "_blank",
+      rel: "noopener")
   end
 
   # "3 dias úteis antes da data de início do trabalho", "No dia de início do processo" or

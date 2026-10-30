@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638, D-639 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 a D-640 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -204,6 +204,13 @@ process_template_items                       -- ProcessTemplateItem e SharedProc
   conditions (jsonb: {employment_kinds: [], position_ids: [], unit_ids: [],
               allocation_client_ids: []}),                        [P-06-22]
   config (jsonb por tipo), depends_on_item_ids (uuid[])
+
+process_template_materials                   -- ProcessTemplateMaterial e SharedProcessTemplateMaterial (D-640)
+  id, company_id (só nos da empresa), process_template_item_id (fica vazio se o item
+  for removido), version, uploaded_by_id, file (Active Storage, PDF)        [P-06-17]
+
+file_scans                                   -- varredura de vírus por arquivo, sem empresa (P-05-30, D-640)
+  id, blob_id, status ('scanning'|'clean'|'infected'), signature, attempted_at, scanned_at
 
 positions + admission_template_id                                 (D-204)
 

@@ -5,7 +5,8 @@ require "sidekiq/api"
 # /up: no brand, session or tenant, on any host (HostResolver). The token goes in the
 # Authorization header ("Bearer <token>"); without HEALTH_CHECK_TOKEN set, the page does
 # not exist. The answer carries no data from the clients and no error details. The ClamAV
-# joins with spec 08.
+# is checked once CLAMAV_HOST is set, so production does not fail before the service is
+# created (D-638, D-640).
 class HealthChecksController < ActionController::Base
   # The queues of spec 20 (RN-20-011), the `time` one in its own worker.
   QUEUES = %w[time critical esocial notifications default ai reports imports].freeze
@@ -18,8 +19,10 @@ class HealthChecksController < ActionController::Base
 
     response.headers["Cache-Control"] = "no-store"
     checks = { database: database, redis: redis }
+    checks[:clamav] = clamav if Antivirus::Clamd.configured?
     checks[:queues] = queues if checks[:redis] == "ok"
-    healthy = checks.values_at(:database, :redis).all?("ok") && checks.fetch(:queues, {}).none? { |_, queue| queue[:late] }
+    healthy = checks.values_at(:database, :redis).all?("ok") && checks.fetch(:clamav, "ok") == "ok" &&
+      checks.fetch(:queues, {}).none? { |_, queue| queue[:late] }
     render json: { status: healthy ? "ok" : "fail", checks: checks }, status: healthy ? :ok : :service_unavailable
   end
 
@@ -41,6 +44,10 @@ class HealthChecksController < ActionController::Base
     Sidekiq.redis { |connection| connection.call("PING") } == "PONG" ? "ok" : "fail"
   rescue StandardError
     "fail"
+  end
+
+  def clamav
+    Antivirus::Clamd.new.ping? ? "ok" : "fail"
   end
 
   def queues

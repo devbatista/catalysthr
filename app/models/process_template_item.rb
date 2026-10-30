@@ -6,6 +6,9 @@ class ProcessTemplateItem < ApplicationRecord
   acts_as_tenant :company
 
   belongs_to :template, class_name: "ProcessTemplate", foreign_key: :process_template_id, inverse_of: :items
+  # Removing the item keeps the versions (D-640); the foreign key empties the link.
+  has_many :materials, class_name: "ProcessTemplateMaterial", foreign_key: :process_template_item_id, inverse_of: :item,
+    dependent: nil
 
   def audit_company_id
     company_id

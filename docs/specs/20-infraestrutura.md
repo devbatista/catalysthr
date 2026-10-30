@@ -1,7 +1,7 @@
 # 20 — Infraestrutura
 
 > Status: aprovado (transferência internacional e criptografia do Railway a confirmar) · Última atualização: 2026-10-13
-> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627, D-629, D-638, D-639 ([decisoes.md](decisoes.md))
+> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627, D-629, D-638 a D-640 ([decisoes.md](decisoes.md))
 > Os itens **[P-20-nn]** foram todos aprovados sem ajuste (D-515, seção 10).
 
 ## 1. Objetivo

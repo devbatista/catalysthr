@@ -893,6 +893,15 @@ pt-BR:
         no_custom_fields: "A empresa não tem campos personalizados ativos."
         free_fields: "Campos livres"
         free_fields_hint: "Um por linha, até %{count}. Ficam só no processo, fora da ficha."
+        material: "Material"
+        material_hint: "PDF de até %{size} MB. O arquivo passa pela varredura de vírus antes de ficar disponível. Um arquivo novo vira a versão seguinte, e os aceites já feitos continuam valendo para a versão lida."
+        material_file:
+          first: "Arquivo PDF"
+          new_version: "Enviar uma nova versão"
+        version: "Versão"
+        version_number: "Versão %{version}"
+        sent: "Enviada em"
+        scan: "Varredura"
         forward: "O que é encaminhado"
         forward_hint: "Ao escritório contábil ligado à empresa."
         forward_validated_documents: "Os documentos validados"
@@ -907,6 +916,17 @@ pt-BR:
         no_other_items: "Nenhum outro item no modelo."
         submit: "Salvar item"
         cancel: "Cancelar"
+    # The acknowledgement's PDF and its virus scan (RN-06-060, P-05-30, D-640).
+    materials:
+      in_use: "Material: versão %{version}"
+      none: "Sem material liberado"
+      scan:
+        scanning: "Em varredura"
+        clean: "Liberada"
+        infected: "Recusada: vírus encontrado"
+      latest:
+        scanning: "Versão %{version} em varredura"
+        infected: "Versão %{version} recusada: vírus encontrado"
   # Holidays (spec 06, RN-06-029; spec 11, RN-11-020; D-638).
   holidays:
     levels:
@@ -2967,6 +2987,9 @@ pt-BR:
       shared_process_template: "Modelo de processo"
       process_template_item: "Item do modelo"
       shared_process_template_item: "Item do modelo"
+      process_template_material: "Material do item"
+      shared_process_template_material: "Material do item"
+      file_scan: "Varredura de vírus"
     attributes:
       holiday:
         level: "Abrangência"
@@ -3001,6 +3024,7 @@ pt-BR:
         config: "Configuração"
         depends_on_item_ids: "Dependências"
         kind: "Tipo"
+        material_file: "Material"
       shared_process_template_item:
         title: "Título"
         instructions: "Instruções"
@@ -3011,6 +3035,7 @@ pt-BR:
         config: "Configuração"
         depends_on_item_ids: "Dependências"
         kind: "Tipo"
+        material_file: "Material"
       unit_holiday:
         kind: "Tipo"
         date: "Data"
@@ -3378,6 +3403,7 @@ pt-BR:
               not_active: "só vale para modelo ativo"
             base:
               company_owned: "Um modelo da biblioteca ou do parceiro não pertence a uma empresa"
+              materials_not_ready: "Para ativar, todo item de leitura e aceite precisa de um material já liberado pela varredura de vírus: %{titles}"
         shared_process_template:
           attributes:
             kind:
@@ -3389,6 +3415,7 @@ pt-BR:
               not_active: "só vale para modelo ativo"
             base:
               company_owned: "Um modelo da biblioteca ou do parceiro não pertence a uma empresa"
+              materials_not_ready: "Para ativar, todo item de leitura e aceite precisa de um material já liberado pela varredura de vírus: %{titles}"
         process_template_item:
           attributes:
             due_anchor:
@@ -3407,6 +3434,11 @@ pt-BR:
             depends_on_item_ids:
               cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
               invalid: "só podem ser itens deste modelo"
+            material_file:
+              blank: "precisa de um arquivo PDF"
+              acknowledgement_only: "só vale para o item de leitura e aceite"
+              pdf_only: "precisa ser um arquivo PDF"
+              too_large: "pode ter até %{count} MB"
         shared_process_template_item:
           attributes:
             due_anchor:
@@ -3425,6 +3457,11 @@ pt-BR:
             depends_on_item_ids:
               cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
               invalid: "só podem ser itens deste modelo"
+            material_file:
+              blank: "precisa de um arquivo PDF"
+              acknowledgement_only: "só vale para o item de leitura e aceite"
+              pdf_only: "precisa ser um arquivo PDF"
+              too_large: "pode ter até %{count} MB"
         holiday:
           attributes:
             date:

@@ -67,6 +67,10 @@ module CatalystHr
     config.x.asaas_api_key = ENV["ASAAS_API_KEY"].presence
     # The token Asaas sends with each notice, set on the webhook in Asaas's panel.
     config.x.asaas_webhook_token = ENV["ASAAS_WEBHOOK_TOKEN"].presence
+    # The ClamAV (clamd) on the private network (RN-20-015, D-640). Without the host, every
+    # upload stays in scanning and nothing is released.
+    config.x.clamav_host = ENV["CLAMAV_HOST"].presence
+    config.x.clamav_port = ENV.fetch("CLAMAV_PORT", 3310).to_i
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

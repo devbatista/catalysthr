@@ -1,7 +1,7 @@
 # 05 — LGPD, segurança e auditoria
 
 > Status: aprovado (prazos da seção 4.4 pendentes de validação jurídica) · Última atualização: 2026-10-18
-> Decisões: D-075, D-080 a D-089, D-124, D-183, D-185 a D-187, D-217 a D-227, D-606 ([decisoes.md](decisoes.md))
+> Decisões: D-075, D-080 a D-089, D-124, D-183, D-185 a D-187, D-217 a D-227, D-606, D-640 ([decisoes.md](decisoes.md))
 > Os itens **[P-05-nn]** foram todos aprovados sem ajuste (D-227, seção 10).
 > **Atenção:** os prazos de retenção da seção 4.4 são uma proposta técnica e **precisam ser validados pelo jurídico** antes de entrar em produção (D-217).
 
@@ -195,7 +195,7 @@ O CPF da pessoa é dado pessoal comum, mas fica criptografado (D-086) e é masca
 |---|---|
 | Transporte | Somente HTTPS, com HSTS (`config.force_ssl`) **[P-05-28]** |
 | Cabeçalhos | CSP restritiva sem script inline, compatível com JS via importmap; `X-Frame-Options: DENY`; `Referrer-Policy` **[P-05-29]**. Entra no fim da fase 1 (D-606) |
-| Uploads | Validação do tipo real do arquivo (não só da extensão), tamanho máximo, varredura de vírus (ClamAV ou similar) antes de liberar o arquivo **[P-05-30]**. A varredura entra com os materiais dos modelos de processo (spec 06, bloco 06b, D-638), e a pasta de documentos (spec 08) reaproveita |
+| Uploads | Validação do tipo real do arquivo (não só da extensão), tamanho máximo, varredura de vírus (ClamAV ou similar) antes de liberar o arquivo **[P-05-30]**. A varredura entra com os materiais dos modelos de processo (spec 06, bloco 06b, D-638), e a pasta de documentos (spec 08) reaproveita a tabela `file_scans` (D-640) |
 | Dependências e código | `brakeman` e `bundler-audit` no CI. A build falha com vulnerabilidade alta **[P-05-31]** |
 | Segredos | Variáveis de ambiente do Railway. Nenhum segredo no repositório. As chaves são trocadas quando alguém da equipe sai **[P-05-32]** |
 | Logs da aplicação | `filter_parameters` cobre CPF, senha, token, salário, conta, PIX e campos de saúde. Logs nunca têm dado sensível **[P-05-33]** |

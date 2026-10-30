@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -470,6 +470,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
     t.index ["flag", "created_at"], name: "index_feature_flag_changes_on_flag_and_created_at"
   end
 
+  create_table "file_scans", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "blob_id", null: false
+    t.string "status", default: "scanning", null: false
+    t.string "signature"
+    t.datetime "attempted_at"
+    t.datetime "scanned_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blob_id"], name: "index_file_scans_on_blob_id", unique: true
+    t.index ["created_at"], name: "index_file_scans_scanning", where: "((status)::text = 'scanning'::text)"
+  end
+
   create_table "fiscal_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.boolean "singleton", default: true, null: false
     t.string "service_code", null: false
@@ -817,6 +829,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_process_template_items_on_company_id"
     t.index ["process_template_id", "position"], name: "idx_on_process_template_id_position_d337fec09d"
+  end
+
+  create_table "process_template_materials", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "process_template_item_id"
+    t.integer "version", null: false
+    t.uuid "uploaded_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_process_template_materials_on_company_id"
+    t.index ["process_template_item_id", "version"], name: "index_process_template_materials_version", unique: true
+    t.index ["uploaded_by_id"], name: "index_process_template_materials_on_uploaded_by_id"
   end
 
   create_table "process_templates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1210,6 +1234,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
   add_foreign_key "employments", "companies"
   add_foreign_key "employments", "worker_profiles"
   add_foreign_key "feature_flag_changes", "users", column: "changed_by_id"
+  add_foreign_key "file_scans", "active_storage_blobs", column: "blob_id", on_delete: :cascade
   add_foreign_key "fiscal_settings", "users", column: "updated_by_id"
   add_foreign_key "holidays", "users", column: "reviewed_by_id"
   add_foreign_key "impersonation_sessions", "brands"
@@ -1244,6 +1269,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_120100) do
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
   add_foreign_key "process_template_items", "companies"
   add_foreign_key "process_template_items", "process_templates", on_delete: :cascade
+  add_foreign_key "process_template_materials", "companies"
+  add_foreign_key "process_template_materials", "process_template_items", on_delete: :nullify
+  add_foreign_key "process_template_materials", "users", column: "uploaded_by_id"
   add_foreign_key "process_templates", "companies"
   add_foreign_key "process_templates", "partners"
   add_foreign_key "process_templates", "process_templates", column: "onboarding_template_id", on_delete: :nullify

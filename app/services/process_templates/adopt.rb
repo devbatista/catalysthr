@@ -7,19 +7,35 @@ module ProcessTemplates
   module Adopt
     module_function
 
-    # into: a Partner, or the current Company.
-    def call(source, into:)
+    # into: a Partner, or the current Company. by: who adopts, as the sender of the copied PDFs.
+    def call(source, into:, by:)
       ActiveRecord::Base.transaction do
         copy = model_for(into).create!(**owner(into), kind: source.kind, name: source.name, description: source.description,
           status: "draft", source_template_id: source.id)
-        copies = source.items.to_h { |item| [ item.id, copy.items.create!(item.copy_attributes) ] }
-        source.items.each do |item|
+        items = source.items_with_materials
+        copies = items.to_h { |item| [ item.id, copy.items.create!(item.copy_attributes) ] }
+        items.each do |item|
+          copy_material(item.material_in_use, into: copies.fetch(item.id), by: by) if item.acknowledgement?
           next if item.depends_on_item_ids.empty?
 
           copies.fetch(item.id).update!(depends_on_item_ids: item.depends_on_item_ids.map { |id| copies.fetch(id).id })
         end
         copy
       end
+    end
+
+    # Only the version in use, as the copy's first, in a file of the copy's own owner with
+    # the same scan result (D-640). Nothing is copied during an impersonate simulation.
+    def copy_material(material, into:, by:)
+      return if material.nil? || Simulation.active?
+
+      original = material.file.blob
+      blob = original.open do |file|
+        ActiveStorage::Blob.create_and_upload!(io: file, filename: original.filename.to_s, content_type: original.content_type,
+          identify: false)
+      end
+      into.materials.create!(version: 1, uploaded_by: by, file: blob)
+      FileScan.start!(blob, from: original.file_scan)
     end
 
     def model_for(into)
@@ -29,6 +45,6 @@ module ProcessTemplates
     def owner(into)
       into.is_a?(Partner) ? { partner: into } : {}
     end
-    private_class_method :model_for, :owner
+    private_class_method :copy_material, :model_for, :owner
   end
 end

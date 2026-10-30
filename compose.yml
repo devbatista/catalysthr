@@ -14,6 +14,7 @@ x-app: &app
     DB_HOST: postgres
     DB_PORT: 5432
     REDIS_URL: redis://redis:6379/0
+    CLAMAV_HOST: clamav
   volumes:
     - .:/rails
     - bundle:/usr/local/bundle
@@ -64,7 +65,16 @@ services:
     volumes:
       - redis_data:/data
 
+  # Antivírus dos uploads (P-05-30, D-640). Imagem com arm64 e amd64 (a clamav/clamav só
+  # tem amd64). A primeira subida baixa as assinaturas e leva alguns minutos; até lá, os
+  # uploads ficam em varredura. A documentação pede no mínimo 3 GiB de RAM.
+  clamav:
+    image: clamav/clamav-debian:1.5
+    volumes:
+      - clamav_data:/var/lib/clamav
+
 volumes:
   bundle:
   postgres_data:
   redis_data:
+  clamav_data:

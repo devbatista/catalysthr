@@ -6,4 +6,7 @@ class SharedProcessTemplateItem < ApplicationRecord
   default_scope { where(company_id: nil) }
 
   belongs_to :template, class_name: "SharedProcessTemplate", foreign_key: :process_template_id, inverse_of: :items
+  # Removing the item keeps the versions (D-640); the foreign key empties the link.
+  has_many :materials, class_name: "SharedProcessTemplateMaterial", foreign_key: :process_template_item_id, inverse_of: :item,
+    dependent: nil
 end

@@ -81,4 +81,16 @@ RSpec.describe "Detailed health check", type: :request do
     check(token: "")
     expect(response).to have_http_status(:not_found)
   end
+
+  # D-640: only once CLAMAV_HOST is set, so production does not fail before the service exists.
+  it "checks ClamAV once it is configured" do
+    expect(check.then { response.parsed_body["checks"] }).not_to have_key("clamav")
+
+    allow(Antivirus::Clamd).to receive(:configured?).and_return(true)
+    allow(Antivirus::Clamd).to receive(:new).and_return(instance_double(Antivirus::Clamd, ping?: false))
+    check
+
+    expect(response).to have_http_status(:service_unavailable)
+    expect(response.parsed_body).to include("status" => "fail", "checks" => include("clamav" => "fail"))
+  end
 end
