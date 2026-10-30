@@ -23,8 +23,9 @@ module ProcessTemplateItemEditing
     kind = params.dig(:item, :kind).presence_in(ProcessTemplateItemDefinition::EDITOR_KINDS)
     @item = @template.items.build(kind: kind, position: (@template.items.maximum(:position) || 0) + 1)
     @item.assign_attributes(item_params)
+    assign_material
 
-    if @item.save
+    if @item.save(context: %i[create editor_create])
       redirect_to template_route(:template, @template, anchor: "items"), notice: t("process_templates.items.created")
     else
       render "shared/process_templates/items/new", status: :unprocessable_content
@@ -38,7 +39,9 @@ module ProcessTemplateItemEditing
 
   def update
     authorize! :update, @template
-    if @item.update(item_params)
+    @item.assign_attributes(item_params)
+    assign_material
+    if @item.save
       redirect_to template_route(:template, @template, anchor: "items"), notice: t("process_templates.items.updated")
     else
       render "shared/process_templates/items/edit", status: :unprocessable_content
@@ -85,6 +88,14 @@ module ProcessTemplateItemEditing
 
   def load_item
     @item = @template.items.find(params[:id])
+  end
+
+  # The acknowledgement's PDF comes apart from the item's fields; each one sent is a new
+  # version (RN-06-060, D-640).
+  def assign_material
+    file = params.dig(:item, :material_file)
+    @item.material_file = file if file.is_a?(ActionDispatch::Http::UploadedFile)
+    @item.material_uploaded_by = current_user
   end
 
   # The deadline comes as days before or after the date (RN-06-025); the free fields, one

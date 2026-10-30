@@ -105,3 +105,10 @@ infra_restore_drill_reminder:
   cron: "0 9 1 1,4,7,10 * America/Sao_Paulo"
   class: "Infra::RestoreDrillReminderJob"
   queue: "default"
+
+# Files still in virus scanning an hour after the last attempt, back to the queue (P-05-30,
+# RN-20-015, D-640)
+antivirus_rescan_pending:
+  cron: "40 * * * * America/Sao_Paulo"          # every hour
+  class: "Antivirus::RescanPendingJob"
+  queue: "default"

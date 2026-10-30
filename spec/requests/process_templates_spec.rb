@@ -57,6 +57,17 @@ RSpec.describe "Models of process", type: :request do
       expect(template.reload).to be_active
     end
 
+    it "keeps the library's PDF without a company (D-640)" do
+      sign_in_admin("support")
+
+      post "/process-templates/#{library.id}/items", params: { item: { kind: "acknowledgement", title: "Código de conduta",
+        responsible_role: "employee", material_file: Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4"), "application/pdf",
+          original_filename: "conduta.pdf") } }
+
+      material = SharedProcessTemplateMaterial.sole
+      expect(material).to have_attributes(company_id: nil, version: 1, item: library.items.find_by!(kind: "acknowledgement"))
+    end
+
     it "keeps the finance team out" do
       sign_in_admin("finance")
 
@@ -214,6 +225,106 @@ RSpec.describe "Models of process", type: :request do
       foreign = ActsAsTenant.with_tenant(create(:company)) { ProcessTemplate.create!(kind: "admission", name: "De outra") }
 
       get "/process-templates/#{foreign.id}"
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  # Block 06b-2 (RN-06-060, P-06-17, P-05-30, D-640): the acknowledgement's PDF, by
+  # version, released only after the virus scan.
+  describe "the acknowledgement's material, in the company" do
+    let(:template) { in_company { ProcessTemplate.create!(kind: "admission", name: "Admissão") } }
+
+    before do
+      host! "aurora.painel.catalysthr.com.br"
+      sign_in_panel(%w[hr_admin], organization: company)
+      post "/current-company", params: { company_id: company.id }
+    end
+
+    def pdf(content = "%PDF-1.4 regulamento", name: "regulamento.pdf")
+      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf", original_filename: name)
+    end
+
+    def add_item(file)
+      post "/process-templates/#{template.id}/items", params: { item: { kind: "acknowledgement", title: "Regulamento interno",
+        responsible_role: "employee", material_file: file } }
+    end
+
+    def scanned(material, status)
+      FileScan.find_by!(blob: material.file.blob).update!(status: status)
+    end
+
+    it "serves the PDF and lets the model be activated only once the scan releases it" do
+      expect { add_item(pdf) }.to have_enqueued_job(Antivirus::ScanJob)
+      item = in_company { template.items.sole }
+      material = in_company { item.materials.sole }
+      expect(material).to have_attributes(version: 1, scan_status: "scanning")
+
+      get "/process-templates/#{template.id}"
+      expect(response.body).to include("Sem material liberado", "Versão 1 em varredura")
+      get "/process-templates/#{template.id}/materials/#{material.id}"
+      expect(response).to have_http_status(:not_found)
+      patch "/process-templates/#{template.id}/activate"
+      expect(flash[:alert]).to include("material já liberado pela varredura de vírus: Regulamento interno")
+      expect(in_company { template.reload }).to be_draft
+
+      scanned(material, "clean")
+      get "/process-templates/#{template.id}"
+      expect(response.body).to include("Material: versão 1")
+      get "/process-templates/#{template.id}/materials/#{material.id}"
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.body).to eq("%PDF-1.4 regulamento")
+      patch "/process-templates/#{template.id}/activate"
+      expect(in_company { template.reload }).to be_active
+    end
+
+    it "refuses a file that is not a PDF by its content, a large one, or none" do
+      add_item(pdf("MZ executável", name: "regulamento.pdf"))
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("precisa ser um arquivo PDF")
+
+      stub_const("ProcessTemplateMaterialDefinition::MAX_SIZE", 10)
+      add_item(pdf("%PDF-1.4 grande demais"))
+      expect(response.body).to include("pode ter até 0 MB")
+
+      add_item(nil)
+      expect(response.body).to include("precisa de um arquivo PDF")
+      expect(in_company { template.items.count }).to eq(0)
+      expect(FileScan.count).to eq(0)
+    end
+
+    it "keeps the older versions, in use while the new one scans, and after the item is removed (P-06-17)" do
+      add_item(pdf)
+      item = in_company { template.items.sole }
+      first = in_company { item.materials.sole }
+      scanned(first, "clean")
+
+      patch "/process-templates/#{template.id}/items/#{item.id}", params: { item: { title: "Regulamento interno",
+        material_file: pdf("%PDF-1.4 regulamento novo") } }
+      second = in_company { item.materials.find_by!(version: 2) }
+      get "/process-templates/#{template.id}/items/#{item.id}/edit"
+      expect(response.body).to include("Versão 1", "Versão 2", "Liberada", "Em varredura", "Enviar uma nova versão")
+
+      scanned(second, "infected")
+      get "/process-templates/#{template.id}"
+      expect(response.body).to include("Material: versão 1", "Versão 2 recusada: vírus encontrado")
+
+      delete "/process-templates/#{template.id}/items/#{item.id}"
+      expect(in_company { ProcessTemplateMaterial.where(id: [ first.id, second.id ]).pluck(:process_template_item_id) }).to eq([ nil, nil ])
+    end
+
+    it "answers 404 for another company's PDF (RN-01-013)" do
+      other = create(:company, partner: partner)
+      foreign = ActsAsTenant.with_tenant(other) do
+        item = ProcessTemplate.create!(kind: "admission", name: "De outra").items.create!(position: 1, kind: "acknowledgement",
+          title: "Manual", responsible_role: "employee")
+        blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new("%PDF"), filename: "m.pdf", content_type: "application/pdf")
+        FileScan.create!(blob: blob, status: "clean")
+        item.materials.create!(version: 1, uploaded_by: create(:user), file: blob)
+      end
+
+      get "/process-templates/#{template.id}/materials/#{foreign.id}"
       expect(response).to have_http_status(:not_found)
     end
   end

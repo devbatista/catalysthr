@@ -108,6 +108,49 @@
         <p class="field-hint"><%= t("process_templates.items.form.free_fields_hint", count: ProcessTemplateItemDefinition::FREE_FIELDS_LIMIT) %></p>
       </div>
     </section>
+  <% elsif @item.acknowledgement? %>
+    <% versions = @item.persisted? ? @item.materials.includes(:uploaded_by, file_attachment: { blob: :file_scan }).order(version: :desc) : [] %>
+    <section class="card card-body space-y-4">
+      <div>
+        <h2 class="card-title"><%= t("process_templates.items.form.material") %></h2>
+        <p class="field-hint"><%= t("process_templates.items.form.material_hint", size: ProcessTemplateMaterialDefinition::MAX_SIZE / 1.megabyte) %></p>
+      </div>
+      <div class="form-grid">
+        <div class="field-wide">
+          <%= form.label :material_file, t("process_templates.items.form.material_file.#{versions.any? ? "new_version" : "first"}"), class: "field-label" %>
+          <%= form.file_field :material_file, accept: ProcessTemplateMaterialDefinition::CONTENT_TYPE, required: @item.new_record?, class: "input" %>
+        </div>
+      </div>
+      <% if versions.any? %>
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th><%= t("process_templates.items.form.version") %></th>
+                <th class="hidden sm:table-cell"><%= t("process_templates.items.form.sent") %></th>
+                <th><%= t("process_templates.items.form.scan") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% versions.each do |version| %>
+                <tr>
+                  <td>
+                    <% if version.clean? %>
+                      <%= material_link(@template, version, label: t("process_templates.items.form.version_number", version: version.version)) %>
+                    <% else %>
+                      <%= t("process_templates.items.form.version_number", version: version.version) %>
+                    <% end %>
+                    <p class="mt-0.5 text-xs text-ink-soft sm:hidden"><%= l(version.created_at, format: "%d/%m/%Y %H:%M") %> · <%= version.uploaded_by.name %></p>
+                  </td>
+                  <td class="hidden sm:table-cell"><%= l(version.created_at, format: "%d/%m/%Y %H:%M") %> · <%= version.uploaded_by.name %></td>
+                  <td><%= material_scan_pill(version) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </section>
   <% elsif @item.forward? %>
     <section class="card card-body space-y-3">
       <div>

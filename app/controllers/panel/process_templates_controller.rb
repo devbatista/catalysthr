@@ -8,7 +8,7 @@ module Panel
     # The company comes before the model, read inside it.
     skip_before_action :load_template
     before_action :require_current_company
-    before_action :load_template, only: %i[show edit update activate archive]
+    before_action :load_template, only: %i[show edit update activate archive material]
 
     # The company's default of the kind, only an active model (RN-06-003).
     def default

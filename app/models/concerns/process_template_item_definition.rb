@@ -5,9 +5,8 @@ module ProcessTemplateItemDefinition
   extend ActiveSupport::Concern
 
   KINDS = %w[task document form acknowledgement forward approval].freeze
-  # The kinds the editor offers: the acknowledgement's material comes with block 06b-2 and
-  # the document, with spec 08's document types (D-639).
-  EDITOR_KINDS = %w[task form forward approval].freeze
+  # The kinds the editor offers: the document comes with spec 08's document types (D-639).
+  EDITOR_KINDS = %w[task form acknowledgement forward approval].freeze
   ROLES = %w[employee hr manager upper_manager accountant client_manager initiator].freeze
   # The dates a deadline counts from, by the model's kind (RN-06-025, P-06-07).
   ANCHORS = {
@@ -32,6 +31,9 @@ module ProcessTemplateItemDefinition
 
     audited
 
+    # The acknowledgement's PDF chosen in the editor, and who sent it (RN-06-060, D-640).
+    attr_accessor :material_file, :material_uploaded_by
+
     enum :kind, KINDS.index_by(&:itself), validate: true
 
     normalizes :title, with: ->(title) { title.to_s.squish.presence }
@@ -47,6 +49,10 @@ module ProcessTemplateItemDefinition
     validate :conditions_allowed
     validate :config_of_kind
     validate :dependencies
+    validate :material_file_given, on: :editor_create
+    validate :material_file_valid
+
+    after_save :add_material, if: -> { material_file.present? }
   end
 
   def anchors
@@ -59,6 +65,16 @@ module ProcessTemplateItemDefinition
 
   def depends_on
     template.items.select { |item| depends_on_item_ids.include?(item.id) }
+  end
+
+  # The newest version already clean; while a newer one is scanning, the previous one is
+  # still the one in use (D-640).
+  def material_in_use
+    materials.select(&:clean?).max_by(&:version)
+  end
+
+  def latest_material
+    materials.max_by(&:version)
   end
 
   # The attributes an adopted copy takes (D-232); the dependencies are mapped afterwards.
@@ -126,6 +142,33 @@ module ProcessTemplateItemDefinition
     when "forward"
       errors.add(:config, :forward_empty) unless config["validated_documents"] || config["record"]
     end
+  end
+
+  # A new acknowledgement item comes with its PDF; a copy takes the original's (D-640).
+  def material_file_given
+    errors.add(:material_file, :blank) if acknowledgement? && material_file.blank?
+  end
+
+  # Only a PDF, by its content and not by the name, up to 10 MB (D-640, RN-08-010).
+  def material_file_valid
+    return if material_file.blank?
+    return errors.add(:material_file, :acknowledgement_only) unless acknowledgement?
+
+    errors.add(:material_file, :pdf_only) unless ProcessTemplateMaterialDefinition.pdf?(material_file)
+    errors.add(:material_file, :too_large, count: ProcessTemplateMaterialDefinition::MAX_SIZE / 1.megabyte) if
+      material_file.size > ProcessTemplateMaterialDefinition::MAX_SIZE
+  end
+
+  # The next version, scanned before being served (P-05-30). Nothing is stored during an
+  # impersonate simulation, which is rolled back (RN-02-085).
+  def add_material
+    file, self.material_file = material_file, nil
+    return if Simulation.active?
+
+    blob = ActiveStorage::Blob.create_and_upload!(io: file, filename: file.original_filename.to_s,
+      content_type: ProcessTemplateMaterialDefinition::CONTENT_TYPE, identify: false)
+    materials.create!(version: (materials.maximum(:version) || 0) + 1, uploaded_by: material_uploaded_by, file: blob)
+    FileScan.start!(blob)
   end
 
   def custom_fields_exist?

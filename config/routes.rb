@@ -70,6 +70,7 @@ Rails.application.routes.draw do
         member do
           patch :activate
           patch :archive
+          get "materials/:material_id", action: :material, as: :material
         end
         resources :items, controller: "process_template_items", except: %i[index show] do
           patch :move, on: :member
@@ -218,6 +219,7 @@ Rails.application.routes.draw do
         member do
           patch :activate
           patch :archive
+          get "materials/:material_id", action: :material, as: :material
           patch :default
         end
         post :adopt, on: :collection
@@ -296,6 +298,7 @@ Rails.application.routes.draw do
           member do
             patch :activate
             patch :archive
+            get "materials/:material_id", action: :material, as: :material
           end
           post :adopt, on: :collection
           resources :items, controller: "process_template_items", except: %i[index show] do

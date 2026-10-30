@@ -40,7 +40,7 @@ RSpec.describe Companies::Transfer do
     it "keeps the models adopted from the old partner as the company's own (RN-01-053, D-639)" do
       original = SharedProcessTemplate.create!(partner: aurora, kind: "admission", name: "Admissão Aurora", status: "active")
       original.items.create!(position: 1, kind: "task", title: "Boas-vindas", responsible_role: "hr")
-      copy = ActsAsTenant.with_tenant(company) { ProcessTemplates::Adopt.call(original, into: company) }
+      copy = ActsAsTenant.with_tenant(company) { ProcessTemplates::Adopt.call(original, into: company, by: superadmin) }
 
       transfer(to: boreal)
       original.update!(name: "Admissão Aurora 2027")
