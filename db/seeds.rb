@@ -11,6 +11,8 @@ aurora_brand = Brand.find_or_create_by!(owner: aurora) do |brand|
   brand.commercial_name = "Aurora RH"
   brand.short_name = "Aurora"
   brand.primary_color = "#6B2FA3"
+  # The sidebar's color (D-597); without it, the sidebar stays in the CatalystHR blue.
+  brand.secondary_color = "#2E1247"
   brand.login_welcome_text = "Bem-vindo ao portal de RH da Aurora."
   brand.support_email = "suporte@aurora.example"
 end
