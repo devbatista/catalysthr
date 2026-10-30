@@ -12,6 +12,8 @@ class PartnerAbility
     return if membership.nil?
 
     can :read, :partner_panel
+    # The partner's models of process: the consultant reads them (spec 06, section 6).
+    can :read, SharedProcessTemplate, partner_id: partner.id
     admin(user, partner) if membership.roles.include?("partner_admin")
   end
 
@@ -38,6 +40,10 @@ class PartnerAbility
     # The partner's e-mail domain (spec 01, section 6, D-596). The client companies send
     # from it (P-01-18).
     can :manage_email_domain, Brand, owner_type: "Partner", owner_id: partner.id
+    # The partner's models of process, and adopting the library's active ones (spec 06,
+    # section 6, D-232).
+    can %i[create update], SharedProcessTemplate, partner_id: partner.id
+    can :adopt, SharedProcessTemplate, partner_id: nil, status: "active"
 
     # The HR administrators of the client companies: see, invite, change or remove them
     # (P-03-35, D-585). Never one's own membership (RN-03-012).

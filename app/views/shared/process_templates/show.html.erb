@@ -1,0 +1,107 @@
+<%# A model of process and its items, in order (spec 06, D-639). The items are edited one
+    by one and moved up or down; an archived model is read only (RN-06-002). %>
+<% content_for :title, @template.name %>
+<% editable = @template.editable? && can?(:update, @template) %>
+<% names = condition_names(@template) %>
+
+<p class="text-sm"><%= link_to t("process_templates.show.back.#{template_area}"), template_route(:templates), class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= @template.name %></h1>
+  <%= template_status_pill(@template) %>
+  <% if @template.is_default %><span class="pill pill-info"><%= t("process_templates.default") %></span><% end %>
+</div>
+
+<div class="card card-body mt-6">
+  <dl class="details-list">
+    <div><dt><%= t("process_templates.show.kind") %></dt><dd><%= t("process_templates.kinds.#{@template.kind}") %></dd></div>
+    <% if @template.source_template %>
+      <div><dt><%= t("process_templates.show.source") %></dt><dd><%= @template.source_template.name %> (<%= template_origin(@template.source_template) %>)</dd></div>
+    <% end %>
+    <% if @template.company_level? && @template.admission? %>
+      <div>
+        <dt><%= t("process_templates.show.onboarding") %></dt>
+        <dd><%= @template.onboarding_template&.name || t("process_templates.show.no_onboarding") %></dd>
+      </div>
+    <% end %>
+    <div class="sm:col-span-2"><dt><%= t("process_templates.show.description") %></dt><dd><%= @template.description || "—" %></dd></div>
+  </dl>
+
+  <% if can?(:update, @template) && !@template.archived? %>
+    <div class="mt-5 flex flex-wrap gap-3 border-t border-line-soft pt-4">
+      <%= link_to t("process_templates.show.edit"), template_route(:edit_template, @template), class: "btn btn-secondary" %>
+      <% if @template.draft? %>
+        <%= button_to t("process_templates.show.activate"), template_route(:activate_template, @template), method: :patch,
+          class: "btn btn-primary", form: { data: { confirm: t("process_templates.show.activate_confirm") } } %>
+      <% end %>
+      <% if @template.company_level? && @template.active? && !@template.is_default %>
+        <%= button_to t("process_templates.show.make_default"), template_route(:default_template, @template), method: :patch,
+          class: "btn btn-secondary", form: { data: { confirm: t("process_templates.show.make_default_confirm") } } %>
+      <% end %>
+      <%= button_to t("process_templates.show.archive"), template_route(:archive_template, @template), method: :patch,
+        class: "btn btn-danger", form: { data: { confirm: t("process_templates.show.archive_confirm") } } %>
+    </div>
+  <% end %>
+</div>
+
+<section id="items" class="card card-body mt-6 space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="card-title"><%= t("process_templates.show.items", count: @template.items.size) %></h2>
+  </div>
+
+  <% if @template.items.empty? %>
+    <p class="text-sm text-ink-soft"><%= t("process_templates.show.no_items") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t("process_templates.show.item") %></th>
+            <th class="hidden md:table-cell"><%= t("process_templates.show.responsible") %></th>
+            <th class="hidden md:table-cell"><%= t("process_templates.show.deadline") %></th>
+            <th class="hidden lg:table-cell"><%= t("process_templates.show.conditions") %></th>
+            <% if editable %><th class="hidden sm:table-cell"><span class="sr-only"><%= t("process_templates.show.actions") %></span></th><% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @template.items.each_with_index do |item, index| %>
+            <tr>
+              <td>
+                <span class="font-mono text-xs text-ink-muted"><%= index + 1 %>.</span>
+                <span class="font-bold text-ink-strong"><%= item.title %></span>
+                <span class="mt-1 flex flex-wrap gap-1">
+                  <span class="pill pill-info"><%= t("process_templates.item_kinds.#{item.kind}") %></span>
+                  <span class="pill pill-mute"><%= t("process_templates.items.#{item.required ? "required" : "optional"}") %></span>
+                </span>
+                <% if item.depends_on_item_ids.any? %>
+                  <p class="mt-1 text-xs text-ink-soft"><%= t("process_templates.show.depends_on", items: item.depends_on.map(&:title).join(", ")) %></p>
+                <% end %>
+                <div class="mt-1 space-y-0.5 text-xs text-ink-soft md:hidden">
+                  <p><%= t("process_templates.roles.#{item.responsible_role}") %> · <%= item_deadline(item) %></p>
+                </div>
+                <p class="mt-0.5 text-xs text-ink-soft lg:hidden"><%= item_conditions(item, names) %></p>
+                <% if editable %><div class="mt-2 sm:hidden"><%= render "shared/process_templates/item_actions", item: item, index: index %></div><% end %>
+              </td>
+              <td class="hidden md:table-cell"><%= t("process_templates.roles.#{item.responsible_role}") %></td>
+              <td class="hidden md:table-cell"><%= item_deadline(item) %></td>
+              <td class="hidden text-ink-soft lg:table-cell"><%= item_conditions(item, names) %></td>
+              <% if editable %>
+                <td class="hidden text-right sm:table-cell"><%= render "shared/process_templates/item_actions", item: item, index: index %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if editable %>
+    <div class="border-t border-line-soft pt-4">
+      <h3 class="text-sm font-bold text-ink-strong"><%= t("process_templates.show.new_item") %></h3>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <% ProcessTemplateItemDefinition::EDITOR_KINDS.each do |kind| %>
+          <%= link_to t("process_templates.item_kinds.#{kind}"), template_route(:new_template_item, @template, kind: kind), class: "btn btn-secondary btn-sm" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

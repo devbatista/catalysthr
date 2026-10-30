@@ -9,6 +9,9 @@ class Position < ApplicationRecord
 
   acts_as_tenant :company
 
+  # The position's own admission model, ahead of the company's default (D-204, RN-06-003).
+  belongs_to :admission_template, class_name: "ProcessTemplate", optional: true, inverse_of: :positions
+
   enum :status, STATUSES.index_by(&:itself), validate: true
 
   normalizes :cbo_code, with: ->(code) { code.to_s.gsub(/\D/, "") }
@@ -20,6 +23,7 @@ class Position < ApplicationRecord
   validates :salary_min_cents, :salary_max_cents, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validate :official_cbo
   validate :salary_range
+  validate :admission_template_kind
 
   def audit_company_id
     company_id
@@ -57,5 +61,13 @@ class Position < ApplicationRecord
     return if salary_min_cents.nil? || salary_max_cents.nil?
 
     errors.add(:salary_max_cents, :below_minimum) if salary_max_cents < salary_min_cents
+  end
+
+  # An active admission model of the company, chosen when the link changes; an archived
+  # one already linked stays, and the process falls back to the default (RN-06-002).
+  def admission_template_kind
+    return if admission_template_id.nil? || !admission_template_id_changed?
+
+    errors.add(:admission_template, :invalid) unless admission_template&.admission? && admission_template.active?
   end
 end

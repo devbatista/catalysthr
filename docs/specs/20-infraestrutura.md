@@ -1,7 +1,7 @@
 # 20 — Infraestrutura
 
 > Status: aprovado (transferência internacional e criptografia do Railway a confirmar) · Última atualização: 2026-10-13
-> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627, D-629 ([decisoes.md](decisoes.md))
+> Decisões: D-026, D-031, D-075, D-108, D-153, D-223, D-500 a D-515, D-614, D-627, D-629, D-638, D-639 ([decisoes.md](decisoes.md))
 > Os itens **[P-20-nn]** foram todos aprovados sem ajuste (D-515, seção 10).
 
 ## 1. Objetivo
@@ -98,7 +98,7 @@ Definir **onde e como o CatalystHR roda**:
 - **RN-20-012** — Os serviços conversam pela **rede privada** do Railway (`*.railway.internal`). O banco, o Redis e o ClamAV **não têm endereço público** **[P-20-06]**.
 - **RN-20-013** — **Build** pelo `Dockerfile` do Rails, com jemalloc, YJIT e o **7-Zip** (pacote `7zip` do Debian 13, comando `7z`, versão 25) para os ZIPs com AES-256 (D-514). A senha do ZIP não pode aparecer na linha de comando nem nos logs **[P-20-07]**. **Nota de implementação (2026-10-14):** o 7-Zip não lê a senha de variável de ambiente; ele aceita o argumento `-p` ou a digitação no terminal. A forma de passar a senha sem expô-la (por exemplo, pela entrada do processo num pseudo-terminal) será resolvida e testada na implementação da exportação (fase 2).
 - **RN-20-014** — **Migrações** rodam no *pre-deploy command* do Railway (`bin/rails db:migrate`), só no serviço `web`. Se falharem, o deploy não acontece **[P-20-08]**. A configuração dos serviços fica no Railway e é documentada no README, porque o `railway.json` foi descontinuado pelo Railway (D-517).
-- **RN-20-015** — O **ClamAV** é chamado pela aplicação via TCP (gem `clamav-client`). Se o ClamAV estiver fora do ar, o arquivo fica em `scanning` e o job tenta de novo. Nada é liberado sem varredura (P-05-30) **[P-20-09]**.
+- **RN-20-015** — O **ClamAV** é chamado pela aplicação via TCP, por um cliente próprio do protocolo INSTREAM, sem gem (D-639). Se o ClamAV estiver fora do ar, o arquivo fica em `scanning` e o job tenta de novo. Nada é liberado sem varredura (P-05-30) **[P-20-09]**.
 
 ### 4.3 Domínios e certificados (D-153, D-503)
 
@@ -215,7 +215,7 @@ system_banners                                       -- faixa de incidente (RN-2
 | `Infra::AlertRelayJob` | Ao receber um alerta crítico | Envia WhatsApp ou SMS ao plantão |
 | `Infra::RestoreDrillReminderJob` | A cada 3 meses | Lembra a equipe do ensaio de restauração |
 
-Gems e ferramentas novas: `sentry-ruby`, `sentry-rails`, `sentry-sidekiq`, `lograge`, `clamav-client`, `flipper`, `strong_migrations`, `simplecov`, 7-Zip no container, k6 para o teste de carga **[P-20-36]**.
+Gems e ferramentas novas: `sentry-ruby`, `sentry-rails`, `sentry-sidekiq`, `lograge`, `flipper`, `strong_migrations`, `simplecov`, 7-Zip no container, k6 para o teste de carga **[P-20-36]**. O cliente do ClamAV é próprio, sem a gem `clamav-client` (D-639).
 
 ## 7. Critérios de aceite
 

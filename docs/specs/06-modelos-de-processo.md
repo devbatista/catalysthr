@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638, D-639 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -192,21 +192,20 @@ forward:  pending → sent → received
 ## 7. Modelo de dados
 
 ```
-process_templates
-  id, owner_type ('Platform'|'Partner'|'Company'), owner_id (nullable para Platform),
-  company_id (nullable; preenchido só quando o dono é empresa, para acts_as_tenant),
-  kind, name, description, status, source_template_id, is_default,
-  onboarding_template_id (só para admissão)                      [P-06-04]
+process_templates                            -- ProcessTemplate (empresa) e SharedProcessTemplate (D-639)
+  id, company_id (só nos da empresa, para acts_as_tenant), partner_id (só nos do
+  parceiro; os dois vazios = biblioteca), kind, name, description, status,
+  source_template_id, is_default, onboarding_template_id (só para admissão)   [P-06-04]
 
-process_template_items
-  id, process_template_id, position, kind, title, instructions, required,
-  responsible_role, due_anchor, due_offset_days, due_business_days (bool),
+process_template_items                       -- ProcessTemplateItem e SharedProcessTemplateItem (D-639)
+  id, company_id (só nos da empresa), process_template_id, position, kind, title,
+  instructions, required, responsible_role, due_anchor, due_offset_days (negativo =
+  antes), due_business_days (bool),
   conditions (jsonb: {employment_kinds: [], position_ids: [], unit_ids: [],
               allocation_client_ids: []}),                        [P-06-22]
-  config (jsonb por tipo)
+  config (jsonb por tipo), depends_on_item_ids (uuid[])
 
-process_template_item_dependencies
-  item_id, depends_on_item_id
+positions + admission_template_id                                 (D-204)
 
 process_instances
   id, company_id, process_template_id (origem), kind, subject_type, subject_id

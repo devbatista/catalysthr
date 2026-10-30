@@ -1,0 +1,14 @@
+<%# An item's actions on the model's page: up, down, edit and remove (D-639). %>
+<div class="flex flex-wrap gap-2 sm:justify-end xl:flex-nowrap">
+  <% if index.positive? %>
+    <%= button_to "↑", template_route(:move_template_item, @template, item, direction: "up"), method: :patch,
+      class: "btn btn-secondary btn-sm", title: t("process_templates.show.up"), "aria-label": t("process_templates.show.up") %>
+  <% end %>
+  <% if index < @template.items.size - 1 %>
+    <%= button_to "↓", template_route(:move_template_item, @template, item, direction: "down"), method: :patch,
+      class: "btn btn-secondary btn-sm", title: t("process_templates.show.down"), "aria-label": t("process_templates.show.down") %>
+  <% end %>
+  <%= link_to t("process_templates.show.edit_item"), template_route(:edit_template_item, @template, item), class: "btn btn-secondary btn-sm" %>
+  <%= button_to t("process_templates.show.remove_item"), template_route(:template_item, @template, item), method: :delete,
+    class: "btn btn-danger btn-sm", form: { data: { confirm: t("process_templates.show.remove_item_confirm", title: item.title) } } %>
+</div>

@@ -121,6 +121,10 @@ class CompanyAbility
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
     # The unit's holidays and optional days, and turning off Good Friday (RN-06-029, D-638).
     can %i[read create destroy], UnitHoliday, company_id: company.id
+    # The company's models of process, and adopting the active ones of its partner and of
+    # the library (spec 06, section 6, D-240, P-06-01, P-06-02).
+    can %i[read create update], ProcessTemplate, company_id: company.id
+    can :adopt, SharedProcessTemplate, partner_id: [ nil, company.partner_id ].uniq, status: "active"
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator

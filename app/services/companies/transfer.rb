@@ -5,8 +5,9 @@ module Companies
   # it. The old address does not redirect (P-01-13), and the company's users are told the
   # new one. Only the superadmin transfers (spec 01, section 6).
   #
-  # When the models of process, the assistant's materials and the Q&A exist (specs 06 and
-  # 14), what the company used from the old partner is copied here (RN-01-053, D-599).
+  # The models of process the company adopted are already its own copies (P-06-01, D-232),
+  # so nothing is copied for them (RN-01-053, D-639). When the assistant's materials and the
+  # Q&A exist (spec 14), what the company used from the old partner is copied here (D-599).
   class Transfer
     Result = Data.define(:transfer, :errors) do
       def success? = errors.empty?

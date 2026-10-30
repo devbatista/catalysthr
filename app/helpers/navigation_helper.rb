@@ -58,6 +58,8 @@ module NavigationHelper
       ]),
       # The content every company uses (RN-19-080): for now, the holidays (D-638).
       nav_group(:content, [
+        (nav_item(t("navigation.process_library"), admin_process_templates_path,
+          controller_path.in?(%w[admin/process_templates admin/process_template_items])) if can?(:read, SharedProcessTemplate)),
         (nav_item(t("navigation.holidays"), admin_holidays_path, controller_path == "admin/holidays") if can?(:read, Holiday))
       ]),
       nav_group(:support, [
@@ -128,6 +130,8 @@ module NavigationHelper
         (nav_item(t("navigation.positions"), positions_path, controller_path == "panel/positions") if can?(:read, Position)),
         (nav_item(t("navigation.allocation_clients"), allocation_clients_path, controller_path == "panel/allocation_clients") if company.uses_allocation_clients && can?(:read, AllocationClient)),
         (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
+        (nav_item(t("navigation.process_templates"), process_templates_path,
+          controller_path.in?(%w[panel/process_templates panel/process_template_items])) if can?(:read, ProcessTemplate)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.contract"), new_contract_path, controller_path == "panel/contracts") if checkout_allowed?(company)),
         (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),
@@ -149,7 +153,8 @@ module NavigationHelper
         (nav_item(t("navigation.invoices"), partner_invoices_path, controller_path == "panel/partner_panel/invoices") if billing_allowed?(:read_invoices, partner)),
         (nav_item(t("navigation.team"), partner_team_members_path, controller_path == "panel/partner_panel/team_members") if can?(:read, Membership.new(organization: partner))),
         (nav_item(t("navigation.brand"), edit_partner_brand_path, controller_path.in?(%w[panel/partner_panel/brands panel/partner_panel/brand_email_domains])) if partner.brand && can?(:update, partner.brand)),
-        *ComingSoon::PARTNER_FEATURES.map { |feature| soon_item(feature, partner_coming_soon_path(feature)) }
+        (nav_item(t("navigation.process_templates"), partner_process_templates_path,
+          controller_path.in?(%w[panel/partner_panel/process_templates panel/partner_panel/process_template_items])) if can?(:read, SharedProcessTemplate))
       ])
     ]
   end

@@ -35,6 +35,24 @@ RSpec.describe Companies::Transfer do
       expect(result.transfer).to have_attributes(from_partner: aurora, to_partner: boreal, performed_by: superadmin)
     end
 
+    # The adoption already made the company's copy (P-06-01, D-232): nothing is copied, and
+    # the copy stops depending on the old partner, whose own models stay with it (D-639).
+    it "keeps the models adopted from the old partner as the company's own (RN-01-053, D-639)" do
+      original = SharedProcessTemplate.create!(partner: aurora, kind: "admission", name: "Admissão Aurora", status: "active")
+      original.items.create!(position: 1, kind: "task", title: "Boas-vindas", responsible_role: "hr")
+      copy = ActsAsTenant.with_tenant(company) { ProcessTemplates::Adopt.call(original, into: company) }
+
+      transfer(to: boreal)
+      original.update!(name: "Admissão Aurora 2027")
+      original.items.first.update!(title: "Outro item")
+
+      ActsAsTenant.with_tenant(company) do
+        expect(ProcessTemplate.sole).to have_attributes(id: copy.id, name: "Admissão Aurora", source_template_id: original.id)
+        expect(ProcessTemplateItem.sole.title).to eq("Boas-vindas")
+      end
+      expect(SharedProcessTemplate.where(partner: aurora).sole).to eq(original)
+    end
+
     it "keeps the company's own brand and its display mode (D-168)" do
       company.update!(brand_display_mode: "replace")
       create(:brand, owner: company, commercial_name: "Padaria RH")
