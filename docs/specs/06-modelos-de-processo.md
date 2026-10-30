@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638, D-639 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
