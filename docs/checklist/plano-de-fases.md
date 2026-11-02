@@ -164,12 +164,12 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 ### Entregas
 
 **Leva 1, sem depender de terceiros, nesta ordem: 06, 08, 16 e 07, depois 15, 17 e 18 (D-638):**
-- [ ] **Spec 06:** motor de modelos de processo, em 3 PRs (D-638):
+- [x] **Spec 06:** motor de modelos de processo, em 3 PRs (D-638):
   - [x] 06a. Feriados: importação anual da BrasilAPI para revisão e publicação pela equipe, estaduais e municipais à mão no admin, feriados e pontos facultativos da unidade pelo RH (com a Sexta-feira da Paixão desmarcável) e o cálculo de dias úteis (RN-06-026, RN-06-029, RN-11-020, P-06-20, CA-06-003) (PR #97). Depois do deploy: buscar no admin os nacionais de 2026 e 2027 e publicá-los
   - 06b, em dois PRs (D-639):
     - [x] 06b-1. Modelos na biblioteca, no parceiro e na empresa (Empresa → Modelos de processo), editor, adoção, padrão por tipo, modelo de admissão do cargo, integração ligada à admissão, condições, dependências sem ciclo e o teste da transferência (RN-06-001 a RN-06-042, RN-01-053, D-599, CA-06-001, CA-06-008). O envio de documento entra com a spec 08 (PR #99)
     - [x] 06b-2. Material em PDF do item de leitura e aceite, com o cliente próprio do clamd e a varredura de vírus (clamav no Docker Compose; o serviço no Railway fica para a validação) (RN-06-060, P-05-30, D-640) (PR #100)
-  - [ ] 06c. Processo: início, responsáveis, prazos, bloqueio, ajustes com histórico, dispensa, conclusão, recálculo, troca de cliente, jobs, avisos e a tela genérica do processo (RN-06-050 a RN-06-066, CA-06-004 a CA-06-007, CA-06-009, CA-06-010)
+  - [x] 06c. Processo: início, responsáveis, prazos, bloqueio, ajustes com histórico, dispensa, conclusão, recálculo, troca de cliente, jobs, avisos e a tela genérica do processo (RN-06-050 a RN-06-066, CA-06-004 a CA-06-007, CA-06-009, CA-06-010, D-641) (PR #101). O início do processo vem com a 07 e a 09; o que o colaborador conclui, com a 16
 - [ ] **Spec 08:** documentos, revisão, vencimentos, pedidos, ciência, lote, exclusão recuperável. A varredura de vírus vem do 06b (D-638). O texto da ciência eletrônica segue a resposta do jurídico (itens 3.1 e 3.2), sem mudar o mecanismo
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe"
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
