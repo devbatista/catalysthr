@@ -227,6 +227,26 @@ Rails.application.routes.draw do
           patch :move, on: :member
         end
       end
+      # The processes under way (spec 06, RN-06-050 to RN-06-053, D-641): the generic page the
+      # admission (spec 07) and the requests (spec 09) reuse. They start from those specs.
+      resources :processes, only: :show do
+        member do
+          patch :complete
+          patch :cancel
+        end
+        resources :items, controller: "process_items", only: %i[new create edit update destroy] do
+          member do
+            patch :move
+            patch :done
+            patch :approve
+            patch :reject
+            patch :forward
+            patch :skip
+            get :receipt
+            get :material
+          end
+        end
+      end
       resources :allocation_clients, path: "clients", except: :destroy do
         member do
           patch :managers

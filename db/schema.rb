@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -810,6 +810,93 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
     t.index ["version"], name: "index_pre_activation_prices_on_version", unique: true
   end
 
+  create_table "process_events", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "process_instance_id", null: false
+    t.uuid "process_item_id"
+    t.string "action", null: false
+    t.uuid "actor_id"
+    t.jsonb "details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["actor_id"], name: "index_process_events_on_actor_id"
+    t.index ["company_id"], name: "index_process_events_on_company_id"
+    t.index ["process_instance_id", "created_at"], name: "index_process_events_on_process_instance_id_and_created_at"
+    t.index ["process_item_id"], name: "index_process_events_on_process_item_id"
+  end
+
+  create_table "process_instances", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "process_template_id"
+    t.string "kind", null: false
+    t.string "subject_type", null: false
+    t.uuid "subject_id", null: false
+    t.string "status", default: "open", null: false
+    t.jsonb "anchor_dates", default: {}, null: false
+    t.jsonb "subject_snapshot", default: {}, null: false
+    t.uuid "unit_id"
+    t.string "completion_mode", default: "confirm", null: false
+    t.uuid "started_by_id", null: false
+    t.datetime "completed_at"
+    t.uuid "completed_by_id"
+    t.datetime "cancelled_at"
+    t.uuid "cancelled_by_id"
+    t.text "cancel_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cancelled_by_id"], name: "index_process_instances_on_cancelled_by_id"
+    t.index ["company_id"], name: "index_process_instances_on_company_id"
+    t.index ["completed_by_id"], name: "index_process_instances_on_completed_by_id"
+    t.index ["process_template_id"], name: "index_process_instances_on_process_template_id"
+    t.index ["started_by_id"], name: "index_process_instances_on_started_by_id"
+    t.index ["subject_type", "subject_id"], name: "index_process_instances_on_subject_type_and_subject_id"
+    t.index ["unit_id"], name: "index_process_instances_on_unit_id"
+  end
+
+  create_table "process_item_dependencies", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "item_id", null: false
+    t.uuid "depends_on_item_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_process_item_dependencies_on_company_id"
+    t.index ["depends_on_item_id"], name: "index_process_item_dependencies_on_depends_on_item_id"
+    t.index ["item_id", "depends_on_item_id"], name: "idx_on_item_id_depends_on_item_id_377e599321", unique: true
+  end
+
+  create_table "process_items", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "process_instance_id", null: false
+    t.uuid "source_template_item_id"
+    t.integer "position", null: false
+    t.string "kind", null: false
+    t.string "title", null: false
+    t.text "instructions"
+    t.boolean "required", default: true, null: false
+    t.string "status", null: false
+    t.string "responsible_role", null: false
+    t.uuid "responsible_membership_ids", default: [], null: false, array: true
+    t.boolean "responsible_fallback", default: false, null: false
+    t.string "due_anchor"
+    t.integer "due_offset_days"
+    t.boolean "due_business_days", default: false, null: false
+    t.date "due_on"
+    t.boolean "due_manually_set", default: false, null: false
+    t.date "overdue_notified_on"
+    t.jsonb "config", default: {}, null: false
+    t.jsonb "result", default: {}, null: false
+    t.uuid "completed_by_id"
+    t.datetime "completed_at"
+    t.text "skipped_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_process_items_on_company_id"
+    t.index ["completed_by_id"], name: "index_process_items_on_completed_by_id"
+    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY ((ARRAY['blocked'::character varying, 'pending'::character varying])::text[]))"
+    t.index ["process_instance_id", "position"], name: "index_process_items_on_process_instance_id_and_position"
+    t.index ["responsible_membership_ids"], name: "index_process_items_on_responsible_membership_ids", using: :gin
+    t.index ["source_template_item_id"], name: "index_process_items_on_source_template_item_id"
+  end
+
   create_table "process_template_items", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id"
     t.uuid "process_template_id", null: false
@@ -1267,6 +1354,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
   add_foreign_key "positions", "companies"
   add_foreign_key "positions", "process_templates", column: "admission_template_id", on_delete: :nullify
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"
+  add_foreign_key "process_events", "companies"
+  add_foreign_key "process_events", "process_instances", on_delete: :cascade
+  add_foreign_key "process_events", "process_items", on_delete: :nullify
+  add_foreign_key "process_events", "users", column: "actor_id"
+  add_foreign_key "process_instances", "companies"
+  add_foreign_key "process_instances", "process_templates", on_delete: :nullify
+  add_foreign_key "process_instances", "units"
+  add_foreign_key "process_instances", "users", column: "cancelled_by_id"
+  add_foreign_key "process_instances", "users", column: "completed_by_id"
+  add_foreign_key "process_instances", "users", column: "started_by_id"
+  add_foreign_key "process_item_dependencies", "companies"
+  add_foreign_key "process_item_dependencies", "process_items", column: "depends_on_item_id", on_delete: :cascade
+  add_foreign_key "process_item_dependencies", "process_items", column: "item_id", on_delete: :cascade
+  add_foreign_key "process_items", "companies"
+  add_foreign_key "process_items", "process_instances", on_delete: :cascade
+  add_foreign_key "process_items", "process_template_items", column: "source_template_item_id", on_delete: :nullify
+  add_foreign_key "process_items", "users", column: "completed_by_id"
   add_foreign_key "process_template_items", "companies"
   add_foreign_key "process_template_items", "process_templates", on_delete: :cascade
   add_foreign_key "process_template_materials", "companies"

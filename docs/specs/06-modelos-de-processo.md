@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 a D-640 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 a D-641 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -217,17 +217,25 @@ positions + admission_template_id                                 (D-204)
 process_instances
   id, company_id, process_template_id (origem), kind, subject_type, subject_id
   (Employment, Request...), status, anchor_dates (jsonb), started_by_id,
-  completed_at, cancelled_at, cancel_reason
+  subject_snapshot (jsonb: vínculo, cargo, unidade e cliente no início, RN-06-036),
+  completion_mode ('confirm'|'automatic', D-641), completed_at, completed_by_id,
+  cancelled_at, cancelled_by_id, cancel_reason
 
 process_items
   id, company_id, process_instance_id, source_template_item_id, position, kind,
   title, instructions, required, status, responsible_role,
-  responsible_membership_ids (array), due_on, due_manually_set (bool),
+  responsible_membership_ids (array), responsible_fallback (bool, RN-06-022),
+  due_anchor, due_offset_days, due_business_days (para o recálculo, RN-06-027),
+  due_on, due_manually_set (bool), overdue_notified_on,
   config (jsonb), result (jsonb), completed_by_id, completed_at,
   skipped_reason
 
 process_item_dependencies
-  item_id, depends_on_item_id
+  id, company_id, item_id, depends_on_item_id
+
+process_events                               -- histórico do processo (RN-06-051, D-641)
+  id, company_id, process_instance_id, process_item_id, action, actor_id,
+  details (jsonb), created_at
 
 holidays                                     -- compartilhado com a spec 11; sem empresa (D-638)
   id, level ('national'|'state'|'city'), state, ibge_city_code, city_name, date, name,

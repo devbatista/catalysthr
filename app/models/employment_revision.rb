@@ -39,6 +39,9 @@ class EmploymentRevision < ApplicationRecord
   before_update :only_future_changes
   before_destroy :only_future_changes
   before_destroy :keep_first_revision
+  # The open processes follow a new allocation client once in force (RN-06-036, D-641);
+  # a future one, on its date (Employments::ApplyScheduledRevisionsJob).
+  after_create_commit -> { Processes::FollowClientChange.call(employment, by: created_by) }, unless: :future?
 
   validates :effective_on, presence: true
   validates :salary_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true

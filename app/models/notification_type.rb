@@ -67,6 +67,13 @@ NotificationType::CATALOG = [
     roles: %w[partner_admin hr_admin]),
   NotificationType.new(code: "billing.contract_closing", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin]),
+  # An item of a process to the client's manager (P-15-35); the person's notice comes with
+  # the portal (spec 16, D-641).
+  NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[client_manager]),
+  # An item past its date, to whoever answers for it and to the process's HR (RN-06-028).
+  NotificationType.new(code: "processes.task_overdue", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[manager client_manager hr_admin hr_analyst consultant]),
   # The partner's read only, to the HR administrator of each company of the portfolio,
   # without amounts (RN-19-052, D-495).
   NotificationType.new(code: "billing.partner_read_only", mandatory: true, urgent: false, channels: %w[system email],

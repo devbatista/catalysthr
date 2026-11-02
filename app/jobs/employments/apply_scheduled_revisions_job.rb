@@ -1,6 +1,7 @@
 module Employments
   # Every morning, tells the HR about the revisions that come into force on the day
-  # (P-04-29, D-602, D-608). The revision in force is already chosen by its date
+  # (P-04-29, D-602, D-608), and the open processes follow a new allocation client
+  # (RN-06-036, D-641). The revision in force is already chosen by its date
   # (RN-04-061), so the job only notifies; the eSocial pending items come with spec 13.
   # Each HR person gets one notice with the revisions of their scope: the administrator
   # all of them, the analyst those in their units (D-142), and the partner's consultant
@@ -16,7 +17,10 @@ module Employments
     def perform(date = Date.current)
       company_ids = CrossCompany.scope(EmploymentRevision, Company.all).where(effective_on: date).distinct.pluck(:company_id)
       Company.where(id: company_ids).find_each do |company|
-        ActsAsTenant.with_tenant(company) { notify_company(company, date) }
+        ActsAsTenant.with_tenant(company) do
+          notify_company(company, date)
+          follow_processes(date)
+        end
       end
     end
 
@@ -37,6 +41,11 @@ module Employments
         mine = unit_ids ? revisions.select { |revision| unit_ids.include?(revision.unit_id) } : revisions
         notify(company, membership, mine, date) if mine.any?
       end
+    end
+
+    # The open processes follow the allocation client now in force (RN-06-036, D-641).
+    def follow_processes(date)
+      Employment.where(id: due(date).select(:employment_id)).find_each { |employment| Processes::FollowClientChange.call(employment) }
     end
 
     # [membership, unit ids or nil for all units]

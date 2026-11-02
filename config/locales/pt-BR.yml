@@ -705,6 +705,92 @@ pt-BR:
       caepf: "CAEPF"
     uses_headquarters: "Usa a inscrição da matriz"
   # Models of process (spec 06, D-639).
+  # Processes under way (spec 06, RN-06-050 to RN-06-053, D-641).
+  processes:
+    title: "%{kind} de %{person}"
+    statuses:
+      open: "Em andamento"
+      completed: "Concluído"
+      cancelled: "Cancelado"
+    item_statuses:
+      blocked: "Bloqueado"
+      pending: "Pendente"
+      submitted: "Enviado"
+      correction_requested: "Correção pedida"
+      done: "Concluído"
+      skipped: "Dispensado"
+      approved: "Aprovado"
+      rejected: "Reprovado"
+      sent: "Enviado"
+      received: "Recebido"
+    overdue: "Atrasado"
+    nobody: "Ninguém"
+    no_due: "Sem prazo"
+    no_date: "A definir"
+    portal_only: "O colaborador conclui pelo portal."
+    member_roles:
+      hr_admin: "RH administrador"
+      hr_analyst: "RH analista"
+      manager: "Gestor"
+      client_manager: "Gestor do cliente"
+      employee: "Colaborador"
+      consultant: "Consultor"
+      accountant: "Contador"
+      firm_admin: "Escritório contábil"
+    fields:
+      title: "título"
+      instructions: "instruções"
+      required: "obrigatoriedade"
+      due_on: "prazo"
+    result:
+      by: "Por %{name} em %{date}"
+      comment: "Comentário: %{text}"
+      rejected: "Reprovado: %{text}"
+      skipped: "Dispensado: %{text}"
+      sent_on: "Enviado em %{date}"
+      receipt: "Comprovante"
+    actions:
+      done: "Marcar como feito"
+      done_submit: "Confirmar"
+      comment: "Comentário (opcional)"
+      approve: "Aprovar"
+      approve_confirm: "Aprovar \"%{title}\"?"
+      reject: "Reprovar"
+      reason: "Justificativa"
+      reject_submit: "Confirmar reprovação"
+      forward: "Registrar envio"
+      forward_hint: "Sem escritório contábil ligado, registre a data do envio e o comprovante. PDF, JPG ou PNG, até 10 MB."
+      sent_on: "Data do envio"
+      receipt: "Comprovante"
+      forward_submit: "Registrar"
+      edit: "Editar"
+      skip: "Dispensar"
+      skip_reason: "Justificativa"
+      skip_hint:
+        required: "Item obrigatório: a justificativa é necessária e fica no histórico."
+        optional: "Item opcional: a justificativa é opcional."
+      skip_submit: "Confirmar dispensa"
+      remove: "Remover"
+      remove_confirm: "Remover \"%{title}\" deste processo? A remoção fica no histórico."
+      up: "Subir"
+      down: "Descer"
+    events:
+      started: "Processo iniciado a partir do modelo %{template}"
+      item_completed: "\"%{title}\" marcado como feito"
+      item_approved: "\"%{title}\" aprovado"
+      item_rejected: "\"%{title}\" reprovado: %{reason}"
+      item_forwarded: "Envio de \"%{title}\" registrado"
+      item_skipped: "\"%{title}\" dispensado"
+      item_unblocked: "\"%{title}\" liberado"
+      item_added: "\"%{title}\" incluído"
+      item_removed: "\"%{title}\" removido"
+      item_updated: "\"%{title}\" alterado: %{fields}"
+      item_moved: "\"%{title}\" mudou de posição"
+      responsible_changed: "Responsáveis de \"%{title}\" alterados"
+      client_changed: "\"%{title}\" passou aos gestores do novo cliente"
+      due_recalculated: "Prazo de \"%{title}\" recalculado de %{from} para %{to}"
+      completed: "Processo concluído"
+      cancelled: "Processo cancelado: %{reason}"
   process_templates:
     library: "Biblioteca CatalystHR"
     default: "Padrão"
@@ -1246,6 +1332,76 @@ pt-BR:
       whatsapp: "WhatsApp"
       accounting_integrations: "Integrações contábeis"
   panel:
+    processes:
+      show:
+        ready: "Pronto para concluir"
+        started: "Iniciado por %{name} em %{date}"
+        from_template: "modelo %{name}"
+        responsible_alert: "Algum item ficou sem responsável do papel previsto e foi para o RH. Confira os itens marcados e troque os responsáveis, se for preciso."
+        subject_changed: "Desde o início do processo, mudou: %{fields}. Os itens não são reavaliados sozinhos; ajuste o que for preciso."
+        snapshot:
+          employment_kind: "o tipo de vínculo"
+          position_id: "o cargo"
+          unit_id: "a unidade"
+          department_id: "o departamento"
+          allocation_client_id: "o cliente"
+        cancelled_reason: "Cancelado por %{name}: %{reason}"
+        person: "Pessoa"
+        unit: "Unidade"
+        completed_at: "Concluído em"
+        complete: "Concluir processo"
+        complete_confirm: "Concluir este processo? Os itens não poderão mais ser alterados."
+        not_ready: "O processo pode ser concluído quando todos os itens obrigatórios estiverem concluídos ou dispensados."
+        cancel: "Cancelar processo"
+        cancel_reason: "Motivo do cancelamento"
+        cancel_submit: "Confirmar cancelamento"
+        cancel_confirm: "Cancelar este processo? Ele fica fechado, com o motivo no histórico."
+        items:
+          one: "1 item"
+          other: "%{count} itens"
+        my_items:
+          one: "1 item atribuído a você"
+          other: "%{count} itens atribuídos a você"
+        no_items: "Nenhum item."
+        item: "Item do checklist"
+        responsible: "Responsável"
+        due: "Prazo"
+        status: "Status"
+        waiting_for: "Aguardando: %{items}"
+        fallback: "Sem ninguém no papel \"%{role}\": foi para o RH."
+        new_item: "Incluir item"
+        history: "Histórico"
+        system: "Sistema"
+      complete:
+        completed: "Processo concluído."
+        not_ready: "Ainda há itens obrigatórios em aberto."
+      cancel:
+        cancelled: "Processo cancelado."
+        cancel_reason_blank: "Informe o motivo do cancelamento."
+    process_items:
+      closed: "Este item ou processo não pode mais ser alterado."
+      resolved:
+        done: "Item concluído."
+        approved: "Item aprovado."
+        rejected: "Item reprovado."
+        skipped: "Item dispensado."
+      new:
+        title: "Novo item"
+        back: "Voltar para o processo"
+      edit:
+        title: "Editar %{title}"
+      create:
+        created: "Item incluído no processo."
+      update:
+        updated: "Item salvo."
+      destroy:
+        destroyed: "Item removido do processo."
+      form:
+        due_on: "Prazo"
+        due_hint: "Um prazo escolhido aqui não acompanha mais as datas do processo."
+        role: "Papel"
+        role_hint: "As pessoas do papel são escolhidas como no início do processo. Sem ninguém no papel, o item vai para o RH."
+        people_hint: "Quem marcar aqui pode concluir o item."
     unit_holidays:
       create:
         holiday: "Feriado incluído na unidade."
@@ -2372,6 +2528,17 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    processes:
+      task_assigned:
+        name: "Item de processo atribuído"
+        hint: "Quando um item de um processo fica com você."
+        title: "Item para você: %{item}"
+        body: "O item \"%{item}\" do processo de %{person} ficou com você. Prazo: %{due}."
+      task_overdue:
+        name: "Item de processo atrasado"
+        hint: "Uma vez por item, quando ele passa do prazo."
+        title: "Item atrasado: %{item}"
+        body: "O item \"%{item}\" do processo de %{person} passou do prazo de %{due}."
     security:
       account_locked:
         name: "Conta bloqueada"
@@ -2988,6 +3155,8 @@ pt-BR:
       process_template_item: "Item do modelo"
       shared_process_template_item: "Item do modelo"
       process_template_material: "Material do item"
+      process_instance: "Processo"
+      process_item: "Item do processo"
       shared_process_template_material: "Material do item"
       file_scan: "Varredura de vírus"
     attributes:
@@ -3036,6 +3205,15 @@ pt-BR:
         depends_on_item_ids: "Dependências"
         kind: "Tipo"
         material_file: "Material"
+      process_instance:
+        cancel_reason: "Motivo do cancelamento"
+      process_item:
+        title: "Título"
+        instructions: "Instruções"
+        responsible_role: "Papel"
+        responsible_membership_ids: "Responsáveis"
+        skipped_reason: "Justificativa"
+        due_on: "Prazo"
       unit_holiday:
         kind: "Tipo"
         date: "Data"
@@ -3462,6 +3640,17 @@ pt-BR:
               acknowledgement_only: "só vale para o item de leitura e aceite"
               pdf_only: "precisa ser um arquivo PDF"
               too_large: "pode ter até %{count} MB"
+        process_item:
+          attributes:
+            base:
+              reason_blank: "Informe a justificativa da reprovação"
+              sent_on_invalid: "Informe uma data de envio até hoje"
+              receipt_blank: "Anexe o comprovante do envio"
+              receipt_type: "O comprovante precisa ser PDF, JPG ou PNG"
+              receipt_size: "O comprovante pode ter até %{count} MB"
+              skip_reason_blank: "Um item obrigatório só é dispensado com justificativa"
+              not_open: "Este item já foi resolvido"
+              not_actionable: "Este item não pode ser concluído agora"
         holiday:
           attributes:
             date:

@@ -31,6 +31,7 @@ class CompanyAbility
     end
     manager(company, membership) if roles.include?("manager")
     client_manager(company, membership) if roles.include?("client_manager")
+    assigned_items(company, membership) if (roles & %w[manager client_manager]).any?
     # A read-only membership still reads its modules (D-090).
     modules(membership&.roles || [], membership, consultant, support_at?(user, company, support_access), contracted)
   end
@@ -78,6 +79,30 @@ class CompanyAbility
     end
     can %i[read read_personal read_health update], WorkerProfile, people
     can :read_pay, WorkerProfile, people if modules.include?("folha")
+    unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
+    processes(company, unit_ids: unit_ids, modules: modules)
+  end
+
+  # The processes the HR runs (spec 03, sections 4.4 and 4.6, D-641): those of their units,
+  # with the kind's module; every one for the HR administrator. :adjust is the HR's part:
+  # change, skip, end, cancel and the history (RN-06-051 to RN-06-053).
+  def processes(company, unit_ids:, modules:)
+    kinds = ProcessInstance::MODULES.select { |_kind, code| modules == :all || modules.include?(code) }.keys
+    conditions = { company_id: company.id, kind: kinds }
+    conditions[:unit_id] = unit_ids unless unit_ids == :all
+    can %i[read adjust], ProcessInstance, conditions
+    can :act, ProcessItem, company_id: company.id, instance: conditions
+  end
+
+  # The manager and the client manager see and resolve only the items assigned to them
+  # (spec 03, sections 4.4 and 4.12, RN-03-014, P-03-39).
+  def assigned_items(company, membership)
+    instance_ids, item_ids = ActsAsTenant.with_tenant(company) do
+      items = ProcessItem.where("? = ANY(responsible_membership_ids)", membership.id)
+      [ items.distinct.pluck(:process_instance_id), items.pluck(:id) ]
+    end
+    can :read, ProcessInstance, company_id: company.id, id: instance_ids
+    can :act, ProcessItem, company_id: company.id, id: item_ids
   end
 
   # The manager reads their own departments, with the subdepartments (the E scope, D-190),
@@ -125,6 +150,7 @@ class CompanyAbility
     # the library (spec 06, section 6, D-240, P-06-01, P-06-02).
     can %i[read create update], ProcessTemplate, company_id: company.id
     can :adopt, SharedProcessTemplate, partner_id: [ nil, company.partner_id ].uniq, status: "active"
+    processes(company, unit_ids: :all, modules: :all)
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator
