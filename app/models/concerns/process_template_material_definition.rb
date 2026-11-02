@@ -7,14 +7,10 @@ module ProcessTemplateMaterialDefinition
 
   CONTENT_TYPE = "application/pdf".freeze
   MAX_SIZE = 10.megabytes
-  PDF_SIGNATURE = "%PDF-".b.freeze
 
-  # A PDF starts with "%PDF-", whatever the file's name or the type the browser sent.
+  # By its content, whatever the file's name or the type the browser sent.
   def self.pdf?(io)
-    io.rewind
-    io.read(PDF_SIGNATURE.bytesize).to_s.b == PDF_SIGNATURE
-  ensure
-    io.rewind
+    FileSignature.content_type(io) == CONTENT_TYPE
   end
 
   included do

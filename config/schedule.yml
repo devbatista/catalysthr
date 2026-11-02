@@ -112,3 +112,10 @@ antivirus_rescan_pending:
   cron: "40 * * * * America/Sao_Paulo"          # every hour
   class: "Antivirus::RescanPendingJob"
   queue: "default"
+
+# Items of processes past their date, to who answers for them and the HR (spec 06,
+# RN-06-028, D-641)
+processes_overdue_items:
+  cron: "30 6 * * * America/Sao_Paulo"
+  class: "Processes::OverdueItemsJob"
+  queue: "default"

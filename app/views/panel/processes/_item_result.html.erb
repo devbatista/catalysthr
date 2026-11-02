@@ -1,0 +1,33 @@
+<%# What was recorded on the item: the comment, the reason of a rejection or of a skip, the
+    forward's date and receipt, and the acknowledgement's PDF (RN-06-010, RN-06-066,
+    P-06-17). %>
+<% result = item.result %>
+<% if item.completed_at && item.resolved? || item.rejected? %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <%= t("processes.result.by", name: item.completed_by&.name || t("panel.processes.show.system"), date: l(item.completed_at, format: "%d/%m/%Y %H:%M")) %>
+  </p>
+<% end %>
+<% if result["comment"] %><p class="mt-1 text-xs text-ink-soft"><%= t("processes.result.comment", text: result["comment"]) %></p><% end %>
+<% if result["reason"] %><p class="mt-1 text-xs text-bad"><%= t("processes.result.rejected", text: result["reason"]) %></p><% end %>
+<% if item.skipped? && item.skipped_reason %><p class="mt-1 text-xs text-ink-soft"><%= t("processes.result.skipped", text: item.skipped_reason) %></p><% end %>
+<% if result["sent_on"] %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <%= t("processes.result.sent_on", date: l(Date.iso8601(result["sent_on"]), format: "%d/%m/%Y")) %>
+    <% if @hr && item.forward_receipt.attached? %>
+      <% status = item.forward_receipt.blob.file_scan&.status || "scanning" %>
+      · <% if status == "clean" %><%= link_to t("processes.result.receipt"), receipt_process_item_path(@instance, item), class: "link-button", target: "_blank", rel: "noopener" %><% else %><%= t("process_templates.materials.scan.#{status}") %><% end %>
+    <% end %>
+  </p>
+<% end %>
+<% if item.acknowledgement? %>
+  <% material = item.material %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <% if material&.clean? %>
+      <%= link_to t("process_templates.materials.in_use", version: material.version), material_process_item_path(@instance, item),
+        class: "link-button", target: "_blank", rel: "noopener" %> ·
+    <% end %>
+    <%= t("processes.portal_only") %>
+  </p>
+<% elsif item.form? %>
+  <p class="mt-1 text-xs text-ink-soft"><%= t("processes.portal_only") %></p>
+<% end %>

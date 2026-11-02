@@ -1,0 +1,62 @@
+<%# An item of a process under way, changed by the HR (RN-06-051): on a new one, the role
+    resolves the people (RN-06-020); on an existing one, the HR picks them (RN-06-021). A
+    date set here no longer follows the process's dates (RN-06-027). %>
+<%= form_with model: @item, scope: :item, url: url, method: method, class: "mt-6 space-y-6" do |form| %>
+  <%= render "admin/plans/errors", records: [ @item ] %>
+  <%= form.hidden_field :kind if @item.new_record? %>
+
+  <section class="card card-body space-y-4">
+    <div class="flex flex-wrap items-center gap-2">
+      <h2 class="card-title"><%= t("process_templates.items.form.item") %></h2>
+      <span class="pill pill-info"><%= t("process_templates.item_kinds.#{@item.kind}") %></span>
+    </div>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :title, t("process_templates.items.form.title"), class: "field-label" %>
+        <%= form.text_field :title, required: true, maxlength: 160, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :due_on, t("panel.process_items.form.due_on"), class: "field-label" %>
+        <%= form.date_field :due_on, class: "input" %>
+      </div>
+      <div class="field-full">
+        <%= form.label :instructions, t("process_templates.items.form.instructions"), class: "field-label" %>
+        <%= form.text_area :instructions, rows: 3, maxlength: 4000, class: "input" %>
+      </div>
+    </div>
+    <p class="field-hint"><%= t("panel.process_items.form.due_hint") %></p>
+    <label class="flex items-center gap-2 text-sm">
+      <%= form.check_box :required %>
+      <%= t("process_templates.items.form.required") %>
+    </label>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("process_templates.items.form.responsible") %></h2>
+    <% if @item.new_record? %>
+      <div class="form-grid">
+        <div class="field-wide">
+          <%= form.label :responsible_role, t("panel.process_items.form.role"), class: "field-label" %>
+          <%= form.select :responsible_role, responsible_roles(@instance.template || ProcessTemplate.new(kind: @instance.kind)), {}, class: "input" %>
+        </div>
+      </div>
+      <p class="field-hint"><%= t("panel.process_items.form.role_hint") %></p>
+    <% else %>
+      <p class="field-hint"><%= t("panel.process_items.form.people_hint") %></p>
+      <%= hidden_field_tag "item[responsible_membership_ids][]", "", id: nil %>
+      <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <% responsible_options(@instance, @item).each do |label, id| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "item[responsible_membership_ids][]", id, @item.responsible_membership_ids.include?(id), id: "item_responsible_#{id}" %>
+            <%= label %>
+          </label>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit t("process_templates.items.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("process_templates.items.form.cancel"), process_path(@instance, anchor: "items"), class: "link-button text-sm" %>
+  </div>
+<% end %>
