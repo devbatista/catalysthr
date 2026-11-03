@@ -258,9 +258,11 @@ Rails.application.routes.draw do
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       # The documents (spec 08, D-642): the review queue, each document with its versions and
       # the review, and the person's folder; the company's types and the platform's settings.
-      resources :documents, only: %i[index show] do
+      resources :documents, only: %i[index show destroy] do
         # The documents expiring and expired in the HR's scope (RN-08-031, RN-08-032).
         get :expirations, on: :collection
+        # The recovery within 30 days (RN-08-083, D-644).
+        patch :restore, on: :member
         resources :versions, controller: "document_versions", only: %i[new create] do
           member do
             get :file
@@ -276,6 +278,18 @@ Rails.application.routes.draw do
         get :receipt, on: :member
         patch "acknowledgments/:acknowledgment_id/refuse", action: :refuse, on: :member, as: :refuse
       end
+      # The HR's batches, confirmed by hand until spec 14 (RN-08-060 to RN-08-063, D-644), and
+      # the folder's ZIP for who asked it (RN-08-082).
+      resources :document_batches, path: "document-batches", only: %i[index create show] do
+        member do
+          post :files
+          patch :items
+          post :distribute
+        end
+      end
+      resources :document_folder_exports, path: "document-exports", only: [] do
+        get :download, on: :member
+      end
       resources :document_types, path: "document-types", except: %i[show destroy] do
         patch :setting, on: :member
         resources :position_expirations, path: "position-expirations", controller: "position_document_expirations",
@@ -283,6 +297,7 @@ Rails.application.routes.draw do
       end
       resources :employees, except: :destroy do
         resources :documents, controller: "employee_documents", only: %i[index new create]
+        post "documents/export", to: "document_folder_exports#create", as: :document_export
         resources :employments, only: %i[new create]
         resources :emergency_contacts, path: "emergency-contacts", except: %i[index show]
         resources :dependents, except: %i[index show destroy] do

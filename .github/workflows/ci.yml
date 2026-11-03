@@ -98,9 +98,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # libvips straightens and cleans a document's images before the PDF (spec 08, RN-08-011).
-      - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips-dev
+      # libvips straightens and cleans a document's images before the PDF (spec 08, RN-08-011);
+      # 7-Zip writes the folder's ZIP (RN-08-082, D-514).
+      - name: Install libvips and 7-Zip
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips-dev 7zip
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

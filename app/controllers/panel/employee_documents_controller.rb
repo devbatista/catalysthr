@@ -14,6 +14,13 @@ module Panel
       @by_category = documents.group_by(&:category)
       @categories = DocumentCategory::ALL.select { |category| @by_category.key?(category) || readable_categories.include?(category) }
       @category = params[:category].presence_in(@categories) || @categories.find { |category| @by_category.key?(category) } || @categories.first
+      # The deleted ones still recoverable, for the HR administrator (RN-08-083, D-644).
+      if can?(:restore, Document)
+        @deleted = Document.where(worker_profile: @profile, purged_at: nil).where.not(deleted_at: nil)
+          .where(deleted_at: Documents::Removal::RECOVERABLE_FOR.ago..).includes(:document_type, :deleted_by).order(deleted_at: :desc).to_a
+      end
+      # The latest ZIP this person asked (RN-08-082).
+      @export = DocumentFolderExport.where(worker_profile: @profile, requested_by: current_user).order(created_at: :desc).first
     end
 
     def new

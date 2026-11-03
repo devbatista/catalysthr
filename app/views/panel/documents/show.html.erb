@@ -19,9 +19,23 @@
   <%= document_version_pill(@document.latest_version) %>
   <% if @document.sensitive? %><span class="pill pill-warn"><%= t("document_types.flags.sensitive") %></span><% end %>
   <% if type.internal %><span class="pill pill-mute"><%= t("document_types.flags.internal") %></span><% end %>
-  <% if !@document.read_only? && can?(:upload, @document) %>
-    <%= link_to t(".new_version"), new_document_version_path(@document), class: "btn btn-secondary sm:ml-auto" %>
-  <% end %>
+  <div class="flex flex-wrap items-start gap-3 sm:ml-auto">
+    <% if !@document.read_only? && can?(:upload, @document) %>
+      <%= link_to t(".new_version"), new_document_version_path(@document), class: "btn btn-secondary" %>
+    <% end %>
+    <%# Deleting, with the reason, by the HR administrator (RN-08-083, D-644). %>
+    <% if !@document.read_only? && can?(:destroy, @document) %>
+      <details class="w-full sm:w-auto">
+        <summary class="btn btn-danger"><%= t(".delete") %></summary>
+        <%= form_with url: document_path(@document), method: :delete, class: "mt-3 space-y-3 sm:w-80" do |form| %>
+          <%= form.label :delete_reason, t(".delete_reason"), class: "field-label" %>
+          <%= form.text_area :delete_reason, rows: 2, required: true, maxlength: 2000, class: "input" %>
+          <p class="field-hint"><%= t(".delete_hint") %></p>
+          <%= form.submit t(".delete_submit"), class: "btn btn-danger", data: { confirm: t(".delete_confirm") } %>
+        <% end %>
+      </details>
+    <% end %>
+  </div>
 </div>
 <p class="page-subtitle">
   <%= t("documents.categories.#{@document.category}") %> · <%= document_type_expiration(type) %>

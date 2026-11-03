@@ -4,13 +4,15 @@ module Panel
   # and the history of uploads and reviews (RN-08-020 to RN-08-024, RN-08-081). A
   # sensitive document asks for the password first and each opening of its file is an
   # access event (D-183, D-085); during an impersonate its file stays hidden (RN-02-086).
+  # The HR administrator deletes a document with a reason and recovers it within 30 days
+  # (RN-08-083, D-644).
   class DocumentsController < BaseController
     include SensitiveAccess
 
     PER_PAGE = 50
 
     before_action :require_current_company
-    before_action :load_document, only: :show
+    before_action :load_document, only: %i[show destroy]
 
     def index
       authorize! :review, Document
@@ -49,6 +51,25 @@ module Panel
 
       @versions = @document.versions.includes(:uploaded_by, :reviewed_by, pdf_attachment: { blob: :file_scan }).to_a
       @version = @versions.find { |version| version.id == params[:version_id] } || @document.latest_version
+    end
+
+    def destroy
+      authorize! :destroy, @document
+      if Documents::Removal.new(@document, by: current_user).delete(reason: params[:delete_reason])
+        redirect_to employee_documents_path(@document.worker_profile, category: @document.category), notice: t(".deleted")
+      else
+        redirect_to document_path(@document), alert: @document.errors.full_messages.to_sentence
+      end
+    end
+
+    def restore
+      document = Document.where.not(deleted_at: nil).accessible_by(current_ability, :read).find(params[:id])
+      authorize! :restore, document
+      if Documents::Removal.new(document, by: current_user).restore
+        redirect_to document_path(document), notice: t(".restored")
+      else
+        redirect_to employee_documents_path(document.worker_profile, deleted: 1), alert: document.errors.full_messages.to_sentence
+      end
     end
 
     private
