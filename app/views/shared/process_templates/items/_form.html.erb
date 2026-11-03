@@ -151,6 +151,21 @@
         </div>
       <% end %>
     </section>
+  <% elsif @item.document? %>
+    <section class="card card-body space-y-4">
+      <div>
+        <h2 class="card-title"><%= t("process_templates.items.form.document_type") %></h2>
+        <p class="field-hint"><%= t("process_templates.items.form.document_type_hint.#{company ? "company" : "shared"}") %></p>
+      </div>
+      <div class="form-grid">
+        <div class="field-wide">
+          <%= label_tag "item_document_type_id", t("process_templates.items.form.document_type"), class: "field-label" %>
+          <%= select_tag "item[config][document_type_id]",
+            options_for_select(document_type_options(company), @item.config["document_type_id"]),
+            include_blank: true, required: true, id: "item_document_type_id", class: "input" %>
+        </div>
+      </div>
+    </section>
   <% elsif @item.forward? %>
     <section class="card card-body space-y-3">
       <div>

@@ -1,0 +1,43 @@
+<%# A new document in a person's folder, by the HR (RN-08-013): the type, and, when it is
+    for one of them, the dependent or the bank account (D-604) or the process item
+    (RN-06-010). %>
+<% name = @profile.display_name %>
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back", name: name), employee_documents_path(@profile), class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", name: name) %></p>
+
+<%= form_with model: @upload, scope: :upload, url: employee_documents_path(@profile), method: :post, multipart: true,
+  class: "card card-body mt-6 space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ @upload ] %>
+  <% if @upload.dependent %><%= form.hidden_field :dependent_id, value: @upload.dependent.id %><% end %>
+  <% if @upload.bank_account %><%= form.hidden_field :bank_account_id, value: @upload.bank_account.id %><% end %>
+  <% if @upload.process_item %><%= form.hidden_field :process_item_id, value: @upload.process_item.id %><% end %>
+
+  <% if (about = @upload.dependent&.name || (bank_account_summary(@upload.bank_account) if @upload.bank_account) || @upload.process_item&.title) %>
+    <p class="alert-info"><%= t(".about", about: about) %></p>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= form.label :document_type_id, t(".type"), class: "field-label" %>
+      <% if @upload.process_item && @upload.document_type %>
+        <%= form.hidden_field :document_type_id, value: @upload.document_type.id %>
+        <p class="input bg-canvas"><%= @upload.document_type.name %></p>
+      <% else %>
+        <%= form.select :document_type_id,
+          grouped_options_for_select(type_options.group_by(&:category).sort_by { |category, _| DocumentCategory::ALL.index(category) }
+            .map { |category, types| [ t("documents.categories.#{category}"), types.map { |type| [ type.name, type.id ] } ] },
+            @upload.document_type&.id),
+          { include_blank: true }, required: true, class: "input" %>
+      <% end %>
+    </div>
+    <%= render "shared/documents/upload_fields", form: form %>
+  </div>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), employee_documents_path(@profile), class: "link-button text-sm" %>
+  </div>
+<% end %>

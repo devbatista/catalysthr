@@ -1,0 +1,51 @@
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, PlatformDocumentType) %>
+    <%= link_to t(".new"), new_admin_document_type_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @types.empty? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% end %>
+<% DocumentCategory::ALL.each do |category| %>
+  <% types = @types[category] %>
+  <% next unless types %>
+  <section class="card card-body mt-6 space-y-3">
+    <h2 class="card-title"><%= t("documents.categories.#{category}") %> · <%= types.size %></h2>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th class="hidden md:table-cell"><%= t(".expiration") %></th>
+            <th class="hidden lg:table-cell"><%= t(".settings") %></th>
+            <th><span class="sr-only"><%= t(".actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% types.each do |type| %>
+            <tr>
+              <td>
+                <span class="font-bold text-ink-strong"><%= type.name %></span>
+                <span class="ml-1 font-mono text-xs text-ink-muted"><%= type.code %></span>
+                <% if type.archived? %><span class="pill pill-mute ml-1"><%= t("document_types.statuses.archived") %></span><% end %>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= document_type_expiration(type) %></p>
+              </td>
+              <td class="hidden md:table-cell"><%= document_type_expiration(type) %></td>
+              <td class="hidden lg:table-cell"><span class="flex flex-wrap gap-1"><%= document_type_flags(type) %></span></td>
+              <td class="text-right">
+                <% if can?(:update, type) %>
+                  <%= link_to t(".edit"), edit_admin_document_type_path(type), class: "link-button text-sm" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

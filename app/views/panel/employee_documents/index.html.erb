@@ -1,0 +1,60 @@
+<%# A person's folder, as in the prototype ("Pessoa › Documentos › Pessoais"): a chip per
+    category with its count, only the ones the person who opens it may read (P-03-17,
+    P-03-16), and each document with its latest version (spec 08, D-642). %>
+<% name = @profile.display_name %>
+<% content_for :title, t(".title", name: name) %>
+<% documents = (@by_category[@category] || []).sort_by { |document| document_title(document) } %>
+
+<p class="text-sm">
+  <%= link_to name, employee_path(@profile), class: "link-button" %> ›
+  <%= t(".documents") %> › <%= t("documents.categories.#{@category}") %>
+</p>
+<div class="mt-3 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title", name: name) %></h1>
+  <% if can?(:upload, folder_document) %>
+    <%= link_to t(".new"), new_employee_document_path(@profile), class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".categories") %>">
+  <% @categories.each do |category| %>
+    <%= link_to "#{t("documents.categories.#{category}")} · #{@by_category.fetch(category, []).size}",
+      employee_documents_path(@profile, category: category), class: "chip #{"chip-active" if category == @category}",
+      "aria-current": (category == @category ? "page" : nil) %>
+  <% end %>
+</nav>
+
+<% if documents.empty? %>
+  <p class="card card-body mt-5 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-5 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".document") %></th>
+          <th class="hidden md:table-cell"><%= t(".latest") %></th>
+          <th><%= t(".status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% documents.each do |document| %>
+          <% latest = document.latest_version %>
+          <tr>
+            <td>
+              <%= link_to document_title(document), document_path(document), class: "link-button font-bold" %>
+              <span class="mt-1 flex flex-wrap gap-1">
+                <% if document.sensitive? %><span class="pill pill-warn"><%= t("document_types.flags.sensitive") %></span><% end %>
+                <% if document.document_type.internal %><span class="pill pill-mute"><%= t("document_types.flags.internal") %></span><% end %>
+                <% if document.read_only? %><span class="pill pill-mute"><%= t(".generated") %></span><% end %>
+              </span>
+              <% if latest %><p class="mt-1 text-xs text-ink-soft md:hidden"><%= version_upload_text(latest) %></p><% end %>
+            </td>
+            <td class="hidden md:table-cell text-sm text-ink-soft"><%= latest ? version_upload_text(latest) : "—" %></td>
+            <td><%= document_version_pill(latest) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

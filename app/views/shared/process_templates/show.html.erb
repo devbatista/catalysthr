@@ -73,6 +73,7 @@
                   <span class="pill pill-mute"><%= t("process_templates.items.#{item.required ? "required" : "optional"}") %></span>
                 </span>
                 <% if item.acknowledgement? %><%= item_material(item) %><% end %>
+                <% if item.document? %><%= item_document_type(item) %><% end %>
                 <% if item.depends_on_item_ids.any? %>
                   <p class="mt-1 text-xs text-ink-soft"><%= t("process_templates.show.depends_on", items: item.depends_on.map(&:title).join(", ")) %></p>
                 <% end %>

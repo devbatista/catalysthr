@@ -1,0 +1,70 @@
+<%# The menu's "Documentos" (D-642): the versions waiting for the HR's review, the oldest
+    first, with filters by unit, type and person. Blocks 08b and 08c add the expirations,
+    the requests and the batches. %>
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with url: documents_path, method: :get, class: "card card-body mt-6" do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :unit_id, t(".unit"), class: "field-label" %>
+      <%= form.select :unit_id, @units.map { |unit| [ unit.name, unit.id ] }, { include_blank: t(".all_units"), selected: params[:unit_id] }, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :document_type_id, t(".type"), class: "field-label" %>
+      <%= form.select :document_type_id, @types.map { |type| [ type.name, type.id ] }, { include_blank: t(".all"), selected: params[:document_type_id] },
+        class: "input" %>
+    </div>
+    <div>
+      <%= form.label :q, t(".person"), class: "field-label" %>
+      <%= form.search_field :q, value: params[:q], maxlength: 120, class: "input" %>
+    </div>
+    <div class="flex items-end">
+      <%= form.submit t(".filter"), class: "btn btn-secondary", name: nil %>
+    </div>
+  </div>
+<% end %>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".awaiting", count: @count) %></h2>
+  <% if @versions.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".document") %></th>
+            <th class="hidden md:table-cell"><%= t(".person") %></th>
+            <th class="hidden lg:table-cell"><%= t(".sent") %></th>
+            <th><%= t(".status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @versions.each do |version| %>
+            <% document = version.document %>
+            <tr>
+              <td>
+                <%= link_to document_title(document), document_path(document, version_id: version.id), class: "link-button font-bold" %>
+                <span class="ml-1 text-xs text-ink-muted"><%= t("documents.version_number", number: version.number) %></span>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= document.worker_profile.display_name %></p>
+                <p class="mt-1 text-xs text-ink-soft lg:hidden"><%= l(version.uploaded_at, format: "%d/%m/%Y %H:%M") %></p>
+              </td>
+              <td class="hidden md:table-cell">
+                <%= link_to document.worker_profile.display_name, employee_documents_path(document.worker_profile, category: document.category),
+                  class: "link-button" %>
+              </td>
+              <td class="hidden lg:table-cell text-sm text-ink-soft"><%= l(version.uploaded_at, format: "%d/%m/%Y %H:%M") %> · <%= version.uploaded_by.name %></td>
+              <td><%= document_version_pill(version) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% if @count > @versions.size %>
+      <p class="field-hint"><%= t(".more", shown: @versions.size, count: @count) %></p>
+    <% end %>
+  <% end %>
+</section>

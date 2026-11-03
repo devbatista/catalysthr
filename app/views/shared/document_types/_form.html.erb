@@ -1,0 +1,79 @@
+<%# A document type (RN-08-003): the platform's in the admin, with its code, or the
+    company's own. The expiration's numbers matter only for their rule (RN-08-030); without
+    JavaScript, both stay visible with their hints. %>
+<%= form_with model: type, scope: :document_type, url: url, method: method, class: "card card-body mt-6 space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ type ] %>
+
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= form.label :name, t("document_types.form.name"), class: "field-label" %>
+      <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+    </div>
+    <% if platform %>
+      <div>
+        <%= form.label :code, t("document_types.form.code"), class: "field-label" %>
+        <% if type.persisted? %>
+          <p class="input bg-canvas font-mono"><%= type.code %></p>
+        <% else %>
+          <%= form.text_field :code, required: true, maxlength: 60, pattern: "[a-z0-9_]+", class: "input font-mono" %>
+          <p class="field-hint"><%= t("document_types.form.code_hint") %></p>
+        <% end %>
+      </div>
+    <% end %>
+    <div>
+      <%= form.label :category, t("document_types.form.category"), class: "field-label" %>
+      <%= form.select :category, DocumentCategory::ALL.map { |category| [ t("documents.categories.#{category}"), category ] }, {}, class: "input" %>
+    </div>
+    <div class="field-full">
+      <%= form.label :description, t("document_types.form.description"), class: "field-label" %>
+      <%= form.text_area :description, rows: 2, maxlength: 1000, class: "input" %>
+      <p class="field-hint"><%= t("document_types.form.description_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :max_files, t("document_types.form.max_files"), class: "field-label" %>
+      <%= form.number_field :max_files, required: true, min: 1, max: DocumentTypeDefinition::MAX_FILES, class: "input" %>
+      <p class="field-hint"><%= t("document_types.form.max_files_hint", count: DocumentTypeDefinition::MAX_FILES) %></p>
+    </div>
+    <div>
+      <%= form.label :expiration_rule, t("document_types.form.expiration_rule"), class: "field-label" %>
+      <%= form.select :expiration_rule, DocumentTypeDefinition::EXPIRATION_RULES.map { |rule| [ t("document_types.expiration_rules.#{rule}"), rule ] }, {}, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :expiration_months, t("document_types.form.expiration_months"), class: "field-label" %>
+      <%= form.number_field :expiration_months, min: 1, max: 120, class: "input" %>
+      <p class="field-hint"><%= t("document_types.form.expiration_months_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :max_age_days, t("document_types.form.max_age_days"), class: "field-label" %>
+      <%= form.number_field :max_age_days, min: 1, max: 3650, class: "input" %>
+      <p class="field-hint"><%= t("document_types.form.max_age_days_hint") %></p>
+    </div>
+    <div>
+      <%= form.label :alert_days, t("document_types.form.alert_days"), class: "field-label" %>
+      <%= form.number_field :alert_days, required: true, min: 1, max: DocumentTypeDefinition::MAX_ALERT_DAYS, class: "input" %>
+      <p class="field-hint"><%= t("document_types.form.alert_days_hint") %></p>
+    </div>
+    <% if type.persisted? %>
+      <div>
+        <%= form.label :status, t("document_types.form.status"), class: "field-label" %>
+        <%= form.select :status, DocumentTypeDefinition::STATUSES.map { |status| [ t("document_types.statuses.#{status}"), status ] }, {}, class: "input" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-2">
+    <label class="flex items-center gap-2 text-sm">
+      <%= form.check_box :internal %>
+      <%= t("document_types.form.internal") %>
+    </label>
+    <label class="flex items-center gap-2 text-sm">
+      <%= form.check_box :requires_acknowledgment %>
+      <%= t("document_types.form.requires_acknowledgment") %>
+    </label>
+  </div>
+
+  <div class="flex items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t("document_types.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("document_types.form.cancel"), cancel_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

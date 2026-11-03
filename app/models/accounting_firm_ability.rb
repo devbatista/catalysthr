@@ -12,10 +12,19 @@ class AccountingFirmAbility
     Membership.active.for_brand(brand).where(user: user, organization_type: "AccountingFirm").find_each do |membership|
       can :read, :firm_panel
       admin(user, membership.organization, brand) if membership.roles.include?("firm_admin")
+      folders(membership.organization)
     end
   end
 
   private
+
+  # The folders of the linked companies' people, read only and without health (spec 03,
+  # section 4.5, D-193, P-03-18, CA-08-009). The screen comes with the admission's forward
+  # (spec 07, D-642).
+  def folders(firm)
+    companies = AccountingFirmCompany.where(accounting_firm_id: firm.id, status: "active").pluck(:company_id)
+    can :read, Document, company_id: companies, document_type: { category: DocumentCategory.readable(health: false, pay: true) }
+  end
 
   def admin(user, firm, brand)
     # Requests from the brand's companies, accepted or refused by the firm (P-02-29, D-590).

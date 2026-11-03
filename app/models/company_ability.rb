@@ -81,6 +81,18 @@ class CompanyAbility
     can :read_pay, WorkerProfile, people if modules.include?("folha")
     unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
     processes(company, unit_ids: unit_ids, modules: modules)
+    if modules.include?("documentos")
+      folders = { company_id: company.id }
+      folders[:worker_profile_id] = people[:id] if people.key?(:id)
+      documents(folders, pay: modules.include?("folha"))
+    end
+  end
+
+  # The folders the HR reaches (spec 03, section 4.5, D-642): see, send and review, health
+  # included (P-03-17), and the payroll's category only with the payroll module (P-03-16).
+  # Deleting is the HR administrator's, with block 08c (P-03-19).
+  def documents(folders, pay:)
+    can %i[read upload review], Document, folders.merge(document_type: { category: DocumentCategory.readable(health: true, pay: pay) })
   end
 
   # The processes the HR runs (spec 03, sections 4.4 and 4.6, D-641): those of their units,
@@ -151,6 +163,11 @@ class CompanyAbility
     can %i[read create update], ProcessTemplate, company_id: company.id
     can :adopt, SharedProcessTemplate, partner_id: [ nil, company.partner_id ].uniq, status: "active"
     processes(company, unit_ids: :all, modules: :all)
+    # The company's document types, and turning off or adjusting the platform's (RN-08-002,
+    # RN-08-004, D-272).
+    can %i[read create update configure_expiration], DocumentType, company_id: company.id
+    can %i[read configure configure_expiration], DocumentType, company_id: nil
+    documents({ company_id: company.id }, pay: true)
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator

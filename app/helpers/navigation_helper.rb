@@ -60,6 +60,7 @@ module NavigationHelper
       nav_group(:content, [
         (nav_item(t("navigation.process_library"), admin_process_templates_path,
           controller_path.in?(%w[admin/process_templates admin/process_template_items])) if can?(:read, SharedProcessTemplate)),
+        (nav_item(t("navigation.document_types"), admin_document_types_path, controller_path == "admin/document_types") if can?(:read, PlatformDocumentType)),
         (nav_item(t("navigation.holidays"), admin_holidays_path, controller_path == "admin/holidays") if can?(:read, Holiday))
       ]),
       nav_group(:support, [
@@ -102,7 +103,8 @@ module NavigationHelper
   end
 
   EMPLOYEE_CONTROLLERS = %w[panel/employees panel/employments panel/employment_revisions panel/emergency_contacts
-    panel/dependents panel/bank_accounts].freeze
+    panel/dependents panel/bank_accounts panel/employee_documents].freeze
+  DOCUMENT_CONTROLLERS = %w[panel/documents panel/document_versions].freeze
 
   def company_navigation
     company = Current.company
@@ -121,6 +123,12 @@ module NavigationHelper
       nav_item(t("navigation.home"), root_path, controller_path == "panel/home"),
       (nav_item(t("navigation.employees"), employees_path, controller_path.in?(EMPLOYEE_CONTROLLERS)) if can?(:read, WorkerProfile))
     )
+    # The review queue (spec 08, D-642), for who reaches the folders, in the prototype's
+    # place, after the admissions.
+    if can?(:review, Document)
+      after = groups[:operation].index { |item| item&.path == coming_soon_path("admissions") } || 1
+      groups[:operation].insert(after + 1, nav_item(t("navigation.documents"), documents_path, controller_path.in?(DOCUMENT_CONTROLLERS)))
+    end
 
     groups.map { |group, items| nav_group(group, items) } + [
       nav_group(:company, [
@@ -132,6 +140,8 @@ module NavigationHelper
         (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
         (nav_item(t("navigation.process_templates"), process_templates_path,
           controller_path.in?(%w[panel/process_templates panel/process_template_items])) if can?(:read, ProcessTemplate)),
+        (nav_item(t("navigation.document_types"), document_types_path,
+          controller_path.in?(%w[panel/document_types panel/position_document_expirations])) if can?(:create, DocumentType)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.contract"), new_contract_path, controller_path == "panel/contracts") if checkout_allowed?(company)),
         (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),

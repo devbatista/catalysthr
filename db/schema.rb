@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -276,6 +276,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
 
+  create_table "company_document_type_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_type_id", null: false
+    t.boolean "enabled", default: true, null: false
+    t.integer "alert_days"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "document_type_id"], name: "index_company_document_type_settings_unique", unique: true
+    t.index ["document_type_id"], name: "index_company_document_type_settings_on_document_type_id"
+  end
+
   create_table "company_module_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.string "module", null: false
@@ -401,6 +412,75 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_dependents_on_company_id"
     t.index ["worker_profile_id"], name: "index_dependents_on_worker_profile_id"
+  end
+
+  create_table "document_types", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.string "code"
+    t.string "name", null: false
+    t.text "description"
+    t.string "category", null: false
+    t.boolean "internal", default: false, null: false
+    t.boolean "requires_acknowledgment", default: false, null: false
+    t.string "expiration_rule", default: "none", null: false
+    t.integer "expiration_months"
+    t.integer "max_age_days"
+    t.integer "alert_days", default: 30, null: false
+    t.integer "max_files", default: 1, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_document_types_platform_code", unique: true, where: "(company_id IS NULL)"
+    t.index ["company_id"], name: "index_document_types_on_company_id"
+  end
+
+  create_table "document_versions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_id", null: false
+    t.integer "number", null: false
+    t.string "status", default: "scanning", null: false
+    t.string "sha256"
+    t.uuid "uploaded_by_id", null: false
+    t.datetime "uploaded_at", null: false
+    t.uuid "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.string "correction_reason"
+    t.text "correction_note"
+    t.date "issued_on"
+    t.date "valid_until"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "status"], name: "index_document_versions_queue"
+    t.index ["company_id"], name: "index_document_versions_on_company_id"
+    t.index ["document_id", "number"], name: "index_document_versions_on_document_id_and_number", unique: true
+    t.index ["reviewed_by_id"], name: "index_document_versions_on_reviewed_by_id"
+    t.index ["uploaded_by_id"], name: "index_document_versions_on_uploaded_by_id"
+  end
+
+  create_table "documents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
+    t.uuid "document_type_id", null: false
+    t.string "status", default: "pending", null: false
+    t.uuid "current_version_id"
+    t.date "expires_on"
+    t.string "source", default: "hr", null: false
+    t.string "source_ref_type"
+    t.uuid "source_ref_id"
+    t.uuid "dependent_id"
+    t.uuid "bank_account_id"
+    t.datetime "deleted_at"
+    t.uuid "deleted_by_id"
+    t.text "delete_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bank_account_id"], name: "index_documents_on_bank_account_id"
+    t.index ["company_id", "worker_profile_id"], name: "index_documents_folder"
+    t.index ["current_version_id"], name: "index_documents_on_current_version_id"
+    t.index ["deleted_by_id"], name: "index_documents_on_deleted_by_id"
+    t.index ["dependent_id"], name: "index_documents_on_dependent_id"
+    t.index ["document_type_id"], name: "index_documents_on_document_type_id"
+    t.index ["source_ref_type", "source_ref_id"], name: "index_documents_on_source_ref"
   end
 
   create_table "emergency_contacts", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -781,6 +861,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
     t.uuid "billing_account_id"
     t.index "kind, lower((name)::text)", name: "index_plans_on_kind_and_name", unique: true
     t.index ["billing_account_id"], name: "index_plans_on_billing_account_id"
+  end
+
+  create_table "position_document_expirations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "position_id", null: false
+    t.uuid "document_type_id", null: false
+    t.integer "expiration_months", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_position_document_expirations_on_company_id"
+    t.index ["document_type_id"], name: "index_position_document_expirations_on_document_type_id"
+    t.index ["position_id", "document_type_id"], name: "index_position_document_expirations_unique", unique: true
   end
 
   create_table "positions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1289,6 +1381,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
+  add_foreign_key "company_document_type_settings", "companies"
+  add_foreign_key "company_document_type_settings", "document_types"
   add_foreign_key "company_module_settings", "companies"
   add_foreign_key "company_module_settings", "users", column: "changed_by_id"
   add_foreign_key "company_notification_settings", "companies"
@@ -1309,6 +1403,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
   add_foreign_key "departments", "units"
   add_foreign_key "dependents", "companies"
   add_foreign_key "dependents", "worker_profiles"
+  add_foreign_key "document_types", "companies"
+  add_foreign_key "document_versions", "companies"
+  add_foreign_key "document_versions", "documents"
+  add_foreign_key "document_versions", "users", column: "reviewed_by_id"
+  add_foreign_key "document_versions", "users", column: "uploaded_by_id"
+  add_foreign_key "documents", "bank_accounts"
+  add_foreign_key "documents", "companies"
+  add_foreign_key "documents", "dependents"
+  add_foreign_key "documents", "document_types"
+  add_foreign_key "documents", "document_versions", column: "current_version_id"
+  add_foreign_key "documents", "users", column: "deleted_by_id"
+  add_foreign_key "documents", "worker_profiles"
   add_foreign_key "emergency_contacts", "companies"
   add_foreign_key "emergency_contacts", "worker_profiles"
   add_foreign_key "employment_revisions", "allocation_clients"
@@ -1351,6 +1457,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_180000) do
   add_foreign_key "plan_versions", "plans"
   add_foreign_key "plan_versions", "users", column: "created_by_id"
   add_foreign_key "plans", "billing_accounts"
+  add_foreign_key "position_document_expirations", "companies"
+  add_foreign_key "position_document_expirations", "document_types"
+  add_foreign_key "position_document_expirations", "positions"
   add_foreign_key "positions", "companies"
   add_foreign_key "positions", "process_templates", column: "admission_template_id", on_delete: :nullify
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"

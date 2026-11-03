@@ -1,5 +1,27 @@
 pt-BR:
   admin:
+    document_types:
+      index:
+        title: "Tipos de documento"
+        subtitle: "Os tipos que todas as empresas usam, por categoria. A leitura pela IA entra com a spec 14. Um tipo é arquivado, nunca excluído, porque há documentos que apontam para ele."
+        new: "Novo tipo"
+        empty: "Nenhum tipo cadastrado."
+        name: "Tipo"
+        expiration: "Vencimento"
+        settings: "Configurações"
+        actions: "Ações"
+        edit: "Editar"
+      new:
+        title: "Novo tipo de documento"
+        back: "Tipos de documento"
+        subtitle: "Vale para todas as empresas, que podem desativá-lo."
+      edit:
+        back: "Tipos de documento"
+        subtitle: "A mudança vale para todas as empresas. Os documentos já enviados continuam com o tipo."
+      create:
+        created: "Tipo %{name} criado."
+      update:
+        updated: "Tipo %{name} salvo."
     holidays:
       index:
         title: "Feriados"
@@ -749,7 +771,11 @@ pt-BR:
       skipped: "Dispensado: %{text}"
       sent_on: "Enviado em %{date}"
       receipt: "Comprovante"
+      document: "Ver o documento"
+    document_hint: "O item é concluído quando o RH aprova o documento."
     actions:
+      send_document: "Enviar documento"
+      send_version: "Enviar nova versão"
       done: "Marcar como feito"
       done_submit: "Confirmar"
       comment: "Comentário (opcional)"
@@ -791,6 +817,9 @@ pt-BR:
       due_recalculated: "Prazo de \"%{title}\" recalculado de %{from} para %{to}"
       completed: "Processo concluído"
       cancelled: "Processo cancelado: %{reason}"
+      document_submitted: "Documento de \"%{title}\" enviado"
+      document_approved: "Documento de \"%{title}\" aprovado"
+      document_correction_requested: "Correção pedida no documento de \"%{title}\""
   process_templates:
     library: "Biblioteca CatalystHR"
     default: "Padrão"
@@ -940,6 +969,7 @@ pt-BR:
       updated: "Item salvo."
       destroyed: "Item removido."
       no_deadline: "Sem prazo"
+      no_document_type: "Tipo de documento não encontrado"
       on_anchor: "No dia %{anchor}"
       deadline_before: "%{days} antes %{anchor}"
       deadline_after: "%{days} depois %{anchor}"
@@ -988,6 +1018,10 @@ pt-BR:
         version_number: "Versão %{version}"
         sent: "Enviada em"
         scan: "Varredura"
+        document_type: "Tipo de documento"
+        document_type_hint:
+          company: "Um tipo por item. O item é concluído quando o RH aprova o documento enviado."
+          shared: "Um tipo da plataforma por item; os tipos próprios da empresa entram depois de adotar o modelo. O item é concluído quando o RH aprova o documento enviado."
         forward: "O que é encaminhado"
         forward_hint: "Ao escritório contábil ligado à empresa."
         forward_validated_documents: "Os documentos validados"
@@ -1013,6 +1047,88 @@ pt-BR:
       latest:
         scanning: "Versão %{version} em varredura"
         infected: "Versão %{version} recusada: vírus encontrado"
+  # Documents (spec 08, D-642).
+  documents:
+    categories:
+      personal: "Pessoais"
+      admission: "Admissão"
+      health: "Saúde"
+      dependents: "Dependentes"
+      statements: "Declarações"
+      contracts: "Contratos"
+      payroll: "Folha"
+      time_tracking: "Ponto"
+      other: "Outros"
+    version_statuses:
+      submitted: "Enviado"
+      scanning: "Em varredura"
+      ai_processing: "Em leitura pela IA"
+      ai_failed: "Conferência manual"
+      awaiting_review: "Aguardando revisão"
+      approved: "Aprovado"
+      correction_requested: "Correção pedida"
+      replaced: "Substituído"
+      rejected_by_scan: "Recusado na varredura"
+    correction_reasons:
+      illegible: "Imagem ilegível"
+      expired: "Documento vencido"
+      wrong_type: "Tipo errado"
+      incomplete: "Documento incompleto (falta frente ou verso)"
+      divergent: "Dados divergentes"
+      other: "Outro"
+    no_version: "Sem envio"
+    version_number: "Versão %{number}"
+    uploaded: "Versão %{number} enviada em %{date} por %{name}"
+    upload:
+      files: "Arquivos"
+      files_hint: "PDF, JPG ou PNG, até %{size} MB cada. Até %{count} imagens, como frente e verso, viram um PDF único; um PDF vai sozinho. O arquivo passa pela varredura de vírus antes de ficar disponível."
+    linked:
+      send_certificate: "Enviar certidão"
+      send_proof: "Enviar comprovante"
+  document_types:
+    expiration_rules:
+      none: "Não vence"
+      document_date: "Validade do próprio documento"
+      periodicity: "Periodicidade"
+      age: "Aceito só se recente"
+    expiration_summary:
+      periodicity:
+        one: "A cada %{count} mês"
+        other: "A cada %{count} meses"
+      age:
+        one: "Aceito até %{count} dia depois da emissão"
+        other: "Aceito até %{count} dias depois da emissão"
+    statuses:
+      active: "Ativo"
+      archived: "Arquivado"
+    flags:
+      sensitive: "Sensível"
+      internal: "Interno"
+      acknowledgment: "Pede ciência"
+      files:
+        one: "%{count} arquivo"
+        other: "Até %{count} arquivos"
+    form:
+      name: "Nome"
+      code: "Código"
+      code_hint: "Letras minúsculas, números e sublinhado. Não muda depois."
+      category: "Categoria"
+      description: "Descrição"
+      description_hint: "Ajuda a IA a reconhecer o tipo, quando a leitura entrar (spec 14)."
+      max_files: "Arquivos por versão"
+      max_files_hint: "Até %{count} imagens, como frente e verso, juntadas num PDF."
+      expiration_rule: "Vencimento"
+      expiration_months: "Meses da periodicidade"
+      expiration_months_hint: "Só para a periodicidade. Cada cargo pode ter outro número."
+      max_age_days: "Dias aceitos depois da emissão"
+      max_age_days_hint: "Só para o aceito se recente, como os 90 dias do comprovante de residência."
+      alert_days: "Aviso antes do vencimento (dias)"
+      alert_days_hint: "O padrão é 30 dias."
+      status: "Situação"
+      internal: "Interno: o colaborador não vê os documentos deste tipo"
+      requires_acknowledgment: "Pede ciência do colaborador por padrão"
+      submit: "Salvar tipo"
+      cancel: "Cancelar"
   # Holidays (spec 06, RN-06-029; spec 11, RN-11-020; D-638).
   holidays:
     levels:
@@ -1312,6 +1428,8 @@ pt-BR:
     plans: "Planos e preços"
     fiscal_settings: "Notas fiscais"
     holidays: "Feriados"
+    document_types: "Tipos de documento"
+    documents: "Documentos"
     process_templates: "Modelos de processo"
     process_library: "Biblioteca de modelos"
     units: "Unidades"
@@ -1332,6 +1450,143 @@ pt-BR:
       whatsapp: "WhatsApp"
       accounting_integrations: "Integrações contábeis"
   panel:
+    document_types:
+      index:
+        title: "Tipos de documento"
+        subtitle: "Os tipos próprios da empresa e os da plataforma, que podem ser desativados. Desativar não mexe nos documentos já enviados."
+        new: "Novo tipo"
+        own:
+          one: "Da empresa · %{count}"
+          other: "Da empresa · %{count}"
+        no_own: "A empresa ainda não criou tipos próprios."
+        platform:
+          one: "Da plataforma · %{count}"
+          other: "Da plataforma · %{count}"
+        platform_hint: "Mantidos pela equipe CatalystHR. A empresa escolhe quais usa e com quantos dias de antecedência quer o aviso de vencimento."
+        name: "Tipo"
+        category: "Categoria"
+        expiration: "Vencimento"
+        notice: "Aviso"
+        notice_days:
+          one: "%{count} dia antes"
+          other: "%{count} dias antes"
+        use: "Uso"
+        actions: "Ações"
+        edit: "Editar"
+        in_use: "Em uso"
+        turned_off: "Desativado"
+        enabled: "Usar este tipo na empresa"
+        alert_days: "Aviso antes do vencimento (dias)"
+        turn_off_hint: "Desativado, o tipo some das opções de envio. Os documentos já enviados continuam na pasta."
+        save: "Salvar"
+        by_position:
+          one: "%{position}: a cada %{count} mês"
+          other: "%{position}: a cada %{count} meses"
+        remove: "Remover"
+        add_position: "Outra periodicidade para um cargo"
+        position: "Cargo"
+        months: "Meses"
+        add: "Incluir"
+      new:
+        title: "Novo tipo de documento"
+        back: "Tipos de documento"
+        subtitle: "Um tipo próprio da empresa, sem a leitura pela IA."
+      edit:
+        back: "Tipos de documento"
+        subtitle: "Os documentos já enviados continuam com o tipo."
+      create:
+        created: "Tipo %{name} criado."
+      update:
+        updated: "Tipo %{name} salvo."
+      setting:
+        saved: "Configuração de %{name} salva."
+    position_document_expirations:
+      create:
+        saved: "Periodicidade de %{position} salva."
+      destroy:
+        destroyed: "Periodicidade de %{position} removida."
+    employee_documents:
+      index:
+        title: "Documentos de %{name}"
+        documents: "Documentos"
+        subtitle: "A pasta da pessoa, por categoria. Abrir um documento sensível pede a senha e fica registrado."
+        new: "Enviar documento"
+        categories: "Categorias"
+        empty: "Nenhum documento nesta categoria."
+        document: "Documento"
+        latest: "Último envio"
+        status: "Situação"
+        generated: "Gerado pelo sistema"
+      new:
+        title: "Enviar documento"
+        back: "Documentos de %{name}"
+        subtitle: "Na pasta de %{name}. O documento fica aguardando a revisão do RH depois da varredura de vírus."
+        about: "Para: %{about}"
+        type: "Tipo de documento"
+        submit: "Enviar"
+        cancel: "Cancelar"
+      create:
+        created: "Documento enviado. Ele fica disponível depois da varredura de vírus."
+    documents:
+      index:
+        title: "Documentos"
+        subtitle: "Os documentos aguardando a revisão do RH, do envio mais antigo para o mais recente."
+        unit: "Unidade"
+        type: "Tipo"
+        person: "Pessoa"
+        all: "Todos"
+        all_units: "Todas"
+        filter: "Filtrar"
+        awaiting:
+          one: "Aguardando revisão · %{count}"
+          other: "Aguardando revisão · %{count}"
+        empty: "Nenhum documento aguardando revisão."
+        document: "Documento"
+        sent: "Enviado em"
+        status: "Situação"
+        more: "Mostrando os %{shown} mais antigos de %{count}. Use os filtros para ver os outros."
+      show:
+        documents: "Documentos"
+        new_version: "Enviar nova versão"
+        from_process: "Item \"%{title}\" do processo"
+        no_versions: "Nenhuma versão enviada."
+        open: "Abrir em nova aba"
+        hidden: "Documento sensível: fica oculto durante o acesso como outro usuário."
+        rejected_by_scan: "Esta versão foi recusada porque a varredura encontrou um vírus. O arquivo foi apagado; envie outro."
+        processing: "O arquivo está na varredura de vírus e fica disponível em instantes. Recarregue a página."
+        review: "Revisão"
+        authenticity: "Confira o documento antes de aprovar. A plataforma não comprova a autenticidade do documento."
+        valid_until: "Validade do documento"
+        issued_on: "Data do documento"
+        approve: "Aprovar"
+        approve_confirm: "Aprovar esta versão? Ela passa a ser a vigente, e a anterior fica como substituída."
+        correction: "Pedir correção"
+        reason: "Motivo"
+        note: "Observação"
+        note_hint: "Obrigatória quando o motivo é \"Outro\". O motivo e a observação aparecem para o colaborador."
+        correction_submit: "Pedir correção"
+        versions:
+          one: "Versões · %{count}"
+          other: "Versões · %{count}"
+        reviewed: "Revisada por %{name} em %{date}"
+        issued_on_value: "Data do documento: %{date}"
+        valid_until_value: "Validade: %{date}"
+    document_versions:
+      new:
+        title: "Nova versão de %{document}"
+        back: "Voltar para o documento"
+        subtitle: "Na pasta de %{name}. Depois de aprovada, a nova versão substitui a vigente."
+        files_allowed:
+          one: "Este tipo aceita %{count} arquivo por versão."
+          other: "Este tipo aceita até %{count} imagens por versão."
+        submit: "Enviar"
+        cancel: "Cancelar"
+      create:
+        created: "Versão enviada. Ela fica disponível depois da varredura de vírus."
+      approve:
+        approved: "Versão aprovada."
+      correction:
+        requested: "Correção pedida."
     processes:
       show:
         ready: "Pronto para concluir"
@@ -1610,6 +1865,7 @@ pt-BR:
         status: "Situação"
       show:
         back: "Colaboradores"
+        documents_folder: "Documentos"
         civil_name: "Nome civil: %{name}"
         edit: "Editar ficha"
         registration: "matrícula %{number}"
@@ -3156,6 +3412,12 @@ pt-BR:
       shared_process_template_item: "Item do modelo"
       process_template_material: "Material do item"
       process_instance: "Processo"
+      document_type: "Tipo de documento"
+      platform_document_type: "Tipo de documento"
+      company_document_type_setting: "Configuração do tipo"
+      position_document_expiration: "Periodicidade por cargo"
+      document: "Documento"
+      document_version: "Versão do documento"
       process_item: "Item do processo"
       shared_process_template_material: "Material do item"
       file_scan: "Varredura de vírus"
@@ -3205,6 +3467,40 @@ pt-BR:
         depends_on_item_ids: "Dependências"
         kind: "Tipo"
         material_file: "Material"
+      document_type:
+        name: "Nome"
+        description: "Descrição"
+        category: "Categoria"
+        max_files: "Arquivos por versão"
+        alert_days: "Aviso antes do vencimento"
+        expiration_rule: "Vencimento"
+        expiration_months: "Meses da periodicidade"
+        max_age_days: "Dias aceitos depois da emissão"
+        status: "Situação"
+      platform_document_type:
+        code: "Código"
+        name: "Nome"
+        description: "Descrição"
+        category: "Categoria"
+        max_files: "Arquivos por versão"
+        alert_days: "Aviso antes do vencimento"
+        expiration_rule: "Vencimento"
+        expiration_months: "Meses da periodicidade"
+        max_age_days: "Dias aceitos depois da emissão"
+        status: "Situação"
+      company_document_type_setting:
+        alert_days: "Aviso antes do vencimento"
+        document_type: "Tipo de documento"
+      position_document_expiration:
+        expiration_months: "Meses"
+        document_type: "Tipo de documento"
+        position: "Cargo"
+      document:
+        dependent: "Dependente"
+        bank_account: "Conta bancária"
+      document_version:
+        correction_reason: "Motivo"
+        correction_note: "Observação"
       process_instance:
         cancel_reason: "Motivo do cancelamento"
       process_item:
@@ -3608,6 +3904,7 @@ pt-BR:
               too_many_free_fields: "aceita até %{count} campos livres"
               custom_fields_company_only: "com campos personalizados só vale no modelo da empresa"
               forward_empty: "precisa encaminhar os documentos validados, a ficha ou os dois"
+              document_type_blank: "precisa de um tipo de documento ativo"
               invalid: "tem um campo personalizado que não existe mais"
             depends_on_item_ids:
               cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
@@ -3631,6 +3928,7 @@ pt-BR:
               too_many_free_fields: "aceita até %{count} campos livres"
               custom_fields_company_only: "com campos personalizados só vale no modelo da empresa"
               forward_empty: "precisa encaminhar os documentos validados, a ficha ou os dois"
+              document_type_blank: "precisa de um tipo de documento ativo"
               invalid: "tem um campo personalizado que não existe mais"
             depends_on_item_ids:
               cycle: "formam um ciclo: um item não pode depender, direta ou indiretamente, de si mesmo"
@@ -3651,6 +3949,36 @@ pt-BR:
               skip_reason_blank: "Um item obrigatório só é dispensado com justificativa"
               not_open: "Este item já foi resolvido"
               not_actionable: "Este item não pode ser concluído agora"
+        document_type:
+          attributes:
+            base:
+              platform_owned: "Os tipos da plataforma são mantidos pela equipe CatalystHR"
+        platform_document_type:
+          attributes:
+            base:
+              company_owned: "Este tipo é de uma empresa"
+            code:
+              invalid: "só aceita letras minúsculas, números e sublinhado"
+        document:
+          attributes:
+            dependent:
+              invalid: "não é desta pessoa"
+            bank_account:
+              invalid: "não é desta pessoa"
+        document_version:
+          attributes:
+            base:
+              not_reviewable: "Esta versão não está aguardando revisão"
+        position_document_expiration:
+          attributes:
+            document_type:
+              invalid: "não vence por periodicidade"
+            document_type_id:
+              taken: "já tem uma periodicidade para este cargo"
+        company_document_type_setting:
+          attributes:
+            document_type:
+              invalid: "não é um tipo da plataforma"
         holiday:
           attributes:
             date:
@@ -3918,8 +4246,26 @@ pt-BR:
         variable_salary_description: "Descrição do salário variável"
         weekly_hours: "Horas semanais"
         justification: "Justificativa"
+      documents/upload:
+        files: "Arquivos"
+        document_type: "Tipo de documento"
     errors:
       models:
+        documents/upload:
+          attributes:
+            files:
+              blank: "precisam de ao menos um arquivo"
+              format: "precisam ser %{formats}"
+              too_large: "podem ter até %{count} MB cada"
+              single_pdf: "com um PDF, ele precisa ir sozinho"
+              too_many:
+                one: "aceitam %{count} arquivo para este tipo"
+                other: "aceitam até %{count} imagens para este tipo"
+            document_type:
+              blank: "precisa ser um tipo ativo na empresa"
+            base:
+              read_only: "Este documento foi gerado pelo sistema e não recebe novas versões"
+              process_item_closed: "O item do processo não está aguardando este documento"
         billing/client_registration:
           attributes:
             plan_id:

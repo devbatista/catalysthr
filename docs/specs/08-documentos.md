@@ -1,7 +1,7 @@
 # 08 — Documentos
 
 > Status: aprovado · Última atualização: 2026-10-12
-> Decisões: D-084 a D-086, D-147, D-183, D-187, D-193, D-204, D-221, D-270 a D-282 ([decisoes.md](decisoes.md))
+> Decisões: D-084 a D-086, D-147, D-183, D-187, D-193, D-204, D-221, D-270 a D-282, D-640, D-642 ([decisoes.md](decisoes.md))
 > Os itens **[P-08-nn]** foram todos aprovados sem ajuste (D-282, seção 10).
 
 ## 1. Objetivo
