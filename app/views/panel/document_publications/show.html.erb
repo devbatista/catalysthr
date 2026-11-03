@@ -1,0 +1,77 @@
+<%# A publication's panel (RN-08-051 to RN-08-054): who confirmed, with the date and the IP,
+    who is waiting and who refused. After the date, the HR may record the refusal with a
+    note and up to two witnesses (P-08-14). The receipt in PDF (P-08-15) asks for the
+    password. Only the viewer's scope. Inline forms use <details>, without JavaScript
+    (D-022). %>
+<% content_for :title, @publication.title %>
+<% counts = @acknowledgments.map(&:status).tally %>
+
+<p class="text-sm"><%= link_to t(".back"), document_publications_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= @publication.title %></h1>
+  <%= link_to t(".receipt"), receipt_document_publication_path(@publication), class: "btn btn-secondary" %>
+</div>
+<p class="page-subtitle">
+  <%= @publication.document_type.name %> ·
+  <%= t("panel.document_publications.index.published", name: @publication.published_by.name, date: l(@publication.created_at, format: "%d/%m/%Y")) %> ·
+  <%= t(".due_on", date: l(@publication.due_on)) %>
+</p>
+<% if @publication.message %><p class="alert-info mt-4 whitespace-pre-line"><%= @publication.message %></p><% end %>
+
+<dl class="mt-6 grid grid-cols-3 gap-4">
+  <% Acknowledgment::STATUSES.each do |status| %>
+    <div class="card card-body">
+      <dt class="text-sm text-ink-soft"><%= t("documents.acknowledgment_statuses.#{status}") %></dt>
+      <dd class="mt-1 text-2xl font-bold text-ink-strong"><%= counts.fetch(status, 0) %></dd>
+    </div>
+  <% end %>
+</dl>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".people", count: @acknowledgments.size) %></h2>
+  <ul class="divide-y divide-line-soft">
+    <% @acknowledgments.each do |acknowledgment| %>
+      <li class="py-3 text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <%= link_to acknowledgment.worker_profile.display_name, document_path(acknowledgment.document_id), class: "link-button font-bold" %>
+          <span class="flex flex-wrap gap-1"><%= acknowledgment_pill(acknowledgment) %></span>
+        </div>
+        <% if acknowledgment.acknowledged? %>
+          <p class="mt-1 text-xs text-ink-soft"><%= t(".acknowledged", date: l(acknowledgment.acknowledged_at, format: "%d/%m/%Y %H:%M")) %></p>
+          <% if acknowledgment.comment %><p class="mt-1 text-xs text-ink-soft"><%= t(".comment", text: acknowledgment.comment) %></p><% end %>
+        <% elsif acknowledgment.refused? %>
+          <p class="mt-1 text-xs text-ink-soft"><%= t(".refused", name: acknowledgment.recorded_by&.name, date: l(acknowledgment.recorded_at, format: "%d/%m/%Y %H:%M")) %></p>
+          <p class="mt-1 text-xs text-ink-soft"><%= acknowledgment.refused_note %></p>
+          <% if acknowledgment.witnesses.any? %>
+            <p class="mt-1 text-xs text-ink-soft"><%= t(".witnesses", names: acknowledgment.witnesses.map { |witness| witness["name"] }.to_sentence) %></p>
+          <% end %>
+        <% elsif acknowledgment.overdue? && can?(:refuse, acknowledgment) %>
+          <details class="mt-2">
+            <summary class="btn btn-secondary btn-sm"><%= t(".refuse") %></summary>
+            <%= form_with url: refuse_document_publication_path(@publication, acknowledgment_id: acknowledgment.id), method: :patch,
+              class: "mt-3 space-y-3" do |form| %>
+              <p class="field-hint"><%= t(".refuse_hint") %></p>
+              <div>
+                <%= form.label :refused_note, t(".note"), class: "field-label", for: "refused_note_#{acknowledgment.id}" %>
+                <%= form.text_area :refused_note, rows: 3, required: true, maxlength: 2000, id: "refused_note_#{acknowledgment.id}", class: "input" %>
+              </div>
+              <div class="form-grid">
+                <% Acknowledgment::MAX_WITNESSES.times do |index| %>
+                  <div>
+                    <%= label_tag "witness_name_#{acknowledgment.id}_#{index}", t(".witness_name", number: index + 1), class: "field-label" %>
+                    <%= text_field_tag "witnesses[#{index}][name]", nil, maxlength: 120, id: "witness_name_#{acknowledgment.id}_#{index}", class: "input" %>
+                  </div>
+                  <div>
+                    <%= label_tag "witness_cpf_#{acknowledgment.id}_#{index}", t(".witness_cpf", number: index + 1), class: "field-label" %>
+                    <%= text_field_tag "witnesses[#{index}][cpf]", nil, maxlength: 14, inputmode: "numeric", id: "witness_cpf_#{acknowledgment.id}_#{index}", class: "input font-mono" %>
+                  </div>
+                <% end %>
+              </div>
+              <%= form.submit t(".refuse_submit"), class: "btn btn-danger btn-sm", data: { confirm: t(".refuse_confirm") } %>
+            <% end %>
+          </details>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</section>

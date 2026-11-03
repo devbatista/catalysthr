@@ -5,6 +5,7 @@
 
 <h1 class="page-title"><%= t(".title") %></h1>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
+<%= render "panel/documents/tabs", current: :review %>
 
 <%= form_with url: documents_path, method: :get, class: "card card-body mt-6" do |form| %>
   <div class="form-grid">

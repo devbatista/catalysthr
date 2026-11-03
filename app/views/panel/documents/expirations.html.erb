@@ -1,0 +1,64 @@
+<%# The documents expiring and expired in the HR's scope, the nearest first (RN-08-031,
+    RN-08-032). Nothing is blocked (P-08-12). %>
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t("panel.documents.index.title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+<%= render "panel/documents/tabs", current: :expirations %>
+
+<%= form_with url: expirations_documents_path, method: :get, class: "card card-body mt-6" do |form| %>
+  <div class="form-grid">
+    <div>
+      <%= form.label :unit_id, t("panel.documents.index.unit"), class: "field-label" %>
+      <%= form.select :unit_id, @units.map { |unit| [ unit.name, unit.id ] }, { include_blank: t("panel.documents.index.all_units"), selected: params[:unit_id] },
+        class: "input" %>
+    </div>
+    <div>
+      <%= form.label :status, t(".status"), class: "field-label" %>
+      <%= form.select :status, %w[expiring expired].map { |status| [ t("documents.statuses.#{status}"), status ] },
+        { include_blank: t("panel.documents.index.all"), selected: params[:status] }, class: "input" %>
+    </div>
+    <div class="flex items-end">
+      <%= form.submit t("panel.documents.index.filter"), class: "btn btn-secondary", name: nil %>
+    </div>
+  </div>
+<% end %>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".count", count: @count) %></h2>
+  <% if @documents.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t("panel.documents.index.document") %></th>
+            <th class="hidden md:table-cell"><%= t("panel.documents.index.person") %></th>
+            <th><%= t(".expires_on") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @documents.each do |document| %>
+            <tr>
+              <td>
+                <%= link_to document_title(document), document_path(document), class: "link-button font-bold" %>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= document.worker_profile.display_name %></p>
+              </td>
+              <td class="hidden md:table-cell">
+                <%= link_to document.worker_profile.display_name, employee_documents_path(document.worker_profile, category: document.category), class: "link-button" %>
+              </td>
+              <td class="whitespace-nowrap">
+                <%= l(document.expires_on) %>
+                <%= document_status_pill(document) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% if @count > @documents.size %>
+      <p class="field-hint"><%= t("panel.documents.index.more", shown: @documents.size, count: @count) %></p>
+    <% end %>
+  <% end %>
+</section>

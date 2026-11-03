@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -60,6 +60,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["cnpj"], name: "index_accounting_firms_on_cnpj", unique: true
+  end
+
+  create_table "acknowledgments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_publication_id"
+    t.uuid "document_id", null: false
+    t.uuid "document_version_id", null: false
+    t.uuid "worker_profile_id", null: false
+    t.string "status", default: "awaiting", null: false
+    t.date "due_on", null: false
+    t.datetime "acknowledged_at"
+    t.string "ip"
+    t.string "user_agent"
+    t.text "comment"
+    t.string "sha256"
+    t.text "refused_note"
+    t.text "witnesses"
+    t.uuid "recorded_by_id"
+    t.datetime "recorded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_acknowledgments_on_company_id"
+    t.index ["document_id"], name: "index_acknowledgments_on_document_id"
+    t.index ["document_publication_id"], name: "index_acknowledgments_on_document_publication_id"
+    t.index ["document_version_id"], name: "index_acknowledgments_on_document_version_id"
+    t.index ["recorded_by_id"], name: "index_acknowledgments_on_recorded_by_id"
+    t.index ["worker_profile_id"], name: "index_acknowledgments_on_worker_profile_id"
   end
 
   create_table "active_storage_attachments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -414,6 +441,49 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
     t.index ["worker_profile_id"], name: "index_dependents_on_worker_profile_id"
   end
 
+  create_table "document_publications", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_type_id", null: false
+    t.uuid "published_by_id", null: false
+    t.string "title", null: false
+    t.text "message"
+    t.date "due_on", null: false
+    t.jsonb "audience_filter", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_publications_on_company_id"
+    t.index ["document_type_id"], name: "index_document_publications_on_document_type_id"
+    t.index ["published_by_id"], name: "index_document_publications_on_published_by_id"
+  end
+
+  create_table "document_request_targets", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_request_id", null: false
+    t.uuid "worker_profile_id", null: false
+    t.uuid "document_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_request_targets_on_company_id"
+    t.index ["document_id"], name: "index_document_request_targets_on_document_id"
+    t.index ["document_request_id", "worker_profile_id"], name: "index_document_request_targets_unique", unique: true
+    t.index ["worker_profile_id"], name: "index_document_request_targets_on_worker_profile_id"
+  end
+
+  create_table "document_requests", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_type_id", null: false
+    t.uuid "requested_by_id", null: false
+    t.text "message"
+    t.date "due_on"
+    t.jsonb "audience_filter", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_requests_on_company_id"
+    t.index ["document_type_id"], name: "index_document_requests_on_document_type_id"
+    t.index ["requested_by_id"], name: "index_document_requests_on_requested_by_id"
+  end
+
   create_table "document_types", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id"
     t.string "code"
@@ -474,7 +544,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
     t.text "delete_reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "expiration_alerted_on"
     t.index ["bank_account_id"], name: "index_documents_on_bank_account_id"
+    t.index ["company_id", "expires_on"], name: "index_documents_expiring", where: "((expires_on IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["company_id", "worker_profile_id"], name: "index_documents_folder"
     t.index ["current_version_id"], name: "index_documents_on_current_version_id"
     t.index ["deleted_by_id"], name: "index_documents_on_deleted_by_id"
@@ -1362,6 +1434,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
   add_foreign_key "accounting_firm_companies", "accounting_firms"
   add_foreign_key "accounting_firm_companies", "companies"
   add_foreign_key "accounting_firm_companies", "users", column: "linked_by_id"
+  add_foreign_key "acknowledgments", "companies"
+  add_foreign_key "acknowledgments", "document_publications"
+  add_foreign_key "acknowledgments", "document_versions"
+  add_foreign_key "acknowledgments", "documents"
+  add_foreign_key "acknowledgments", "users", column: "recorded_by_id"
+  add_foreign_key "acknowledgments", "worker_profiles"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "add_on_prices", "add_ons"
@@ -1403,6 +1481,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_120100) do
   add_foreign_key "departments", "units"
   add_foreign_key "dependents", "companies"
   add_foreign_key "dependents", "worker_profiles"
+  add_foreign_key "document_publications", "companies"
+  add_foreign_key "document_publications", "document_types"
+  add_foreign_key "document_publications", "users", column: "published_by_id"
+  add_foreign_key "document_request_targets", "companies"
+  add_foreign_key "document_request_targets", "document_requests"
+  add_foreign_key "document_request_targets", "documents"
+  add_foreign_key "document_request_targets", "worker_profiles"
+  add_foreign_key "document_requests", "companies"
+  add_foreign_key "document_requests", "document_types"
+  add_foreign_key "document_requests", "users", column: "requested_by_id"
   add_foreign_key "document_types", "companies"
   add_foreign_key "document_versions", "companies"
   add_foreign_key "document_versions", "documents"

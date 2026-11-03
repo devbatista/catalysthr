@@ -1,7 +1,7 @@
 # 15 — Notificações
 
 > Status: aprovado · Última atualização: 2026-10-18
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609 ([decisoes.md](decisoes.md))
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609, D-643 ([decisoes.md](decisoes.md))
 > Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -115,6 +115,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | Código | Quando | Obr. | Urg. | Canais padrão |
   |---|---|---|---|---|
   | `documents.review_pending` | Documento aguardando revisão | Não | Não | S E |
+  | `documents.hr_expiring` | Documento vencendo na unidade (RN-08-031, D-643) | Não | Não | S E |
   | `documents.batch_ready` | Lote pronto para confirmar | Não | Não | S E |
   | `documents.batch_expiring` | Lote perto de expirar (RN-08-062) | Não | Não | S E |
   | `requests.created` | Solicitação nova para o RH | Não | Não | S E |

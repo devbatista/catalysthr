@@ -93,6 +93,10 @@ class CompanyAbility
   # Deleting is the HR administrator's, with block 08c (P-03-19).
   def documents(folders, pay:)
     can %i[read upload review], Document, folders.merge(document_type: { category: DocumentCategory.readable(health: true, pay: pay) })
+    # Requests and publications asking for an acknowledgment, to the people of their scope
+    # (RN-08-040, RN-08-050, D-643); each panel shows only those people.
+    can %i[read create], [ DocumentRequest, DocumentPublication ], company_id: folders[:company_id]
+    can :refuse, Acknowledgment, folders
   end
 
   # The processes the HR runs (spec 03, sections 4.4 and 4.6, D-641): those of their units,

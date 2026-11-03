@@ -7,8 +7,9 @@ module Processes
       @company = company
     end
 
-    def memberships_for(unit_id:, kind:)
-      modul = ProcessInstance::MODULES.fetch(kind)
+    # modul: the module the analysts and the consultants need, the kind's by default; the
+    # documents' notices ask for "documentos" (D-643).
+    def memberships_for(unit_id:, kind: nil, modul: ProcessInstance::MODULES.fetch(kind))
       company_hr = Membership.with_access.where(organization: @company).includes(:user).to_a
       admins = company_hr.select { |membership| membership.roles.include?("hr_admin") }
       analysts = company_hr.select do |membership|

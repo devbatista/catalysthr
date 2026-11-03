@@ -19,6 +19,8 @@ class Document < ApplicationRecord
   belongs_to :bank_account, optional: true
   belongs_to :deleted_by, class_name: "User", optional: true
   has_many :versions, -> { order(:number) }, class_name: "DocumentVersion", inverse_of: :document, dependent: nil
+  has_many :request_targets, class_name: "DocumentRequestTarget", dependent: nil
+  has_many :acknowledgments, dependent: nil
 
   # Prefixed: "valid" would clash with valid?.
   enum :status, STATUSES.index_by(&:itself), validate: true, prefix: true
@@ -48,6 +50,11 @@ class Document < ApplicationRecord
   # The process item this document answers, when it came from one (D-642).
   def process_item
     source_ref if source_ref_type == "ProcessItem"
+  end
+
+  # The publication asking for an acknowledgment, already approved by the HR (D-643).
+  def publication
+    source_ref if source_ref_type == "DocumentPublication"
   end
 
   private

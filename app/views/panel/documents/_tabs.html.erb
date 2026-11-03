@@ -1,0 +1,8 @@
+<%# The menu's "Documentos" (D-642, D-643): the review queue, the expirations, the requests
+    and the publications asking for an acknowledgment. Block 08c adds the batches. %>
+<nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t("panel.documents.tabs.label") %>">
+  <% [ [ :review, documents_path ], [ :expirations, expirations_documents_path ], [ :requests, document_requests_path ],
+       [ :publications, document_publications_path ] ].each do |tab, path| %>
+    <%= link_to t("panel.documents.tabs.#{tab}"), path, class: "chip #{"chip-active" if tab == current}", "aria-current": (tab == current ? "page" : nil) %>
+  <% end %>
+</nav>

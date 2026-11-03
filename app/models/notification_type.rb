@@ -74,6 +74,12 @@ NotificationType::CATALOG = [
   # An item past its date, to whoever answers for it and to the process's HR (RN-06-028).
   NotificationType.new(code: "processes.task_overdue", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[manager client_manager hr_admin hr_analyst consultant]),
+  # A document expiring: to the unit's HR, with the link, and to the department's managers,
+  # the text only (RN-08-031, P-08-11, D-643).
+  NotificationType.new(code: "documents.hr_expiring", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
+  NotificationType.new(code: "documents.team_expiring", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[manager]),
   # The partner's read only, to the HR administrator of each company of the portfolio,
   # without amounts (RN-19-052, D-495).
   NotificationType.new(code: "billing.partner_read_only", mandatory: true, urgent: false, channels: %w[system email],

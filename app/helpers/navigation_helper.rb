@@ -104,7 +104,7 @@ module NavigationHelper
 
   EMPLOYEE_CONTROLLERS = %w[panel/employees panel/employments panel/employment_revisions panel/emergency_contacts
     panel/dependents panel/bank_accounts panel/employee_documents].freeze
-  DOCUMENT_CONTROLLERS = %w[panel/documents panel/document_versions].freeze
+  DOCUMENT_CONTROLLERS = %w[panel/documents panel/document_versions panel/document_requests panel/document_publications].freeze
 
   def company_navigation
     company = Current.company

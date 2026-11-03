@@ -12,8 +12,15 @@ module Documents
       @by = by
     end
 
+    # A date older than the "age" rule takes is not approved: the review suggests asking
+    # the correction "documento vencido" (RN-08-033, CA-08-003).
     def approve(issued_on: nil, valid_until: nil)
       return error(:not_reviewable) unless @version.reviewable?
+
+      type = @document.document_type
+      if Expiration.too_old?(type, issued_on, @document.worker_profile.today)
+        return error(:too_old, count: type.max_age_days)
+      end
 
       done = @version.with_lock do
         next error(:not_reviewable) unless @version.reviewable?
@@ -22,7 +29,8 @@ module Documents
         previous.find_each { |version| version.update!(status: "replaced") }
         @version.update!(status: "approved", reviewed_by: @by, reviewed_at: Time.current, issued_on: issued_on.presence,
           valid_until: valid_until.presence)
-        @document.update!(current_version: @version, status: "valid")
+        @document.current_version = @version
+        Expiration.apply(@document)
         true
       end
       after_review(done)
@@ -46,12 +54,12 @@ module Documents
     def after_review(done)
       return false unless done
 
-      Processes::DocumentItem.sync(@document, by: @by)
+      Documents::Followers.sync(@document, by: @by)
       true
     end
 
-    def error(key)
-      @version.errors.add(:base, key)
+    def error(key, **options)
+      @version.errors.add(:base, key, **options)
       false
     end
   end
