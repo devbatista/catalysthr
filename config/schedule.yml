@@ -125,3 +125,15 @@ documents_expirations:
   cron: "20 6 * * * America/Sao_Paulo"
   class: "Documents::ExpirationsJob"
   queue: "default"
+
+# The deleted documents' files after 30 days and the folders' ZIPs after 24 hours, and the
+# batches about to expire (spec 08, RN-08-062, RN-08-082, RN-08-083, D-644).
+documents_purge_deleted:
+  cron: "50 3 * * * America/Sao_Paulo"
+  class: "Documents::PurgeDeletedJob"
+  queue: "default"
+
+documents_batch_expirations:
+  cron: "40 6 * * * America/Sao_Paulo"
+  class: "Documents::BatchExpirationsJob"
+  queue: "default"

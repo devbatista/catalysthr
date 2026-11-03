@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -441,6 +441,53 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_180000) do
     t.index ["worker_profile_id"], name: "index_dependents_on_worker_profile_id"
   end
 
+  create_table "document_batch_items", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "document_batch_id", null: false
+    t.uuid "suggested_type_id"
+    t.uuid "suggested_worker_profile_id"
+    t.decimal "confidence", precision: 4, scale: 3
+    t.uuid "confirmed_type_id"
+    t.uuid "confirmed_worker_profile_id"
+    t.string "status", default: "pending", null: false
+    t.uuid "document_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_batch_items_on_company_id"
+    t.index ["confirmed_type_id"], name: "index_document_batch_items_on_confirmed_type_id"
+    t.index ["confirmed_worker_profile_id"], name: "index_document_batch_items_on_confirmed_worker_profile_id"
+    t.index ["document_batch_id"], name: "index_document_batch_items_on_document_batch_id"
+    t.index ["document_id"], name: "index_document_batch_items_on_document_id"
+    t.index ["suggested_type_id"], name: "index_document_batch_items_on_suggested_type_id"
+    t.index ["suggested_worker_profile_id"], name: "index_document_batch_items_on_suggested_worker_profile_id"
+  end
+
+  create_table "document_batches", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "uploaded_by_id", null: false
+    t.string "status", default: "awaiting_confirmation", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "expiry_notified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_batches_on_company_id"
+    t.index ["uploaded_by_id"], name: "index_document_batches_on_uploaded_by_id"
+  end
+
+  create_table "document_folder_exports", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "worker_profile_id", null: false
+    t.uuid "requested_by_id", null: false
+    t.string "status", default: "queued", null: false
+    t.integer "documents_count"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_folder_exports_on_company_id"
+    t.index ["requested_by_id"], name: "index_document_folder_exports_on_requested_by_id"
+    t.index ["worker_profile_id"], name: "index_document_folder_exports_on_worker_profile_id"
+  end
+
   create_table "document_publications", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.uuid "document_type_id", null: false
@@ -545,10 +592,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "expiration_alerted_on"
+    t.datetime "purged_at"
     t.index ["bank_account_id"], name: "index_documents_on_bank_account_id"
     t.index ["company_id", "expires_on"], name: "index_documents_expiring", where: "((expires_on IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["company_id", "worker_profile_id"], name: "index_documents_folder"
     t.index ["current_version_id"], name: "index_documents_on_current_version_id"
+    t.index ["deleted_at"], name: "index_documents_to_purge", where: "((deleted_at IS NOT NULL) AND (purged_at IS NULL))"
     t.index ["deleted_by_id"], name: "index_documents_on_deleted_by_id"
     t.index ["dependent_id"], name: "index_documents_on_dependent_id"
     t.index ["document_type_id"], name: "index_documents_on_document_type_id"
@@ -1481,6 +1530,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_180000) do
   add_foreign_key "departments", "units"
   add_foreign_key "dependents", "companies"
   add_foreign_key "dependents", "worker_profiles"
+  add_foreign_key "document_batch_items", "companies"
+  add_foreign_key "document_batch_items", "document_batches"
+  add_foreign_key "document_batch_items", "document_types", column: "confirmed_type_id"
+  add_foreign_key "document_batch_items", "document_types", column: "suggested_type_id"
+  add_foreign_key "document_batch_items", "documents"
+  add_foreign_key "document_batch_items", "worker_profiles", column: "confirmed_worker_profile_id"
+  add_foreign_key "document_batch_items", "worker_profiles", column: "suggested_worker_profile_id"
+  add_foreign_key "document_batches", "companies"
+  add_foreign_key "document_batches", "users", column: "uploaded_by_id"
+  add_foreign_key "document_folder_exports", "companies"
+  add_foreign_key "document_folder_exports", "users", column: "requested_by_id"
+  add_foreign_key "document_folder_exports", "worker_profiles"
   add_foreign_key "document_publications", "companies"
   add_foreign_key "document_publications", "document_types"
   add_foreign_key "document_publications", "users", column: "published_by_id"

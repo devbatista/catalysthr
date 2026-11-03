@@ -1098,6 +1098,22 @@ pt-BR:
       pending: "Pendente"
       in_review: "Em revisão"
       fulfilled: "Atendido"
+    batch_statuses:
+      processing: "Processando"
+      awaiting_confirmation: "Aguardando confirmação"
+      distributed: "Distribuído"
+      expired: "Expirado"
+    batch_item_statuses:
+      pending: "Aguardando"
+      confirmed: "Confirmado"
+      discarded: "Descartado"
+      distributed: "Na pasta"
+    batch_item_actions:
+      pending: "Deixar aguardando"
+      confirmed: "Confirmar"
+      discarded: "Descartar"
+    export:
+      index_header: "Arquivo | Tipo | Data | Situação | Vence em | Hash (SHA-256)"
     late: "Atrasado"
     acknowledgment_meaning: "A ciência confirma que a pessoa recebeu o documento. Ela não significa concordância nem assinatura."
     audience:
@@ -1562,6 +1578,18 @@ pt-BR:
         categories: "Categorias"
         request: "Pedir documento"
         publish: "Publicar com ciência"
+        export: "Baixar a pasta (ZIP)"
+        export_confirm: "Gerar o ZIP com os documentos que você pode ver nesta pasta? O link vale por 24 horas, só para você."
+        export_ready: "ZIP pronto: baixar até %{date}"
+        export_queued: "Gerando o ZIP. Recarregue a página em instantes."
+        export_failed: "Não foi possível gerar o ZIP. Tente de novo."
+        deleted:
+          one: "Excluídos · %{count}"
+          other: "Excluídos · %{count}"
+        deleted_hint: "Podem ser recuperados por 30 dias depois da exclusão."
+        deleted_by: "Excluído por %{name} em %{date}: %{reason}"
+        recoverable_until: "Recuperável até %{date}"
+        restore: "Recuperar"
         empty: "Nenhum documento nesta categoria."
         document: "Documento"
         latest: "Último envio"
@@ -1584,6 +1612,7 @@ pt-BR:
         expirations: "Vencimentos"
         requests: "Pedidos"
         publications: "Ciência"
+        batches: "Lotes"
       expirations:
         title: "Vencimentos"
         subtitle: "Os documentos vencendo e vencidos no seu escopo, do mais próximo para o mais distante. O vencimento não bloqueia nada no sistema."
@@ -1615,6 +1644,11 @@ pt-BR:
         new_version: "Enviar nova versão"
         from_process: "Item \"%{title}\" do processo"
         from_publication: "Publicação \"%{title}\""
+        delete: "Excluir"
+        delete_reason: "Motivo"
+        delete_hint: "O documento sai da pasta na hora e pode ser recuperado por 30 dias. Depois disso, o arquivo é apagado."
+        delete_submit: "Excluir documento"
+        delete_confirm: "Excluir este documento da pasta?"
         expires_on: "Vence em %{date}"
         acknowledgment: "Ciência até %{date}"
         no_versions: "Nenhuma versão enviada."
@@ -1639,6 +1673,62 @@ pt-BR:
         reviewed: "Revisada por %{name} em %{date}"
         issued_on_value: "Data do documento: %{date}"
         valid_until_value: "Validade: %{date}"
+      destroy:
+        deleted: "Documento excluído. Ele pode ser recuperado por 30 dias."
+      restore:
+        restored: "Documento recuperado."
+    document_folder_exports:
+      create:
+        queued: "O ZIP está sendo gerado. O link aparece aqui quando ficar pronto."
+    document_batches:
+      index:
+        title: "Lotes"
+        subtitle: "Vários arquivos enviados de uma vez. Você escolhe o tipo e a pessoa de cada um e confirma antes de distribuir nas pastas."
+        new: "Novo lote"
+        empty: "Nenhum lote enviado por você."
+        batch: "Lote"
+        files: "Arquivos"
+        status: "Situação"
+        created: "Lote de %{date}"
+        expires: "Expira em %{date}"
+        counts: "%{total} arquivos · %{distributed} distribuídos"
+      show:
+        title: "Lote de documentos"
+        back: "Lotes"
+        created: "Criado em %{date}"
+        expires: "Expira em %{date}, com os arquivos ainda sem distribuir"
+        add: "Acrescentar arquivos"
+        add_hint: "Até %{round} arquivos por vez, e ainda cabem %{room}. PDF, JPG ou PNG, até %{size} MB cada. Cada arquivo vira um documento."
+        files: "Arquivos"
+        add_submit: "Acrescentar"
+        items:
+          one: "Arquivos · %{count}"
+          other: "Arquivos · %{count}"
+        empty: "Nenhum arquivo neste lote ainda."
+        open_document: "Ver o documento"
+        type: "Tipo"
+        person: "Pessoa"
+        action: "Ação"
+        save: "Salvar escolhas"
+        distribute: "Distribuir confirmados"
+        distribute_confirm: "Distribuir os arquivos confirmados nas pastas? Cada um entra para a revisão do RH."
+        distribute_hint: "Salve as escolhas antes de distribuir. Só vão para as pastas os arquivos confirmados e já liberados pela varredura; os outros ficam no lote."
+      files:
+        added:
+          one: "%{count} arquivo acrescentado."
+          other: "%{count} arquivos acrescentados."
+      items:
+        saved: "Escolhas salvas."
+      distribute:
+        distributed:
+          zero: "Nenhum arquivo confirmado e liberado para distribuir."
+          one: "%{count} arquivo distribuído."
+          other: "%{count} arquivos distribuídos."
+      errors:
+        choice_blank: "escolha o tipo e a pessoa para confirmar"
+        out_of_scope: "a pessoa está fora do seu escopo para este tipo"
+        infected: "o arquivo foi recusado na varredura"
+        batch_closed: "Este lote não aceita mais mudanças"
     document_requests:
       index:
         title: "Pedidos de documento"
@@ -2970,6 +3060,11 @@ pt-BR:
         hint: "Só o aviso, sem acesso ao arquivo."
         title: "%{document} de %{person} vence em %{date}"
         body: "O documento %{document} de %{person}, da sua equipe, vence em %{date}."
+      batch_expiring:
+        name: "Lote perto de expirar"
+        hint: "Sete dias antes, se ainda houver arquivos sem distribuir."
+        title: "Lote com %{count} arquivos expira em %{date}"
+        body: "O seu lote de documentos tem %{count} arquivos ainda sem distribuir. Em %{date}, eles serão apagados."
     security:
       account_locked:
         name: "Conta bloqueada"
@@ -4142,6 +4237,13 @@ pt-BR:
               invalid: "não é desta pessoa"
             bank_account:
               invalid: "não é desta pessoa"
+            base:
+              delete_reason_blank: "Informe o motivo da exclusão"
+              read_only: "Documento gerado pelo sistema não é excluído pela pasta"
+              process_item_open: "O documento responde a um item de processo em aberto. Dispense o item antes de excluir"
+              acknowledgment_awaiting: "O documento tem ciência aguardando. Registre a recusa depois do prazo antes de excluir"
+              already_deleted: "O documento já foi excluído"
+              not_recoverable: "O documento não pode mais ser recuperado"
         document_version:
           attributes:
             base:
@@ -4436,6 +4538,8 @@ pt-BR:
       documents/upload:
         files: "Arquivos"
         document_type: "Tipo de documento"
+      documents/batch_upload:
+        files: "Arquivos"
       documents/request_form:
         document_type: "Tipo de documento"
         due_on: "Prazo"
@@ -4448,6 +4552,16 @@ pt-BR:
         message: "Mensagem"
     errors:
       models:
+        documents/batch_upload:
+          attributes:
+            files:
+              blank: "precisam de ao menos um arquivo"
+              round: "podem ser até %{count} por vez"
+              batch_full: "passam do limite de %{count} por lote; ainda cabem %{room}"
+              format: "precisam ser %{formats}"
+              too_large: "podem ter até %{count} MB cada"
+            base:
+              batch_closed: "Este lote não aceita mais arquivos"
         documents/request_form:
           attributes:
             due_on:

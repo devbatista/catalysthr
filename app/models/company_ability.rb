@@ -15,6 +15,7 @@ class CompanyAbility
   HR_ROLES = %w[hr_admin hr_analyst].freeze
 
   def initialize(user, company, support_access: nil)
+    @user = user
     membership = Membership.with_access.find_by(user: user, organization: company)
     roles = membership.nil? || membership.read_only? ? [] : membership.roles
     contracted = company.contract_modules.releasable
@@ -97,6 +98,11 @@ class CompanyAbility
     # (RN-08-040, RN-08-050, D-643); each panel shows only those people.
     can %i[read create], [ DocumentRequest, DocumentPublication ], company_id: folders[:company_id]
     can :refuse, Acknowledgment, folders
+    # The batches of who sent them (RN-08-060, D-644) and the folder's ZIP of who asked it
+    # (RN-08-082, D-642).
+    can %i[read create update], DocumentBatch, company_id: folders[:company_id], uploaded_by_id: @user.id
+    can :export, WorkerProfile, folders.slice(:company_id).merge(folders.key?(:worker_profile_id) ? { id: folders[:worker_profile_id] } : {})
+    can :download, DocumentFolderExport, company_id: folders[:company_id], requested_by_id: @user.id
   end
 
   # The processes the HR runs (spec 03, sections 4.4 and 4.6, D-641): those of their units,
@@ -172,6 +178,8 @@ class CompanyAbility
     can %i[read create update configure_expiration], DocumentType, company_id: company.id
     can %i[read configure configure_expiration], DocumentType, company_id: nil
     documents({ company_id: company.id }, pay: true)
+    # Deleting and recovering a document are the HR administrator's (P-03-19, RN-08-083).
+    can %i[destroy restore], Document, company_id: company.id
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator

@@ -1,0 +1,92 @@
+<%# A batch (RN-08-060 to RN-08-063, D-644), as the spec's table "arquivo → tipo → pessoa":
+    files added in rounds of up to 20, each one's type and person, only of the scope of
+    who sent it, and whether it waits, is confirmed or discarded. Only the confirmed and
+    clean ones are distributed; nothing reaches a folder before (CA-08-006). The AI's
+    suggestions come with spec 14 (D-642). One form for the table, without JavaScript
+    (D-022). %>
+<% content_for :title, t(".title") %>
+<% open = @batch.open? %>
+<% people = audience_people.map { |profile| [ profile.display_name, profile.id ] } %>
+<% types = audience_types.group_by(&:category).sort_by { |category, _| DocumentCategory::ALL.index(category) }
+  .map { |category, list| [ t("documents.categories.#{category}"), list.map { |type| [ type.name, type.id ] } ] } %>
+
+<p class="text-sm"><%= link_to t(".back"), document_batches_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <span class="pill <%= open ? "pill-warn" : "pill-mute" %>"><%= t("documents.batch_statuses.#{@batch.status}") %></span>
+</div>
+<p class="page-subtitle">
+  <%= t(".created", date: l(@batch.created_at, format: "%d/%m/%Y %H:%M")) %>
+  <% if @batch.awaiting_confirmation? %> · <%= t(".expires", date: l(@batch.expires_at.to_date)) %><% end %>
+</p>
+
+<% if open && @batch.room.positive? %>
+  <%= form_with url: files_document_batch_path(@batch), method: :post, multipart: true, class: "card card-body mt-6 space-y-3" do |form| %>
+    <h2 class="card-title"><%= t(".add") %></h2>
+    <p class="field-hint"><%= t(".add_hint", round: DocumentBatch::ROUND_FILES, room: @batch.room, size: Documents::Upload::MAX_SIZE / 1.megabyte) %></p>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :files, t(".files"), class: "field-label" %>
+        <%= form.file_field :files, multiple: true, required: true, accept: FileSignature::SIGNATURES.keys.join(","), class: "input" %>
+      </div>
+    </div>
+    <div><%= form.submit t(".add_submit"), class: "btn btn-secondary" %></div>
+  <% end %>
+<% end %>
+
+<section class="card card-body mt-6 space-y-4">
+  <h2 class="card-title"><%= t(".items", count: @items.size) %></h2>
+  <% if @items.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <%= form_with url: items_document_batch_path(@batch), method: :patch, id: "batch-items", class: "space-y-4" do |form| %>
+      <ul class="divide-y divide-line-soft">
+        <% @items.each do |item| %>
+          <% editable = open && !item.distributed? %>
+          <li class="py-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="min-w-0 break-all text-sm font-bold text-ink-strong"><%= item.file.filename %></span>
+              <span class="flex flex-wrap gap-1">
+                <% unless item.clean? %><%= material_scan_pill(item) %><% end %>
+                <span class="pill <%= item.distributed? || item.confirmed? ? "pill-ok" : item.discarded? ? "pill-mute" : "pill-warn" %>"><%= t("documents.batch_item_statuses.#{item.status}") %></span>
+              </span>
+            </div>
+            <% if item.distributed? %>
+              <p class="mt-1 text-xs text-ink-soft">
+                <%= item.confirmed_type&.name %> · <%= item.confirmed_worker_profile&.display_name %> ·
+                <%= link_to t(".open_document"), document_path(item.document_id), class: "link-button" %>
+              </p>
+            <% elsif editable %>
+              <div class="mt-2 grid gap-3 md:grid-cols-3">
+                <div>
+                  <%= label_tag "items_#{item.id}_document_type_id", t(".type"), class: "field-label" %>
+                  <%= select_tag "items[#{item.id}][document_type_id]", grouped_options_for_select(types, item.confirmed_type_id),
+                    include_blank: true, id: "items_#{item.id}_document_type_id", class: "input" %>
+                </div>
+                <div>
+                  <%= label_tag "items_#{item.id}_worker_profile_id", t(".person"), class: "field-label" %>
+                  <%= select_tag "items[#{item.id}][worker_profile_id]", options_for_select(people, item.confirmed_worker_profile_id),
+                    include_blank: true, id: "items_#{item.id}_worker_profile_id", class: "input" %>
+                </div>
+                <div>
+                  <%= label_tag "items_#{item.id}_status", t(".action"), class: "field-label" %>
+                  <%= select_tag "items[#{item.id}][status]",
+                    options_for_select(Documents::BatchReview::ACTIONS.map { |action| [ t("documents.batch_item_actions.#{action}"), action ] }, item.status),
+                    id: "items_#{item.id}_status", class: "input" %>
+                </div>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <% if open %>
+      <div class="flex flex-wrap items-center gap-3 border-t border-line-soft pt-4">
+        <button type="submit" form="batch-items" class="btn btn-secondary"><%= t(".save") %></button>
+        <%= button_to t(".distribute"), distribute_document_batch_path(@batch), class: "btn btn-primary",
+          form: { data: { confirm: t(".distribute_confirm") } } %>
+        <p class="field-hint w-full"><%= t(".distribute_hint") %></p>
+      </div>
+    <% end %>
+  <% end %>
+</section>

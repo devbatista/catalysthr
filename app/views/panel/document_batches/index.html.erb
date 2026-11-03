@@ -1,0 +1,47 @@
+<%# The person's batches (RN-08-060 to RN-08-062, D-644), the newest first, with how many
+    files wait and when the batch expires. %>
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t("panel.documents.index.title") %></h1>
+  <% if can?(:create, DocumentBatch) %>
+    <%= button_to t(".new"), document_batches_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+<%= render "panel/documents/tabs", current: :batches %>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".title") %></h2>
+  <% if @batches.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".batch") %></th>
+            <th class="hidden md:table-cell"><%= t(".files") %></th>
+            <th><%= t(".status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @batches.each do |batch| %>
+            <% counts = batch.items.map(&:status).tally %>
+            <tr>
+              <td>
+                <%= link_to t(".created", date: l(batch.created_at, format: "%d/%m/%Y %H:%M")), document_batch_path(batch), class: "link-button font-bold" %>
+                <% if batch.awaiting_confirmation? %>
+                  <p class="mt-1 text-xs text-ink-soft"><%= t(".expires", date: l(batch.expires_at.to_date)) %></p>
+                <% end %>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= t(".counts", total: batch.items.size, distributed: counts.fetch("distributed", 0)) %></p>
+              </td>
+              <td class="hidden md:table-cell text-sm"><%= t(".counts", total: batch.items.size, distributed: counts.fetch("distributed", 0)) %></td>
+              <td><span class="pill <%= batch.awaiting_confirmation? ? "pill-warn" : "pill-mute" %>"><%= t("documents.batch_statuses.#{batch.status}") %></span></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>

@@ -80,6 +80,10 @@ NotificationType::CATALOG = [
     roles: %w[hr_admin hr_analyst consultant]),
   NotificationType.new(code: "documents.team_expiring", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[manager]),
+  # A batch with files not distributed, 7 days before it expires, to who sent it
+  # (RN-08-062, D-644).
+  NotificationType.new(code: "documents.batch_expiring", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
   # The partner's read only, to the HR administrator of each company of the portfolio,
   # without amounts (RN-19-052, D-495).
   NotificationType.new(code: "billing.partner_read_only", mandatory: true, urgent: false, channels: %w[system email],

@@ -26,6 +26,22 @@
 </div>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
+<%# The folder's ZIP, for who asks it, with the password, for 24 hours (RN-08-082, D-644). %>
+<% if can?(:export, @profile) %>
+  <div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
+    <%= button_to t(".export"), employee_document_export_path(@profile), class: "btn btn-secondary btn-sm",
+      form: { data: { confirm: t(".export_confirm") } } %>
+    <% if @export&.available? %>
+      <%= link_to t(".export_ready", date: l(@export.expires_at, format: "%d/%m %H:%M")), download_document_folder_export_path(@export),
+        class: "link-button" %>
+    <% elsif @export&.queued? %>
+      <span class="text-ink-soft"><%= t(".export_queued") %></span>
+    <% elsif @export&.failed? %>
+      <span class="text-bad"><%= t(".export_failed") %></span>
+    <% end %>
+  </div>
+<% end %>
+
 <nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".categories") %>">
   <% @categories.each do |category| %>
     <%= link_to "#{t("documents.categories.#{category}")} · #{@by_category.fetch(category, []).size}",
@@ -66,4 +82,26 @@
       </tbody>
     </table>
   </div>
+<% end %>
+
+<%# The deleted ones, recoverable for 30 days by the HR administrator (RN-08-083, D-644). %>
+<% if @deleted&.any? %>
+  <section class="card card-body mt-6 space-y-3">
+    <div>
+      <h2 class="card-title"><%= t(".deleted", count: @deleted.size) %></h2>
+      <p class="field-hint"><%= t(".deleted_hint") %></p>
+    </div>
+    <ul class="divide-y divide-line-soft">
+      <% @deleted.each do |document| %>
+        <li class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+          <div>
+            <p class="font-bold text-ink-strong"><%= document_title(document) %></p>
+            <p class="text-xs text-ink-soft"><%= t(".deleted_by", name: document.deleted_by&.name, date: l(document.deleted_at, format: "%d/%m/%Y %H:%M"), reason: document.delete_reason) %></p>
+            <p class="text-xs text-ink-soft"><%= t(".recoverable_until", date: l((document.deleted_at + Documents::Removal::RECOVERABLE_FOR).to_date)) %></p>
+          </div>
+          <%= button_to t(".restore"), restore_document_path(document), method: :patch, class: "btn btn-secondary btn-sm" %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 <% end %>
