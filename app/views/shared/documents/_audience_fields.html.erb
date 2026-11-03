@@ -1,0 +1,45 @@
+<%# Who gets a request or a publication (RN-08-040, RN-08-050, D-643): one person, or a
+    group by unit, department, position and employment kind, and the dependents' criteria.
+    Only people with an open employment in the scope of who sends. Checked lists, without
+    JavaScript (D-022). %>
+<% filter = filter.to_h.stringify_keys %>
+<section class="card card-body space-y-4">
+  <div>
+    <h2 class="card-title"><%= t("documents.audience.title") %></h2>
+    <p class="field-hint"><%= t("documents.audience.hint") %></p>
+  </div>
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= label_tag "audience_person", t("documents.audience.person"), class: "field-label" %>
+      <%= select_tag "audience[worker_profile_ids][]", options_for_select(audience_people.map { |profile| [ profile.display_name, profile.id ] },
+        Array(filter["worker_profile_ids"])), include_blank: t("documents.audience.group"), id: "audience_person", class: "input" %>
+      <p class="field-hint"><%= t("documents.audience.person_hint") %></p>
+    </div>
+  </div>
+  <% audience_options.each do |key, options| %>
+    <% next if options.empty? %>
+    <fieldset>
+      <legend class="field-label"><%= t("documents.audience.#{key}") %></legend>
+      <%= hidden_field_tag "audience[#{key}][]", "", id: nil %>
+      <div class="mt-1 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <% options.each do |label, value| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "audience[#{key}][]", value, Array(filter[key]).include?(value.to_s), id: "audience_#{key}_#{value}" %>
+            <%= label %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+  <% end %>
+  <fieldset>
+    <legend class="field-label"><%= t("documents.audience.criteria") %></legend>
+    <div class="mt-1 space-y-2">
+      <% Documents::Audience::FLAGS.each do |flag| %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= check_box_tag "audience[#{flag}]", "1", ActiveModel::Type::Boolean.new.cast(filter[flag]), id: "audience_#{flag}" %>
+          <%= t("documents.audience.#{flag}") %>
+        </label>
+      <% end %>
+    </div>
+  </fieldset>
+</section>

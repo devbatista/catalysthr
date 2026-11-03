@@ -1085,6 +1085,54 @@ pt-BR:
     linked:
       send_certificate: "Enviar certidão"
       send_proof: "Enviar comprovante"
+    statuses:
+      pending: "Sem envio"
+      valid: "Vigente"
+      expiring: "Vencendo"
+      expired: "Vencido"
+    acknowledgment_statuses:
+      awaiting: "Aguardando ciência"
+      acknowledged: "Ciente"
+      refused: "Ciência recusada"
+    target_statuses:
+      pending: "Pendente"
+      in_review: "Em revisão"
+      fulfilled: "Atendido"
+    late: "Atrasado"
+    acknowledgment_meaning: "A ciência confirma que a pessoa recebeu o documento. Ela não significa concordância nem assinatura."
+    audience:
+      title: "Para quem"
+      hint: "Uma pessoa, ou um grupo pelos filtros. Entram só as pessoas com vínculo aberto e no seu escopo. Os filtros marcados valem juntos."
+      person: "Pessoa"
+      person_hint: "Escolha uma pessoa, ou deixe em \"Grupo, pelos filtros abaixo\"."
+      group: "Grupo, pelos filtros abaixo"
+      unit_ids: "Unidades"
+      department_ids: "Departamentos"
+      position_ids: "Cargos"
+      employment_kinds: "Tipos de vínculo"
+      criteria: "Critérios"
+      family_allowance: "Com dependente para salário-família"
+      irrf: "Com dependente para IRRF"
+    receipt:
+      title: "Comprovante de ciência"
+      document: "Documento"
+      published: "Publicado por %{name} em"
+      due_on: "Prazo da ciência"
+      hash: "Hash do arquivo (SHA-256)"
+      meaning: "A ciência confirma o recebimento do documento, e não concordância nem assinatura."
+      generated: "Gerado em %{date} pelo CatalystHR."
+      statuses:
+        awaiting: "aguardando ciência"
+        acknowledged: "ciente"
+        refused: "ciência recusada"
+      acknowledged_at: "Ciência em"
+      ip: "IP"
+      user_agent: "Navegador"
+      file_hash: "Hash do arquivo lido"
+      comment: "Comentário"
+      recorded: "Recusa registrada por %{name} em"
+      note: "Observação"
+      witness: "Testemunha %{number}"
   document_types:
     expiration_rules:
       none: "Não vence"
@@ -1512,6 +1560,8 @@ pt-BR:
         subtitle: "A pasta da pessoa, por categoria. Abrir um documento sensível pede a senha e fica registrado."
         new: "Enviar documento"
         categories: "Categorias"
+        request: "Pedir documento"
+        publish: "Publicar com ciência"
         empty: "Nenhum documento nesta categoria."
         document: "Documento"
         latest: "Último envio"
@@ -1528,6 +1578,21 @@ pt-BR:
       create:
         created: "Documento enviado. Ele fica disponível depois da varredura de vírus."
     documents:
+      tabs:
+        label: "Seções de documentos"
+        review: "Revisão"
+        expirations: "Vencimentos"
+        requests: "Pedidos"
+        publications: "Ciência"
+      expirations:
+        title: "Vencimentos"
+        subtitle: "Os documentos vencendo e vencidos no seu escopo, do mais próximo para o mais distante. O vencimento não bloqueia nada no sistema."
+        status: "Situação"
+        count:
+          one: "%{count} documento"
+          other: "%{count} documentos"
+        empty: "Nenhum documento vencendo ou vencido."
+        expires_on: "Vence em"
       index:
         title: "Documentos"
         subtitle: "Os documentos aguardando a revisão do RH, do envio mais antigo para o mais recente."
@@ -1549,6 +1614,9 @@ pt-BR:
         documents: "Documentos"
         new_version: "Enviar nova versão"
         from_process: "Item \"%{title}\" do processo"
+        from_publication: "Publicação \"%{title}\""
+        expires_on: "Vence em %{date}"
+        acknowledgment: "Ciência até %{date}"
         no_versions: "Nenhuma versão enviada."
         open: "Abrir em nova aba"
         hidden: "Documento sensível: fica oculto durante o acesso como outro usuário."
@@ -1571,6 +1639,102 @@ pt-BR:
         reviewed: "Revisada por %{name} em %{date}"
         issued_on_value: "Data do documento: %{date}"
         valid_until_value: "Validade: %{date}"
+    document_requests:
+      index:
+        title: "Pedidos de documento"
+        subtitle: "Os documentos pedidos às pessoas, que viram pendência no portal. O pedido é atendido quando o RH aprova o documento."
+        new: "Pedir documento"
+        empty: "Nenhum pedido feito."
+        document: "Documento"
+        due_on: "Prazo"
+        progress: "Atendidos"
+        asked: "Pedido por %{name} em %{date}"
+        no_due: "Sem prazo"
+        progress_value: "%{fulfilled} de %{count}"
+        late:
+          one: "%{count} atrasado"
+          other: "%{count} atrasados"
+      new:
+        title: "Pedir documento"
+        back: "Pedidos de documento"
+        subtitle: "Cada pessoa recebe o documento pendente na pasta. O aviso e o envio pelo colaborador entram com o portal; até lá, o RH envia pela pasta."
+        type: "Tipo de documento"
+        due_on: "Prazo"
+        message: "Mensagem"
+        message_hint: "Aparece para o colaborador junto com a pendência."
+        submit: "Pedir"
+        cancel: "Cancelar"
+      create:
+        created:
+          one: "Documento pedido a %{count} pessoa."
+          other: "Documento pedido a %{count} pessoas."
+      show:
+        title: "Pedido de %{document}"
+        back: "Pedidos de documento"
+        asked: "Pedido por %{name} em %{date}"
+        due_on: "Prazo: %{date}"
+        counts:
+          fulfilled: "Atendidos"
+          in_review: "Em revisão"
+          pending: "Pendentes"
+          late: "Atrasados"
+        people:
+          one: "Pessoas · %{count}"
+          other: "Pessoas · %{count}"
+        person: "Pessoa"
+        status: "Situação"
+    document_publications:
+      index:
+        title: "Documentos com ciência"
+        subtitle: "Advertências, avisos e comunicados publicados pedindo a ciência das pessoas."
+        new: "Publicar com ciência"
+        empty: "Nenhum documento publicado com ciência."
+        document: "Documento"
+        due_on: "Prazo"
+        progress: "Cientes"
+        published: "Publicado por %{name} em %{date}"
+        progress_value: "%{acknowledged} de %{count}"
+        late:
+          one: "%{count} no atraso"
+          other: "%{count} no atraso"
+      new:
+        title: "Publicar com ciência"
+        back: "Documentos com ciência"
+        subtitle: "Cada pessoa recebe o documento na pasta, já aprovado, e a ciência fica aguardando a confirmação dela no portal. Um comunicado no mural não vale como ciência."
+        name: "Título"
+        type: "Tipo de documento"
+        due_on: "Prazo da ciência"
+        due_on_hint: "Depois do prazo, o RH pode registrar a ciência recusada."
+        file: "Arquivo PDF"
+        file_hint: "Um PDF de até %{size} MB, igual para todas as pessoas. Ele passa pela varredura de vírus antes de ficar disponível."
+        message: "Mensagem"
+        submit: "Publicar"
+        confirm: "Publicar este documento para as pessoas escolhidas? Ele vai para a pasta de cada uma."
+        cancel: "Cancelar"
+      create:
+        created:
+          one: "Documento publicado para %{count} pessoa."
+          other: "Documento publicado para %{count} pessoas."
+      show:
+        back: "Documentos com ciência"
+        receipt: "Baixar comprovante"
+        due_on: "Ciência até %{date}"
+        people:
+          one: "Pessoas · %{count}"
+          other: "Pessoas · %{count}"
+        acknowledged: "Ciente em %{date}"
+        comment: "Comentário: %{text}"
+        refused: "Recusa registrada por %{name} em %{date}"
+        witnesses: "Testemunhas: %{names}"
+        refuse: "Registrar ciência recusada"
+        refuse_hint: "Como no papel: descreva o que aconteceu e, se houver, informe até duas testemunhas com o CPF."
+        note: "Observação"
+        witness_name: "Testemunha %{number}: nome"
+        witness_cpf: "Testemunha %{number}: CPF"
+        refuse_submit: "Registrar recusa"
+        refuse_confirm: "Registrar a ciência recusada? O registro não pode ser desfeito."
+      refuse:
+        refused: "Ciência recusada registrada para %{name}."
     document_versions:
       new:
         title: "Nova versão de %{document}"
@@ -2795,6 +2959,17 @@ pt-BR:
         hint: "Uma vez por item, quando ele passa do prazo."
         title: "Item atrasado: %{item}"
         body: "O item \"%{item}\" do processo de %{person} passou do prazo de %{due}."
+    documents:
+      hr_expiring:
+        name: "Documento vencendo na unidade"
+        hint: "Uma vez por vencimento, na antecedência que o tipo define."
+        title: "%{document} de %{person} vence em %{date}"
+        body: "O documento %{document} de %{person} vence em %{date}. O colaborador já tem a pendência de enviar o novo."
+      team_expiring:
+        name: "Documento da equipe vencendo"
+        hint: "Só o aviso, sem acesso ao arquivo."
+        title: "%{document} de %{person} vence em %{date}"
+        body: "O documento %{document} de %{person}, da sua equipe, vence em %{date}."
     security:
       account_locked:
         name: "Conta bloqueada"
@@ -3498,6 +3673,8 @@ pt-BR:
       document:
         dependent: "Dependente"
         bank_account: "Conta bancária"
+      acknowledgment:
+        refused_note: "Observação"
       document_version:
         correction_reason: "Motivo"
         correction_note: "Observação"
@@ -3969,6 +4146,16 @@ pt-BR:
           attributes:
             base:
               not_reviewable: "Esta versão não está aguardando revisão"
+              too_old: "Documento vencido: emitido há mais de %{count} dias. Peça a correção com o motivo \"Documento vencido\""
+        acknowledgment:
+          attributes:
+            base:
+              not_yours: "Só a própria pessoa confirma a ciência"
+              not_ready: "O documento ainda não está disponível"
+              not_overdue: "A recusa só pode ser registrada depois do prazo"
+              not_awaiting: "Esta ciência já foi registrada"
+              too_many_witnesses: "Informe até %{count} testemunhas"
+              witness_invalid: "Cada testemunha precisa de nome e de um CPF válido"
         position_document_expiration:
           attributes:
             document_type:
@@ -4249,8 +4436,35 @@ pt-BR:
       documents/upload:
         files: "Arquivos"
         document_type: "Tipo de documento"
+      documents/request_form:
+        document_type: "Tipo de documento"
+        due_on: "Prazo"
+        message: "Mensagem"
+      documents/publish:
+        title: "Título"
+        document_type: "Tipo de documento"
+        file: "Arquivo"
+        due_on: "Prazo da ciência"
+        message: "Mensagem"
     errors:
       models:
+        documents/request_form:
+          attributes:
+            due_on:
+              past: "não pode ser uma data passada"
+            base:
+              audience_blank: "Escolha uma pessoa ou marque ao menos um filtro do grupo"
+              nobody: "Nenhuma pessoa do seu escopo, com vínculo aberto, atende a esses filtros"
+        documents/publish:
+          attributes:
+            due_on:
+              past: "não pode ser uma data passada"
+            file:
+              pdf_only: "precisa ser um arquivo PDF"
+              too_large: "pode ter até %{count} MB"
+            base:
+              audience_blank: "Escolha uma pessoa ou marque ao menos um filtro do grupo"
+              nobody: "Nenhuma pessoa do seu escopo, com vínculo aberto, atende a esses filtros"
         documents/upload:
           attributes:
             files:

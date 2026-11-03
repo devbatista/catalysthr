@@ -28,7 +28,23 @@
   <% if (item = @document.process_item) %>
     · <%= link_to t(".from_process", title: item.title), process_path(item.instance, anchor: "items"), class: "link-button" %>
   <% end %>
+  <% if (publication = @document.publication) && can?(:read, publication) %>
+    · <%= link_to t(".from_publication", title: publication.title), document_publication_path(publication), class: "link-button" %>
+  <% end %>
 </p>
+<% if @document.expires_on %>
+  <p class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+    <%= t(".expires_on", date: l(@document.expires_on)) %> <%= document_status_pill(@document) %>
+  </p>
+<% end %>
+<% @document.acknowledgments.includes(:recorded_by).each do |acknowledgment| %>
+  <p class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+    <%= t(".acknowledgment", date: l(acknowledgment.due_on)) %> <%= acknowledgment_pill(acknowledgment) %>
+    <% if acknowledgment.acknowledged? %>
+      <span class="text-xs text-ink-soft"><%= l(acknowledgment.acknowledged_at, format: "%d/%m/%Y %H:%M") %></span>
+    <% end %>
+  </p>
+<% end %>
 
 <% if @version.nil? %>
   <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".no_versions") %></p>

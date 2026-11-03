@@ -36,7 +36,7 @@ module Documents
           FileScan.start!(blob)
         end
       end
-      Processes::DocumentItem.sync(@document, by: by)
+      Documents::Followers.sync(@document, by: by)
       true
     rescue StandardError
       blobs&.each(&:purge_later)

@@ -1,0 +1,50 @@
+<%# A publication asking for an acknowledgment (RN-08-050, D-643): a PDF, the type, the
+    people and the date. Each person gets it in the folder, already approved; their notice
+    and the confirmation come with the portal (spec 16). A notice on the board has no value
+    of acknowledgment (P-15-23). %>
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), document_publications_path, class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with url: document_publications_path, method: :post, multipart: true, class: "mt-6 space-y-6" do |form| %>
+  <%= render "admin/plans/errors", records: [ @form ] %>
+  <section class="card card-body space-y-4">
+    <p class="alert-info"><%= t("documents.acknowledgment_meaning") %></p>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= label_tag "publication_title", t(".name"), class: "field-label" %>
+        <%= text_field_tag "publication[title]", @form.title, required: true, maxlength: 160, id: "publication_title", class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "publication_document_type_id", t(".type"), class: "field-label" %>
+        <%= select_tag "publication[document_type_id]",
+          grouped_options_for_select(audience_types.group_by(&:category).sort_by { |category, _| DocumentCategory::ALL.index(category) }
+            .map { |category, types| [ t("documents.categories.#{category}"), types.map { |type| [ type.name, type.id ] } ] }, @form.document_type&.id),
+          include_blank: true, required: true, id: "publication_document_type_id", class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "publication_due_on", t(".due_on"), class: "field-label" %>
+        <%= date_field_tag "publication[due_on]", @form.due_on, min: Date.current, required: true, id: "publication_due_on", class: "input" %>
+        <p class="field-hint"><%= t(".due_on_hint") %></p>
+      </div>
+      <div class="field-wide">
+        <%= label_tag "publication_file", t(".file"), class: "field-label" %>
+        <%= file_field_tag "publication[file]", accept: Documents::Upload::PDF, required: true, id: "publication_file", class: "input" %>
+        <p class="field-hint"><%= t(".file_hint", size: Documents::Upload::MAX_SIZE / 1.megabyte) %></p>
+      </div>
+      <div class="field-full">
+        <%= label_tag "publication_message", t(".message"), class: "field-label" %>
+        <%= text_area_tag "publication[message]", @form.message, rows: 3, maxlength: 2000, id: "publication_message", class: "input" %>
+      </div>
+    </div>
+  </section>
+
+  <%= render "shared/documents/audience_fields", filter: @form.audience_filter %>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit t(".submit"), class: "btn btn-primary", data: { confirm: t(".confirm") } %>
+    <%= link_to t(".cancel"), document_publications_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

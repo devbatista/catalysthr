@@ -128,6 +128,20 @@ class WorkerProfile < ApplicationRecord
     social_name || user.name
   end
 
+  # The employment that counts now: an open one, the newest first, or the last one.
+  def current_employment
+    employments.max_by { |employment| [ employment.open? ? 1 : 0, employment.started_on ] }
+  end
+
+  # Where the person works now, and today there (the unit's time zone).
+  def current_unit
+    current_employment&.effective_revision&.unit
+  end
+
+  def today
+    Time.find_zone(current_unit&.time_zone || "America/Sao_Paulo").today
+  end
+
   def disability_types
     Array(disability_data["types"])
   end

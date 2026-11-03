@@ -29,6 +29,19 @@ module Panel
       @versions = versions.order(:uploaded_at).limit(PER_PAGE)
     end
 
+    # The documents expiring and expired in the HR's scope, the nearest first (RN-08-031,
+    # RN-08-032). Nothing is blocked (P-08-12).
+    def expirations
+      authorize! :review, Document
+      documents = Document.kept.accessible_by(current_ability, :read).where(status: %w[expiring expired])
+        .includes(:document_type, :dependent, :bank_account, worker_profile: :user)
+      @units = Unit.ordered.to_a
+      documents = documents.where(worker_profile_id: WorkerProfile.in_units(params[:unit_id]).select(:id)) if params[:unit_id].present?
+      documents = documents.where(status: params[:status]) if params[:status].in?(%w[expiring expired])
+      @count = documents.count
+      @documents = documents.order(:expires_on).limit(PER_PAGE)
+    end
+
     def show
       authorize! :read, @document
       require_sensitive_confirmation if @document.sensitive?

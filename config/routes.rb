@@ -259,6 +259,8 @@ Rails.application.routes.draw do
       # The documents (spec 08, D-642): the review queue, each document with its versions and
       # the review, and the person's folder; the company's types and the platform's settings.
       resources :documents, only: %i[index show] do
+        # The documents expiring and expired in the HR's scope (RN-08-031, RN-08-032).
+        get :expirations, on: :collection
         resources :versions, controller: "document_versions", only: %i[new create] do
           member do
             get :file
@@ -266,6 +268,13 @@ Rails.application.routes.draw do
             patch :correction
           end
         end
+      end
+      # The HR's requests (RN-08-040, D-278) and the publications asking for an acknowledgment,
+      # with the refusal and the receipt (RN-08-050 to RN-08-054, D-279, D-643).
+      resources :document_requests, path: "document-requests", only: %i[index new create show]
+      resources :document_publications, path: "document-publications", only: %i[index new create show] do
+        get :receipt, on: :member
+        patch "acknowledgments/:acknowledgment_id/refuse", action: :refuse, on: :member, as: :refuse
       end
       resources :document_types, path: "document-types", except: %i[show destroy] do
         patch :setting, on: :member

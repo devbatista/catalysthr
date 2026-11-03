@@ -119,3 +119,9 @@ processes_overdue_items:
   cron: "30 6 * * * America/Sao_Paulo"
   class: "Processes::OverdueItemsJob"
   queue: "default"
+
+# The documents' expirations and their notice (spec 08, RN-08-031, RN-08-032, D-643).
+documents_expirations:
+  cron: "20 6 * * * America/Sao_Paulo"
+  class: "Documents::ExpirationsJob"
+  queue: "default"

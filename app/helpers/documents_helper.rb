@@ -23,6 +23,29 @@ module DocumentsHelper
     safe_join(flags)
   end
 
+  STATUS_PILLS = { "pending" => "pill-mute", "valid" => "pill-ok", "expiring" => "pill-warn", "expired" => "pill-bad" }.freeze
+  ACKNOWLEDGMENT_PILLS = { "awaiting" => "pill-warn", "acknowledged" => "pill-ok", "refused" => "pill-bad" }.freeze
+  TARGET_PILLS = { "pending" => "pill-warn", "in_review" => "pill-info", "fulfilled" => "pill-ok" }.freeze
+
+  # "Vencendo" or "Vencido" (RN-08-031, RN-08-032); nothing for one in force.
+  def document_status_pill(document)
+    return unless document.status.in?(%w[expiring expired])
+
+    tag.span(t("documents.statuses.#{document.status}"), class: "pill #{STATUS_PILLS.fetch(document.status)}")
+  end
+
+  def acknowledgment_pill(acknowledgment)
+    pills = [ tag.span(t("documents.acknowledgment_statuses.#{acknowledgment.status}"), class: "pill #{ACKNOWLEDGMENT_PILLS.fetch(acknowledgment.status)}") ]
+    pills << tag.span(t("documents.late"), class: "pill pill-bad") if acknowledgment.overdue?
+    safe_join(pills, " ")
+  end
+
+  def request_target_pill(target, due_on)
+    pills = [ tag.span(t("documents.target_statuses.#{target.status}"), class: "pill #{TARGET_PILLS.fetch(target.status)}") ]
+    pills << tag.span(t("documents.late"), class: "pill pill-bad") if target.late?(due_on)
+    safe_join(pills, " ")
+  end
+
   def document_version_pill(version)
     return tag.span(t("documents.no_version"), class: "pill pill-mute") unless version
 

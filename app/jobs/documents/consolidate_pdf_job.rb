@@ -3,8 +3,9 @@ require "vips"
 module Documents
   # Once every file of a version is clean, joins the images in one PDF, a page each, with
   # Prawn (RN-08-011, CA-08-002); a PDF is already the single file. The version then waits
-  # for the HR's review: the reading by the AI comes with spec 14 (D-642). A file with a
-  # virus rejects the version (RN-08-020). Runs once per version, whichever scan ends last.
+  # for the HR's review: the reading by the AI comes with spec 14 (D-642). A published one
+  # is approved by who published it (D-643). A file with a virus rejects the version
+  # (RN-08-020). Runs once per version, whichever scan ends last.
   class ConsolidatePdfJob < ApplicationJob
     queue_as :default
 
@@ -23,7 +24,12 @@ module Documents
           version.update!(status: "awaiting_review")
         end
       end
-      Processes::DocumentItem.sync(version.document, by: version.uploaded_by)
+      document = version.document
+      if version.awaiting_review? && (publication = document.publication)
+        Review.new(version, by: publication.published_by).approve
+      else
+        Followers.sync(document, by: version.uploaded_by)
+      end
     end
 
     private
