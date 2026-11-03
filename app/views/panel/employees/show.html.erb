@@ -5,6 +5,9 @@
 <% user = @profile.user %>
 <% personal = can?(:read_personal, @profile) %>
 <% pay = can?(:read_pay, @profile) %>
+<%# The dependents' certificates and the accounts' proofs in the folder (D-604). %>
+<% linked_documents = Document.kept.accessible_by(current_ability, :read).where(worker_profile: @profile)
+  .where("documents.dependent_id IS NOT NULL OR documents.bank_account_id IS NOT NULL").includes(:document_type).to_a %>
 
 <p class="text-sm"><%= link_to t(".back"), employees_path, class: "link-button" %></p>
 <div class="mt-3 flex flex-wrap items-center gap-3">
@@ -16,6 +19,9 @@
     <% end %>
   </div>
   <div class="flex flex-wrap gap-3 sm:ml-auto">
+    <% if can?(:read, Document) %>
+      <%= link_to t(".documents_folder"), employee_documents_path(@profile), class: "btn btn-secondary" %>
+    <% end %>
     <% if can?(:create, WorkerProfile) && can?(:update, @profile) %>
       <%= link_to t(".new_employment"), new_employee_employment_path(@profile), class: "btn btn-secondary" %>
     <% end %>
@@ -194,9 +200,10 @@
                   <td class="whitespace-nowrap"><%= l(dependent.birth_date) %></td>
                   <td class="font-mono"><%= dependent_cpf(dependent) %></td>
                   <td><%= dependent_uses(dependent) %></td>
-                  <td class="text-right">
+                  <td class="whitespace-nowrap text-right">
+                    <%= linked_document_link(@profile, linked_documents, dependent: dependent) %>
                     <% if dependent.active? && can?(:update, @profile) %>
-                      <%= link_to t(".edit_item"), edit_employee_dependent_path(@profile, dependent), class: "link-button text-sm" %>
+                      <%= link_to t(".edit_item"), edit_employee_dependent_path(@profile, dependent), class: "link-button ml-3 text-sm" %>
                     <% end %>
                   </td>
                 </tr>
@@ -233,6 +240,7 @@
                   <% if account.ended? %><span class="pill pill-mute ml-1"><%= t(".ended_since", date: l(account.ended_on)) %></span><% end %>
                 </p>
                 <p class="text-xs text-ink-muted"><%= t(".declared", name: account.declared_by.name, date: l(account.declared_at.to_date)) %></p>
+                <p class="mt-1 text-xs"><%= linked_document_link(@profile, linked_documents, bank_account: account) %></p>
               </div>
               <% if account.active? && can?(:update, @profile) %>
                 <div class="flex items-center gap-3">

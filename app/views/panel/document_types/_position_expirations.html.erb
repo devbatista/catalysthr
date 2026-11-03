@@ -1,0 +1,32 @@
+<%# The months of a periodicity type by position (D-272), such as the periodic ASO every 6
+    months in a risky position. %>
+<% if type.expires_by_periodicity? && can?(:configure_expiration, type) %>
+  <% expirations = type.position_expirations.select { |each| each.company_id == Current.company.id } %>
+  <% if expirations.any? %>
+    <ul class="mt-2 space-y-1 text-xs text-ink-soft">
+      <% expirations.sort_by { |each| each.position.name }.each do |expiration| %>
+        <li class="flex flex-wrap items-center gap-2">
+          <span><%= t("panel.document_types.index.by_position", position: expiration.position.name, count: expiration.expiration_months) %></span>
+          <%= button_to t("panel.document_types.index.remove"), document_type_position_expiration_path(type, expiration), method: :delete,
+            class: "link-button text-xs" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if @positions.any? %>
+    <details class="mt-2">
+      <summary class="link-button cursor-pointer text-xs"><%= t("panel.document_types.index.add_position") %></summary>
+      <%= form_with url: document_type_position_expirations_path(type), scope: :position_expiration, class: "mt-2 flex flex-wrap items-end gap-2" do |form| %>
+        <div>
+          <%= form.label :position_id, t("panel.document_types.index.position"), class: "field-label", for: "position_#{type.id}" %>
+          <%= form.select :position_id, @positions.map { |position| [ position.name, position.id ] }, {}, id: "position_#{type.id}", class: "input" %>
+        </div>
+        <div>
+          <%= form.label :expiration_months, t("panel.document_types.index.months"), class: "field-label", for: "months_#{type.id}" %>
+          <%= form.number_field :expiration_months, required: true, min: 1, max: 120, id: "months_#{type.id}", class: "input w-24" %>
+        </div>
+        <%= form.submit t("panel.document_types.index.add"), class: "btn btn-secondary btn-sm" %>
+      <% end %>
+    </details>
+  <% end %>
+<% end %>

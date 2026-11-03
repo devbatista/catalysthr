@@ -104,7 +104,7 @@ module ProcessTemplateItemEditing
     attributes = params.expect(item: [ :title, :instructions, :required, :responsible_role, :due_anchor, :due_offset_days,
       :due_direction, :due_business_days, :free_fields,
       { conditions: [ employment_kinds: [], position_ids: [], unit_ids: [], allocation_client_ids: [] ],
-        config: [ :validated_documents, :record, { groups: [], custom_field_keys: [] } ],
+        config: [ :validated_documents, :record, :document_type_id, { groups: [], custom_field_keys: [] } ],
         depends_on_item_ids: [] } ])
     direction = attributes.delete(:due_direction)
     if attributes[:due_offset_days].present?

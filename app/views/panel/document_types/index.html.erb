@@ -1,0 +1,113 @@
+<%# Empresa → Tipos de documento (RN-08-002 to RN-08-004): the company's own types, and the
+    platform's, which the company turns off or whose notice it changes. A periodicity type
+    takes other months by position (D-272). Inline forms use <details>, without
+    JavaScript (D-022). %>
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, DocumentType) %>
+    <%= link_to t(".new"), new_document_type_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".own", count: @own.size) %></h2>
+  <% if @own.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".no_own") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".name") %></th>
+            <th class="hidden md:table-cell"><%= t(".category") %></th>
+            <th class="hidden md:table-cell"><%= t(".expiration") %></th>
+            <th><span class="sr-only"><%= t(".actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @own.each do |type| %>
+            <tr id="type-<%= type.id %>">
+              <td>
+                <span class="font-bold text-ink-strong"><%= type.name %></span>
+                <% if type.archived? %><span class="pill pill-mute ml-1"><%= t("document_types.statuses.archived") %></span><% end %>
+                <span class="mt-1 flex flex-wrap gap-1"><%= document_type_flags(type) %></span>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= t("documents.categories.#{type.category}") %> · <%= document_type_expiration(type) %></p>
+                <%= render "position_expirations", type: type %>
+              </td>
+              <td class="hidden md:table-cell"><%= t("documents.categories.#{type.category}") %></td>
+              <td class="hidden md:table-cell"><%= document_type_expiration(type) %></td>
+              <td class="text-right">
+                <% if can?(:update, type) %>
+                  <%= link_to t(".edit"), edit_document_type_path(type), class: "link-button text-sm" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>
+
+<section id="platform" class="card card-body mt-6 space-y-3">
+  <div>
+    <h2 class="card-title"><%= t(".platform", count: @platform.size) %></h2>
+    <p class="field-hint"><%= t(".platform_hint") %></p>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th class="hidden md:table-cell"><%= t(".category") %></th>
+          <th class="hidden md:table-cell"><%= t(".expiration") %></th>
+          <th class="hidden lg:table-cell"><%= t(".notice") %></th>
+          <th><%= t(".use") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @platform.select(&:active?).each do |type| %>
+          <% setting = type.settings.find { |each| each.company_id == Current.company.id } %>
+          <% enabled = setting&.enabled != false %>
+          <tr id="type-<%= type.id %>" class="<%= "text-ink-muted" unless enabled %>">
+            <td>
+              <span class="font-bold <%= enabled ? "text-ink-strong" : "" %>"><%= type.name %></span>
+              <span class="mt-1 flex flex-wrap gap-1"><%= document_type_flags(type) %></span>
+              <p class="mt-1 text-xs text-ink-soft md:hidden"><%= t("documents.categories.#{type.category}") %> · <%= document_type_expiration(type) %></p>
+              <%= render "position_expirations", type: type if enabled %>
+            </td>
+            <td class="hidden md:table-cell"><%= t("documents.categories.#{type.category}") %></td>
+            <td class="hidden md:table-cell"><%= document_type_expiration(type) %></td>
+            <td class="hidden lg:table-cell">
+              <% if type.expires_by_none? %>—<% else %><%= t(".notice_days", count: setting&.alert_days || type.alert_days) %><% end %>
+            </td>
+            <td>
+              <% if can?(:configure, type) %>
+                <details>
+                  <summary class="btn btn-secondary btn-sm"><%= enabled ? t(".in_use") : t(".turned_off") %></summary>
+                  <%= form_with url: setting_document_type_path(type), method: :patch, scope: :setting, class: "mt-2 space-y-2 sm:w-64" do |form| %>
+                    <label class="flex items-center gap-2 text-sm">
+                      <%= form.hidden_field :enabled, value: "0", id: nil %>
+                      <%= form.check_box :enabled, { checked: enabled, id: "setting_enabled_#{type.id}" }, "1", nil %>
+                      <%= t(".enabled") %>
+                    </label>
+                    <% unless type.expires_by_none? %>
+                      <%= form.label :alert_days, t(".alert_days"), class: "field-label", for: "setting_alert_days_#{type.id}" %>
+                      <%= form.number_field :alert_days, value: setting&.alert_days, placeholder: type.alert_days, min: 1,
+                        max: DocumentTypeDefinition::MAX_ALERT_DAYS, id: "setting_alert_days_#{type.id}", class: "input" %>
+                    <% end %>
+                    <p class="field-hint"><%= t(".turn_off_hint") %></p>
+                    <%= form.submit t(".save"), class: "btn btn-primary btn-sm" %>
+                  <% end %>
+                </details>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

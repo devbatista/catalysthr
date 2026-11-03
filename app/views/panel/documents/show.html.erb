@@ -1,0 +1,125 @@
+<%# A document, as in the prototype's review: the version's PDF beside the review, the
+    versions with the reason each one was replaced (RN-08-023, D-280) and what happened to
+    each one. The reading by the AI and its fields come with spec 14 (D-642). During an
+    impersonate a sensitive file stays hidden (RN-02-086). Inline forms use <details>,
+    without JavaScript (D-022). %>
+<% title = document_title(@document) %>
+<% profile = @document.worker_profile %>
+<% content_for :title, title %>
+<% type = @document.document_type %>
+<% hidden = @document.sensitive? && impersonating? %>
+
+<p class="text-sm">
+  <%= link_to profile.display_name, employee_path(profile), class: "link-button" %> ›
+  <%= link_to t(".documents"), employee_documents_path(profile, category: @document.category), class: "link-button" %> ›
+  <%= t("documents.categories.#{@document.category}") %>
+</p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <h1 class="page-title"><%= title %></h1>
+  <%= document_version_pill(@document.latest_version) %>
+  <% if @document.sensitive? %><span class="pill pill-warn"><%= t("document_types.flags.sensitive") %></span><% end %>
+  <% if type.internal %><span class="pill pill-mute"><%= t("document_types.flags.internal") %></span><% end %>
+  <% if !@document.read_only? && can?(:upload, @document) %>
+    <%= link_to t(".new_version"), new_document_version_path(@document), class: "btn btn-secondary sm:ml-auto" %>
+  <% end %>
+</div>
+<p class="page-subtitle">
+  <%= t("documents.categories.#{@document.category}") %> · <%= document_type_expiration(type) %>
+  <% if (item = @document.process_item) %>
+    · <%= link_to t(".from_process", title: item.title), process_path(item.instance, anchor: "items"), class: "link-button" %>
+  <% end %>
+</p>
+
+<% if @version.nil? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".no_versions") %></p>
+<% else %>
+  <div class="mt-6 grid gap-6 lg:grid-cols-5">
+    <section class="card card-body space-y-3 lg:col-span-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="card-title"><%= t("documents.version_number", number: @version.number) %></h2>
+        <% if @version.readable? && !hidden %>
+          <%= link_to t(".open"), file_document_version_path(@document, @version), class: "link-button text-sm", target: "_blank", rel: "noopener" %>
+        <% end %>
+      </div>
+      <p class="text-xs text-ink-soft"><%= version_upload_text(@version) %></p>
+      <% if hidden %>
+        <p class="alert-info"><%= t(".hidden") %></p>
+      <% elsif @version.readable? %>
+        <iframe src="<%= file_document_version_path(@document, @version) %>" title="<%= title %>"
+          class="h-[70vh] w-full rounded-lg border border-line-soft bg-canvas"></iframe>
+      <% elsif @version.rejected_by_scan? %>
+        <p class="alert-bad" role="alert"><%= t(".rejected_by_scan") %></p>
+      <% else %>
+        <p class="alert-info"><%= t(".processing") %></p>
+      <% end %>
+    </section>
+
+    <div class="space-y-6 lg:col-span-2">
+      <% if @version.reviewable? && can?(:review, @document) %>
+        <section class="card card-body space-y-4">
+          <div>
+            <h2 class="card-title"><%= t(".review") %></h2>
+            <p class="field-hint"><%= t(".authenticity") %></p>
+          </div>
+          <%= form_with url: approve_document_version_path(@document, @version), method: :patch, class: "space-y-3" do |form| %>
+            <% if type.expires_by_document_date? %>
+              <div>
+                <%= form.label :valid_until, t(".valid_until"), class: "field-label" %>
+                <%= form.date_field :valid_until, class: "input" %>
+              </div>
+            <% elsif type.expires_by_periodicity? || type.expires_by_age? %>
+              <div>
+                <%= form.label :issued_on, t(".issued_on"), class: "field-label" %>
+                <%= form.date_field :issued_on, max: Date.current, class: "input" %>
+              </div>
+            <% end %>
+            <%= form.submit t(".approve"), class: "btn btn-primary w-full sm:w-auto", data: { confirm: t(".approve_confirm") } %>
+          <% end %>
+          <details class="border-t border-line-soft pt-4">
+            <summary class="btn btn-secondary"><%= t(".correction") %></summary>
+            <%= form_with url: correction_document_version_path(@document, @version), method: :patch, class: "mt-3 space-y-3" do |form| %>
+              <div>
+                <%= form.label :correction_reason, t(".reason"), class: "field-label" %>
+                <%= form.select :correction_reason, DocumentVersion::CORRECTION_REASONS.map { |reason| [ t("documents.correction_reasons.#{reason}"), reason ] },
+                  { include_blank: true }, required: true, class: "input" %>
+              </div>
+              <div>
+                <%= form.label :correction_note, t(".note"), class: "field-label" %>
+                <%= form.text_area :correction_note, rows: 3, maxlength: 2000, class: "input" %>
+                <p class="field-hint"><%= t(".note_hint") %></p>
+              </div>
+              <%= form.submit t(".correction_submit"), class: "btn btn-danger" %>
+            <% end %>
+          </details>
+        </section>
+      <% end %>
+
+      <section class="card card-body space-y-3">
+        <h2 class="card-title"><%= t(".versions", count: @versions.size) %></h2>
+        <ol class="space-y-3">
+          <% @versions.reverse_each do |version| %>
+            <li class="border-l-2 <%= version == @version ? "border-brand" : "border-line-soft" %> pl-3 text-sm">
+              <p class="flex flex-wrap items-center gap-2">
+                <%= link_to t("documents.version_number", number: version.number), document_path(@document, version_id: version.id),
+                  class: "link-button font-bold", "aria-current": (version == @version ? "true" : nil) %>
+                <%= document_version_pill(version) %>
+              </p>
+              <p class="text-xs text-ink-soft"><%= version_upload_text(version) %></p>
+              <% if version.reviewed_at %>
+                <p class="text-xs text-ink-soft"><%= t(".reviewed", name: version.reviewed_by&.name, date: l(version.reviewed_at, format: "%d/%m/%Y %H:%M")) %></p>
+              <% end %>
+              <% if version.correction_reason %>
+                <p class="text-xs text-bad"><%= correction_text(version) %></p>
+              <% end %>
+              <% if version.issued_on || version.valid_until %>
+                <p class="text-xs text-ink-soft">
+                  <%= [ (t(".issued_on_value", date: l(version.issued_on)) if version.issued_on), (t(".valid_until_value", date: l(version.valid_until)) if version.valid_until) ].compact.join(" · ") %>
+                </p>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+    </div>
+  </div>
+<% end %>

@@ -71,6 +71,8 @@ class PlatformAbility
     # The CatalystHR library of models of process (spec 06, section 6, D-126), in the
     # admin's content (RN-19-080, D-639).
     can %i[read create update], SharedProcessTemplate, partner_id: nil if user.superadmin? || user.support?
+    # The platform's document types (spec 08, RN-08-001, section 6).
+    can %i[read create update], PlatformDocumentType if user.superadmin? || user.support?
     # Sidekiq Web, for the superadmin and the support (RN-20-077).
     can :read, :sidekiq_web if user.superadmin? || user.support?
   end

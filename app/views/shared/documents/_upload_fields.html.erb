@@ -1,0 +1,8 @@
+<%# The files of a version (RN-08-010, RN-08-011): PDF, JPG or PNG up to 10 MB each, up to
+    the type's number of images or a single PDF. The camera and the compression in the
+    browser come with the portal (RN-08-012, D-642). %>
+<div class="field-full">
+  <%= form.label :files, t("documents.upload.files"), class: "field-label" %>
+  <%= form.file_field :files, multiple: true, required: true, accept: FileSignature::SIGNATURES.keys.join(","), class: "input" %>
+  <p class="field-hint"><%= t("documents.upload.files_hint", size: Documents::Upload::MAX_SIZE / 1.megabyte, count: DocumentTypeDefinition::MAX_FILES) %></p>
+</div>

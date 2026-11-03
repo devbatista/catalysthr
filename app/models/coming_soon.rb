@@ -3,7 +3,7 @@
 module ComingSoon
   # The company's menu, by group, in the prototype's order.
   COMPANY_GROUPS = {
-    operation: %w[admissions documents requests assistant],
+    operation: %w[admissions requests assistant],
     personnel: %w[payroll time-tracking performance],
     channels: %w[whatsapp accounting-integrations]
   }.freeze

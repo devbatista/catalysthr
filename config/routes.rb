@@ -76,6 +76,8 @@ Rails.application.routes.draw do
           patch :move, on: :member
         end
       end
+      # The platform's document types (spec 08, RN-08-001, D-642).
+      resources :document_types, path: "document-types", except: %i[show destroy]
       # The feature flags (RN-20-030, D-617).
       resources :feature_flags, path: "feature-flags", param: :name, only: %i[index update destroy] do
         post :declare, on: :collection
@@ -254,7 +256,24 @@ Rails.application.routes.draw do
         end
       end
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
+      # The documents (spec 08, D-642): the review queue, each document with its versions and
+      # the review, and the person's folder; the company's types and the platform's settings.
+      resources :documents, only: %i[index show] do
+        resources :versions, controller: "document_versions", only: %i[new create] do
+          member do
+            get :file
+            patch :approve
+            patch :correction
+          end
+        end
+      end
+      resources :document_types, path: "document-types", except: %i[show destroy] do
+        patch :setting, on: :member
+        resources :position_expirations, path: "position-expirations", controller: "position_document_expirations",
+          only: %i[create destroy]
+      end
       resources :employees, except: :destroy do
+        resources :documents, controller: "employee_documents", only: %i[index new create]
         resources :employments, only: %i[new create]
         resources :emergency_contacts, path: "emergency-contacts", except: %i[index show]
         resources :dependents, except: %i[index show destroy] do

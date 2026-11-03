@@ -37,6 +37,20 @@ module ProcessTemplatesHelper
       rel: "noopener")
   end
 
+  # The types a document item may ask for (D-642): the platform's at any level, and the
+  # company's own in its models.
+  def document_type_options(company_level)
+    types = company_level ? DocumentType.usable : PlatformDocumentType.active
+    types.ordered.map { |type| [ "#{type.name} (#{t("documents.categories.#{type.category}")})", type.id ] }
+  end
+
+  # The type a document item asks for.
+  def item_document_type(item)
+    model = item.template.company_level? ? DocumentType : PlatformDocumentType
+    type = model.find_by(id: item.config["document_type_id"]) if item.config["document_type_id"]
+    tag.span(type ? type.name : t("process_templates.items.no_document_type"), class: "mt-1 inline-flex text-xs text-ink-soft")
+  end
+
   # "3 dias úteis antes da data de início do trabalho", "No dia de início do processo" or
   # "Sem prazo" (RN-06-025).
   def item_deadline(item)

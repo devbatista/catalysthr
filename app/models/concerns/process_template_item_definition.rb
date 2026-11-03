@@ -5,8 +5,8 @@ module ProcessTemplateItemDefinition
   extend ActiveSupport::Concern
 
   KINDS = %w[task document form acknowledgement forward approval].freeze
-  # The kinds the editor offers: the document comes with spec 08's document types (D-639).
-  EDITOR_KINDS = %w[task form acknowledgement forward approval].freeze
+  # The kinds the editor offers (D-639, D-642).
+  EDITOR_KINDS = %w[task document form acknowledgement forward approval].freeze
   ROLES = %w[employee hr manager upper_manager accountant client_manager initiator].freeze
   # The dates a deadline counts from, by the model's kind (RN-06-025, P-06-07).
   ANCHORS = {
@@ -97,6 +97,8 @@ module ProcessTemplateItemDefinition
     when "forward"
       { "validated_documents" => ActiveModel::Type::Boolean.new.cast(config&.dig("validated_documents")) || false,
         "record" => ActiveModel::Type::Boolean.new.cast(config&.dig("record")) || false }
+    when "document"
+      { "document_type_id" => config&.dig("document_type_id").to_s.presence }.compact
     else
       config.presence || {}
     end
@@ -141,7 +143,18 @@ module ProcessTemplateItemDefinition
       errors.add(:config, :invalid) if template&.company_level? && !custom_fields_exist?
     when "forward"
       errors.add(:config, :forward_empty) unless config["validated_documents"] || config["record"]
+    when "document"
+      errors.add(:config, :document_type_blank) unless document_type_available?
     end
+  end
+
+  # One type per item (D-642): the platform's at any level, the company's own only in its
+  # models.
+  def document_type_available?
+    id = config["document_type_id"]
+    return false unless id
+
+    template&.company_level? ? DocumentType.usable.exists?(id: id) : PlatformDocumentType.active.exists?(id: id)
   end
 
   # A new acknowledgement item comes with its PDF; a copy takes the original's (D-640).

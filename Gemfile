@@ -31,6 +31,9 @@ gem "image_processing", "~> 2.2"
 # Loaded on demand, as before, so booting does not need libvips (the CI runner has none).
 gem "ruby-vips", "~> 2.3", require: false
 
+# PDFs (stack, spec 08): a document's images joined in one PDF (RN-08-011)
+gem "prawn", "~> 2.5"
+
 # Background jobs and schedules (D-108, spec 20)
 gem "sidekiq"
 gem "sidekiq-cron"

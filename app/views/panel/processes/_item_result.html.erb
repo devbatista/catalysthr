@@ -28,6 +28,22 @@
     <% end %>
     <%= t("processes.portal_only") %>
   </p>
+<% elsif item.document? %>
+  <%# The document sent for the item, approved by the HR in the folder (RN-06-010, D-642). %>
+  <% document = Document.kept.find_by(source_ref: item) %>
+  <% waiting = @hr && @instance.open? && item.status.in?(%w[pending correction_requested]) %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <% if document && can?(:read, document) %>
+      <%= link_to t("processes.result.document"), document_path(document), class: "link-button" %> ·
+    <% end %>
+    <% if waiting && document && can?(:upload, document) %>
+      <%= link_to t("processes.actions.send_version"), new_document_version_path(document), class: "link-button" %> ·
+    <% elsif waiting && document.nil? && can?(:upload, Document) %>
+      <%= link_to t("processes.actions.send_document"), new_employee_document_path(@instance.subject.worker_profile,
+        document_type_id: item.config["document_type_id"], process_item_id: item.id), class: "link-button" %> ·
+    <% end %>
+    <%= t("processes.document_hint") %>
+  </p>
 <% elsif item.form? %>
   <p class="mt-1 text-xs text-ink-soft"><%= t("processes.portal_only") %></p>
 <% end %>
