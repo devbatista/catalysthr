@@ -176,7 +176,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 08c. Lote sem a IA, ZIP da pasta e exclusão recuperável (RN-08-060 a RN-08-063, RN-08-082, RN-08-083, CA-08-006, CA-08-010, D-644) (PR #104)
 - [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe". Em 3 PRs (D-645); as abas de ponto, solicitações, folha, mural, avaliação e assistente entram com as specs delas, e o desligado em período de leitura com a 09:
   - [x] 16a. Portal em `/portal` (destino por perfil, barra inferior e menu lateral, Início, Docs e Mais), convite do colaborador na ficha e em massa, pasta do colaborador com câmera e compressão, correções, pedidos e ciência, itens de processo dele (tarefa, leitura e aceite, documento), avisos dele e "Minha equipe" (RN-16-001 a RN-16-031, RN-08-012, RN-08-051, RN-06-060, D-600, D-645) (PR #114)
-  - [ ] 16b. PWA: manifest em `/portal`, service worker só com a casca, "Sem conexão", nova versão, convite de instalação e navegador antigo (RN-16-060 a RN-16-085, CA-16-006 a CA-16-008, CA-16-012)
+  - [x] 16b. PWA: manifest em `/portal`, service worker só com a casca, "Sem conexão", nova versão, convite de instalação e navegador antigo (RN-16-060 a RN-16-085, CA-16-006 a CA-16-008, CA-16-012, D-646) (PR #115)
   - [ ] 16c. Passkeys: cadastro, login com a digital ou o rosto, MFA, confirmação de dado sensível, gestão e admin (RN-16-070 a RN-16-077, CA-16-009, CA-16-010)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
 - [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
