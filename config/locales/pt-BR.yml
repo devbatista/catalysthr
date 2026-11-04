@@ -1048,6 +1048,12 @@ pt-BR:
       latest:
         scanning: "Versão %{version} em varredura"
         infected: "Versão %{version} recusada: vírus encontrado"
+  # The app installed on the device (spec 16, RN-16-064, RN-16-080, D-646).
+  pwa:
+    update:
+      message: "Nova versão disponível"
+      button: "Atualizar"
+    old_browser: "Seu navegador está desatualizado. Algumas funções podem não funcionar."
   # The employee's and the manager's portal (spec 16, D-645).
   portal:
     tabs:
@@ -1633,6 +1639,11 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Documento enviado. Ele fica disponível depois da varredura de vírus."
+    service_workers:
+      offline:
+        title: "Sem conexão"
+        message: "Conecte-se para continuar. Nada do que você estava fazendo foi guardado para enviar depois."
+        retry: "Tentar de novo"
     portal:
       home:
         index:
@@ -1653,6 +1664,15 @@ pt-BR:
           due: "até %{date}"
           progress: "%{kind} · %{done} de %{count}"
           progress_label: "%{done} de %{count} itens concluídos"
+        install_invite:
+          title: "Instale o app"
+          prompt: "Abra o portal direto da tela inicial, como um aplicativo."
+          install: "Instalar"
+          ios_intro: "No iPhone, adicione o portal à Tela de Início. Assim ele abre como um aplicativo e pode receber avisos."
+          ios_share: "Toque em Compartilhar, na barra do Safari."
+          ios_add: "Escolha Adicionar à Tela de Início."
+          ios_confirm: "Toque em Adicionar."
+          dismiss: "Agora não"
       documents:
         index:
           title: "Meus documentos"

@@ -12,6 +12,8 @@ module Panel
         name: brand.commercial_name,
         short_name: brand.app_name,
         lang: "pt-BR",
+        # "/" sends each person to the portal or the panel by profile (RN-16-002, D-646).
+        id: "/",
         start_url: "/",
         scope: "/",
         display: "standalone",

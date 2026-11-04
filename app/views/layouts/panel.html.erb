@@ -28,6 +28,7 @@
         --brand-secondary: <%= theme_colors[:secondary] %>;
         --brand-accent: <%= theme_colors[:accent] %>;
         --brand-on-secondary: <%= sidebar_text_color %>;
+        --brand-on-primary: <%= primary_text_color %>;
       }
     </style>
 
@@ -46,6 +47,14 @@
         <%= render "panel/shared/contract_lock", lock: lock if lock %>
       </div>
     <% end %>
+    <%# A new version of the app and an old browser (spec 16, RN-16-064, RN-16-080), shown by
+        application.js when they apply. %>
+    <div hidden data-sw-update role="status"
+      class="fixed inset-x-4 bottom-20 z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-xl bg-ink-strong px-4 py-3 text-sm font-semibold text-white shadow-lg lg:bottom-6">
+      <span><%= t("pwa.update.message") %></span>
+      <button type="button" class="btn btn-primary btn-sm" data-sw-update-button><%= t("pwa.update.button") %></button>
+    </div>
+    <p hidden data-old-browser role="status" class="alert-info fixed inset-x-4 top-4 z-50 mx-auto max-w-md shadow-lg"><%= t("pwa.old_browser") %></p>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

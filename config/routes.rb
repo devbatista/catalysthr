@@ -158,6 +158,10 @@ Rails.application.routes.draw do
     scope module: :panel do
       root "home#index"
       get "manifest.webmanifest", to: "manifests#show", as: :manifest
+      # The app's shell for the PWA and the page without connection (spec 16, RN-16-061,
+      # RN-16-062, D-424).
+      get "service-worker.js", to: "service_workers#show", as: :service_worker, format: false
+      get "offline", to: "service_workers#offline", as: :offline
       # The bell (spec 15, RN-15-001).
       resources :notifications, only: %i[index show] do
         get "unread-count", on: :collection, action: :unread_count, as: :unread_count

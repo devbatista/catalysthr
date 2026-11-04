@@ -1,7 +1,7 @@
 # 16 — Portal do colaborador (PWA)
 
 > Status: aprovado · Última atualização: 2026-10-13
-> Decisões: D-064, D-086, D-089, D-090, D-175, D-183, D-205, D-210, D-301, D-420 a D-430, D-645 ([decisoes.md](decisoes.md))
+> Decisões: D-064, D-086, D-089, D-090, D-175, D-183, D-205, D-210, D-301, D-420 a D-430, D-645, D-646 ([decisoes.md](decisoes.md))
 > Os itens **[P-16-nn]** foram todos aprovados sem ajuste (D-430, seção 10).
 
 ## 1. Objetivo
@@ -121,7 +121,7 @@ O portal é um **PWA**: abre no navegador e pode ser instalado na tela inicial, 
 
 ### 4.7 PWA (D-424, D-427)
 
-- **RN-16-060** — O manifest é gerado por marca (RN-01-033, RN-01-036), com `display: standalone`, `start_url: /portal` e `scope: /` **[P-16-12]**.
+- **RN-16-060** — O manifest é gerado por marca (RN-01-033, RN-01-036), com `display: standalone`, `start_url: /` e `scope: /`. O destino por perfil (RN-16-002) leva o colaborador e o gestor ao portal e o RH ao painel (D-646) **[P-16-12]**.
 - **RN-16-061** — O **service worker** guarda só a casca (D-424) **[P-16-13]**:
   - ícones, CSS e JS com nome versionado (digest), servidos do cache;
   - a tela "Sem conexão";
@@ -159,7 +159,7 @@ O portal é um **PWA**: abre no navegador e pode ser instalado na tela inicial, 
   - aberturas seguintes em até 1,5 segundo (casca no cache);
   - CSS do Tailwind compilado só com as classes usadas, e imagens comprimidas.
 - **RN-16-082** — **Acessibilidade:** WCAG 2.1 nível AA. Alvos de toque com pelo menos 44 × 44 px, respeito ao tamanho de fonte do aparelho, rótulos em todos os campos e navegação por teclado no computador **[P-16-23]**.
-- **RN-16-083** — **Cores da marca:** se a cor principal da marca não tiver contraste suficiente com o texto (4,5:1), o sistema escolhe o texto em branco ou preto para manter a leitura. O cadastro da marca mostra o aviso (spec 01) **[P-16-24]**.
+- **RN-16-083** — **Cores da marca:** o cadastro recusa a cor principal sem contraste de 4,5:1 com o branco (RN-01-031, D-646). Como defesa, para cores antigas ou herdadas, o texto sobre a cor principal escolhe branco ou preto pelo contraste **[P-16-24]**.
 - **RN-16-084** — Sem tema escuro no MVP **[P-16-25]**.
 - **RN-16-085** — Só português do Brasil.
 
@@ -219,7 +219,7 @@ O fim do período de leitura continua no `Memberships::ExpireReadOnlyJob` (spec 
 - **CA-16-009** — Dado um RH com MFA obrigatório e uma passkey cadastrada, quando entra com a passkey, então acessa o painel sem digitar senha nem código.
 - **CA-16-010** — Dada uma passkey cadastrada em `aurora.painel.catalysthr.com.br`, quando o aparelho mostra a passkey, então aparece o nome comercial da marca, e não "CatalystHR".
 - **CA-16-011** — Dado um desligado em período de leitura, quando abre o portal, então vê holerites, informe, espelhos, documentos e TRCT, a data do fim do acesso e o botão de baixar os documentos, mas não a aba Pedidos, exceto pela solicitação Privacidade/LGPD.
-- **CA-16-012** — Dada uma marca com cor principal amarelo-claro, quando o portal mostra um botão com essa cor, então o texto do botão é preto.
+- **CA-16-012** — Dada uma marca com cor principal amarelo-claro, quando alguém tenta salvá-la, então o cadastro recusa e mostra o motivo (RN-01-031); e, se uma cor assim já estiver gravada, o texto do botão com essa cor é preto (D-646).
 
 ## 10. Propostas aprovadas (D-430)
 
