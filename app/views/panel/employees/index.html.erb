@@ -2,9 +2,15 @@
 
 <div class="flex flex-wrap items-center justify-between gap-4">
   <h1 class="page-title"><%= t(".title") %></h1>
-  <% if can?(:create, WorkerProfile) %>
-    <%= link_to t(".new"), new_employee_path, class: "btn btn-primary" %>
-  <% end %>
+  <div class="flex flex-wrap gap-3">
+    <%# The portal's invitation of who still has no access (spec 16, D-645). %>
+    <% if can?(:invite, Membership) %>
+      <%= button_to t(".invite_all"), invite_employees_path, class: "btn btn-secondary", form: { data: { confirm: t(".invite_all_confirm") } } %>
+    <% end %>
+    <% if can?(:create, WorkerProfile) %>
+      <%= link_to t(".new"), new_employee_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
 </div>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 

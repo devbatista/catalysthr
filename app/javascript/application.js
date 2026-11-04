@@ -207,3 +207,92 @@ document.querySelectorAll("[data-cbo-picker]").forEach((picker) => {
   })
   query.addEventListener("keydown", (event) => { if (event.key === "Escape") close() })
 })
+
+// The portal's upload (RN-08-012, P-08-06): the photos from the rear camera are added one
+// at a time, so the front and the back go together, and a large image is made smaller in
+// the browser before it leaves, to stay under 10 MB and go fast in 4G. The files are sent
+// only on submit; without DataTransfer, the fields send them as they are.
+const UPLOAD_MAX_SIDE = 2400
+const UPLOAD_KEEP_BELOW = 1.5 * 1024 * 1024
+
+const shrinkImage = async (file) => {
+  if (!file.type.startsWith("image/") || (file.type === "image/jpeg" && file.size < UPLOAD_KEEP_BELOW)) return file
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" })
+    const scale = Math.min(1, UPLOAD_MAX_SIDE / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement("canvas")
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    const context = canvas.getContext("2d")
+    context.fillStyle = "#FFFFFF"
+    context.fillRect(0, 0, canvas.width, canvas.height)
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85))
+    if (!blob || blob.size >= file.size) return file
+    return new File([ blob ], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" })
+  } catch {
+    return file
+  }
+}
+
+const canTransferFiles = () => {
+  try {
+    return new DataTransfer().items !== undefined
+  } catch {
+    return false
+  }
+}
+
+document.querySelectorAll("[data-portal-upload]").forEach((box) => {
+  if (!canTransferFiles()) return
+
+  const form = box.closest("form")
+  const output = box.querySelector("[data-upload-output]")
+  const list = box.querySelector("[data-upload-list]")
+  const max = Number(box.dataset.maxFiles || 5)
+  let files = []
+
+  const render = () => {
+    list.replaceChildren(...files.map((file, index) => {
+      const item = document.createElement("li")
+      item.className = "flex items-center justify-between gap-3 rounded-lg border border-line-soft bg-white px-3 py-2"
+      const name = document.createElement("span")
+      name.className = "min-w-0 truncate"
+      name.textContent = file.name
+      const remove = document.createElement("button")
+      remove.type = "button"
+      remove.className = "link-button min-h-11 text-sm"
+      remove.textContent = list.dataset.removeLabel
+      remove.addEventListener("click", () => {
+        files.splice(index, 1)
+        render()
+      })
+      item.append(name, remove)
+      return item
+    }))
+  }
+
+  box.querySelectorAll("[data-upload-input]").forEach((input) => {
+    input.removeAttribute("name")
+    input.addEventListener("change", () => {
+      files = files.concat([ ...input.files ])
+      if (files.length > max) {
+        files = files.slice(0, max)
+        window.alert(list.dataset.limitMessage)
+      }
+      input.value = ""
+      render()
+    })
+  })
+
+  form.addEventListener("submit", async (event) => {
+    if (form.dataset.prepared) return
+    event.preventDefault()
+    const transfer = new DataTransfer()
+    for (const file of await Promise.all(files.map(shrinkImage))) transfer.items.add(file)
+    output.files = transfer.files
+    output.disabled = false
+    form.dataset.prepared = "true"
+    form.requestSubmit()
+  })
+})

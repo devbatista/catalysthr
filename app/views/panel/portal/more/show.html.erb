@@ -1,0 +1,32 @@
+<%# "Mais" (spec 16, RN-16-011, D-645): the items that already exist. Payslips, invoices,
+    evaluations, the assistant, the board, internal jobs, privacy and help come with their
+    specs. %>
+<% content_for :title, t(".title") %>
+<% items = [
+  ([ t(".team"), t(".team_hint"), portal_team_path ] if portal_manager?),
+  ([ t(".profile"), t(".profile_hint"), portal_profile_path ] if current_profile),
+  [ t(".notifications"), t(".notifications_hint"), portal_notifications_path ],
+  ([ t(".security"), t(".security_hint"), account_root_path ] unless impersonating?),
+  ([ t(".panel"), t(".panel_hint"), root_path(panel: 1) ] if panel_access?)
+].compact %>
+
+<h1 class="page-title hidden lg:block"><%= t(".title") %></h1>
+<ul class="space-y-3 lg:mt-6 lg:max-w-2xl">
+  <% items.each do |label, hint, path| %>
+    <li>
+      <%= link_to path, class: "card card-body flex min-h-14 items-center justify-between gap-3 no-underline hover:no-underline" do %>
+        <span class="flex flex-col gap-0.5">
+          <strong class="text-ink-strong"><%= label %></strong>
+          <span class="text-xs text-ink-soft"><%= hint %></span>
+        </span>
+        <span class="font-extrabold text-brand-primary" aria-hidden="true">›</span>
+      <% end %>
+    </li>
+  <% end %>
+  <% unless impersonating? %>
+    <li>
+      <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete,
+        class: "card card-body min-h-14 w-full cursor-pointer text-left font-bold text-bad", form_class: "w-full" %>
+    </li>
+  <% end %>
+</ul>

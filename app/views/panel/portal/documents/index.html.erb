@@ -1,0 +1,53 @@
+<%# The employee's folder (spec 08, RN-08-080; spec 16, D-645), as in the prototype: the
+    pending documents on top, a chip per category, and each document with its state. Only
+    the version in force and never the internal types (D-274, D-280). %>
+<% content_for :title, t(".title") %>
+<% pendings = portal_pendings.all.select { |pending| pending.kind.in?(%i[document acknowledgment]) } %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="page-title hidden lg:block"><%= t(".title") %></h1>
+  <%= link_to t(".new"), new_portal_document_path, class: "btn btn-primary w-full sm:w-auto lg:ml-auto" %>
+</div>
+
+<% if pendings.any? %>
+  <section class="mt-5 space-y-3" aria-labelledby="pendings-title">
+    <h2 id="pendings-title" class="section-title"><%= t(".pendings", count: pendings.size) %></h2>
+    <% pendings.each do |pending| %>
+      <%= link_to pending.path, class: "card card-body block space-y-1 no-underline hover:no-underline #{"border-bad-line" if pending.tone == :bad}" do %>
+        <span class="flex flex-wrap items-start justify-between gap-2">
+          <strong class="text-ink-strong"><%= pending.title %></strong>
+          <% if pending.due_on %><span class="pill <%= portal_tone_pill(pending.tone) %>"><%= t("panel.portal.home.index.due", date: l(pending.due_on, format: "%d/%m")) %></span><% end %>
+        </span>
+        <% if pending.detail.present? %><span class="block text-sm <%= pending.tone == :bad ? "text-bad" : "text-ink-soft" %>"><%= pending.detail %></span><% end %>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>
+
+<nav class="mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="<%= t(".categories") %>">
+  <%= link_to t(".all"), portal_documents_path, class: "chip shrink-0 #{"chip-active" if @category.nil?}", "aria-current": (@category.nil? ? "page" : nil) %>
+  <% @categories.each do |category| %>
+    <%= link_to t("documents.categories.#{category}"), portal_documents_path(category: category), class: "chip shrink-0 #{"chip-active" if category == @category}",
+      "aria-current": (category == @category ? "page" : nil) %>
+  <% end %>
+</nav>
+
+<% if @documents.empty? %>
+  <p class="card card-body mt-4 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <ul class="mt-4 grid gap-3 lg:grid-cols-2">
+    <% @documents.each do |document| %>
+      <li>
+        <%= link_to portal_document_path(document), class: "card card-body flex items-center justify-between gap-3 no-underline hover:no-underline" do %>
+          <span class="flex min-w-0 flex-col">
+            <strong class="truncate text-ink-strong"><%= [ document.document_type.name, document.dependent&.name ].compact.join(" · ") %></strong>
+            <span class="text-xs text-ink-soft">
+              <% if document.current_version %><%= t(".validated", date: l(document.current_version.reviewed_at.to_date, format: "%d/%m/%Y")) %><% else %><%= t("documents.categories.#{document.category}") %><% end %>
+            </span>
+          </span>
+          <span class="shrink-0"><%= portal_document_state(document) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

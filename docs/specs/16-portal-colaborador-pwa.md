@@ -1,7 +1,7 @@
 # 16 — Portal do colaborador (PWA)
 
 > Status: aprovado · Última atualização: 2026-10-13
-> Decisões: D-064, D-086, D-089, D-090, D-175, D-183, D-205, D-210, D-301, D-420 a D-430 ([decisoes.md](decisoes.md))
+> Decisões: D-064, D-086, D-089, D-090, D-175, D-183, D-205, D-210, D-301, D-420 a D-430, D-645 ([decisoes.md](decisoes.md))
 > Os itens **[P-16-nn]** foram todos aprovados sem ajuste (D-430, seção 10).
 
 ## 1. Objetivo

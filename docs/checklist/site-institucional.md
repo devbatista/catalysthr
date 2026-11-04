@@ -27,4 +27,4 @@ Os termos saem sem a cláusula de limitação de responsabilidade (11.3 da minut
 ## 3. SES
 
 - [x] **[você]** Caso 179201169800267 reaberto com a resposta: o site público, a política de privacidade, os termos de uso e a empresa, que faltavam no pedido anterior (só a tela de login em `admin`), e o resumo do uso (transacional, destinatários, autenticação, devoluções e reclamações, menos de 1.000 e-mails por mês). Os detalhes e o exemplo de e-mail continuam na resposta de 2026-10-21 (2026-10-27)
-- [ ] Resposta da AWS
+- [x] Resposta da AWS: **recusado de novo** em 2026-11-04, sem motivo informado. Próximo passo em `pendencias-fornecedores.md`

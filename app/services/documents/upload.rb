@@ -11,7 +11,8 @@ module Documents
     MAX_SIZE = 10.megabytes
     PDF = "application/pdf".freeze
 
-    attr_accessor :worker_profile, :document, :document_type, :dependent, :bank_account, :process_item, :files, :by
+    # source: who sends a new document, the HR by default or the employee (RN-08-013).
+    attr_accessor :worker_profile, :document, :document_type, :dependent, :bank_account, :process_item, :files, :by, :source
     attr_reader :version
 
     validate :type_usable
@@ -50,9 +51,8 @@ module Documents
     private
 
     def create_document
-      source = process_item ? "process" : "hr"
       Document.create!(worker_profile: worker_profile, document_type: document_type, dependent: dependent,
-        bank_account: bank_account, source: source, source_ref: process_item)
+        bank_account: bank_account, source: process_item ? "process" : source || "hr", source_ref: process_item)
     end
 
     def upload_blobs

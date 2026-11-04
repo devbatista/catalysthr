@@ -32,6 +32,10 @@ module Documents
           @request.targets.create!(worker_profile: profile, document: document)
         end
       end
+      due = due_on ? I18n.l(due_on) : I18n.t("processes.no_due")
+      @request.targets.includes(document: [ :document_type, { worker_profile: %i[membership user] } ]).find_each do |target|
+        Notices.employee("documents.requested", target.document, subject: target, due: due)
+      end
       true
     end
 

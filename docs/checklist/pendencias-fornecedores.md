@@ -80,7 +80,9 @@
 - [x] Verificar o domínio `catalysthr.com.br` no SES (DKIM, SPF, DMARC) (2026-10-14)
 - [x] Resposta da AWS ao pedido de saída do sandbox: **recusado** em 2026-10-27 (caso 179201169800267), sem motivo informado. Hipótese: o site do pedido (`admin.catalysthr.com.br`) só mostrava a tela de login, sem site público nem política de privacidade
 - [x] Novo pedido, com o site institucional no ar: caso 179201169800267 reaberto em 2026-10-27 (`site-institucional.md`, D-631)
-- [ ] Resposta da AWS ao novo pedido
+- [x] Resposta da AWS ao novo pedido: **recusado de novo** em 2026-11-04 (caso 179201169800267), sem motivo informado ("fatores que não podemos divulgar"). A AWS diz que um pedido novo no futuro pode ter outro resultado
+- [x] Decidir o caminho depois da segunda recusa: um pedido novo a partir de 2026-12-02, depois do teste de ponta a ponta com envios reais no sandbox. Se esse pedido também for recusado, avaliamos a troca de provedor (decisão do responsável em 2026-11-04)
+- [ ] Terceiro pedido de saída do sandbox (`ses-saida-sandbox.md`)
 - [ ] Na fase 1: chaves do KMS dos arquivos e dos backups, com rotação anual, e usuários IAM por finalidade (P-20-21, P-20-22). A chave do A1 fica para a fase 3
 
 ## WhatsApp pela Twilio — trava a fase 2 (convites por WhatsApp já na fase 1)

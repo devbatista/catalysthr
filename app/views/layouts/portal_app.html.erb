@@ -1,0 +1,8 @@
+<%# The portal's pages (spec 16, D-421, D-597): the brand's frame, with the tabs as a side
+    menu on the computer and a bottom bar on the phone, as in the prototype. %>
+<% content_for :content do %>
+  <%= render layout: "shared/portal_shell" do %>
+    <%= yield %>
+  <% end %>
+<% end %>
+<%= render template: "layouts/panel" %>

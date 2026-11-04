@@ -36,6 +36,33 @@ module Panel
       reveal_sections(allowed_sections)
     end
 
+    # The portal's invitation of one person, by e-mail or the link and the QR code to hand
+    # out (spec 16, D-645), through the invitation of spec 02 (RN-02-012).
+    def invite
+      profile = WorkerProfile.accessible_by(current_ability, :read).find(params[:id])
+      membership = profile.membership
+      authorize! :resend_invitation, membership
+      @invitation = Invitations::Resend.call(membership: membership, channels: Array(params[:channels]), invited_by: current_user)
+      @profile = profile
+      render :portal_invited
+    rescue ActiveRecord::RecordInvalid => error
+      redirect_to employee_path(profile), alert: error.record.errors.full_messages.to_sentence
+    end
+
+    # The portal's invitation of everyone still without access (spec 16, D-600, D-645): by
+    # e-mail to who has a valid one and no open invitation; the others are listed, to get
+    # the link or the QR code on their record.
+    def invite_all
+      authorize! :invite, Membership
+      memberships = Membership.where(organization: Current.company, status: "invited").with_role("employee").includes(:user, :worker_profile).to_a
+        .select { |membership| membership.worker_profile && can?(:resend_invitation, membership) && !membership.invitation_open? }
+      @sent, @without_email = memberships.partition { |membership| membership.user.email_deliverable? }
+      @sent.each do |membership|
+        Invitations::Resend.call(membership: membership, channels: %w[email], invited_by: current_user)
+      end
+      render :invited
+    end
+
     def new
       authorize! :create, WorkerProfile
       @registration = EmployeeRegistration.new(registration_number: Current.company.suggested_registration_number,

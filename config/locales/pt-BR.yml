@@ -820,6 +820,7 @@ pt-BR:
       document_submitted: "Documento de \"%{title}\" enviado"
       document_approved: "Documento de \"%{title}\" aprovado"
       document_correction_requested: "Correção pedida no documento de \"%{title}\""
+      item_acknowledged: "\"%{title}\" lido e aceito"
   process_templates:
     library: "Biblioteca CatalystHR"
     default: "Padrão"
@@ -1047,6 +1048,32 @@ pt-BR:
       latest:
         scanning: "Versão %{version} em varredura"
         infected: "Versão %{version} recusada: vírus encontrado"
+  # The employee's and the manager's portal (spec 16, D-645).
+  portal:
+    tabs:
+      label: "Seções do portal"
+      home: "Início"
+      documents: "Docs"
+      more: "Mais"
+    open_panel: "Abrir painel"
+    more:
+      team: "Minha equipe"
+    pendings:
+      fix: "Corrigir %{document}"
+      send: "Enviar %{document}"
+      renew: "Renovar %{document}"
+      acknowledge: "Dar ciência: %{title}"
+      rejected_by_scan: "O arquivo foi recusado na varredura de vírus. Envie outro."
+      expires:
+        expiring: "Vence em %{date}."
+        expired: "Venceu em %{date}."
+    document_states:
+      to_send: "Enviar"
+      correction: "Correção"
+      expired: "Vencido"
+      expiring: "Vencendo"
+      valid: "Validado"
+      in_review: "Em revisão"
   # Documents (spec 08, D-642).
   documents:
     categories:
@@ -1494,6 +1521,7 @@ pt-BR:
     holidays: "Feriados"
     document_types: "Tipos de documento"
     documents: "Documentos"
+    my_portal: "Meu portal"
     process_templates: "Modelos de processo"
     process_library: "Biblioteca de modelos"
     units: "Unidades"
@@ -1605,6 +1633,140 @@ pt-BR:
         cancel: "Cancelar"
       create:
         created: "Documento enviado. Ele fica disponível depois da varredura de vírus."
+    portal:
+      home:
+        index:
+          title: "Início"
+          hello: "Olá, %{name}"
+          team: "Minha equipe"
+          team_open: "Abrir"
+          team_items:
+            one: "%{count} item de processo para você"
+            other: "%{count} itens de processo para você"
+          team_expiring:
+            one: "%{count} documento da equipe vencendo"
+            other: "%{count} documentos da equipe vencendo"
+          pendings:
+            one: "Pendências · %{count}"
+            other: "Pendências · %{count}"
+          no_pendings: "Nenhuma pendência no momento."
+          due: "até %{date}"
+          progress: "%{kind} · %{done} de %{count}"
+          progress_label: "%{done} de %{count} itens concluídos"
+      documents:
+        index:
+          title: "Meus documentos"
+          new: "Enviar documento"
+          pendings:
+            one: "Para fazer · %{count}"
+            other: "Para fazer · %{count}"
+          categories: "Categorias"
+          all: "Todos"
+          empty: "Nenhum documento na sua pasta ainda."
+          validated: "Validado em %{date}"
+        show:
+          back: "Meus documentos"
+          expires_on: "vence em %{date}"
+          rejected_by_scan: "O último arquivo foi recusado na varredura de vírus. Envie outro."
+          correction: "Correção pedida pelo RH: %{reason}"
+          in_review: "O seu envio está com o RH para conferência."
+          file: "Documento"
+          validated: "Versão validada em %{date}"
+          open: "Abrir o documento"
+          sensitive: "Por segurança, o sistema pede a sua senha antes de abrir."
+          no_file: "Ainda não há versão validada deste documento."
+          new_version: "Enviar uma nova versão"
+          send: "Enviar o documento"
+          acknowledgment: "Ciência"
+          comment: "Comentário (opcional)"
+          confirm: "Li e estou ciente"
+          confirm_wait: "O documento fica disponível em instantes, depois da varredura de vírus."
+          due: "Prazo da ciência: %{date}"
+          acknowledged: "Você deu ciência em %{date}."
+        new:
+          title: "Enviar documento"
+          back: "Meus documentos"
+          subtitle: "Tire uma foto ou escolha o arquivo. O RH confere antes de validar."
+          for_item: "Para o item \"%{title}\""
+          type: "Tipo de documento"
+          submit: "Enviar"
+          cancel: "Cancelar"
+        create:
+          created: "Documento enviado. O RH vai conferir."
+        upload:
+          files: "Arquivos"
+          camera: "Tirar foto"
+          choose: "Escolher foto ou PDF"
+          remove: "Remover"
+          limit: "Este documento aceita até %{count} arquivos."
+          hint: "PDF, JPG ou PNG, até %{size} MB cada. Para frente e verso, tire uma foto de cada lado (até %{count}). Um PDF vai sozinho."
+      document_versions:
+        new:
+          title: "Enviar %{document}"
+          back: "Voltar ao documento"
+          subtitle: "Tire uma foto ou escolha o arquivo. O RH confere antes de validar."
+          submit: "Enviar"
+          cancel: "Cancelar"
+        create:
+          created: "Documento enviado. O RH vai conferir."
+      acknowledgments:
+        confirm:
+          confirmed: "Ciência registrada."
+      process_items:
+        resolved: "Item concluído."
+        show:
+          back: "Início"
+          due: "prazo %{date}"
+          not_pending: "Este item não está aguardando você."
+          comment: "Comentário (opcional)"
+          done: "Marcar como feito"
+          read: "Ler o material (versão %{version})"
+          acknowledge_hint: "Ao confirmar, ficam registrados a data, a hora, o IP e a versão que você leu."
+          acknowledge: "Li e aceito"
+          material_wait: "O material fica disponível em instantes, depois da varredura de vírus."
+          open_document: "Ver o documento"
+          send_document: "Enviar o documento"
+      more:
+        show:
+          title: "Mais"
+          team: "Minha equipe"
+          team_hint: "Itens de processo e documentos vencendo da equipe"
+          profile: "Meus dados"
+          profile_hint: "Cargo, unidade e contato"
+          notifications: "Notificações"
+          notifications_hint: "Os avisos dos últimos 90 dias"
+          security: "Segurança"
+          security_hint: "Senha, autenticação em duas etapas e sessões"
+          panel: "Abrir painel"
+          panel_hint: "A área de gestão, que também funciona no celular"
+      profiles:
+        show:
+          title: "Meus dados"
+          back: "Mais"
+          registration: "Matrícula %{number}"
+          open: "Ativo"
+          ended: "Encerrado"
+          position: "Cargo"
+          unit: "Unidade"
+          started_on: "Início"
+          contact: "Contato"
+          email: "E-mail"
+          mobile_phone: "Celular"
+          change_hint: "Para mudar algum dado, fale com o RH. O pedido pelo portal entra com as solicitações."
+      teams:
+        show:
+          title: "Minha equipe"
+          back: "Mais"
+          open_panel: "Abrir no painel"
+          items:
+            one: "Itens de processo · %{count}"
+            other: "Itens de processo · %{count}"
+          no_items: "Nenhum item de processo aguardando você."
+          expiring:
+            one: "Documentos vencendo · %{count}"
+            other: "Documentos vencendo · %{count}"
+          no_expiring: "Nenhum documento da equipe vencendo."
+          expiring_line: "%{document} de %{person} vence em %{date}"
     documents:
       tabs:
         label: "Seções de documentos"
@@ -2106,6 +2268,8 @@ pt-BR:
       index:
         title: "Colaboradores"
         subtitle: "As pessoas da empresa, com o cargo e a unidade de hoje."
+        invite_all: "Convidar todos sem acesso"
+        invite_all_confirm: "Enviar o convite do portal por e-mail a quem ainda não tem acesso e tem e-mail válido? Quem já tem um convite em aberto não recebe outro."
         new: "Novo colaborador"
         filters: "Filtrar por unidade"
         client_filters: "Filtrar por cliente"
@@ -2117,9 +2281,37 @@ pt-BR:
         unit: "Unidade"
         manager: "Gestor"
         status: "Situação"
+      portal_invited:
+        title: "Convite de %{name} para o portal"
+        back: "Voltar à ficha"
+        validity: "O convite vale até %{date}."
+        email_sent: "Convite enviado para %{email}."
+        link_title: "Link do convite"
+        link_instructions: "Entregue o link ou peça para a pessoa ler o QR code no celular. Ele vale uma vez só."
+      invited:
+        title: "Convites do portal"
+        back: "Colaboradores"
+        subtitle: "O convite vale por 72 horas."
+        sent:
+          one: "Enviado por e-mail · %{count}"
+          other: "Enviados por e-mail · %{count}"
+        none_sent: "Ninguém sem acesso tinha e-mail válido e sem convite em aberto."
+        without_email:
+          one: "Sem e-mail válido · %{count}"
+          other: "Sem e-mail válido · %{count}"
+        none_without_email: "Todos têm e-mail válido."
+        without_email_hint: "Abra a ficha de cada um e gere o link ou o QR code para entregar em mãos."
       show:
         back: "Colaboradores"
         documents_folder: "Documentos"
+        portal: "Acesso ao portal"
+        portal_status:
+          invited: "Convite enviado"
+          no_access: "Sem acesso"
+          active: "Com acesso"
+        portal_hint: "O colaborador usa o portal para os documentos, as ciências e os itens de processo. O convite vale por 72 horas."
+        portal_invite: "Convidar para o portal"
+        portal_resend: "Enviar o convite de novo"
         civil_name: "Nome civil: %{name}"
         edit: "Editar ficha"
         registration: "matrícula %{number}"
@@ -3050,6 +3242,31 @@ pt-BR:
         title: "Item atrasado: %{item}"
         body: "O item \"%{item}\" do processo de %{person} passou do prazo de %{due}."
     documents:
+      requested:
+        name: "Documento pedido"
+        hint: "Quando o RH pede um documento."
+        title: "O RH pediu: %{document}"
+        body: "Envie pelo portal até %{due}."
+      correction_requested:
+        name: "Correção pedida"
+        hint: "Quando o RH pede a correção de um documento enviado."
+        title: "Corrigir %{document}"
+        body: "Motivo: %{reason}."
+      expiring:
+        name: "Documento vencendo"
+        hint: "Na antecedência que o tipo define."
+        title: "%{document} vence em %{date}"
+        body: "Envie o novo documento pelo portal."
+      acknowledgment_pending:
+        name: "Documento para ciência"
+        hint: "Quando o RH publica um documento pedindo a sua ciência."
+        title: "Documento para ciência: %{title}"
+        body: "Abra no portal e confirme o recebimento até %{due}."
+      review_pending:
+        name: "Documento aguardando revisão"
+        hint: "Quando um colaborador envia um documento."
+        title: "%{document} de %{person} para revisar"
+        body: "O colaborador enviou o documento pelo portal."
       hr_expiring:
         name: "Documento vencendo na unidade"
         hint: "Uma vez por vencimento, na antecedência que o tipo define."
@@ -4221,6 +4438,7 @@ pt-BR:
               skip_reason_blank: "Um item obrigatório só é dispensado com justificativa"
               not_open: "Este item já foi resolvido"
               not_actionable: "Este item não pode ser concluído agora"
+              material_not_ready: "O material ainda não está disponível"
         document_type:
           attributes:
             base:

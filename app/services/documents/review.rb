@@ -46,6 +46,7 @@ module Documents
           reviewed_by: @by, reviewed_at: Time.current)
         @version.save || raise(ActiveRecord::Rollback)
       end
+      Notices.employee("documents.correction_requested", @document, subject: @version, reason: correction_text) if done
       after_review(done)
     end
 
@@ -56,6 +57,11 @@ module Documents
 
       Documents::Followers.sync(@document, by: @by)
       true
+    end
+
+    def correction_text
+      reason = I18n.t("documents.correction_reasons.#{@version.correction_reason}")
+      @version.correction_note ? "#{reason}: #{@version.correction_note}" : reason
     end
 
     def error(key, **options)

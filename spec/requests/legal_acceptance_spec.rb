@@ -47,8 +47,9 @@ RSpec.describe "Terms and privacy policy", type: :request do
       ip: "127.0.0.1", user_agent: "Navegador de teste")
     expect(consent.decided_at).to be_present
 
+    # A manager starts at the portal (spec 16, RN-16-002).
     get "/"
-    expect(response).to have_http_status(:ok)
+    expect(response).to redirect_to("/portal")
   end
 
   it "uses the brand's own texts when it has them (RN-01-032)" do

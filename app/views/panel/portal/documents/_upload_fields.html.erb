@@ -1,0 +1,23 @@
+<%# The files of a version from the phone (RN-08-010 to RN-08-012, P-08-05, P-08-06): a
+    photo from the rear camera, added one at a time so the front and the back go together,
+    or a photo or a PDF chosen from the device. application.js joins them and makes large
+    images smaller before sending; without JavaScript, the fields send them as they are.
+    The camera is asked only when used (RN-16-066). %>
+<% accept = FileSignature::SIGNATURES.keys.join(",") %>
+<div class="field-full space-y-3" data-portal-upload data-max-files="<%= max_files %>">
+  <p class="field-label"><%= t("panel.portal.documents.upload.files") %></p>
+  <div class="grid gap-3 sm:grid-cols-2">
+    <label class="flex min-h-14 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/5 px-3 py-4 text-center text-sm font-bold text-brand-primary">
+      <%= t("panel.portal.documents.upload.camera") %>
+      <%= file_field_tag "upload[files][]", accept: "image/jpeg,image/png", capture: "environment", class: "sr-only", data: { upload_input: true }, id: nil %>
+    </label>
+    <label class="flex min-h-14 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-brand-primary/40 bg-brand-primary/5 px-3 py-4 text-center text-sm font-bold text-brand-primary">
+      <%= t("panel.portal.documents.upload.choose") %>
+      <%= file_field_tag "upload[files][]", accept: accept, multiple: true, class: "sr-only", data: { upload_input: true }, id: nil %>
+    </label>
+  </div>
+  <%= file_field_tag "upload[files][]", multiple: true, class: "hidden", data: { upload_output: true }, id: nil, disabled: true %>
+  <ul class="space-y-2 text-sm" data-upload-list aria-live="polite"
+    data-remove-label="<%= t("panel.portal.documents.upload.remove") %>" data-limit-message="<%= t("panel.portal.documents.upload.limit", count: max_files) %>"></ul>
+  <p class="field-hint"><%= t("panel.portal.documents.upload.hint", size: Documents::Upload::MAX_SIZE / 1.megabyte, count: max_files) %></p>
+</div>

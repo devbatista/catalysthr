@@ -1,0 +1,84 @@
+<%# The portal's frame (spec 16, RN-16-010 to RN-16-013, D-421), as in the employee's
+    prototype: on the computer, the side menu in the brand's secondary color with the
+    person and the company; on the phone, the top bar with the page's title and the bottom
+    bar with the tabs, each with its count. Ordinary links, without a single page app. %>
+<% tabs = portal_tabs %>
+<% heading = content_for(:portal_title) || content_for(:title) %>
+<div class="lg:flex">
+  <aside aria-label="<%= t("navigation.menu") %>"
+    class="sticky top-(--top-banners) hidden h-[calc(100dvh-var(--top-banners))] w-[228px] shrink-0 flex-col gap-5 overflow-y-auto bg-brand-secondary px-3 py-5 text-brand-on-secondary lg:flex">
+    <div class="px-1.5">
+      <%= link_to portal_root_path, class: "flex items-center gap-2 no-underline hover:no-underline" do %>
+        <% if (logo = sidebar_logo_path) %>
+          <%= image_tag logo, alt: header_brand_name, class: "h-8 w-auto max-w-[180px] object-contain" %>
+        <% else %>
+          <span class="text-lg leading-tight font-extrabold text-brand-on-secondary"><%= header_brand_name %></span>
+        <% end %>
+      <% end %>
+    </div>
+    <nav class="flex flex-col gap-0.5">
+      <% tabs.each do |tab| %>
+        <%= link_to tab.path, class: class_names("nav-link", "nav-link-active" => tab.active), "aria-current": ("page" if tab.active) do %>
+          <span class="flex-1"><%= tab.label %></span>
+          <% if tab.count.positive? %><span class="rounded-full bg-bad px-1.5 text-[11px] leading-5 font-extrabold text-white"><%= tab.count %></span><% end %>
+        <% end %>
+      <% end %>
+      <% if portal_manager? %>
+        <%= link_to t("portal.more.team"), portal_team_path, class: class_names("nav-link", "nav-link-active" => controller_name == "teams") %>
+      <% end %>
+    </nav>
+    <div class="mt-auto border-t border-brand-on-secondary/15 pt-3">
+      <div class="flex items-center gap-2.5 px-1.5">
+        <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-on-secondary/15 text-[11px] font-extrabold" aria-hidden="true"><%= initials(current_user.name) %></span>
+        <span class="flex min-w-0 flex-col text-xs leading-snug">
+          <strong class="truncate"><%= current_profile&.display_name || current_user.name %></strong>
+          <span class="truncate text-brand-on-secondary/70"><%= Current.company.name %></span>
+        </span>
+      </div>
+      <% unless impersonating? %>
+        <div class="mt-2 flex flex-col gap-0.5">
+          <% if panel_access? %><%= link_to t("portal.open_panel"), root_path(panel: 1), class: "nav-link" %><% end %>
+          <%= button_to t("users.shared.sign_out.sign_out"), destroy_user_session_path, method: :delete, class: "nav-link cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </aside>
+
+  <div class="flex min-h-dvh min-w-0 flex-1 flex-col">
+    <%# The phone's top bar, with the page's title (the prototype's dark header). %>
+    <header class="flex items-center gap-3 bg-brand-secondary px-4 py-3 text-brand-on-secondary lg:hidden">
+      <div class="flex min-w-0 flex-1 flex-col">
+        <span class="truncate text-xs opacity-80"><%= Current.company.name %></span>
+        <span class="truncate text-lg font-extrabold"><%= heading %></span>
+      </div>
+      <%= render "shared/bell" %>
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-on-secondary/15 text-xs font-extrabold" aria-hidden="true"><%= initials(current_user.name) %></span>
+    </header>
+    <%# The computer's top bar. %>
+    <header class="hidden min-h-14 items-center gap-3 border-b border-line bg-white px-7 py-2.5 lg:flex">
+      <span class="text-sm text-ink-soft"><%= Current.company.name %></span>
+      <%= render "shared/bell" %>
+    </header>
+
+    <main class="w-full flex-1 px-4 pt-5 pb-24 sm:px-7 sm:pt-8 lg:pb-8">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <%# The phone's bottom bar (RN-16-010), with targets of at least 44 px (RN-16-082). %>
+    <nav aria-label="<%= t("portal.tabs.label") %>"
+      class="<%= class_names("fixed inset-x-0 bottom-0 z-30 grid border-t border-line bg-white pb-[env(safe-area-inset-bottom)] lg:hidden",
+        { 2 => "grid-cols-2", 3 => "grid-cols-3", 4 => "grid-cols-4" }.fetch(tabs.size, "grid-cols-5")) %>">
+      <% tabs.each do |tab| %>
+        <%= link_to tab.path, class: class_names("flex min-h-14 flex-col items-center justify-center gap-1 text-xs font-bold no-underline hover:no-underline",
+          tab.active ? "text-brand-primary" : "text-ink-soft"), "aria-current": ("page" if tab.active) do %>
+          <span class="<%= class_names("h-1 w-6 rounded-full", tab.active ? "bg-brand-primary" : "bg-transparent") %>" aria-hidden="true"></span>
+          <span class="relative">
+            <%= tab.label %>
+            <% if tab.count.positive? %><span class="absolute -top-2 -right-4 rounded-full bg-bad px-1 text-[10px] leading-4 text-white"><%= tab.count %></span><% end %>
+          </span>
+        <% end %>
+      <% end %>
+    </nav>
+  </div>
+</div>

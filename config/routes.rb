@@ -296,6 +296,9 @@ Rails.application.routes.draw do
           only: %i[create destroy]
       end
       resources :employees, except: :destroy do
+        # The portal's invitation of everyone without access, by e-mail (D-600, D-645).
+        post :invite, on: :collection, action: :invite_all
+        post :invite, on: :member
         resources :documents, controller: "employee_documents", only: %i[index new create]
         post "documents/export", to: "document_folder_exports#create", as: :document_export
         resources :employments, only: %i[new create]
@@ -325,6 +328,31 @@ Rails.application.routes.draw do
       # Address by CEP and the unit's position, for the unit's form (D-215, D-216).
       get "address-lookup/:postal_code", to: "address_lookups#show", as: :address_lookup
       get "geocode", to: "address_lookups#geocode", as: :geocode
+
+      # The employee's and the manager's portal (spec 16, RN-16-001, D-645): the start, the
+      # folder with its uploads and acknowledgments, the process items, "Mais", the person's
+      # data, "Minha equipe" and the bell.
+      namespace :portal do
+        root "home#index"
+        resources :documents, only: %i[index show new create] do
+          get :file, on: :member
+          resources :versions, controller: "document_versions", only: %i[new create]
+        end
+        resources :acknowledgments, only: [] do
+          patch :confirm, on: :member
+        end
+        resources :items, controller: "process_items", only: :show do
+          member do
+            patch :done
+            patch :acknowledge
+            get :material
+          end
+        end
+        get "more", to: "more#show", as: :more
+        get "my-data", to: "profiles#show", as: :profile
+        get "team", to: "teams#show", as: :team
+        resources :notifications, only: %i[index show]
+      end
 
       # The prototype's modules not built yet (D-597).
       get "soon/:feature", to: "coming_soon#show", as: :coming_soon,

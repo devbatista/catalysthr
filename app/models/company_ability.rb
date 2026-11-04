@@ -31,6 +31,9 @@ class CompanyAbility
       hr_analyst(company, units: :all, modules: contracted)
     end
     manager(company, membership) if roles.include?("manager")
+    employee(company, membership) if roles.include?("employee")
+    # The portal (spec 16, RN-16-002, D-645): the employee and the manager.
+    can :read, :portal if (roles & %w[employee manager]).any?
     client_manager(company, membership) if roles.include?("client_manager")
     assigned_items(company, membership) if (roles & %w[manager client_manager]).any?
     # A read-only membership still reads its modules (D-090).
@@ -125,6 +128,23 @@ class CompanyAbility
     end
     can :read, ProcessInstance, company_id: company.id, id: instance_ids
     can :act, ProcessItem, company_id: company.id, id: item_ids
+  end
+
+  # What the employee does in the portal with their own folder and items (spec 16, D-645):
+  # see the documents in force, never the internal types (D-274, D-280), send them and new
+  # versions, confirm an acknowledgment (RN-08-051), and resolve the process items assigned
+  # to them. Health is only read (spec 03, section 4.5). Its own actions, so none of the
+  # HR's panel opens to them.
+  def employee(company, membership)
+    profile_id = ActsAsTenant.with_tenant(company) { WorkerProfile.where(membership: membership).pick(:id) }
+    return unless profile_id
+
+    own = { company_id: company.id, worker_profile_id: profile_id }
+    can :read_own, Document, own.merge(document_type: { internal: false })
+    can :upload_own, Document, own.merge(document_type: { internal: false, category: DocumentCategory::ALL - %w[health] })
+    can :acknowledge, Acknowledgment, own
+    item_ids = ActsAsTenant.with_tenant(company) { ProcessItem.where("? = ANY(responsible_membership_ids)", membership.id).pluck(:id) }
+    can :complete_own, ProcessItem, company_id: company.id, id: item_ids
   end
 
   # The manager reads their own departments, with the subdepartments (the E scope, D-190),
