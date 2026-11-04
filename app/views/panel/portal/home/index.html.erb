@@ -1,0 +1,70 @@
+<%# The portal's start (spec 16, RN-16-020, D-429, D-645), as in the prototype: "Minha
+    equipe" for managers, the pending items with their dates and the processes' progress.
+    The time tracking, notices, requests and payslip blocks come with their specs; an empty
+    block does not show. Nothing sensitive appears here (RN-16-021). %>
+<% name = (current_profile&.display_name || current_user.name).split.first %>
+<% content_for :title, t(".title") %>
+<% content_for :portal_title, t(".hello", name: name) %>
+<% pendings = portal_pendings.all %>
+
+<h1 class="page-title hidden lg:block"><%= t(".hello", name: name) %></h1>
+<p class="page-subtitle hidden lg:block"><%= Current.company.name %></p>
+
+<div class="grid gap-6 lg:mt-6 lg:grid-cols-2">
+  <div class="space-y-6">
+    <% if @team && !@team.empty? %>
+      <section class="card card-body space-y-3" aria-labelledby="team-title">
+        <div class="flex items-center justify-between gap-3">
+          <h2 id="team-title" class="card-title"><%= t(".team") %></h2>
+          <%= link_to t(".team_open"), portal_team_path, class: "link-button text-sm" %>
+        </div>
+        <ul class="space-y-1 text-sm">
+          <% if @team.items.any? %><li><%= t(".team_items", count: @team.items.size) %></li><% end %>
+          <% if @team.expiring.any? %><li><%= t(".team_expiring", count: @team.expiring.size) %></li><% end %>
+        </ul>
+      </section>
+    <% end %>
+
+    <section aria-labelledby="pendings-title" class="space-y-3">
+      <h2 id="pendings-title" class="section-title"><%= t(".pendings", count: pendings.size) %></h2>
+      <% if pendings.empty? %>
+        <p class="alert-ok"><%= t(".no_pendings") %></p>
+      <% else %>
+        <% pendings.each do |pending| %>
+          <%= link_to pending.path, class: "card card-body block space-y-1 no-underline hover:no-underline #{"border-bad-line" if pending.tone == :bad}" do %>
+            <span class="flex flex-wrap items-start justify-between gap-2">
+              <strong class="text-ink-strong"><%= pending.title %></strong>
+              <% if pending.due_on %><span class="pill <%= portal_tone_pill(pending.tone) %>"><%= t(".due", date: l(pending.due_on, format: "%d/%m")) %></span><% end %>
+            </span>
+            <% if pending.detail.present? %><span class="block text-sm <%= pending.tone == :bad ? "text-bad" : "text-ink-soft" %>"><%= pending.detail %></span><% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </section>
+  </div>
+
+  <div class="space-y-6">
+    <% @processes.each do |instance| %>
+      <% items = instance.items.reject(&:skipped?) %>
+      <% done = items.count(&:resolved?) %>
+      <section class="space-y-3" aria-label="<%= t("process_templates.kinds.#{instance.kind}") %>">
+        <h2 class="section-title"><%= t(".progress", kind: t("process_templates.kinds.#{instance.kind}"), done: done, count: items.size) %></h2>
+        <div class="card card-body space-y-2">
+          <progress class="h-1.5 w-full accent-ok" value="<%= done %>" max="<%= [ items.size, 1 ].max %>"
+            aria-label="<%= t(".progress_label", done: done, count: items.size) %>"></progress>
+          <ul class="divide-y divide-line-soft text-sm">
+            <% items.each do |item| %>
+              <li class="flex items-start gap-3 py-2">
+                <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border text-xs font-extrabold <%= item.resolved? ? "border-ok bg-ok text-white" : "border-ink-muted" %>" aria-hidden="true"><%= "✓" if item.resolved? %></span>
+                <span class="flex flex-col">
+                  <span class="<%= item.resolved? ? "text-ink-muted" : "font-bold text-ink-strong" %>"><%= item.title %></span>
+                  <span class="text-xs text-ink-soft"><%= t("process_templates.roles.#{item.responsible_role}") %></span>
+                </span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </section>
+    <% end %>
+  </div>
+</div>

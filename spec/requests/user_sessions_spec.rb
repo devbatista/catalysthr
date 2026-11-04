@@ -24,9 +24,10 @@ RSpec.describe "Sessions", type: :request do
     post "/sign-in", params: { user: { login: "12345678909", password: password } }
   end
 
+  # Who is only an employee or a manager starts at the portal (spec 16, RN-16-002).
   def signed_in?
     get "/"
-    response.status == 200
+    response.status == 200 || (response.redirect? && URI(response.location).path == "/portal")
   end
 
   it "records the session with the brand, the IP and the browser" do

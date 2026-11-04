@@ -18,7 +18,7 @@
 - [ ] **Mercado Pago:** liberação dos Pagamentos Automáticos (cartão salvo sem CVV). Libera o 19h. Próximo passo: o SAC por telefone (`pendencias-fornecedores.md`)
 - [x] **Asaas:** conta de sandbox. Libera o desenvolvimento do 19i (2026-10-28)
 - [x] **Asaas:** emissão configurada no Portal Nacional, conferida pela API em produção (2026-10-29, D-634)
-- [ ] **AWS:** saída do sandbox do SES. Recusada em 2026-10-27; caso reaberto no mesmo dia, com o site institucional no ar. Aguardando a resposta (`site-institucional.md`, D-631)
+- [ ] **AWS:** saída do sandbox do SES. Recusada em 2026-10-27; caso reaberto no mesmo dia, com o site institucional no ar (`site-institucional.md`, D-631). Recusada de novo em 2026-11-04, sem motivo. Caminho a decidir (`pendencias-fornecedores.md`)
 - [x] **Railway:** criptografia em repouso confirmada no relatório SOC 2 do Trust Center (2026-10-29), com ressalvas (`pendencias-fornecedores.md`)
 
 ## Depois, comigo

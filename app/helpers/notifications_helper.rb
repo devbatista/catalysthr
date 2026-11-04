@@ -6,6 +6,8 @@ module NotificationsHelper
   end
 
   def bell_path
+    return portal_notifications_path if portal_page?
+
     Current.area == :admin ? admin_notifications_path : notifications_path
   end
 
@@ -14,7 +16,14 @@ module NotificationsHelper
   end
 
   def open_notification_path(notification)
+    return portal_notification_path(notification) if portal_page?
+
     Current.area == :admin ? admin_notification_path(notification) : notification_path(notification)
+  end
+
+  # The portal's pages keep the person in the portal (spec 16, D-645).
+  def portal_page?
+    controller_path.start_with?("panel/portal")
   end
 
   def bell_label(count)

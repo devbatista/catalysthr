@@ -26,6 +26,8 @@ class Membership < ApplicationRecord
   belongs_to :invited_by, class_name: "User", optional: true
   # Companies assigned to a consultant of the partner (D-052).
   has_many :partner_membership_companies, dependent: :delete_all
+  # The employee's record at the company (spec 04, RN-04-040).
+  has_one :worker_profile, dependent: nil
   has_many :assigned_companies, through: :partner_membership_companies, source: :company
 
   # RN-02-060: invited → active ⇄ suspended → read_only → revoked.

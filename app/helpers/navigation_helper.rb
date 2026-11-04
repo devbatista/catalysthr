@@ -188,6 +188,8 @@ module NavigationHelper
   # The person's other areas on this subdomain.
   def other_areas_group
     nav_group(:areas, [
+      # Who is also an employee or a manager at the company (spec 16, RN-16-002).
+      (nav_item(t("navigation.my_portal"), portal_root_path, false) if panel_context == :company && can?(:read, :portal)),
       (nav_item(t("navigation.partner_area"), partner_root_path, false) if panel_context != :partner && can?(:read, :partner_panel)),
       (nav_item(t("navigation.firm_area"), firm_root_path, false) if panel_context != :firm && can?(:read, :firm_panel))
     ])

@@ -1,0 +1,45 @@
+<%# A process item assigned to the person (spec 06, RN-06-010, RN-06-060; D-645): a task to
+    mark as done, a PDF to read and accept, or a document to send. %>
+<% content_for :title, @item.title %>
+
+<p class="text-sm"><%= link_to t(".back"), portal_root_path, class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= @item.title %></h1>
+<p class="page-subtitle">
+  <%= t("process_templates.kinds.#{@item.instance.kind}") %>
+  <% if @item.due_on %> · <%= t(".due", date: l(@item.due_on)) %><% end %>
+</p>
+
+<section class="card card-body mt-6 space-y-4">
+  <% if @item.instructions %><p class="whitespace-pre-line text-sm"><%= @item.instructions %></p><% end %>
+
+  <% if @item.document? %>
+    <% if @document %>
+      <%= link_to t(".open_document"), portal_document_path(@document), class: "btn btn-primary w-full sm:w-auto" %>
+    <% else %>
+      <%= link_to t(".send_document"), new_portal_document_path(process_item_id: @item.id), class: "btn btn-primary w-full sm:w-auto" %>
+    <% end %>
+    <p class="field-hint"><%= t("processes.document_hint") %></p>
+  <% elsif !@item.pending? %>
+    <p class="alert-info"><%= t(".not_pending") %></p>
+  <% elsif @item.task? %>
+    <%= form_with url: done_portal_item_path(@item), method: :patch, class: "space-y-3" do |form| %>
+      <div>
+        <%= form.label :comment, t(".comment"), class: "field-label" %>
+        <%= form.text_area :comment, rows: 2, maxlength: 2000, class: "input" %>
+      </div>
+      <%= form.submit t(".done"), class: "btn btn-primary w-full sm:w-auto" %>
+    <% end %>
+  <% elsif @item.acknowledgement? %>
+    <% material = @item.material %>
+    <% if material&.clean? %>
+      <%= link_to t(".read", version: material.version), material_portal_item_path(@item), class: "btn btn-secondary w-full sm:w-auto",
+        target: "_blank", rel: "noopener" %>
+      <%= form_with url: acknowledge_portal_item_path(@item), method: :patch, class: "space-y-3" do |form| %>
+        <p class="field-hint"><%= t(".acknowledge_hint") %></p>
+        <%= form.submit t(".acknowledge"), class: "btn btn-primary w-full sm:w-auto" %>
+      <% end %>
+    <% else %>
+      <p class="alert-info"><%= t(".material_wait") %></p>
+    <% end %>
+  <% end %>
+</section>

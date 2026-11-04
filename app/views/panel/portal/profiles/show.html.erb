@@ -1,0 +1,32 @@
+<%# "Meus dados" (spec 16, RN-16-011): the employments and the contact, without sensitive
+    data. Asking for a change (D-210) comes with the requests (spec 09). %>
+<% content_for :title, t(".title") %>
+<% user = current_profile.user %>
+
+<p class="text-sm"><%= link_to t(".back"), portal_more_path, class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= current_profile.display_name %></h1>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2">
+  <% @employments.each do |employment| %>
+    <% revision = employment.effective_revision %>
+    <section class="card card-body space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="card-title"><%= t(".registration", number: employment.registration_number) %></h2>
+        <span class="pill <%= employment.open? ? "pill-ok" : "pill-mute" %>"><%= t(employment.open? ? ".open" : ".ended") %></span>
+      </div>
+      <dl class="details-list">
+        <div><dt><%= t(".position") %></dt><dd><%= revision&.position&.name || "—" %></dd></div>
+        <div><dt><%= t(".unit") %></dt><dd><%= [ revision&.unit&.name, revision&.department&.name ].compact.join(" · ").presence || "—" %></dd></div>
+        <div><dt><%= t(".started_on") %></dt><dd><%= l(employment.started_on) %></dd></div>
+      </dl>
+    </section>
+  <% end %>
+  <section class="card card-body space-y-3">
+    <h2 class="card-title"><%= t(".contact") %></h2>
+    <dl class="details-list">
+      <div><dt><%= t(".email") %></dt><dd><%= user.email || "—" %></dd></div>
+      <div><dt><%= t(".mobile_phone") %></dt><dd><%= user.mobile_phone || "—" %></dd></div>
+    </dl>
+    <p class="field-hint"><%= t(".change_hint") %></p>
+  </section>
+</div>

@@ -24,7 +24,7 @@ RSpec.describe "Current company", type: :request do
     create(:membership, user: user, organization: padaria, roles: %w[manager])
     sign_in
 
-    get "/"
+    get "/?panel=1"
     expect(response.body).to include("Empresa: Padaria Pão Quente.")
   end
 
@@ -34,19 +34,19 @@ RSpec.describe "Current company", type: :request do
     outsider = create(:company, partner: partner, name: "Outra Empresa")
     sign_in
 
-    get "/"
+    get "/?panel=1"
     expect(response).to redirect_to("/companies")
     get "/companies"
     expect(response.body).to include("Padaria Pão Quente", "Transportes Rápidos")
     expect(response.body).not_to include("Outra Empresa")
 
     post "/current-company", params: { company_id: transportes.id }
-    get "/"
+    get "/?panel=1"
     expect(response.body).to include("Empresa: Transportes Rápidos.")
 
     post "/current-company", params: { company_id: outsider.id }
     expect(response).to have_http_status(:not_found)
-    get "/"
+    get "/?panel=1"
     expect(response.body).to include("Empresa: Transportes Rápidos.")
   end
 
@@ -59,7 +59,7 @@ RSpec.describe "Current company", type: :request do
     end
     sign_in
 
-    get "/"
+    get "/?panel=1"
     expect(tenants).to eq([ padaria ])
   end
 
@@ -70,7 +70,7 @@ RSpec.describe "Current company", type: :request do
     post "/current-company", params: { company_id: padaria.id }
 
     membership.update_columns(status: "revoked")
-    get "/"
+    get "/?panel=1"
 
     expect(response.body).to include("Empresa: Transportes Rápidos.")
   end

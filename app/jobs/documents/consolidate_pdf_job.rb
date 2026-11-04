@@ -27,6 +27,10 @@ module Documents
       document = version.document
       if version.awaiting_review? && (publication = document.publication)
         Review.new(version, by: publication.published_by).approve
+        document.acknowledgments.awaiting.find_each do |acknowledgment|
+          Notices.employee("documents.acknowledgment_pending", document, subject: acknowledgment, title: publication.title,
+            due: I18n.l(acknowledgment.due_on))
+        end
       else
         Followers.sync(document, by: version.uploaded_by)
       end

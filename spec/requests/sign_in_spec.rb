@@ -28,8 +28,9 @@ RSpec.describe "Sign-in", type: :request do
     post "/sign-in", params: { user: { login: login, password: password } }
   end
 
+  # A manager opens the panel through "Abrir painel" (spec 16, RN-16-002).
   def signed_in?
-    get "/"
+    get "/?panel=1"
     response.status == 200 && response.body.include?("Olá, Maria.")
   end
 
@@ -69,7 +70,7 @@ RSpec.describe "Sign-in", type: :request do
   it "signs in with the CPF with or without the mask, and with the e-mail (CA-02-003)" do
     [ "123.456.789-09", "12345678909", "Maria@Example.com" ].each do |login|
       sign_in_with(login)
-      expect(response).to redirect_to("/"), login
+      expect(URI(response.location).path).to eq("/"), login
       expect(signed_in?).to be(true), login
 
       delete "/sign-out"

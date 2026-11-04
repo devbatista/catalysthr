@@ -80,6 +80,18 @@ NotificationType::CATALOG = [
     roles: %w[hr_admin hr_analyst consultant]),
   NotificationType.new(code: "documents.team_expiring", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[manager]),
+  # The employee's documents in the portal (spec 16, D-645): asked, a correction, expiring
+  # and an acknowledgment waiting. WhatsApp and push come with spec 15's rest, so the
+  # first three stay in the bell for now.
+  NotificationType.new(code: "documents.requested", mandatory: false, urgent: false, channels: %w[system], roles: %w[employee]),
+  NotificationType.new(code: "documents.correction_requested", mandatory: false, urgent: false, channels: %w[system],
+    roles: %w[employee]),
+  NotificationType.new(code: "documents.expiring", mandatory: false, urgent: false, channels: %w[system], roles: %w[employee]),
+  NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[employee]),
+  # A version the employee sent, to the unit's HR (D-645).
+  NotificationType.new(code: "documents.review_pending", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
   # A batch with files not distributed, 7 days before it expires, to who sent it
   # (RN-08-062, D-644).
   NotificationType.new(code: "documents.batch_expiring", mandatory: false, urgent: false, channels: %w[system email],

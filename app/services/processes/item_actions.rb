@@ -40,6 +40,17 @@ module Processes
       end
     end
 
+    # The employee read the PDF and accepts it (RN-06-060, P-06-17, D-645): the version read,
+    # the date, the time, the IP and the browser stay in the result.
+    def acknowledge(ip:, user_agent:)
+      material = @item.material
+      return error(:material_not_ready) unless material&.clean?
+
+      act("done", "item_acknowledged", panel_kinds: %w[acknowledgement],
+        result: { "material_id" => material.id, "material_version" => material.version, "ip" => ip,
+          "user_agent" => user_agent.to_s.first(500), "acknowledged_at" => Time.current.iso8601 })
+    end
+
     # Any open item; a required one only with a reason (RN-06-052, P-06-15).
     def skip(reason:)
       reason = reason.to_s.strip.presence

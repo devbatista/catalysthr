@@ -1,0 +1,32 @@
+<%# A new document sent by the employee (RN-08-013): the type and the files, from the
+    camera or the device. It goes to the HR's review. %>
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), portal_documents_path, class: "link-button" %></p>
+<h1 class="mt-3 page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with model: @upload, scope: :upload, url: portal_documents_path, method: :post, multipart: true, class: "card card-body mt-6 space-y-5" do |form| %>
+  <%= render "admin/plans/errors", records: [ @upload ] %>
+  <% if @upload.process_item %>
+    <%= form.hidden_field :process_item_id, value: @upload.process_item.id %>
+    <p class="alert-info"><%= t(".for_item", title: @upload.process_item.title) %></p>
+  <% end %>
+  <div class="form-grid">
+    <div class="field-wide">
+      <%= form.label :document_type_id, t(".type"), class: "field-label" %>
+      <% if @upload.process_item && @upload.document_type %>
+        <%= form.hidden_field :document_type_id, value: @upload.document_type.id %>
+        <p class="input bg-canvas"><%= @upload.document_type.name %></p>
+      <% else %>
+        <%= form.select :document_type_id, types.map { |type| [ type.name, type.id ] }, { include_blank: true, selected: @upload.document_type&.id },
+          required: true, class: "input" %>
+      <% end %>
+    </div>
+    <%= render "upload_fields", max_files: @upload.document_type&.max_files || DocumentTypeDefinition::MAX_FILES %>
+  </div>
+  <div class="flex flex-wrap items-center gap-4 border-t border-line-soft pt-5">
+    <%= form.submit t(".submit"), class: "btn btn-primary w-full sm:w-auto" %>
+    <%= link_to t(".cancel"), portal_documents_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

@@ -127,6 +127,31 @@
     </section>
   <% end %>
 
+  <%# The portal's access and invitation (spec 16, D-600, D-645), through the invitation of
+      spec 02, valid for 72 hours (RN-02-012). %>
+  <% membership = @profile.membership %>
+  <% if membership && can?(:resend_invitation, membership) %>
+    <section class="card card-body space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="card-title"><%= t(".portal") %></h2>
+        <span class="pill <%= membership.invited? ? "pill-warn" : "pill-ok" %>"><%= t(".portal_status.#{membership.invited? ? (membership.invitation_open? ? "invited" : "no_access") : "active"}") %></span>
+      </div>
+      <% if membership.invited? %>
+        <p class="text-sm text-ink-soft"><%= t(".portal_hint") %></p>
+        <%= form_with url: invite_employee_path(@profile), method: :post, class: "space-y-2" do |form| %>
+          <% Membership::INVITATION_CHANNELS.each do |channel| %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag "channels[]", channel, channel == "email" ? user.email_deliverable? : user.email.blank?, id: "portal_channel_#{channel}",
+                disabled: channel == "email" && !user.email_deliverable? %>
+              <%= t("invitation_channels.#{channel}") %>
+            </label>
+          <% end %>
+          <div class="pt-1"><%= form.submit t(membership.invitation_sent_at ? ".portal_resend" : ".portal_invite"), class: "btn btn-secondary" %></div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
   <section class="card card-body">
     <h2 class="card-title"><%= t(".contact") %></h2>
     <dl class="details-list mt-3">

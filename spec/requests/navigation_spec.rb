@@ -39,7 +39,7 @@ RSpec.describe "Navigation", type: :request do
     end
 
     it "lists every module of the prototype, the ones not built yet as \"Em breve\"" do
-      get "/"
+      get "/?panel=1"
 
       expect(response.body).to include("Painel", "Colaboradores", "Folha de pagamento", "Ponto eletrônico", "Integrações contábeis")
       expect(response.body.scan(">Em breve<").size).to eq(ComingSoon::COMPANY_FEATURES.size)
@@ -63,7 +63,7 @@ RSpec.describe "Navigation", type: :request do
     it "hides a module the partner turned off for the company, and does not open it (RN-19-012, D-616)" do
       turn_on_modules(padaria, %w[folha])
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).to include("Folha de pagamento")
       expect(response.body).not_to include("Ponto eletrônico")
 
@@ -75,7 +75,7 @@ RSpec.describe "Navigation", type: :request do
       Flipper.disable(FeatureFlags::BILLING)
       turn_on_modules(padaria, [])
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).to include("Folha de pagamento", "Ponto eletrônico")
       expect(response.body.scan(">Em breve<").size).to eq(ComingSoon::COMPANY_FEATURES.size)
     end
@@ -83,7 +83,7 @@ RSpec.describe "Navigation", type: :request do
     it "hides the modules out of the contract (P-03-12, D-616)" do
       subscription.items.each { |item| item.update!(ends_on: Date.yesterday, starts_on: Date.yesterday) }
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).not_to include("Folha de pagamento", "Ponto eletrônico")
       expect(response.body).to include("Integrações contábeis")
     end
@@ -92,7 +92,7 @@ RSpec.describe "Navigation", type: :request do
       Membership.find_by!(user: user).update!(roles: %w[hr_analyst], enabled_modules: %w[documentos])
       sign_in_again
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).to include("Documentos", "Assistente")
       expect(response.body).not_to include("Folha de pagamento", "Ponto eletrônico", "Admissões")
 
@@ -104,11 +104,11 @@ RSpec.describe "Navigation", type: :request do
       Membership.find_by!(user: user).update!(roles: %w[hr_admin])
       sign_in_again
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).to include("Folha de pagamento", "Ponto eletrônico", "Admissões")
 
       subscription.items.find_by!(module: "folha").update!(ends_on: Date.yesterday, starts_on: Date.yesterday)
-      get "/"
+      get "/?panel=1"
       expect(response.body).not_to include("Folha de pagamento")
       expect(response.body).to include("Ponto eletrônico")
     end
@@ -116,7 +116,7 @@ RSpec.describe "Navigation", type: :request do
     it "shows time tracking as available after the contract during the trial (CA-19-003, RN-19-031)" do
       subscription.update!(status: "trialing", trial_ends_on: Date.current + 5, activated_on: nil)
 
-      get "/"
+      get "/?panel=1"
       expect(response.body).to match(%r{href="/soon/time-tracking".*?Após a contratação}m)
       expect(response.body).to match(%r{href="/soon/payroll".*?Em breve}m)
 
@@ -163,7 +163,7 @@ RSpec.describe "Navigation", type: :request do
 
     it "is white on a dark secondary color" do
       sign_in
-      get "/"
+      get "/?panel=1"
 
       expect(response.body).to include("--brand-on-secondary: #FFFFFF")
     end
@@ -171,7 +171,7 @@ RSpec.describe "Navigation", type: :request do
     it "is dark on a light secondary color" do
       brand.update!(secondary_color: "#F4F7FA")
       sign_in
-      get "/"
+      get "/?panel=1"
 
       expect(response.body).to include("--brand-on-secondary: #0C1E33")
     end
@@ -184,7 +184,7 @@ RSpec.describe "Navigation", type: :request do
       host! "admin.catalysthr.com.br"
       sign_in_with_mfa("52998224725", superadmin)
 
-      get "/"
+      get "/?panel=1"
 
       expect(response.body).to include("Marcas", "Ver como um usuário", "Termos e política")
       # Only the support enters a direct company (D-581)
