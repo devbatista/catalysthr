@@ -89,7 +89,7 @@ gem "aws-actionmailer-ses", "~> 1.2"
 gem "aws-sdk-sesv2", "~> 1.115"
 
 # The signature of the SES events that SNS posts to the app (spec 15, P-15-24, D-609)
-gem "aws-sdk-sns", "~> 1.124"
+gem "aws-sdk-sns", "~> 1.126"
 
 # The partner's usage report (spec 19, RN-19-024). Out of the default gems since Ruby 3.4.
 gem "csv", "~> 3.3"
