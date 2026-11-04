@@ -6,6 +6,22 @@ document.addEventListener("submit", (event) => {
   if (message && !window.confirm(message)) event.preventDefault()
 })
 
+// Leaving the session clears the app's caches on the device (spec 16, RN-16-061,
+// CA-16-008). They hold only the shell, never data, but nothing stays after a sign-out.
+document.addEventListener("submit", async (event) => {
+  const form = event.target
+  if (event.defaultPrevented || form.dataset.cachesCleared || !("caches" in window)) return
+  if (new URL(form.action, window.location.href).pathname !== "/sign-out") return
+
+  event.preventDefault()
+  try {
+    await Promise.all((await caches.keys()).map((key) => caches.delete(key)))
+  } finally {
+    form.dataset.cachesCleared = "true"
+    form.requestSubmit()
+  }
+})
+
 // A form is sent once. A double click, or Enter and then a click, would send it twice, and
 // the second request can fail where the first one worked, as with the single-use MFA code.
 // The mark clears when the page comes back from the history, and after a while for forms
@@ -296,3 +312,82 @@ document.querySelectorAll("[data-portal-upload]").forEach((box) => {
     form.requestSubmit()
   })
 })
+
+// The app's shell (spec 16, RN-16-061, RN-16-064, D-424): the service worker keeps only the
+// files with a digest and the page without connection. A new version waits until the
+// person taps "Atualizar", or opens the app again.
+if ("serviceWorker" in navigator && document.querySelector('link[rel="manifest"]')) {
+  const banner = document.querySelector("[data-sw-update]")
+  const offer = (worker) => {
+    if (!banner || !navigator.serviceWorker.controller) return
+    banner.hidden = false
+    banner.querySelector("[data-sw-update-button]").onclick = () => worker.postMessage("activate")
+  }
+
+  navigator.serviceWorker.register("/service-worker.js").then(async (registration) => {
+    if (registration.waiting) offer(registration.waiting)
+    // After a sign-out the caches are empty: the shell comes back, still without data.
+    if (registration.active && "caches" in window && (await caches.keys()).length === 0) registration.active.postMessage("precache")
+    registration.addEventListener("updatefound", () => {
+      const worker = registration.installing
+      worker?.addEventListener("statechange", () => {
+        if (worker.state === "installed") offer(worker)
+      })
+    })
+  }).catch(() => {})
+
+  let reloading = false
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloading) return
+    reloading = true
+    window.location.reload()
+  })
+}
+
+// A browser older than the supported ones (D-428, RN-16-080) sees the notice, and the
+// pages keep working.
+if (!(typeof structuredClone === "function" && window.CSS?.supports?.("selector(:has(*))"))) {
+  document.querySelector("[data-old-browser]")?.removeAttribute("hidden")
+}
+
+// The invite to install the app on the start (spec 16, RN-16-065, D-427, CA-16-006): from
+// the second visit on, never once installed; the browser's "Instalar" on Android and on the
+// computer, and the steps on the iPhone, which also free the push. Dismissed, it comes back
+// in 30 days. Only these interface choices stay in the browser (RN-16-063).
+const installInvite = document.querySelector("[data-install-invite]")
+if (installInvite) {
+  const store = {
+    get: (key) => { try { return window.localStorage.getItem(key) } catch { return null } },
+    set: (key, value) => { try { window.localStorage.setItem(key, value) } catch { /* private mode */ } }
+  }
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true
+  const dismissedAt = Number(store.get("install_invite.dismissed_at") || 0)
+  const seen = store.get("install_invite.seen")
+  const show = (variant) => {
+    installInvite.querySelector(`[data-install-variant="${variant}"]`).hidden = false
+    installInvite.hidden = false
+  }
+
+  if (!seen) store.set("install_invite.seen", String(Date.now()))
+  const eligible = seen && !standalone && Date.now() - dismissedAt > 30 * 24 * 60 * 60 * 1000
+  const iphone = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+
+  installInvite.querySelector("[data-install-dismiss]").addEventListener("click", () => {
+    store.set("install_invite.dismissed_at", String(Date.now()))
+    installInvite.hidden = true
+  })
+
+  if (eligible && iphone) show("ios")
+  if (eligible && !iphone) {
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault()
+      show("prompt")
+      installInvite.querySelector("[data-install-button]").onclick = async () => {
+        event.prompt()
+        await event.userChoice
+        installInvite.hidden = true
+      }
+    })
+  }
+  window.addEventListener("appinstalled", () => { installInvite.hidden = true })
+}

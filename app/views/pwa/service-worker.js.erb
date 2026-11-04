@@ -1,0 +1,51 @@
+// The app's shell (spec 16, RN-16-061, RN-16-062, D-424): only the files with a digest in
+// their names and the page without connection are kept. Pages and data always come from
+// the network and are never kept, so nothing of the person stays on the device. Without
+// connection, a page or a form sent shows "Sem conexão", and nothing is kept to send later
+// (D-064, CA-16-007). Each version has its own cache; the new worker waits until the page
+// asks for it ("Nova versão disponível", RN-16-064) or the app opens again.
+const CACHE = "shell-<%= @version %>"
+const OFFLINE = "<%= offline_path %>"
+
+const precache = async () => {
+  const cache = await caches.open(CACHE)
+  const response = await fetch(OFFLINE, { cache: "no-store" })
+  const html = await response.clone().text()
+  const assets = [ ...html.matchAll(/(?:href|src)="(\/assets\/[^"]+)"/g) ].map((match) => match[1])
+  await cache.put(OFFLINE, response)
+  await cache.addAll(assets)
+}
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(precache())
+})
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))))
+})
+
+// "activate" from the update notice; "precache" when the page finds the caches empty, as
+// after a sign-out, so the page without connection is there again.
+self.addEventListener("message", (event) => {
+  if (event.data === "activate") self.skipWaiting()
+  if (event.data === "precache") event.waitUntil(precache())
+})
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request
+  const url = new URL(request.url)
+  if (url.origin !== self.location.origin) return
+
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).catch(async () => (await caches.match(OFFLINE, { cacheName: CACHE })) || Response.error()))
+  } else if (request.method === "GET" && url.pathname.startsWith("/assets/")) {
+    event.respondWith(caches.open(CACHE).then(async (cache) => {
+      const cached = await cache.match(request)
+      if (cached) return cached
+
+      const response = await fetch(request)
+      if (response.ok) cache.put(request, response.clone())
+      return response
+    }))
+  }
+})

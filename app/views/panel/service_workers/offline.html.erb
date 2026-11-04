@@ -1,0 +1,26 @@
+<%# Without connection (spec 16, RN-16-062): the only page the service worker keeps, with
+    the brand and nothing of the person (D-424). Nothing was kept to send later (D-064). %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title><%= t(".title") %> · <%= Current.brand.commercial_name %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="<%= theme_colors[:primary] %>">
+    <style nonce="<%= content_security_policy_nonce %>">
+      :root {
+        --brand-primary: <%= theme_colors[:primary] %>;
+        --brand-secondary: <%= theme_colors[:secondary] %>;
+        --brand-on-primary: <%= primary_text_color %>;
+      }
+    </style>
+    <%= stylesheet_link_tag :app %>
+  </head>
+  <body class="flex min-h-screen items-center justify-center bg-canvas px-4">
+    <main class="card card-body w-full max-w-md space-y-4 text-center">
+      <p class="text-lg font-extrabold text-ink-strong"><%= Current.brand.commercial_name %></p>
+      <h1 class="page-title"><%= t(".title") %></h1>
+      <p class="text-sm text-ink-soft"><%= t(".message") %></p>
+      <a href="/" class="btn btn-primary w-full"><%= t(".retry") %></a>
+    </main>
+  </body>
+</html>

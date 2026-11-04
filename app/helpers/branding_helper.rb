@@ -17,8 +17,18 @@ module BrandingHelper
   SIDEBAR_DARK_TEXT = "#0C1E33"
 
   def sidebar_text_color(secondary = theme_colors[:secondary])
+    readable_text_color(secondary)
+  end
+
+  # The text on the primary color, such as a button's: white or ink, whichever reads
+  # better, so a light yellow brand gets dark text (spec 16, RN-16-083, CA-16-012).
+  def primary_text_color(primary = theme_colors[:primary])
+    readable_text_color(primary)
+  end
+
+  def readable_text_color(background)
     white = Brand::WHITE
-    ColorContrast.ratio(secondary, white) >= ColorContrast.ratio(secondary, SIDEBAR_DARK_TEXT) ? white : SIDEBAR_DARK_TEXT
+    ColorContrast.ratio(background, white) >= ColorContrast.ratio(background, SIDEBAR_DARK_TEXT) ? white : SIDEBAR_DARK_TEXT
   end
 
   # On a dark sidebar, the logo for dark backgrounds; on a light one, the other.
