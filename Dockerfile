@@ -17,10 +17,14 @@ WORKDIR /rails
 # Install base packages. The 7zip package provides `7z` (7-Zip 25) for AES-256 export ZIPs (D-514).
 # The PostgreSQL client comes from the official PostgreSQL repository (PGDG): the daily
 # pg_dump must match the server's version 18, and Debian 13 ships 17 (RN-20-041, D-627).
-RUN apt-get update -qq && \
+# The PGDG signing key lives in the repository (fingerprint
+# B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8, from https://www.postgresql.org/media/keys/ACCC4CF8.asc)
+# so the build does not depend on www.postgresql.org; downloading it failed several deploys
+# with TLS errors. Apt retries transient network failures in every stage.
+COPY docker/apt.postgresql.org.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries && \
+    apt-get update -qq && \
     apt-get install --no-install-recommends -y ca-certificates curl && \
-    install -d /usr/share/postgresql-common/pgdg && \
-    curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
     echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" \
       > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update -qq && \
