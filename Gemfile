@@ -86,7 +86,7 @@ gem "aws-sdk-s3", "~> 1.237", require: false
 
 # E-mail through SES in São Paulo, and the brands' e-mail domains (spec 15, RN-01-040, D-596)
 gem "aws-actionmailer-ses", "~> 1.2"
-gem "aws-sdk-sesv2", "~> 1.115"
+gem "aws-sdk-sesv2", "~> 1.117"
 
 # The signature of the SES events that SNS posts to the app (spec 15, P-15-24, D-609)
 gem "aws-sdk-sns", "~> 1.126"
