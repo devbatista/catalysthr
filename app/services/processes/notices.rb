@@ -16,6 +16,26 @@ module Processes
       end
     end
 
+    # A form sent by the person, to the process's HR (D-649). Only the item's title and the
+    # person's name, never an answer.
+    def form_submitted(item)
+      instance = item.instance
+      HrScope.new(instance.company).memberships_for(unit_id: instance.unit_id, kind: instance.kind).each do |membership|
+        Notifications.notify!("processes.form_submitted", user: membership.user, membership: membership, company: instance.company,
+          subject: item, dedup_key: "form_submitted/#{item.id}/#{item.form_response.submitted_at.to_i}",
+          path: "/processes/#{instance.id}/items/#{item.id}/form/edit", item: item.title, person: instance.subject.worker_profile.display_name)
+      end
+    end
+
+    # A form given back, to the person, in the portal (D-649).
+    def form_returned(item)
+      item.responsibles.with_access.includes(:user).each do |membership|
+        Notifications.notify!("processes.form_correction_requested", user: membership.user, membership: membership,
+          company: item.instance.company, subject: item, dedup_key: "form_returned/#{item.id}/#{item.updated_at.to_i}",
+          path: "/portal/items/#{item.id}", item: item.title)
+      end
+    end
+
     def overdue(item)
       instance = item.instance
       people = OVERDUE_ROLES.include?(item.responsible_role) ? item.responsibles.with_access.includes(:user).to_a : []

@@ -22,6 +22,8 @@ module Processes
         return false unless instance.save
 
         Events.record(instance, "cancelled", by: by, reason: instance.cancel_reason)
+        # Answers never applied have no reason to stay (D-649).
+        ProcessFormResponse.discard(instance.items.select(:id))
       end
       true
     end

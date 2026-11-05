@@ -1,0 +1,179 @@
+<%# The fields of a form item (RN-06-030, D-649), in the portal and in the panel. show: gives
+    the value of a sensitive answer, for the panel, after the password; the portal passes
+    nil, so it stays empty and says when one is already given. Without JavaScript. %>
+<% data = response.data %>
+<% profile = schema.profile %>
+<% has_value = ->(field) {
+     data.dig("fields", field.key).present? || (field.type == :disability_types ? profile.disability_types.any? : profile.public_send(field.key).present?)
+   } %>
+<% label_for = ->(field) { t("panel.employees.edit.#{field.label}") } %>
+<% schema.sections.each do |group, fields| %>
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("process_templates.form_groups.#{group}") %></h2>
+    <% if fields.any?(&:sensitive?) %><p class="field-hint"><%= t("processes.form.sensitive_hint") %></p><% end %>
+    <div class="form-grid">
+      <% fields.each do |field| %>
+        <% name = "form[fields][#{field.key}]" %>
+        <% id = "form_#{field.key}" %>
+        <% answer = data.dig("fields", field.key) %>
+        <% value = if field.sensitive? then show&.call(response, field.key, field.section, answer)
+           elsif !answer.nil? then answer
+           else profile.public_send(field.key) end %>
+        <% case field.type %>
+        <% when :boolean %>
+          <%# In the portal, the person's own answer; in the panel, after the password. %>
+          <% checked = !field.sensitive? || show.nil? ? (field.sensitive? ? answer : value) : value == true %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= hidden_field_tag name, "0", id: nil %>
+            <%= check_box_tag name, "1", checked, id: id %>
+            <%= label_for.(field) %>
+          </label>
+        <% when :disability_types %>
+          <fieldset class="field-full">
+            <legend class="field-label"><%= t("processes.form.disability_types") %></legend>
+            <%= hidden_field_tag "#{name}[]", "", id: nil %>
+            <% chosen = show ? show.call(response, field.key, field.section, Array(answer).join(",")).to_s.split(",") : Array(answer) %>
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <% field.options.each do |type| %>
+                <label class="flex items-center gap-2 text-sm">
+                  <%= check_box_tag "#{name}[]", type, chosen.include?(type), id: "#{id}_#{type}" %>
+                  <%= t("worker_profiles.disability_types.#{type}") %>
+                </label>
+              <% end %>
+            </div>
+          </fieldset>
+        <% else %>
+          <div class="<%= "field-full" if field.type == :text_area %>">
+            <%= label_tag id, label_for.(field), class: "field-label" %>
+            <% case field.type %>
+            <% when :select %>
+              <%= select_tag name, options_for_select(field.options.map { |option| [ t("worker_profiles.#{Processes::FormSchema::OPTIONS.fetch(field.key)}.#{option}"), option ] }, value), include_blank: true, id: id, class: "input" %>
+            <% when :plain_select %>
+              <%= select_tag name, options_for_select(field.options, value), include_blank: true, id: id, class: "input" %>
+            <% when :date %>
+              <%= date_field_tag name, value, id: id, class: "input" %>
+            <% when :text_area %>
+              <%= text_area_tag name, value, id: id, rows: 2, class: "input" %>
+            <% when :email %>
+              <%= email_field_tag name, value, id: id, class: "input" %>
+            <% when :tel %>
+              <%= telephone_field_tag name, value, id: id, class: "input" %>
+            <% else %>
+              <%= text_field_tag name, value, id: id, autocomplete: "off", class: "input#{" font-mono" if field.sensitive?}" %>
+            <% end %>
+            <% if field.sensitive? && show.nil? && has_value.(field) %><p class="field-hint"><%= t("processes.form.already_given") %></p><% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<% schema.row_groups.each do |group| %>
+  <% rows = data.dig("rows", group) || [] %>
+  <% existing = group == "dependents" ? profile.dependents.where(status: "active") : profile.emergency_contacts %>
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("process_templates.form_groups.#{group}") %></h2>
+    <p class="field-hint"><%= t("processes.form.rows_hint") %></p>
+    <% if existing.any? %>
+      <p class="text-sm"><%= t("processes.form.existing", names: existing.map(&:name).to_sentence) %></p>
+    <% end %>
+    <% [ rows.size + 1, Processes::FormSchema::MAX_ROWS ].min.times do |index| %>
+      <% row = rows[index] || {} %>
+      <% prefix = "form[rows][#{group}][#{index}]" %>
+      <div class="form-grid border-t border-line-soft pt-4">
+        <% if group == "emergency_contacts" %>
+          <div class="field-wide"><%= label_tag "#{group}_#{index}_name", t("panel.emergency_contacts.form.name"), class: "field-label" %>
+            <%= text_field_tag "#{prefix}[name]", row["name"], id: "#{group}_#{index}_name", maxlength: 120, autocomplete: "off", class: "input" %></div>
+          <div><%= label_tag "#{group}_#{index}_relationship", t("panel.emergency_contacts.form.relationship"), class: "field-label" %>
+            <%= text_field_tag "#{prefix}[relationship]", row["relationship"], id: "#{group}_#{index}_relationship", maxlength: 60, class: "input" %></div>
+          <div><%= label_tag "#{group}_#{index}_phone", t("panel.emergency_contacts.form.phone"), class: "field-label" %>
+            <%= telephone_field_tag "#{prefix}[phone]", row["phone"], id: "#{group}_#{index}_phone", class: "input" %></div>
+        <% else %>
+          <div class="field-wide"><%= label_tag "#{group}_#{index}_name", t("panel.dependents.form.name"), class: "field-label" %>
+            <%= text_field_tag "#{prefix}[name]", row["name"], id: "#{group}_#{index}_name", maxlength: 120, autocomplete: "off", class: "input" %></div>
+          <div><%= label_tag "#{group}_#{index}_relationship_type", t("panel.dependents.form.relationship_type"), class: "field-label" %>
+            <%= select_tag "#{prefix}[relationship_type]", options_for_select(Dependent::RELATIONSHIP_TYPES.map { |type| [ t("dependents.relationship_types.#{type}"), type ] }, row["relationship_type"]), include_blank: true, id: "#{group}_#{index}_relationship_type", class: "input" %></div>
+          <div><%= label_tag "#{group}_#{index}_birth_date", t("panel.dependents.form.birth_date"), class: "field-label" %>
+            <%= date_field_tag "#{prefix}[birth_date]", row["birth_date"], id: "#{group}_#{index}_birth_date", class: "input" %></div>
+          <div><%= label_tag "#{group}_#{index}_cpf", t("panel.dependents.form.cpf"), class: "field-label" %>
+            <%= text_field_tag "#{prefix}[cpf]", show&.call(response, "dependents.#{index}.cpf", "documents", row["cpf"]), id: "#{group}_#{index}_cpf", inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
+            <% if show.nil? && row["cpf"].present? %><p class="field-hint"><%= t("processes.form.already_given") %></p><% end %></div>
+          <div><%= label_tag "#{group}_#{index}_sex", t("panel.dependents.form.sex"), class: "field-label" %>
+            <%= select_tag "#{prefix}[sex]", options_for_select(WorkerProfile::SEXES.map { |sex| [ t("worker_profiles.sexes.#{sex}"), sex ] }, row["sex"]), include_blank: true, id: "#{group}_#{index}_sex", class: "input" %></div>
+          <% %w[irrf family_allowance incapable].each do |flag| %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= hidden_field_tag "#{prefix}[#{flag}]", "0", id: nil %>
+              <%= check_box_tag "#{prefix}[#{flag}]", "1", row[flag] == "1", id: "#{group}_#{index}_#{flag}" %>
+              <%= t("panel.dependents.form.#{flag}") %>
+            </label>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+<% end %>
+
+<% if schema.bank? %>
+  <% bank = data["bank_account"] || {} %>
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("process_templates.form_groups.bank_account") %></h2>
+    <p class="field-hint"><%= t("processes.form.bank_hint") %></p>
+    <div class="form-grid">
+      <% %w[bank_code branch].each do |key| %>
+        <div><%= label_tag "bank_#{key}", t("processes.form.bank_labels.#{key}"), class: "field-label" %>
+          <%= text_field_tag "form[bank_account][#{key}]", bank[key], id: "bank_#{key}", inputmode: "numeric", autocomplete: "off", class: "input font-mono" %></div>
+      <% end %>
+      <div><%= label_tag "bank_account_number", t("processes.form.bank_labels.number"), class: "field-label" %>
+        <%= text_field_tag "form[bank_account][account_number]", show&.call(response, "bank_number", "pay", bank["account_number"]), id: "bank_account_number", autocomplete: "off", class: "input font-mono" %>
+        <% if show.nil? && bank["account_number"].present? %><p class="field-hint"><%= t("processes.form.already_given") %></p><% end %></div>
+      <div><%= label_tag "bank_account_type", t("processes.form.bank_labels.account_type"), class: "field-label" %>
+        <%= select_tag "form[bank_account][account_type]", options_for_select(BankAccount::ACCOUNT_TYPES.map { |type| [ t("processes.form.bank_labels.account_types.#{type}"), type ] }, bank["account_type"]), include_blank: true, id: "bank_account_type", class: "input" %></div>
+      <div><%= label_tag "bank_pix_key_type", t("processes.form.bank_labels.pix_key_type"), class: "field-label" %>
+        <%= select_tag "form[bank_account][pix_key_type]", options_for_select(BankAccount::PIX_KEY_TYPES.map { |type| [ t("processes.form.bank_labels.pix_types.#{type}"), type ] }, bank["pix_key_type"]), include_blank: true, id: "bank_pix_key_type", class: "input" %></div>
+      <div class="field-wide"><%= label_tag "bank_pix_key", t("processes.form.bank_labels.key"), class: "field-label" %>
+        <%= text_field_tag "form[bank_account][pix_key]", show&.call(response, "bank_key", "pay", bank["pix_key"]), id: "bank_pix_key", autocomplete: "off", class: "input font-mono" %>
+        <% if show.nil? && bank["pix_key"].present? %><p class="field-hint"><%= t("processes.form.already_given") %></p><% end %></div>
+    </div>
+  </section>
+<% end %>
+
+<% if schema.custom_fields.any? %>
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("panel.employees.edit.custom_fields") %></h2>
+    <div class="form-grid">
+      <% schema.custom_fields.each do |definition| %>
+        <% name = "form[custom][#{definition.key}]" %>
+        <% id = "form_custom_#{definition.key}" %>
+        <% value = data.dig("custom", definition.key) || profile.custom_field_value(definition) %>
+        <div>
+          <%= label_tag id, definition.label, class: "field-label" %>
+          <% case definition.field_type %>
+          <% when "date" %>
+            <%= date_field_tag name, value, id: id, class: "input" %>
+          <% when "select" %>
+            <%= select_tag name, options_for_select(definition.options, value), include_blank: true, id: id, class: "input" %>
+          <% when "boolean" %>
+            <%= select_tag name, options_for_select([ [ t("panel.employees.edit.yes"), "true" ], [ t("panel.employees.edit.no"), "false" ] ], value.to_s), include_blank: true, id: id, class: "input" %>
+          <% else %>
+            <%= text_field_tag name, value, id: id, maxlength: 500, class: "input" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<% if schema.free_fields.any? %>
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t("processes.form.free_fields") %></h2>
+    <div class="form-grid">
+      <% schema.free_fields.each_with_index do |label, index| %>
+        <div class="field-wide">
+          <%= label_tag "form_free_#{index}", label, class: "field-label" %>
+          <%= text_field_tag "form[free][#{label}]", data.dig("free", label), id: "form_free_#{index}", maxlength: 2000, class: "input" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

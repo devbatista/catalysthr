@@ -1,7 +1,7 @@
 # 07 — Admissão e integração
 
 > Status: aprovado · Última atualização: 2026-11-05
-> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648, D-649 ([decisoes.md](decisoes.md))
 > Os itens **[P-07-01]** a **[P-07-18]** foram todos aprovados sem ajuste (D-264, seção 10). Os itens **[P-07-19]** e **[P-07-20]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -90,7 +90,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 ### Documentos e formulários (etapas 2 a 4)
 
 - **RN-07-030** — Os documentos seguem a [spec 08](08-documentos.md): envio, processamento pela IA (spec 14), revisão, pedido de correção com motivo visível ao colaborador, versões.
-- **RN-07-031** — Formulários (dados pessoais, bancários, dependentes) gravam na ficha só depois de o RH aplicar (D-238).
+- **RN-07-031** — Formulários (dados pessoais, bancários, dependentes) gravam na ficha só depois de o RH aplicar (D-238). Quem opera a admissão revisa o grupo bancário do formulário de uma admissão aberta, mesmo sem o módulo `folha` (D-649).
 - **RN-07-032** — Na revisão, o sistema mostra uma **lista do que falta para o eSocial**: campos obrigatórios do S-2200 ou S-2300 ainda vazios ou inválidos (validação na spec 13) **[P-07-07]**.
 
 ### Contrato e termos (D-253)

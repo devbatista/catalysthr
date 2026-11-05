@@ -27,6 +27,7 @@ class ProcessItem < ApplicationRecord
   has_many :dependents, class_name: "ProcessItemDependency", foreign_key: :depends_on_item_id, inverse_of: :depends_on_item,
     dependent: :delete_all
   has_many :depends_on, through: :dependencies, source: :depends_on_item
+  has_one :form_response, class_name: "ProcessFormResponse", foreign_key: :process_item_id, inverse_of: :item, dependent: :destroy
   # The receipt of a forward recorded by the HR (RN-06-066).
   has_one_attached :forward_receipt
 

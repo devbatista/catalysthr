@@ -57,7 +57,7 @@ module Processes
       return error(:skip_reason_blank) if @item.required && reason.nil?
       return error(:not_open) unless @item.open? && @item.instance.open?
 
-      transition("skipped", "item_skipped", skipped_reason: reason, reason: reason)
+      transition("skipped", "item_skipped", skipped_reason: reason, reason: reason) { ProcessFormResponse.discard(@item.id) }
     end
 
     private

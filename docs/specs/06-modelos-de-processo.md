@@ -1,7 +1,7 @@
 # 06 — Modelos de processo
 
 > Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 a D-641 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-126, D-143, D-171, D-203, D-204, D-213, D-230 a D-242, D-570, D-638 a D-641, D-648, D-649 ([decisoes.md](decisoes.md))
 > Os itens **[P-06-01]** a **[P-06-20]** foram todos aprovados sem ajuste (D-241, seção 10). Os itens **[P-06-21]** e **[P-06-22]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -125,7 +125,7 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
 - **RN-06-030** — O formulário é montado com:
   - campos da ficha e do vínculo (spec 04), inclusive campos personalizados (D-213);
   - campos livres, que ficam só no processo.
-- **RN-06-031** — Respostas em campos da ficha ou do vínculo só vão para o cadastro quando o RH revisa e aplica. O RH pode corrigir antes de aplicar. Campos sensíveis seguem a spec 05 (criptografia, confirmação de senha) **[P-06-10]**.
+- **RN-06-031** — Respostas em campos da ficha ou do vínculo só vão para o cadastro quando o RH revisa e aplica. O RH pode corrigir antes de aplicar. Campos sensíveis seguem a spec 05 (criptografia, confirmação de senha) **[P-06-10]**. O RH também pode devolver o formulário com um motivo visível à pessoa. Depois de aplicar, os valores saem do processo e ficam só na ficha, com o registro do que foi aplicado (D-649).
 
 ### Condições (D-233)
 
@@ -211,6 +211,10 @@ process_template_materials                   -- ProcessTemplateMaterial e Shared
 
 file_scans                                   -- varredura de vírus por arquivo, sem empresa (P-05-30, D-640)
   id, blob_id, status ('scanning'|'clean'|'infected'), signature, attempted_at, scanned_at
+
+process_form_responses                       -- respostas do formulário, criptografadas e sem PaperTrail (D-649)
+  id, company_id, process_item_id, answers (texto criptografado), submitted_at,
+  submitted_by_id, correction_reason, applied_at, applied_by_id, applied_fields
 
 positions + admission_template_id                                 (D-204)
 

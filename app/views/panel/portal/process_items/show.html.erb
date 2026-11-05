@@ -9,6 +9,27 @@
   <% if @item.due_on %> · <%= t(".due", date: l(@item.due_on)) %><% end %>
 </p>
 
+<% if @item.form? %>
+  <% if @form.errors.any? %>
+    <div class="alert-bad mt-6" role="alert">
+      <ul class="list-disc space-y-1 pl-5"><% @form.errors.each do |message| %><li><%= message %></li><% end %></ul>
+    </div>
+  <% end %>
+  <% if @item.instructions %><p class="mt-4 whitespace-pre-line text-sm"><%= @item.instructions %></p><% end %>
+  <% if @item.status.in?(Processes::FormItem::EDITABLE) %>
+    <% if @form.response.correction_reason %><p class="alert-info mt-6"><%= t(".form_correction", reason: @form.response.correction_reason) %></p><% end %>
+    <%= form_with url: form_portal_item_path(@item), method: :patch, class: "mt-6 space-y-6" do |form| %>
+      <%= render "shared/process_forms/fields", schema: @form.schema, response: @form.response, show: nil %>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <%= form.submit t(".send_form"), name: "send_form", class: "btn btn-primary w-full sm:w-auto" %>
+        <%= form.submit t(".save_form"), class: "btn btn-secondary w-full sm:w-auto" %>
+      </div>
+      <p class="field-hint"><%= t(".form_hint") %></p>
+    <% end %>
+  <% else %>
+    <p class="alert-info mt-6"><%= t(".form_sent") %></p>
+  <% end %>
+<% else %>
 <section class="card card-body mt-6 space-y-4">
   <% if @item.instructions %><p class="whitespace-pre-line text-sm"><%= @item.instructions %></p><% end %>
 
@@ -43,3 +64,4 @@
     <% end %>
   <% end %>
 </section>
+<% end %>

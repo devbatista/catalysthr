@@ -45,5 +45,11 @@
     <%= t("processes.document_hint") %>
   </p>
 <% elsif item.form? %>
-  <p class="mt-1 text-xs text-ink-soft"><%= t("processes.portal_only") %></p>
+  <%# The HR fills, reviews and applies (RN-06-031, D-649). %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <% if @hr && @instance.open? && item.status.in?(Processes::FormItem::APPLICABLE) %>
+      <%= link_to t(item.submitted? ? "processes.form.review" : "processes.form.fill"), edit_process_item_form_path(@instance, item), class: "link-button" %> ·
+    <% end %>
+    <%= item.done? ? t("processes.form.applied", count: item.result["applied"].to_i) : t("processes.form.applied_hint") %>
+  </p>
 <% end %>
