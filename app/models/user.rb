@@ -19,7 +19,7 @@ class User < ApplicationRecord
   # Sign-in bookkeeping changes on every sign-in and is not a change of the person's data.
   audited sensitive: %i[cpf],
     secret: %i[encrypted_password reset_password_token reset_password_sent_at unlock_token otp_secret
-      otp_backup_codes consumed_timestep],
+      otp_backup_codes consumed_timestep webauthn_handle],
     ignore: %i[sign_in_count current_sign_in_at last_sign_in_at current_sign_in_ip last_sign_in_ip
       failed_attempts locked_at]
 
@@ -27,6 +27,7 @@ class User < ApplicationRecord
   has_many :consents, dependent: :restrict_with_error
   has_many :trusted_devices, dependent: :delete_all
   has_many :user_sessions, dependent: :delete_all
+  has_many :webauthn_credentials, dependent: :delete_all
 
   enum :status, { active: "active", deactivated: "deactivated" }, validate: true
   enum :platform_role, PLATFORM_ROLES.index_by(&:itself), validate: { allow_nil: true }
@@ -139,6 +140,15 @@ class User < ApplicationRecord
     update!(otp_secret: nil, otp_required_for_login: false, otp_backup_codes: nil, consumed_timestep: nil)
     AccessEvent.record!(kind: "auth", action: by == self ? "mfa_disabled" : "mfa_reset", user: by, subject: self,
       metadata: { reason: reason }.compact)
+  end
+
+  # The random identifier the passkeys carry, instead of anything of the person
+  # (RN-16-070). A skipped validation and callback: it is not a change of the person's data.
+  def ensure_webauthn_handle!
+    with_lock do
+      update_columns(webauthn_handle: WebAuthn.generate_user_id) if webauthn_handle.blank?
+    end
+    webauthn_handle
   end
 
   # New codes replace the previous ones (RN-02-042, P-02-20).

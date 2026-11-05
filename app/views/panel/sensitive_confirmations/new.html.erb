@@ -1,4 +1,4 @@
-<%# The password before sensitive data (RN-02-052, D-183). %>
+<%# The password or a passkey before sensitive data (RN-02-052, RN-16-073, D-183). %>
 <% content_for :title, t(".title") %>
 
 <div class="card card-body mx-auto mt-6 max-w-md">
@@ -14,6 +14,15 @@
     <div class="flex items-center gap-4">
       <%= form.submit t(".submit"), class: "btn btn-primary" %>
       <%= link_to t(".cancel"), @return_to.include?("reveal") ? @return_to.sub(/\?.*\z/, "") : employees_path, class: "link-button text-sm" %>
+    </div>
+  <% end %>
+
+  <% if @passkeys_here %>
+    <div hidden data-passkey-confirm class="mt-4 space-y-2" data-url="<%= sensitive_passkey_confirmation_path %>"
+      data-challenge-url="<%= sensitive_passkey_challenge_path %>" data-return-to="<%= @return_to %>"
+      data-failure="<%= t("panel.sensitive_passkey_confirmations.create.refused") %>">
+      <button type="button" class="btn btn-secondary" data-passkey-button><%= t(".passkey") %></button>
+      <p hidden data-passkey-message role="alert" class="text-sm text-bad"></p>
     </div>
   <% end %>
 </div>

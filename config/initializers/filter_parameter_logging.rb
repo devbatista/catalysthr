@@ -6,5 +6,6 @@
 Rails.application.config.filter_parameters += [
   :passw, :email, :login, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :cvv, :cvc,
   :cpf, :rg, :cnh, :pis, :nis, :ctps, :phone, :celular, :telefone, :birth, :nascimento,
-  :salary, :salario, :bank, :pix, :agencia, :conta, :cid, :health, :saude, :address, :endereco
+  :salary, :salario, :bank, :pix, :agencia, :conta, :cid, :health, :saude, :address, :endereco,
+  :credential, :nickname
 ]

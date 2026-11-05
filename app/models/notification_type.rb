@@ -30,6 +30,8 @@ NotificationType::CATALOG = [
   # goes to the bell only in phase 1 (D-607). WhatsApp comes in phase 2.
   NotificationType.new(code: "security.account_locked", mandatory: true, urgent: false, channels: %w[system], roles: :all),
   NotificationType.new(code: "security.mfa_reset", mandatory: true, urgent: false, channels: %w[system email], roles: :all),
+  # A new passkey survives a new password (P-16-20), so the person is always told (D-647).
+  NotificationType.new(code: "security.passkey_added", mandatory: true, urgent: false, channels: %w[system email], roles: :all),
   # To the new e-mail; the old one is told directly, since it belongs to no one (D-607).
   NotificationType.new(code: "security.contact_changed", mandatory: true, urgent: false, channels: %w[email], roles: :all),
   # The partner's administrator or whoever registered the domain (RN-01-040).

@@ -66,7 +66,7 @@
       <% end %>
     <% end %>
 
-    <% if @user.mfa_enabled? && can?(:reset_mfa, @user) %>
+    <% if (@user.mfa_enabled? || @user.webauthn_credentials.active.exists?) && can?(:reset_mfa, @user) %>
       <%= form_with url: reset_mfa_admin_user_path(@user), method: :post, class: "space-y-2",
         data: { confirm: t(".reset_mfa_confirm") } do |form| %>
         <h3 class="card-title"><%= t(".reset_mfa") %></h3>

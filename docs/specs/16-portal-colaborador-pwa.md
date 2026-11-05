@@ -89,7 +89,7 @@ O portal é um **PWA**: abre no navegador e pode ser instalado na tela inicial, 
   | 7 | **Último holerite** | Competência e o botão abrir. O valor só aparece depois da confirmação (RN-16-021) |
 
 - **RN-16-021** — Nenhum valor de salário ou líquido, nem outro dado sensível, aparece no Início sem a confirmação de senha ou passkey (RN-02-052). Isso vale para quem está olhando por cima do ombro ou para um celular emprestado **[P-16-05]**.
-- **RN-16-022** — Convites que aparecem no Início, quando se aplicam: instalar o app (seção 4.7), ativar o push (spec 15), cadastrar uma passkey (seção 4.8). No máximo um convite por vez **[P-16-06]**.
+- **RN-16-022** — Convites que aparecem no Início, quando se aplicam: instalar o app (seção 4.7), ativar o push (spec 15), cadastrar uma passkey (seção 4.8). No máximo um convite por vez **[P-16-06]**: o de instalar vem antes do da passkey, que, dispensado, volta em 30 dias (D-647).
 
 ### 4.4 Minha equipe (D-420)
 
@@ -142,11 +142,11 @@ O portal é um **PWA**: abre no navegador e pode ser instalado na tela inicial, 
 
 ### 4.8 Passkeys (D-425, D-426)
 
-- **RN-16-070** — **Cadastro:** em Segurança, ou pelo convite do Início, depois de entrar com senha (e MFA, se exigido) e confirmar a senha. A pessoa dá um nome para cada passkey ("iPhone", "Notebook"). Até **10 passkeys** por usuário **[P-16-17]**.
+- **RN-16-070** — **Cadastro:** em Segurança, ou pelo convite do Início, depois de entrar com senha (e MFA, se exigido) e confirmar a senha. A pessoa dá um nome para cada passkey ("iPhone", "Notebook"). Até **10 passkeys** por usuário **[P-16-17]**. Cada cadastro gera o aviso obrigatório `security.passkey_added`, no sino e por e-mail, porque a passkey sobrevive à troca de senha (D-647). O aparelho guarda o e-mail da pessoa ou, sem e-mail, o nome; nunca o CPF (D-647).
 - **RN-16-071** — **Login:** o botão **"Entrar com digital ou rosto"** na tela de login, e o preenchimento automático do navegador no campo de login (*conditional UI*), quando suportado. A verificação do usuário no aparelho é **obrigatória** (`userVerification: required`) **[P-16-18]**.
 - **RN-16-072** — Entrar com passkey **cumpre o MFA** (D-426) e não pede o código do app.
 - **RN-16-073** — **Confirmação de dados sensíveis:** a passkey substitui a senha (RN-02-052) e vale pelos mesmos 5 minutos (D-183).
-- **RN-16-074** — **Domínio da passkey:** o *RP ID* é o **subdomínio da marca** (por exemplo, `aurora.painel.catalysthr.com.br`), e o nome mostrado pelo aparelho é o nome comercial da marca. Assim, a passkey não mostra "CatalystHR" (white label). A consequência: se a empresa mudar de marca (transferência, D-123), as passkeys antigas deixam de funcionar, e a pessoa entra com a senha e cadastra de novo **[P-16-19]**.
+- **RN-16-074** — **Domínio da passkey:** o *RP ID* é o **subdomínio da marca** (por exemplo, `aurora.painel.catalysthr.com.br`), e o nome enviado ao aparelho é o nome comercial da marca. O que aparece depende do aparelho: muitos mostram o domínio, que contém "catalysthr" (D-647). A consequência: se a empresa mudar de marca (transferência, D-123), as passkeys antigas deixam de funcionar, e a pessoa entra com a senha e cadastra de novo **[P-16-19]**.
 - **RN-16-075** — A equipe CatalystHR (`admin.catalysthr.com.br`) também pode usar passkey, com o RP ID `admin.catalysthr.com.br`.
 - **RN-16-076** — **Gestão:** a lista mostra nome, data de cadastro e último uso. Cada passkey pode ser removida. A redefinição de MFA por quem administra o perfil (RN-02-044) também remove todas as passkeys. Trocar a senha **não** remove as passkeys **[P-16-20]**.
 - **RN-16-077** — O servidor guarda só a **chave pública** e o contador. A biometria nunca sai do aparelho e não é dado biométrico tratado pela plataforma (spec 05).
@@ -217,7 +217,7 @@ O fim do período de leitura continua no `Memberships::ExpireReadOnlyJob` (spec 
 - **CA-16-007** — Dado o app aberto sem internet, quando a pessoa toca em Registrar ponto, então vê "Sem conexão", e nada é guardado para depois.
 - **CA-16-008** — Dado um logout, quando a pessoa abre o app de novo sem internet, então nenhum dado da sessão anterior aparece.
 - **CA-16-009** — Dado um RH com MFA obrigatório e uma passkey cadastrada, quando entra com a passkey, então acessa o painel sem digitar senha nem código.
-- **CA-16-010** — Dada uma passkey cadastrada em `aurora.painel.catalysthr.com.br`, quando o aparelho mostra a passkey, então aparece o nome comercial da marca, e não "CatalystHR".
+- **CA-16-010** — Dado o cadastro de uma passkey em `aurora.painel.catalysthr.com.br`, quando o servidor monta o pedido ao aparelho, então envia o nome comercial da marca e o subdomínio dela como RP ID. O que o aparelho mostra depende dele e é conferido em aparelhos reais na fase de validação (D-647).
 - **CA-16-011** — Dado um desligado em período de leitura, quando abre o portal, então vê holerites, informe, espelhos, documentos e TRCT, a data do fim do acesso e o botão de baixar os documentos, mas não a aba Pedidos, exceto pela solicitação Privacidade/LGPD.
 - **CA-16-012** — Dada uma marca com cor principal amarelo-claro, quando alguém tenta salvá-la, então o cadastro recusa e mostra o motivo (RN-01-031); e, se uma cor assim já estiver gravada, o texto do botão com essa cor é preto (D-646).
 

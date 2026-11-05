@@ -57,7 +57,7 @@
     <p class="text-sm text-ink-muted"><%= membership_t("show.support_only") %></p>
   <% end %>
 
-  <% reset_mfa = user.mfa_enabled? && may_manage_membership?(:reset_mfa, @membership) %>
+  <% reset_mfa = (user.mfa_enabled? || user.webauthn_credentials.active.exists?) && may_manage_membership?(:reset_mfa, @membership) %>
   <% remove = may_manage_membership?(@membership.invited? ? :cancel_invitation : :revoke, @membership) %>
   <% if reset_mfa || remove %>
     <div class="flex flex-wrap gap-3">

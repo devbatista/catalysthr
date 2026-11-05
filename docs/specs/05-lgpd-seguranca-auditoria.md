@@ -89,7 +89,7 @@ O CPF da pessoa é dado pessoal comum, mas fica criptografado (D-086) e é masca
   | `sensitive_read` | Ver salário, abrir atestado, ver dados bancários |
   | `download` | Baixar documento, holerite, exportação, AFD, XML do eSocial |
   | `export` | Relatórios, exportação da pasta, exportação de encerramento |
-  | `auth` | Login, falha de login, logout, bloqueio, desbloqueio, troca de senha, MFA ativado ou redefinido, dispositivo lembrado ou revogado |
+  | `auth` | Login, falha de login, logout, bloqueio, desbloqueio, troca de senha, MFA ativado ou redefinido, dispositivo lembrado ou revogado, passkey cadastrada ou removida |
   | `impersonation` | Início, cada requisição, fim (P-02-34) |
   | `admin` | Mudança de perfil, liberação de módulos, retenção por processo, incidentes |
 

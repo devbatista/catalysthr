@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -1401,11 +1401,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.string "otp_backup_codes", array: true
     t.string "email_status", default: "valid", null: false
     t.datetime "email_status_at"
+    t.string "webauthn_handle"
     t.index ["cpf"], name: "index_users_on_cpf", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(email IS NOT NULL)"
     t.index ["platform_role"], name: "index_users_on_platform_role", where: "(platform_role IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+    t.index ["webauthn_handle"], name: "index_users_on_webauthn_handle", unique: true
   end
 
   create_table "versions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1423,6 +1425,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.datetime "created_at", null: false
     t.index ["company_id"], name: "index_versions_on_company_id"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  create_table "webauthn_credentials", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "rp_id", null: false
+    t.string "external_id", null: false
+    t.text "public_key", null: false
+    t.bigint "sign_count", default: 0, null: false
+    t.string "nickname", null: false
+    t.string "transports", default: [], null: false, array: true
+    t.string "aaguid"
+    t.datetime "last_used_at"
+    t.datetime "removed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rp_id", "external_id"], name: "index_webauthn_credentials_on_rp_id_and_external_id", unique: true
+    t.index ["user_id"], name: "index_webauthn_credentials_on_user_id"
   end
 
   create_table "worker_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1664,6 +1683,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
   add_foreign_key "usage_periods", "companies"
   add_foreign_key "user_sessions", "brands"
   add_foreign_key "user_sessions", "users"
+  add_foreign_key "webauthn_credentials", "users"
   add_foreign_key "worker_profiles", "companies"
   add_foreign_key "worker_profiles", "memberships"
 end

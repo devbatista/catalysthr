@@ -1,0 +1,53 @@
+<%# The person's passkeys (RN-16-070, RN-16-076). The form appears through passkeys.js, only
+    where the browser supports it. A passkey of another address serves only there
+    (RN-16-074): it stays in the list because it counts toward the limit. %>
+<section id="passkeys" class="mt-6 card card-body">
+  <h2 class="card-title"><%= t(".title") %></h2>
+  <p class="mt-2 text-sm text-ink-soft"><%= t(".explanation") %></p>
+
+  <% if @passkeys.any? %>
+    <ul class="mt-2 divide-y divide-line-soft">
+      <% @passkeys.each do |passkey| %>
+        <li class="flex items-center justify-between gap-4 py-3">
+          <span class="min-w-0 text-sm">
+            <span class="font-semibold"><%= passkey.nickname %></span><br>
+            <span class="text-ink-muted">
+              <%= t(".details", created: l(passkey.created_at.to_date), last_used: passkey.last_used_at ? l(passkey.last_used_at, format: :short) : t(".never_used")) %>
+            </span>
+            <% if passkey.rp_id != request.host %>
+              <br><span class="break-all text-ink-muted"><%= t(".elsewhere", address: passkey.rp_id) %></span>
+            <% end %>
+          </span>
+          <%= button_to t(".remove"), account_passkey_path(passkey), method: :delete, class: "link-button text-sm",
+            form: { data: { confirm: t(".remove_confirm") } } %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if current_user.mfa_required? && !current_user.mfa_enabled? %>
+    <p class="mt-3 text-sm"><%= t("account.passkeys.challenge.mfa_first") %></p>
+  <% elsif @passkeys.size >= WebauthnCredential::MAX_PER_USER %>
+    <p class="mt-3 text-sm"><%= t("account.passkeys.create.limit", count: WebauthnCredential::MAX_PER_USER) %></p>
+  <% else %>
+    <div data-passkey-register class="mt-4 space-y-2" data-url="<%= account_passkeys_path %>"
+      data-challenge-url="<%= challenge_account_passkeys_path %>" data-failure="<%= t("account.passkeys.create.refused") %>">
+      <form hidden class="space-y-3">
+        <div class="form-grid">
+          <div>
+            <label for="passkey_nickname" class="field-label"><%= t(".nickname") %></label>
+            <input type="text" id="passkey_nickname" name="nickname" required maxlength="<%= WebauthnCredential::NICKNAME_LIMIT %>"
+              class="input" placeholder="<%= t(".nickname_hint") %>" autocomplete="off">
+          </div>
+          <div>
+            <label for="passkey_current_password" class="field-label"><%= t("account.security.show.current_password") %></label>
+            <input type="password" id="passkey_current_password" name="current_password" required class="input" autocomplete="current-password">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><%= t(".add") %></button>
+      </form>
+      <p hidden data-passkey-unsupported class="text-sm text-ink-soft"><%= t(".unsupported") %></p>
+      <p hidden data-passkey-message role="alert" class="text-sm text-bad"></p>
+    </div>
+  <% end %>
+</section>
