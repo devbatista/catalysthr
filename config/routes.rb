@@ -240,13 +240,20 @@ Rails.application.routes.draw do
           patch :move, on: :member
         end
       end
-      # The admissions (spec 07, D-648).
+      # The admissions (spec 07, D-648), with their contracts and terms (D-650).
       resources :admissions, only: %i[index new create show] do
         member do
           post :release
           patch :template, action: :change_template, as: :change_template
           patch "start-date", action: :reschedule, as: :reschedule
         end
+        resources :generated_documents, path: "contracts", only: %i[create show] do
+          patch :signed, on: :member
+        end
+      end
+      # The models of contracts and terms (RN-07-040, P-07-17).
+      resources :document_templates, path: "document-templates", except: %i[show destroy] do
+        get :preview, on: :member
       end
       # The processes under way (spec 06, RN-06-050 to RN-06-053, D-641): the generic page the
       # admission (spec 07) and the requests (spec 09) reuse. They start from those specs.

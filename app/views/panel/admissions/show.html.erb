@@ -129,6 +129,8 @@
   </section>
 <% end %>
 
+<% if @hr %><%= render "contracts" %><% end %>
+
 <section id="items" class="card card-body mt-6 space-y-4">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <h2 class="card-title"><%= t(@hr ? ".items" : ".my_items", done: resolved, count: @items.size) %></h2>

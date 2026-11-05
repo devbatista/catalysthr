@@ -1,0 +1,20 @@
+<%# Blank variables (RN-07-042, CA-07-004): only the names, never a value. %>
+<% content_for :title, t(".title") %>
+<p class="text-sm"><%= link_to t(".back"), admission_path(@admission, anchor: "contracts"), class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", template: @template.name) %></p>
+
+<section class="card card-body mt-6 space-y-4">
+  <ul class="list-disc space-y-1 pl-5 text-sm">
+    <% @missing.each do |name| %><li><%= t("document_templates.variables.#{name.tr(".", "_")}") %></li><% end %>
+  </ul>
+  <p class="field-hint"><%= t(".hint") %></p>
+  <div class="flex flex-wrap items-center gap-3">
+    <%= form_with url: admission_generated_documents_path(@admission), method: :post do |form| %>
+      <%= form.hidden_field :document_template_id, value: @template.id %>
+      <%= form.hidden_field :confirm_blank, value: "1" %>
+      <%= form.submit t(".confirm"), class: "btn btn-primary" %>
+    <% end %>
+    <%= link_to t(".back"), admission_path(@admission, anchor: "contracts"), class: "btn btn-secondary" %>
+  </div>
+</section>

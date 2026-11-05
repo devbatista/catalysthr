@@ -1,7 +1,7 @@
 # 07 — Admissão e integração
 
 > Status: aprovado · Última atualização: 2026-11-05
-> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648, D-649 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648 a D-650 ([decisoes.md](decisoes.md))
 > Os itens **[P-07-01]** a **[P-07-18]** foram todos aprovados sem ajuste (D-264, seção 10). Os itens **[P-07-19]** e **[P-07-20]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -96,9 +96,9 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 ### Contrato e termos (D-253)
 
 - **RN-07-040** — O RH administrador cadastra modelos de documento (contrato CLT, contrato de experiência, termo de compromisso de estágio, contrato PJ, termos diversos). Cada modelo vale para tipos de vínculo escolhidos.
-- **RN-07-041** — O modelo é escrito num editor de texto simples (títulos, negrito, itálico, listas, tabelas simples), com **variáveis** como `{{colaborador.nome}}`, `{{cargo.nome}}`, `{{vinculo.salario}}`, `{{empresa.razao_social}}` e `{{unidade.endereco}}`. O PDF é gerado com Prawn (D-263) **[P-07-08]**.
+- **RN-07-041** — O modelo é escrito num editor de texto simples (títulos, negrito, itálico, listas, tabelas simples), com **variáveis** como `{{colaborador.nome}}`, `{{cargo.nome}}`, `{{vinculo.salario}}`, `{{empresa.razao_social}}` e `{{unidade.endereco}}`. O PDF é gerado com Prawn (D-263) **[P-07-08]**. As variáveis são um catálogo fixo, e o modelo não aceita variável desconhecida nem caractere fora da fonte do PDF (D-650).
 - **RN-07-042** — Ao gerar, o sistema avisa se alguma variável está vazia e não gera até que ela seja preenchida ou o RH confirme "gerar com campo em branco" **[P-07-09]**.
-- **RN-07-043** — O PDF gerado fica no processo. Depois da assinatura no papel, o RH envia a versão assinada, que entra na pasta como documento do tipo "Contrato assinado" (spec 08). Um item do modelo pode exigir esse envio.
+- **RN-07-043** — O PDF gerado fica no processo, fora da pasta. Abre para quem opera a admissão aberta, com a confirmação de senha e o evento de acesso, e gerar de novo substitui o PDF não assinado (D-650). Depois da assinatura no papel, o RH envia a versão assinada, que entra na pasta como documento do tipo "Contrato assinado" (spec 08). Um item do modelo pode exigir esse envio.
 
 ### eSocial (D-255)
 
@@ -216,7 +216,7 @@ document_templates                                     -- contratos e termos (D-
   e variáveis), status
 
 generated_documents
-  id, company_id, employment_id, document_template_id, file (S3),
+  id, company_id, employment_id, document_template_id, status, file (S3),
   generated_by_id, generated_at, missing_variables (array),
   signed_document_id (spec 08, nullable)
 

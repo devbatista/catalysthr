@@ -1,0 +1,27 @@
+<%# The models of contracts and terms (RN-07-040, P-07-17). %>
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <%= link_to t(".new"), new_document_template_path, class: "btn btn-primary" %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @templates.empty? %>
+  <p class="card card-body mt-5 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-5 overflow-x-auto">
+    <table class="data-table min-w-[560px]">
+      <thead><tr><th><%= t(".name") %></th><th><%= t(".kinds") %></th><th><%= t(".status") %></th></tr></thead>
+      <tbody>
+        <% @templates.each do |template| %>
+          <tr>
+            <td><%= link_to template.name, edit_document_template_path(template), class: "link-button font-bold" %></td>
+            <td><%= template.employment_kinds.map { |kind| t("employments.kinds.#{kind}") }.to_sentence %></td>
+            <td><span class="pill <%= template.active? ? "pill-ok" : "pill-mute" %>"><%= t("document_templates.statuses.#{template.status}") %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

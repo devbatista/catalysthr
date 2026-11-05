@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -557,6 +557,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
     t.index ["requested_by_id"], name: "index_document_requests_on_requested_by_id"
   end
 
+  create_table "document_templates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "name", null: false
+    t.string "employment_kinds", default: [], null: false, array: true
+    t.text "body", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_document_templates_on_company_id"
+  end
+
   create_table "document_types", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id"
     t.string "code"
@@ -744,6 +755,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "generated_documents", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "employment_id", null: false
+    t.uuid "document_template_id", null: false
+    t.string "status", default: "generating", null: false
+    t.uuid "generated_by_id", null: false
+    t.datetime "generated_at"
+    t.string "missing_variables", default: [], null: false, array: true
+    t.uuid "signed_document_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_generated_documents_on_company_id"
+    t.index ["document_template_id"], name: "index_generated_documents_on_document_template_id"
+    t.index ["employment_id", "document_template_id"], name: "index_generated_documents_unique", unique: true
+    t.index ["generated_by_id"], name: "index_generated_documents_on_generated_by_id"
+    t.index ["signed_document_id"], name: "index_generated_documents_on_signed_document_id"
   end
 
   create_table "holidays", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1634,6 +1663,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
   add_foreign_key "document_requests", "companies"
   add_foreign_key "document_requests", "document_types"
   add_foreign_key "document_requests", "users", column: "requested_by_id"
+  add_foreign_key "document_templates", "companies"
   add_foreign_key "document_types", "companies"
   add_foreign_key "document_versions", "companies"
   add_foreign_key "document_versions", "documents"
@@ -1660,6 +1690,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
   add_foreign_key "feature_flag_changes", "users", column: "changed_by_id"
   add_foreign_key "file_scans", "active_storage_blobs", column: "blob_id", on_delete: :cascade
   add_foreign_key "fiscal_settings", "users", column: "updated_by_id"
+  add_foreign_key "generated_documents", "companies"
+  add_foreign_key "generated_documents", "document_templates"
+  add_foreign_key "generated_documents", "documents", column: "signed_document_id"
+  add_foreign_key "generated_documents", "employments"
+  add_foreign_key "generated_documents", "users", column: "generated_by_id"
   add_foreign_key "holidays", "users", column: "reviewed_by_id"
   add_foreign_key "impersonation_sessions", "brands"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_user_id"

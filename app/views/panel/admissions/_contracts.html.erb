@@ -1,0 +1,58 @@
+<%# Contracts and terms (RN-07-042, RN-07-043, D-650): generated here, kept in the process.
+    Only the signed one goes to the folder. While one is generating, the page reloads. %>
+<section id="contracts" class="card card-body mt-6 space-y-4" <%= "data-reload-after=3000".html_safe if @generated.any?(&:generating?) %>>
+  <h2 class="card-title"><%= t(".title") %></h2>
+  <p class="field-hint"><%= t(".hint") %></p>
+
+  <% if @generated.any? %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead><tr><th><%= t(".document") %></th><th class="hidden md:table-cell"><%= t(".generated_at") %></th><th><%= t(".status") %></th></tr></thead>
+        <tbody>
+          <% @generated.each do |generated| %>
+            <tr>
+              <td>
+                <span class="font-bold text-ink-strong"><%= generated.document_template.name %></span>
+                <% if generated.missing_variables.any? %><p class="mt-1 text-xs text-bad"><%= t(".with_blanks", count: generated.missing_variables.size) %></p><% end %>
+                <div class="mt-2 flex flex-wrap items-start gap-3 text-sm">
+                  <% if generated.ready? && generated.file.attached? %>
+                    <%= link_to t(".open"), admission_generated_document_path(@admission, generated), class: "link-button", target: "_blank", rel: "noopener" %>
+                  <% end %>
+                  <% if generated.signed? %>
+                    <% if can?(:read, generated.signed_document) %><%= link_to t(".open_signed"), document_path(generated.signed_document), class: "link-button" %><% end %>
+                  <% elsif generated.ready? && @admission.open? %>
+                    <details>
+                      <summary class="link-button cursor-pointer"><%= t(".send_signed") %></summary>
+                      <%= form_with url: signed_admission_generated_document_path(@admission, generated), method: :patch, multipart: true, class: "mt-2 space-y-2 sm:w-80" do |form| %>
+                        <%= form.file_field :files, multiple: true, name: "files[]", required: true, accept: "application/pdf,image/jpeg,image/png", class: "input" %>
+                        <p class="field-hint"><%= t(".signed_hint") %></p>
+                        <%= form.submit t(".send_signed_submit"), class: "btn btn-primary btn-sm" %>
+                      <% end %>
+                    </details>
+                  <% end %>
+                </div>
+              </td>
+              <td class="hidden md:table-cell"><%= generated.generated_at ? l(generated.generated_at, format: "%d/%m/%Y %H:%M") : "—" %></td>
+              <td><span class="pill <%= generated.signed? ? "pill-ok" : generated.failed? ? "pill-bad" : "pill-info" %>"><%= t(".statuses.#{generated.signed? ? "signed" : generated.status}") %></span></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if @admission.open? && can?(:update, @admission) %>
+    <% if @document_templates.any? %>
+      <%= form_with url: admission_generated_documents_path(@admission), method: :post, class: "flex flex-wrap items-end gap-3 border-t border-line-soft pt-4" do |form| %>
+        <div class="w-full sm:w-96">
+          <%= form.label :document_template_id, t(".template"), class: "field-label" %>
+          <%= form.select :document_template_id, options_for_select(@document_templates.map { |template| [ template.name, template.id ] }), { prompt: t(".choose") }, required: true, class: "input" %>
+        </div>
+        <%= form.submit t(".generate"), class: "btn btn-primary" %>
+      <% end %>
+      <p class="field-hint"><%= t(".generate_hint") %></p>
+    <% else %>
+      <p class="text-sm text-ink-soft"><%= t(".no_templates") %></p>
+    <% end %>
+  <% end %>
+</section>

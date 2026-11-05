@@ -1,0 +1,62 @@
+<%# A model's text with simple markup and variables (RN-07-041, D-648): the toolbar only
+    writes the markup; without JavaScript, the text is typed. Each list sends an empty value,
+    so unchecking everything shows the error. %>
+<%= form_with model: template, scope: :document_template, url: url, method: method, class: "mt-6 space-y-6" do |form| %>
+  <%= render "admin/plans/errors", records: [ template ] %>
+
+  <section class="card card-body space-y-4">
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :name, t("panel.document_templates.form.name"), class: "field-label" %>
+        <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
+      </div>
+      <% if template.persisted? %>
+        <div>
+          <%= form.label :status, t("panel.document_templates.form.status"), class: "field-label" %>
+          <%= form.select :status, DocumentTemplate::STATUSES.map { |status| [ t("document_templates.statuses.#{status}"), status ] }, {}, class: "input" %>
+        </div>
+      <% end %>
+    </div>
+    <fieldset>
+      <legend class="field-label"><%= t("panel.document_templates.form.kinds") %></legend>
+      <%= hidden_field_tag "document_template[employment_kinds][]", "", id: nil %>
+      <div class="flex flex-wrap gap-x-5 gap-y-2">
+        <% Employment::KINDS.each do |kind| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "document_template[employment_kinds][]", kind, template.employment_kinds.include?(kind), id: "template_kind_#{kind}" %>
+            <%= t("employments.kinds.#{kind}") %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="card card-body space-y-3" data-template-editor>
+    <h2 class="card-title"><%= t("panel.document_templates.form.text") %></h2>
+    <div class="flex flex-wrap items-center gap-2" role="toolbar" aria-label="<%= t("panel.document_templates.form.toolbar") %>">
+      <% { "title" => "# ", "subtitle" => "## ", "bullets" => "- ", "numbers" => "1. " }.each do |key, prefix| %>
+        <button type="button" class="btn btn-secondary btn-sm" data-line-prefix="<%= prefix %>"><%= t("panel.document_templates.form.buttons.#{key}") %></button>
+      <% end %>
+      <button type="button" class="btn btn-secondary btn-sm" data-wrap="**"><%= t("panel.document_templates.form.buttons.bold") %></button>
+      <button type="button" class="btn btn-secondary btn-sm" data-wrap="*"><%= t("panel.document_templates.form.buttons.italic") %></button>
+      <button type="button" class="btn btn-secondary btn-sm" data-insert="&#10;| Coluna 1 | Coluna 2 |&#10;| valor | valor |&#10;"><%= t("panel.document_templates.form.buttons.table") %></button>
+      <select class="input mt-0 w-auto" data-variable aria-label="<%= t("panel.document_templates.form.insert_variable") %>">
+        <option value=""><%= t("panel.document_templates.form.insert_variable") %></option>
+        <% Documents::TemplateVariables::CATALOG.each do |name| %>
+          <option value="<%= name %>"><%= t("document_templates.variables.#{name.tr(".", "_")}") %></option>
+        <% end %>
+      </select>
+    </div>
+    <%= form.label :body, t("panel.document_templates.form.body"), class: "sr-only" %>
+    <%= form.text_area :body, rows: 22, required: true, maxlength: DocumentTemplate::MAX_BODY, class: "input font-mono text-sm", data: { template_body: true } %>
+    <p class="field-hint"><%= t("panel.document_templates.form.body_hint") %></p>
+  </section>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <%= form.submit t("panel.document_templates.form.submit"), class: "btn btn-primary" %>
+    <% if template.persisted? %>
+      <%= link_to t("panel.document_templates.form.preview"), preview_document_template_path(template), class: "btn btn-secondary", target: "_blank", rel: "noopener" %>
+    <% end %>
+    <%= link_to t("panel.document_templates.form.cancel"), document_templates_path, class: "link-button text-sm" %>
+  </div>
+<% end %>
