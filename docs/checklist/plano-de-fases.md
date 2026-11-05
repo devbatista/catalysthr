@@ -181,7 +181,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam com outras specs: CA-16-001 (abas de ponto e folha), CA-16-003 (spec 09), CA-16-004 (spec 10), CA-16-005 (spec 12 e WhatsApp) e CA-16-011, com os jobs `Memberships::ReadOnlyEndingJob` e `Portal::ExportMyDocumentsJob` (desligamento, spec 09)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial. Em 5 PRs (D-648), com a flag `admissions`; a etapa de IA fica sem itens até a spec 14:
   - [ ] 07a. Admissão no painel: etapas nos modelos, documentos exigidos pelo cargo, padrão por tipo de vínculo, cadastro inicial, escolha e troca do modelo, barra de etapas, "Liberar acesso" (e-mail e link), lista e tela, visão do gestor do cliente e saída do "Em breve" (RN-07-001 a RN-07-022, RN-04-030, RN-06-037, CA-07-001 a CA-07-003, CA-07-011, CA-07-013, CA-07-014, CA-03-004, CA-03-010, CA-03-011)
-  - [ ] 07b. Formulários no portal e revisão do RH, com as respostas criptografadas e fora do PaperTrail (RN-06-030, RN-06-031, RN-07-031)
+  - [ ] 07b. Formulários no portal e revisão do RH, com as respostas criptografadas e fora do PaperTrail (RN-06-030, RN-06-031, RN-07-031, D-649)
   - [ ] 07c. Contratos e termos: modelos com variáveis, editor, PDF pelo Prawn e versão assinada (RN-07-040 a RN-07-043, CA-07-004)
   - [ ] 07d. ASO, contabilidade, conclusão com o salário exigido, integração, cancelamento e aprovação reprovada (RN-07-060, RN-07-061, RN-07-070, RN-07-080 a RN-07-083, RN-07-090 a RN-07-092, RN-07-110 a RN-07-112, CA-07-006, CA-07-007, CA-07-012)
   - [ ] 07e. Ativação e experiência (RN-07-085, RN-07-086, RN-07-100 a RN-07-102, CA-07-008 sem o eSocial, CA-07-009, CA-07-010)

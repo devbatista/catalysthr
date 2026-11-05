@@ -91,6 +91,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | `time.receipt_email` | Comprovante da marcação por e-mail (D-314, opção da pessoa) | Não | E |
   | `announcements.published` | Comunicado novo no mural (D-408) | Não | S E W P |
   | `admission.started` | Admissão liberada, com as pendências de envio | Sim | S E W |
+  | `processes.form_correction_requested` | Formulário devolvido pelo RH (D-649) | Não | S |
   | `memberships.read_only_ending` | Acesso do desligado termina em 30 dias (spec 16, RN-16-052) | Sim | S E W P |
 
   **Gestor**
@@ -122,6 +123,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | `requests.created` | Solicitação nova para o RH | Não | Não | S E |
   | `requests.escalated` | Etapa escalada para o RH | Não | Sim | S E P |
   | `processes.task_overdue` | Item atrasado (RN-06-028) | Não | Não | S E |
+  | `processes.form_submitted` | Formulário para revisar (D-649) | Não | Não | S E |
   | `admission.esocial_deadline` | S-2200 perto do prazo (RN-07-052) | Sim | Sim | S E P |
   | `admission.aso_unfit` | ASO inapto (RN-07-061) | Sim | Sim | S E P |
   | `admission.activated_with_pending` | Vínculo ativado sem eSocial aceito ou com pendências (RN-07-085) | Sim | Sim | S E P |

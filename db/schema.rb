@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -1074,6 +1074,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
     t.index ["process_item_id"], name: "index_process_events_on_process_item_id"
   end
 
+  create_table "process_form_responses", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "process_item_id", null: false
+    t.text "answers"
+    t.datetime "submitted_at"
+    t.uuid "submitted_by_id"
+    t.text "correction_reason"
+    t.datetime "applied_at"
+    t.uuid "applied_by_id"
+    t.string "applied_fields", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["applied_by_id"], name: "index_process_form_responses_on_applied_by_id"
+    t.index ["company_id"], name: "index_process_form_responses_on_company_id"
+    t.index ["process_item_id"], name: "index_process_form_responses_on_process_item_id", unique: true
+    t.index ["submitted_by_id"], name: "index_process_form_responses_on_submitted_by_id"
+  end
+
   create_table "process_instances", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.uuid "process_template_id"
@@ -1683,6 +1701,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
   add_foreign_key "process_events", "process_instances", on_delete: :cascade
   add_foreign_key "process_events", "process_items", on_delete: :nullify
   add_foreign_key "process_events", "users", column: "actor_id"
+  add_foreign_key "process_form_responses", "companies"
+  add_foreign_key "process_form_responses", "process_items"
+  add_foreign_key "process_form_responses", "users", column: "applied_by_id"
+  add_foreign_key "process_form_responses", "users", column: "submitted_by_id"
   add_foreign_key "process_instances", "companies"
   add_foreign_key "process_instances", "process_templates", on_delete: :nullify
   add_foreign_key "process_instances", "units"

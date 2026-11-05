@@ -73,6 +73,11 @@ NotificationType::CATALOG = [
   # the portal (spec 16, D-641).
   NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[client_manager]),
+  # A form to review, and one given back to the person (D-649).
+  NotificationType.new(code: "processes.form_submitted", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
+  NotificationType.new(code: "processes.form_correction_requested", mandatory: false, urgent: false, channels: %w[system],
+    roles: %w[employee]),
   # The admission released to who already has access; the others get the invitation
   # (RN-07-020, D-648). WhatsApp comes with spec 15's rest.
   NotificationType.new(code: "admission.started", mandatory: true, urgent: false, channels: %w[system email], roles: %w[employee]),

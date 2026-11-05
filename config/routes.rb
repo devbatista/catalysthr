@@ -256,6 +256,11 @@ Rails.application.routes.draw do
           patch :cancel
         end
         resources :items, controller: "process_items", only: %i[new create edit update destroy] do
+          # The form item: fill, correct, give back and apply (RN-06-031, D-649).
+          resource :form, controller: "process_forms", only: %i[edit update] do
+            patch :apply
+            patch "give-back", action: :give_back, as: :give_back
+          end
           member do
             patch :move
             patch :done
@@ -366,6 +371,7 @@ Rails.application.routes.draw do
           member do
             patch :done
             patch :acknowledge
+            patch :form
             get :material
           end
         end

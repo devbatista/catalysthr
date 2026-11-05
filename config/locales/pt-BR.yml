@@ -750,6 +750,38 @@ pt-BR:
     no_due: "Sem prazo"
     no_date: "A definir"
     portal_only: "O colaborador conclui pelo portal."
+    form:
+      closed: "Este formulário não pode mais ser alterado."
+      reason_blank: "Informe o motivo."
+      sensitive_hint: "Dados sensíveis, guardados com criptografia."
+      already_given: "Já informado. Deixe em branco para manter, ou digite para substituir."
+      rows_hint: "Preencha uma linha. Ao salvar, aparece outra, se precisar."
+      existing: "Já cadastrados: %{names}."
+      bank_hint: "Preencha a conta ou a chave PIX, não os dois."
+      free_fields: "Outras informações"
+      fill: "Preencher"
+      review: "Revisar e aplicar"
+      applied_hint: "Só vai para a ficha depois que o RH aplica."
+      applied:
+        one: "Aplicado na ficha: %{count} campo."
+        other: "Aplicado na ficha: %{count} campos."
+      disability_types: "Tipos de deficiência"
+      bank_labels:
+        bank_code: "Banco (código)"
+        branch: "Agência"
+        number: "Conta"
+        account_type: "Tipo de conta"
+        pix_key_type: "Tipo da chave PIX"
+        key: "Chave PIX"
+        account_types:
+          checking: "Corrente"
+          savings: "Poupança"
+          salary: "Salário"
+        pix_types:
+          cpf: "CPF"
+          email: "E-mail"
+          phone: "Celular"
+          random: "Chave aleatória"
     member_roles:
       hr_admin: "RH administrador"
       hr_analyst: "RH analista"
@@ -821,6 +853,9 @@ pt-BR:
       document_approved: "Documento de \"%{title}\" aprovado"
       document_correction_requested: "Correção pedida no documento de \"%{title}\""
       item_acknowledged: "\"%{title}\" lido e aceito"
+      form_submitted: "\"%{title}\" enviado ao RH"
+      form_returned: "\"%{title}\" devolvido: %{reason}"
+      form_applied: "\"%{title}\" aplicado na ficha"
   # The admission (spec 07).
   admissions:
     steps_label: "Etapas da admissão"
@@ -1765,7 +1800,14 @@ pt-BR:
           confirmed: "Ciência registrada."
       process_items:
         resolved: "Item concluído."
+        form_saved: "Salvo. Você pode continuar depois."
+        form_sent: "Formulário enviado ao RH."
         show:
+          send_form: "Enviar ao RH"
+          save_form: "Salvar e continuar depois"
+          form_hint: "Fica salvo com segurança no servidor, não no aparelho."
+          form_sent: "Formulário enviado. O RH está revisando."
+          form_correction: "O RH pediu uma correção: %{reason}"
           back: "Início"
           due: "prazo %{date}"
           not_pending: "Este item não está aguardando você."
@@ -2054,6 +2096,24 @@ pt-BR:
         approved: "Versão aprovada."
       correction:
         requested: "Correção pedida."
+    process_forms:
+      edit:
+        back: "Voltar para o checklist"
+        subtitle: "Formulário de %{person}. Nada vai para a ficha antes de aplicar."
+        apply: "Aplicar na ficha"
+        apply_confirm: "Aplicar estas respostas na ficha da pessoa?"
+        save: "Salvar sem aplicar"
+        give_back: "Devolver para a pessoa"
+        give_back_submit: "Devolver"
+        given_back_reason: "Devolvido: %{reason}"
+        reason: "O que precisa ser corrigido"
+        reason_hint: "A pessoa vê este texto. Não escreva dados sensíveis aqui."
+      update:
+        saved: "Formulário salvo."
+      apply:
+        applied: "Formulário aplicado na ficha."
+      give_back:
+        given_back: "Formulário devolvido para a pessoa."
     admissions:
       index:
         title: "Admissões"
@@ -3439,6 +3499,16 @@ pt-BR:
         title: "Sua admissão foi liberada"
         body: "Veja no portal o que falta enviar."
     processes:
+      form_submitted:
+        name: "Formulário para revisar"
+        hint: "Quando uma pessoa envia um formulário de processo."
+        title: "Formulário para revisar: %{item}"
+        body: "%{person} enviou o formulário."
+      form_correction_requested:
+        name: "Formulário devolvido"
+        hint: "Quando o RH pede uma correção no seu formulário."
+        title: "Corrija o formulário: %{item}"
+        body: "Veja no portal o que o RH pediu."
       task_assigned:
         name: "Item de processo atribuído"
         hint: "Quando um item de um processo fica com você."

@@ -58,8 +58,10 @@ class EmployeePendings
     return [] unless @membership
 
     # A document item with a correction already shows as its document's pending.
-    ProcessItem.where("? = ANY(responsible_membership_ids)", @membership.id).where(status: "pending",
-      kind: Panel::Portal::ProcessItemsController::KINDS).joins(:instance).merge(ProcessInstance.open).includes(:instance).map do |item|
+    mine = ProcessItem.where("? = ANY(responsible_membership_ids)", @membership.id)
+    # A form given back waits for the person again (D-649).
+    mine.where(status: "pending", kind: Panel::Portal::ProcessItemsController::KINDS)
+      .or(mine.where(status: "correction_requested", kind: "form")).joins(:instance).merge(ProcessInstance.open).includes(:instance).map do |item|
       Pending.new(:item, item.title, I18n.t("process_templates.kinds.#{item.instance.kind}"), item.due_on, portal_item_path(item),
         item.overdue? ? :bad : :info)
     end
