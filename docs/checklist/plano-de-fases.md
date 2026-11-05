@@ -174,10 +174,11 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 08a. Tipos de documento (plataforma no admin, empresa, desativação, periodicidade por cargo), pasta da pessoa, envio pelo RH com o PDF único das imagens, varredura, revisão sem a IA, versões, sensível com senha, fila "Documentos", item de envio de documento no editor de modelos, certidão do dependente e comprovante da conta (RN-08-001 a RN-08-024, RN-08-070, RN-08-080, RN-08-081, CA-08-001, CA-08-002, CA-08-008, CA-08-009, D-604) (PR #102)
   - [x] 08b. Vencimentos, pedido avulso e ciência eletrônica (RN-08-030 a RN-08-054, CA-08-003 a CA-08-005, CA-08-007, D-643) (PR #103)
   - [x] 08c. Lote sem a IA, ZIP da pasta e exclusão recuperável (RN-08-060 a RN-08-063, RN-08-082, RN-08-083, CA-08-006, CA-08-010, D-644) (PR #104)
-- [ ] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe". Em 3 PRs (D-645); as abas de ponto, solicitações, folha, mural, avaliação e assistente entram com as specs delas, e o desligado em período de leitura com a 09:
+- [x] **Spec 16:** portal PWA, service worker, convite para instalar, passkeys, "Minha equipe". Em 3 PRs (D-645); as abas de ponto, solicitações, folha, mural, avaliação e assistente entram com as specs delas, e o desligado em período de leitura com a 09:
   - [x] 16a. Portal em `/portal` (destino por perfil, barra inferior e menu lateral, Início, Docs e Mais), convite do colaborador na ficha e em massa, pasta do colaborador com câmera e compressão, correções, pedidos e ciência, itens de processo dele (tarefa, leitura e aceite, documento), avisos dele e "Minha equipe" (RN-16-001 a RN-16-031, RN-08-012, RN-08-051, RN-06-060, D-600, D-645) (PR #114)
   - [x] 16b. PWA: manifest com abertura em `/` pelo perfil, service worker só com a casca, "Sem conexão", nova versão, convite de instalação e navegador antigo (RN-16-060 a RN-16-085, CA-16-006 a CA-16-008, CA-16-012, D-646) (PR #115)
-  - [ ] 16c. Passkeys: cadastro, login com a digital ou o rosto, MFA, confirmação de dado sensível, gestão e admin (RN-16-070 a RN-16-077, CA-16-009, CA-16-010)
+  - [x] 16c. Passkeys: cadastro, login com a digital ou o rosto, MFA, confirmação de dado sensível, gestão e admin (RN-16-070 a RN-16-077, CA-16-009, CA-16-010, D-647) (PR #117). A flag `passkeys` fica desligada até a conferência em aparelhos reais, na fase de validação
+  - Ficam com outras specs: CA-16-001 (abas de ponto e folha), CA-16-003 (spec 09), CA-16-004 (spec 10), CA-16-005 (spec 12 e WhatsApp) e CA-16-011, com os jobs `Memberships::ReadOnlyEndingJob` e `Portal::ExportMyDocumentsJob` (desligamento, spec 09)
 - [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
 - [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
@@ -193,7 +194,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
 - [ ] Admissões com documentos lidos pela IA e revisados pelo RH, com dados fictícios
 - [ ] As solicitações fluem com aprovação e escalada
-- [ ] Os critérios de aceite das specs 06, 07, 08, 09, 15 e 16 passam
+- [ ] Os critérios de aceite das specs 06, 07, 08, 09, 15 e 16 do escopo da fase passam, com os que dependem das fases 3 e 4 listados à parte, como na fase 1 (CA-16-004 e CA-16-005, e as férias do CA-16-003)
 
 ---
 
