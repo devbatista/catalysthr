@@ -1463,6 +1463,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    passkeys:
+      name: "Passkeys"
+      description: "Entrar e confirmar dados sensíveis com a digital ou o rosto do aparelho (spec 16, D-645)."
     sign_in:
       name: "Acesso ao sistema"
       description: "Entrar, recuperar a senha e desbloquear a conta (spec 02)."
@@ -1664,6 +1667,11 @@ pt-BR:
           due: "até %{date}"
           progress: "%{kind} · %{done} de %{count}"
           progress_label: "%{done} de %{count} itens concluídos"
+        passkey_invite:
+          title: "Entre com a digital ou o rosto"
+          text: "Cadastre uma passkey neste aparelho e entre com um toque, sem digitar a senha. A biometria fica só no aparelho."
+          register: "Cadastrar"
+          dismiss: "Agora não"
         install_invite:
           title: "Instale o app"
           prompt: "Abra o portal direto da tela inicial, como um aplicativo."
@@ -2764,8 +2772,15 @@ pt-BR:
         password: "Senha"
         submit: "Confirmar"
         cancel: "Cancelar"
+        passkey: "Confirmar com digital ou rosto"
       create:
         invalid_password: "Senha incorreta."
+    sensitive_passkey_confirmations:
+      challenge:
+        none: "Nenhuma passkey cadastrada neste endereço. Confirme com a senha."
+      create:
+        expired: "O tempo para confirmar terminou. Tente de novo."
+        refused: "Não foi possível confirmar com esta passkey. Tente de novo ou use a senha."
     company_notification_settings:
       edit:
         title: "Canais dos avisos"
@@ -3119,6 +3134,7 @@ pt-BR:
         login: "CPF ou e-mail"
         password: "Senha"
         submit: "Entrar"
+        passkey: "Entrar com digital ou rosto"
       second_factor:
         title: "Código de verificação"
         instructions: "Digite o código de 6 dígitos do app autenticador ou um dos códigos de recuperação."
@@ -3128,6 +3144,10 @@ pt-BR:
         expired: "O tempo para digitar o código terminou. Entre de novo."
       verify_second_factor:
         invalid_code: "Código inválido. Depois de 5 tentativas erradas, somando senha e código, o acesso é bloqueado."
+    passkey_sessions:
+      create:
+        expired: "O tempo para entrar terminou. Tente de novo."
+        refused: "Não foi possível entrar com esta passkey. Tente de novo ou use a sua senha."
     passwords:
       new:
         title: "Recuperar a senha"
@@ -3150,7 +3170,34 @@ pt-BR:
     back: "Voltar"
     back_to_security: "Voltar para Segurança"
     invalid_password: "Senha atual incorreta."
+    passkeys:
+      challenge:
+        mfa_first: "O seu perfil exige a verificação em duas etapas. Ative-a antes de cadastrar uma passkey."
+        nickname:
+          one: "Dê um nome à passkey, com até %{count} caractere."
+          other: "Dê um nome à passkey, com até %{count} caracteres."
+      create:
+        created: "Passkey cadastrada."
+        expired: "O tempo para cadastrar terminou. Tente de novo."
+        refused: "Não foi possível cadastrar a passkey. Tente de novo."
+        limit:
+          one: "O limite é de %{count} passkey. Remova uma para cadastrar outra."
+          other: "O limite é de %{count} passkeys. Remova uma para cadastrar outra."
+      destroy:
+        removed: "Passkey removida."
     security:
+      passkeys:
+        title: "Passkeys"
+        explanation: "Entre e confirme dados sensíveis com a digital ou o rosto do aparelho. A biometria fica só no aparelho, e a senha continua valendo."
+        details: "Cadastrada em %{created} · último uso: %{last_used}"
+        never_used: "nunca"
+        elsewhere: "Vale só em %{address}"
+        remove: "Remover"
+        remove_confirm: "Remover esta passkey? Ela deixa de funcionar neste aparelho."
+        nickname: "Nome da passkey"
+        nickname_hint: "iPhone, Notebook"
+        add: "Cadastrar passkey"
+        unsupported: "Este navegador não permite cadastrar passkeys."
       show:
         title: "Segurança"
         current_password: "Senha atual"
@@ -3313,6 +3360,11 @@ pt-BR:
         hint: "Quando quem administra o seu acesso redefine a verificação."
         title: "Verificação em duas etapas redefinida em %{brand_name}"
         body: "Quem administra o seu acesso redefiniu a verificação em duas etapas. No próximo acesso, entre com a sua senha e ative de novo o app autenticador. Se você não pediu isso, fale com o RH da empresa ou com o suporte."
+      passkey_added:
+        name: "Passkey cadastrada"
+        hint: "Quando uma nova passkey entra na sua conta."
+        title: "Nova passkey cadastrada em %{brand_name}"
+        body: "A passkey \"%{nickname}\" foi cadastrada na sua conta. Se não foi você, remova-a em Segurança, troque a sua senha e fale com o RH da empresa ou com o suporte."
       contact_changed:
         name: "E-mail da conta alterado"
         hint: "Vai para o e-mail novo, quando o RH ou o suporte corrige o contato."

@@ -1,5 +1,5 @@
-# Seeing sensitive data asks for the password again, and the confirmation holds for 5
-# minutes in the session (RN-02-052, D-183). A page shows a sensitive section only when
+# Seeing sensitive data asks for the password or a passkey again, and the confirmation holds
+# for 5 minutes in the session (RN-02-052, RN-16-073, D-183). A page shows a sensitive section only when
 # asked (?reveal=section) and allowed; each value shown then becomes an access event
 # (RN-05-001, RN-05-020), in SensitiveDataHelper. During an impersonate the password is
 # not asked and the values stay masked (RN-02-087).
@@ -45,5 +45,11 @@ module SensitiveAccess
 
   def revealed_sections
     @revealed_sections || []
+  end
+
+  # Only a path of this site, never another host.
+  def safe_return_to
+    path = params[:return_to].to_s
+    path.start_with?("/") && !path.start_with?("//") && !path.include?("\\") ? path : root_path
   end
 end

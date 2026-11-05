@@ -65,6 +65,8 @@ gem "devise", "~> 5.0"
 
 # MFA with an authenticator app (TOTP) and recovery codes (RN-02-042, P-02-35)
 gem "devise-two-factor", "~> 6.4"
+# Passkeys: the WebAuthn ceremonies (spec 16, RN-16-070, P-16-26)
+gem "webauthn", "~> 3.5"
 
 # QR code of the authenticator setup, drawn as SVG on the server (RN-02-042)
 gem "rqrcode", "~> 3.1"

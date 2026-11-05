@@ -1,8 +1,9 @@
+<% passkeys = FeatureFlags.enabled?(FeatureFlags::PASSKEYS) %>
 <%= form_with model: resource, scope: resource_name, url: user_session_path, class: "mt-6 space-y-4" do |form| %>
   <div>
     <%= form.label :login, t(".login"), class: "field-label" %>
-    <%= form.text_field :login, autofocus: true, autocomplete: "username", required: true,
-      class: "input" %>
+    <%= form.text_field :login, autofocus: true, required: true, class: "input",
+      autocomplete: passkeys ? "username webauthn" : "username" %>
   </div>
 
   <div>
@@ -12,4 +13,13 @@
   </div>
 
   <%= form.submit t(".submit"), class: "btn btn-primary btn-block" %>
+<% end %>
+
+<%# RN-16-071: shown by passkeys.js only where the browser supports it. %>
+<% if passkeys %>
+  <div hidden data-passkey-sign-in class="mt-3 space-y-2" data-url="<%= user_passkey_path %>"
+    data-challenge-url="<%= user_passkey_challenge_path %>" data-failure="<%= t("users.passkey_sessions.create.refused") %>">
+    <button type="button" class="btn btn-secondary btn-block" data-passkey-button><%= t(".passkey") %></button>
+    <p hidden data-passkey-message role="alert" class="text-sm text-bad"></p>
+  </div>
 <% end %>

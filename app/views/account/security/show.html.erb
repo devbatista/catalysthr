@@ -40,6 +40,10 @@
     <% end %>
   </section>
 
+  <% if FeatureFlags.enabled?(FeatureFlags::PASSKEYS) && !Current.support_access %>
+    <%= render "account/security/passkeys" %>
+  <% end %>
+
   <section class="mt-6 card card-body">
     <h2 class="card-title"><%= t(".devices.title") %></h2>
     <% if @devices.empty? %>

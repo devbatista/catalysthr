@@ -29,10 +29,13 @@ Rails.application.routes.draw do
   devise_scope :user do
     get "sign-in/code", to: "users/sessions#second_factor", as: :user_second_factor
     post "sign-in/code", to: "users/sessions#verify_second_factor", as: nil
+    # Signing in with a passkey (RN-16-071, D-426).
+    post "sign-in/passkey/challenge", to: "users/passkey_sessions#challenge", as: :user_passkey_challenge
+    post "sign-in/passkey", to: "users/passkey_sessions#create", as: :user_passkey
   end
 
-  # The person's own security: password, MFA, recovery codes, remembered devices and
-  # open sessions (RN-02-042, RN-02-043, RN-02-053).
+  # The person's own security: password, MFA, recovery codes, passkeys, remembered devices
+  # and open sessions (RN-02-042, RN-02-043, RN-02-053, RN-16-070).
   namespace :account, path: "security" do
     root "security#show"
     resource :password, only: %i[edit update]
@@ -40,6 +43,9 @@ Rails.application.routes.draw do
     resource :recovery_codes, only: :create, path: "recovery-codes"
     resources :sessions, only: :destroy
     resources :trusted_devices, only: :destroy, path: "trusted-devices"
+    resources :passkeys, only: %i[create destroy] do
+      post :challenge, on: :collection
+    end
   end
 
   # HostResolver (spec 01, RN-01-001) tags each request with its area; unknown hosts
@@ -327,6 +333,8 @@ Rails.application.routes.draw do
       # The password before sensitive data (RN-02-052).
       get "confirm-password", to: "sensitive_confirmations#new", as: :new_sensitive_confirmation
       post "confirm-password", to: "sensitive_confirmations#create", as: :sensitive_confirmation
+      post "confirm-password/passkey/challenge", to: "sensitive_passkey_confirmations#challenge", as: :sensitive_passkey_challenge
+      post "confirm-password/passkey", to: "sensitive_passkey_confirmations#create", as: :sensitive_passkey_confirmation
       # The official CBO, searched by code or title for the position's form (RN-04-031).
       get "cbo-search", to: "cbo_searches#index", as: :cbo_search
       # Address by CEP and the unit's position, for the unit's form (D-215, D-216).

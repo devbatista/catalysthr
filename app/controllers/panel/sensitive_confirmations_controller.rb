@@ -1,5 +1,6 @@
 module Panel
-  # The password asked before sensitive data is shown (RN-02-052, D-183). It is never
+  # The password asked before sensitive data is shown (RN-02-052, D-183); a passkey does
+  # the same (RN-16-073), in SensitivePasskeyConfirmationsController. It is never
   # offered during an impersonate (RN-02-087). Wrong attempts are limited per address
   # (config/initializers/rack_attack.rb) and become access events.
   class SensitiveConfirmationsController < BaseController
@@ -13,6 +14,7 @@ module Panel
     def new
       authorize! :manage, :own_security
       @return_to = safe_return_to
+      @passkeys_here = FeatureFlags.enabled?(FeatureFlags::PASSKEYS) && current_user.webauthn_credentials.active.at(request.host).exists?
     end
 
     def create
@@ -26,14 +28,6 @@ module Panel
         flash.now[:alert] = t(".invalid_password")
         render :new, status: :unprocessable_content
       end
-    end
-
-    private
-
-    # Only a path of this site, never another host.
-    def safe_return_to
-      path = params[:return_to].to_s
-      path.start_with?("/") && !path.start_with?("//") && !path.include?("\\") ? path : root_path
     end
   end
 end

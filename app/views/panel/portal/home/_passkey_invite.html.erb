@@ -1,0 +1,9 @@
+<%# The invite to register a passkey (spec 16, RN-16-022, RN-16-070, D-647), shown by
+    passkeys.js on a device with fingerprint or face, while the install invite is not on
+    the screen. Dismissed, it comes back in 30 days. %>
+<section hidden data-passkey-invite class="card card-body space-y-3 border-brand-primary/30" aria-labelledby="passkey-invite-title">
+  <h2 id="passkey-invite-title" class="card-title"><%= t(".title") %></h2>
+  <p class="text-sm text-ink-soft"><%= t(".text") %></p>
+  <%= link_to t(".register"), account_root_path(anchor: "passkeys"), class: "btn btn-primary min-h-11 w-full sm:w-auto" %>
+  <button type="button" class="link-button min-h-11 text-sm" data-passkey-invite-dismiss><%= t(".dismiss") %></button>
+</section>

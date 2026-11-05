@@ -50,4 +50,34 @@ RSpec.describe "Request limits", type: :request do
 
     expect(cache.instance_variable_get(:@data).keys.join).not_to include("12345678909")
   end
+
+  it "counts passkey sign-ins with the password's attempts (RN-16-071)" do
+    Flipper.enable(FeatureFlags::PASSKEYS)
+    freeze_time do
+      30.times { post "/sign-in/passkey", as: :json }
+      expect(response).not_to have_http_status(:too_many_requests)
+
+      post "/sign-in", params: { user: { login: "12345678909", password: "Errada#2026" } }
+      expect(response).to have_http_status(:too_many_requests)
+    end
+  end
+
+  it "leaves room for the challenge every sign-in page asks, up to 60 a minute" do
+    Flipper.enable(FeatureFlags::PASSKEYS)
+    freeze_time do
+      60.times { post "/sign-in/passkey/challenge", as: :json }
+      expect(response).not_to have_http_status(:too_many_requests)
+
+      post "/sign-in/passkey/challenge", as: :json
+      expect(response).to have_http_status(:too_many_requests)
+    end
+  end
+
+  it "stops passkey confirmations and registering passwords with the password's limit (RN-16-070, RN-16-073)" do
+    freeze_time do
+      10.times { post "/confirm-password/passkey", as: :json }
+      post "/security/passkeys/challenge", as: :json
+      expect(response).to have_http_status(:too_many_requests)
+    end
+  end
 end

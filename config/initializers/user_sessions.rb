@@ -18,7 +18,7 @@ Rails.application.config.after_initialize do
     # Devise's strategies sign in with :authentication and sign_in with :set_user (after
     # the MFA code, after the invitation). bypass_sign_in runs no callbacks.
     AccessEvent.record!(kind: "auth", action: "sign_in", user: user,
-      metadata: { area: auth.env[HostResolver::AREA].to_s, brand_id: brand_id }.compact)
+      metadata: { area: auth.env[HostResolver::AREA].to_s, brand_id: brand_id, method: auth.env["catalysthr.sign_in_method"] }.compact)
   end
 
   # Every request: a session that ended, expired or belongs to someone else signs out

@@ -5,13 +5,19 @@
 # The limits are not in the spec. They leave room for a company where many people
 # sign in from the same office address.
 class Rack::Attack
-  SIGN_IN_PATHS = %w[/sign-in /sign-in/code].freeze
+  SIGN_IN_PATHS = %w[/sign-in /sign-in/code /sign-in/passkey].freeze
   RECOVERY_PATHS = %w[/password /unlock].freeze
   INVITATION_PATH = "/invitation"
+  CONFIRMATION_PATHS = %w[/confirm-password /confirm-password/passkey /security/passkeys/challenge].freeze
 
   # Sign-in attempts per address, with the password or the MFA code.
   throttle("sign_in/ip", limit: 30, period: 1.minute) do |request|
     request.ip if request.post? && SIGN_IN_PATHS.include?(request.path)
+  end
+
+  # Passkey challenges per address. The autofill asks for one on every sign-in page.
+  throttle("passkey_challenge/ip", limit: 60, period: 1.minute) do |request|
+    request.ip if request.post? && request.path == "/sign-in/passkey/challenge"
   end
 
   # Recovery and unlock requests per address, so nobody floods the e-mails.
@@ -34,9 +40,10 @@ class Rack::Attack
     request.ip if request.patch? && request.path == INVITATION_PATH
   end
 
-  # Password confirmations before sensitive data (RN-02-052), per address.
+  # Password and passkey confirmations before sensitive data (RN-02-052), and the password
+  # that registers a passkey (RN-16-070), per address.
   throttle("sensitive_confirmation/ip", limit: 10, period: 15.minutes) do |request|
-    request.ip if request.post? && request.path == "/confirm-password"
+    request.ip if request.post? && CONFIRMATION_PATHS.include?(request.path)
   end
 
   self.throttled_responder = lambda do |_request|

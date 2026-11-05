@@ -75,6 +75,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   |---|---|---|---|
   | `security.account_locked` | Conta bloqueada por tentativas (D-181). Na fase 1, só no sino: o e-mail de desbloqueio já é um aviso de acesso (D-607) | Sim | S E W |
   | `security.mfa_reset` | MFA redefinido por quem administra o perfil | Sim | S E |
+  | `security.passkey_added` | Nova passkey cadastrada na conta, com o nome dela (D-647) | Sim | S E |
   | `security.contact_changed` | E-mail ou celular alterado pelo RH (aviso ao contato antigo e ao novo) | Sim | E W |
   | `payroll.payslip_published` | Holerite publicado (D-360) | Sim | S E W P |
   | `payroll.income_statement` | Informe de rendimentos disponível (D-361) | Sim | S E W P |

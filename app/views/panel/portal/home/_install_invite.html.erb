@@ -1,8 +1,8 @@
 <%# The invite to install the app (spec 16, RN-16-022, RN-16-065, D-427, CA-16-006),
     shown by application.js from the second visit on: the browser's "Instalar" on Android
     and on the computer, or the steps on the iPhone. Never once installed; dismissed, it
-    comes back in 30 days. One invite at a time: the push's and the passkey's come with their
-    blocks. %>
+    comes back in 30 days. One invite at a time: it goes before the passkey's (D-647), and the
+    push's comes with its block. %>
 <section hidden data-install-invite class="card card-body space-y-3 border-brand-primary/30" aria-labelledby="install-title">
   <h2 id="install-title" class="card-title"><%= t(".title") %></h2>
   <div hidden data-install-variant="prompt" class="space-y-3">

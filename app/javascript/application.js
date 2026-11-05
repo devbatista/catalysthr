@@ -1,4 +1,5 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
+import "passkeys"
 
 // Forms with data-confirm ask before submitting, for actions that remove access.
 document.addEventListener("submit", (event) => {

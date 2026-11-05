@@ -206,6 +206,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] AWS SES: fora do sandbox em São Paulo (pedido enviado em 2026-10-14, recusado e reaberto em 2026-10-27, recusado de novo em 2026-11-04)
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Asaas: a primeira NFS-e real, com a flag `nfse` ligada (`pendencias-fornecedores.md`)
+- [ ] Passkeys em aparelhos reais (iPhone, Android, Windows, D-647): cadastro, login e o que cada aparelho mostra como nome (CA-16-010). Só o Chrome com autenticador virtual foi conferido. Depois, ligar a flag `passkeys`
 - [ ] Teste de ponta a ponta da fase 1: o superadmin cria um parceiro e uma empresa direta em teste; eles configuram a marca e convidam o RH, que entra com MFA; contratam um plano e pagam por cartão e por PIX; a NFS-e sai pelo Asaas e aparece na fatura
 - [ ] Serviço `clamav` no Railway (1 vCPU, 3 GB, de US$ 12 a 24 por mês), antes de ligar a flag de qualquer módulo com upload para um cliente (D-638)
 - [ ] Spec 20: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e o reenvio ao plantão (RN-20-076, com o plano pago do Sentry e a Twilio, D-629)

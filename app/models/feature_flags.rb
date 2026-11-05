@@ -12,8 +12,11 @@ module FeatureFlags
   # The NFS-e through Asaas (spec 19, section 4.11, D-633), on its own so the billing can
   # launch before the notes are ready.
   NFSE = :nfse
+  # Passkeys (spec 16, section 4.8, D-645). Off, nobody sees the option; the reset of the MFA
+  # removes the ones already registered either way (RN-16-076).
+  PASSKEYS = :passkeys
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE ].freeze
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze
