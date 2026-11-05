@@ -14,8 +14,13 @@ module Documents
 
     # A date older than the "age" rule takes is not approved: the review suggests asking
     # the correction "documento vencido" (RN-08-033, CA-08-003).
-    def approve(issued_on: nil, valid_until: nil)
+    # aso_result: fit or unfit, on the ASO of an open CLT admission, with the exam's date in
+    # issued_on (RN-07-061, D-651).
+    def approve(issued_on: nil, valid_until: nil, aso_result: nil)
       return error(:not_reviewable) unless @version.reviewable?
+
+      admission = Admissions::Aso.admission_for(@document)
+      return error(:aso_result_blank) if admission && !(aso_result.in?(%w[fit unfit]) && issued_on.present?)
 
       type = @document.document_type
       if Expiration.too_old?(type, issued_on, @document.worker_profile.today)
@@ -31,6 +36,7 @@ module Documents
           valid_until: valid_until.presence)
         @document.current_version = @version
         Expiration.apply(@document)
+        Admissions::Aso.record(admission, result: aso_result, exam_on: issued_on, by: @by) if admission
         true
       end
       after_review(done)

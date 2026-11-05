@@ -5,9 +5,11 @@ module Panel
   # the items assigned to them (P-07-20, RN-03-014). The items' actions stay on the process's
   # page (spec 06). Behind the `admissions` flag (D-648).
   class AdmissionsController < BaseController
+    include SensitiveAccess
+
     before_action :require_current_company
     before_action :require_flag
-    before_action :load_admission, only: %i[show release change_template reschedule]
+    before_action :load_admission, only: %i[show release change_template reschedule complete cancel reassess_aso]
 
     helper_method :unit_options, :department_options, :position_options, :allocation_client_options
 
@@ -24,6 +26,10 @@ module Panel
     def show
       authorize! :read_summary, @admission
       @hr = can?(:read, @admission)
+      # The ASO's result only after the password, as an access event (D-086, D-651).
+      reveal_sections(%w[health]) if @hr && can?(:read_health, @admission.worker_profile)
+      return if performed?
+
       @instance = @admission.process_instance
       @revision = @admission.employment.effective_revision
       @items = @instance.items.to_a
@@ -33,6 +39,7 @@ module Panel
       @generated = @hr ? GeneratedDocument.where(employment_id: @admission.employment_id)
         .includes(:document_template, :signed_document, file_attachment: :blob).order(:created_at).to_a : []
       @document_templates = @hr ? DocumentTemplate.active.for_kind(@admission.employment.kind).ordered.to_a : []
+      @blockers = @hr && @admission.open? ? Admissions::Conclusion.new(@admission, by: current_user, starter: nil).blockers : []
       @completes_pay = @revision&.completed_by_admission? && can?(:update, @admission) && can?(:update, @admission.worker_profile)
     end
 
@@ -83,6 +90,36 @@ module Panel
         redirect_to admission_path(@admission), notice: t(".rescheduled")
       else
         redirect_to admission_path(@admission), alert: @admission.errors.full_messages.to_sentence
+      end
+    end
+
+    # With the summary on the page, the HR confirms (RN-07-080, RN-07-081, D-260).
+    def complete
+      authorize! :update, @admission
+      if Admissions::Conclusion.new(@admission, by: current_user, starter: starter).call
+        redirect_to admission_path(@admission), notice: t(".completed")
+      else
+        redirect_to admission_path(@admission), alert: t(".not_ready")
+      end
+    end
+
+    # Before the employment starts (RN-07-090 to RN-07-092).
+    def cancel
+      authorize! :update, @admission
+      if Admissions::Cancellation.call(@admission, reason: params[:cancel_reason], note: params[:cancel_note], by: current_user)
+        redirect_to admission_path(@admission), notice: t(".cancelled")
+      else
+        redirect_to admission_path(@admission), alert: @admission.errors.full_messages.to_sentence
+      end
+    end
+
+    # A new exam after an unfit ASO (RN-07-061).
+    def reassess_aso
+      authorize! :update, @admission
+      if Admissions::Aso.reassess(@admission, by: current_user)
+        redirect_to admission_path(@admission), notice: t(".reassessing")
+      else
+        redirect_to admission_path(@admission), alert: t(".not_unfit")
       end
     end
 

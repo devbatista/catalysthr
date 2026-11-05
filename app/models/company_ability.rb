@@ -86,6 +86,7 @@ class CompanyAbility
     unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
     processes(company, unit_ids: unit_ids, modules: modules)
     admissions(company, unit_ids: unit_ids) if modules.include?("admissao")
+    admission_documents(company, unit_ids) if modules.include?("admissao") && !modules.include?("documentos")
     if modules.include?("documentos")
       folders = { company_id: company.id }
       folders[:worker_profile_id] = people[:id] if people.key?(:id)
@@ -133,6 +134,18 @@ class CompanyAbility
     end
     can %i[read read_summary create update release], Admission, company_id: company.id, process_instance: instances
     can :admit_in, Unit, units
+  end
+
+  # Who runs an admission sends and reviews that person's documents without the documents
+  # module, only while it's open and in their units (spec 03, section 4.4, D-650).
+  def admission_documents(company, unit_ids)
+    people = ActsAsTenant.with_tenant(company) do
+      open = Admission.in_status("open")
+      open = open.where(process_instances: { unit_id: unit_ids }) unless unit_ids == :all
+      open.joins(:employment).pluck("employments.worker_profile_id")
+    end
+    can %i[read upload review], Document, company_id: company.id, worker_profile_id: people,
+      document_type: { category: DocumentCategory::ALL }
   end
 
   # The manager and the client manager see and resolve only the items assigned to them

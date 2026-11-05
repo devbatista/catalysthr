@@ -48,6 +48,7 @@ module Panel
 
       attributes = item_params
       @item.assign_attributes(attributes.slice(:title, :instructions, :required))
+      @item.required = true if Admissions::Aso.required_item?(@item)
       assign_due(attributes[:due_on]) if attributes.key?(:due_on)
       people_before = @item.responsible_membership_ids
       assign_people(attributes[:responsible_membership_ids]) if attributes.key?(:responsible_membership_ids)
@@ -68,7 +69,7 @@ module Panel
     # Only an item not yet resolved; the ones that waited for it may be freed (RN-06-040).
     def destroy
       authorize! :adjust, @instance
-      return closed_redirect if @item.resolved? || !@instance.open?
+      return closed_redirect if @item.resolved? || !@instance.open? || Admissions::Aso.required_item?(@item)
 
       @item.transaction do
         Processes::Events.record(@instance, "item_removed", by: current_user, title: @item.title)
@@ -117,6 +118,11 @@ module Panel
       receipt = params[:receipt]
       receipt = nil unless receipt.is_a?(ActionDispatch::Http::UploadedFile)
       resolve(item_actions.forward(sent_on: params[:sent_on], receipt: receipt))
+    end
+
+    def reopen
+      authorize! :adjust, @instance
+      resolve(item_actions.reopen)
     end
 
     def skip

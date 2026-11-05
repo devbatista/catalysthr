@@ -15,6 +15,8 @@ module Processes
       item = document.process_item
       status = STATUSES[document.latest_version&.status]
       return unless item && status
+      # An unfit ASO is valid, but doesn't resolve the item (RN-07-061, D-651).
+      return if status == "approved" && Admissions::Aso.item?(item) && Admissions::Aso.admission_of(item)&.aso_unfit?
 
       changed = item.with_lock do
         next false unless item.open? && item.instance.open? && item.status != status

@@ -1,7 +1,7 @@
 # 07 — Admissão e integração
 
 > Status: aprovado · Última atualização: 2026-11-05
-> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648 a D-650 ([decisoes.md](decisoes.md))
+> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648 a D-651 ([decisoes.md](decisoes.md))
 > Os itens **[P-07-01]** a **[P-07-18]** foram todos aprovados sem ajuste (D-264, seção 10). Os itens **[P-07-19]** e **[P-07-20]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -111,7 +111,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 ### ASO (D-259)
 
 - **RN-07-060** — Para CLT, a conclusão exige um ASO admissional **apto** validado. O item de ASO é obrigatório e não pode ser dispensado no vínculo CLT **[P-07-11]**. Se o processo não tem item do tipo `aso_admission`, o sistema acrescenta um (D-648).
-- **RN-07-061** — Se a IA ou o RH registra o ASO como **inapto**, a admissão mostra um alerta grave, e o RH escolhe entre **cancelar** (RN-07-090) e **reavaliar** (pede um novo ASO, e o inapto fica no histórico). Ao revisar o ASO, o RH escolhe apto ou inapto, o que preenche `aso_status` (D-648).
+- **RN-07-061** — Se a IA ou o RH registra o ASO como **inapto**, a admissão mostra um alerta grave, e o RH escolhe entre **cancelar** (RN-07-090) e **reavaliar** (pede um novo ASO, e o inapto fica no histórico). Ao revisar o ASO, o RH escolhe apto ou inapto, com a data do exame, o que preenche `aso_status` (D-648). O ASO inapto continua válido na pasta, mas o item não resolve. Exame depois do início gera um aviso, sem bloquear (D-651).
 
 ### Contabilidade (D-258)
 
@@ -152,7 +152,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
   - se o S-2200 ou S-2300 já tinha sido enviado, o sistema gera a exclusão (S-3000) na spec 13;
   - a membership é revogada, exceto se a pessoa tiver outros vínculos ou perfis na empresa;
   - dados e documentos ficam na retenção de candidato não contratado (6 meses, spec 05).
-- **RN-07-092** — Não é possível cancelar depois da ativação do vínculo. A partir daí, a saída é por desligamento (spec 09) **[P-07-14]**.
+- **RN-07-092** — Não é possível cancelar depois da ativação do vínculo. A partir daí, a saída é por desligamento (spec 09) **[P-07-14]**. Até a ativação, a admissão concluída ainda pode ser cancelada (D-651).
 
 ### Contrato de experiência (D-261, D-262)
 
@@ -200,8 +200,8 @@ admissions                                             [P-07-18]
   source ('manual'|'recruitment'|'import'), source_ref,
   invite_released_at, invite_released_by_id,
   esocial_status, esocial_event_id (spec 13),
-  aso_status ('missing'|'fit'|'unfit'),
-  completed_at, completed_by_id, cancelled_at, cancel_reason, cancel_note
+  aso_status ('missing'|'fit'|'unfit', criptografado, D-651), aso_exam_on,
+  completed_at, completed_by_id, cancelled_at, cancel_reason, cancel_note (criptografados, D-651)
 
 process_template_items + stage, process_items + stage  -- etapa do item (D-648)
   'registration'|'documents'|'hr_review'|'accounting'|'conclusion'

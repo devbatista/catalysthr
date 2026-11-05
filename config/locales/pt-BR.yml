@@ -823,6 +823,7 @@ pt-BR:
       forward_submit: "Registrar"
       edit: "Editar"
       skip: "Dispensar"
+      reopen: "Reabrir para nova decisão"
       skip_reason: "Justificativa"
       skip_hint:
         required: "Item obrigatório: a justificativa é necessária e fica no histórico."
@@ -856,6 +857,9 @@ pt-BR:
       form_submitted: "\"%{title}\" enviado ao RH"
       form_returned: "\"%{title}\" devolvido: %{reason}"
       form_applied: "\"%{title}\" aplicado na ficha"
+      aso_reviewed: "ASO admissional revisado"
+      aso_reassessment: "Novo exame pedido para o ASO admissional"
+      item_reopened: "\"%{title}\" reaberto para nova decisão"
   # The contracts and terms (spec 07, D-650).
   document_templates:
     statuses:
@@ -884,6 +888,12 @@ pt-BR:
       hoje: "Data de hoje, por extenso"
   # The admission (spec 07).
   admissions:
+    cancel_reasons:
+      withdrew: "Candidato desistiu"
+      aso_unfit: "ASO inapto"
+      company_withdrew: "Empresa desistiu"
+      other: "Outro motivo"
+      generic: "Admissão cancelada"
     steps_label: "Etapas da admissão"
     template_changed: "Modelo trocado"
     steps:
@@ -1544,6 +1554,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    esocial:
+      name: "eSocial na admissão"
+      description: "Ligada, a conclusão da admissão exige o eSocial enviado, e a ativação avisa sem o aceite (spec 13, D-648)."
     admissions:
       name: "Admissões"
       description: "O módulo de admissão no painel, no lugar de \"Em breve\" (spec 07, D-648)."
@@ -1943,6 +1956,13 @@ pt-BR:
         valid_until: "Validade do documento"
         issued_on: "Data do documento"
         approve: "Aprovar"
+        aso_exam_on: "Data do exame"
+        aso_result: "Resultado do ASO"
+        aso_choose: "Escolha o resultado"
+        aso_hint: "Inapto fica válido na pasta, mas a admissão só conclui com um ASO apto."
+        aso_results:
+          fit: "Apto"
+          unfit: "Inapto"
         approve_confirm: "Aprovar esta versão? Ela passa a ser a vigente, e a anterior fica como substituída."
         correction: "Pedir correção"
         reason: "Motivo"
@@ -2242,6 +2262,51 @@ pt-BR:
         released_already: "Depois de liberar o acesso, o modelo não pode ser trocado."
       reschedule:
         rescheduled: "Data de início alterada."
+      complete:
+        completed: "Admissão concluída."
+        not_ready: "Ainda há pendências para concluir a admissão."
+      cancel:
+        cancelled: "Admissão cancelada."
+      reassess_aso:
+        reassessing: "O item do ASO foi reaberto para um novo exame."
+        not_unfit: "Não há ASO inapto para reavaliar."
+      conclusion:
+        title: "Conclusão"
+        items: "Itens do checklist"
+        items_done: "%{done} de %{count} concluídos"
+        aso: "ASO admissional"
+        see_result: "Ver o resultado"
+        aso_status:
+          missing: "Aguardando"
+          fit: "Apto"
+          unfit: "Inapto"
+        contract: "Contrato"
+        contract_signed: "Assinado, na pasta"
+        contract_none: "Sem versão assinada"
+        esocial: "eSocial"
+        esocial_na: "Não se aplica"
+        esocial_outside: "Envio feito fora do sistema nesta fase"
+        esocial_statuses:
+          not_sent: "Não enviado"
+          sent: "Enviado"
+          accepted: "Aceito"
+          rejected: "Rejeitado"
+        missing: "Falta para concluir:"
+        blockers:
+          rejected: "Resolver a aprovação reprovada"
+          items: "Concluir ou dispensar os itens obrigatórios"
+          aso: "ASO admissional apto validado"
+          salary: "Preencher o salário"
+          esocial: "Enviar o eSocial"
+        complete: "Concluir admissão"
+        complete_confirm: "Concluir a admissão? A integração do modelo começa em seguida."
+        cancel: "Cancelar a admissão"
+        cancel_reason: "Motivo"
+        cancel_choose: "Escolha o motivo"
+        cancel_note: "Observação"
+        cancel_hint: "O vínculo é cancelado e o acesso é revogado, salvo se a pessoa tiver outros vínculos ou perfis aqui. Dados e documentos ficam pela retenção de quem não foi contratado."
+        cancel_submit: "Cancelar a admissão"
+        cancel_confirm: "Cancelar esta admissão? Isso não pode ser desfeito."
       contracts:
         title: "Contratos e termos"
         hint: "O PDF fica aqui, fora da pasta, e abre com a sua senha, porque pode trazer salário e documentos. Na pasta entra só a versão assinada."
@@ -2277,6 +2342,13 @@ pt-BR:
         title: "Admissão de %{name}"
         back: "Voltar para as admissões"
         start_expected: "início previsto em %{date}"
+        aso_decision: "O ASO admissional precisa de uma decisão do RH. Cancele a admissão ou peça um novo exame."
+        reassess: "Reavaliar: pedir novo ASO"
+        reassess_confirm: "Reabrir o item do ASO para um novo exame? O anterior fica no histórico."
+        aso_late: "O exame admissional foi feito depois do início do vínculo."
+        item_rejected: "\"%{title}\" foi reprovado: %{reason}. Reabra ou dispense no checklist, ou cancele a admissão."
+        cancelled_on: "Cancelada em %{date}."
+        see_reason: "Ver o motivo"
         other_employment: "Esta pessoa já tem vínculo nesta empresa. A admissão continua permitida, porque vínculos simultâneos são aceitos."
         responsible_alert: "Algum item ficou sem responsável do papel previsto e foi para o RH. Confira no checklist."
         progress: "Etapas"
@@ -2375,6 +2447,7 @@ pt-BR:
         approved: "Item aprovado."
         rejected: "Item reprovado."
         skipped: "Item dispensado."
+        pending: "Item reaberto."
       new:
         title: "Novo item"
         back: "Voltar para o processo"
@@ -3598,6 +3671,11 @@ pt-BR:
   # (RN-15-005).
   notification_types:
     admission:
+      aso_unfit:
+        name: "Atenção em uma admissão"
+        hint: "Quando uma admissão precisa de uma decisão do RH sobre o ASO."
+        title: "Atenção na admissão de %{person}"
+        body: "Abra a admissão no painel para ver o que precisa de decisão."
       started:
         name: "Admissão liberada"
         hint: "Quando o RH libera a sua admissão, com o que falta enviar."
@@ -4759,6 +4837,9 @@ pt-BR:
         admission:
           attributes:
             base:
+              already_started: "Depois da ativação do vínculo, a saída é pelo desligamento"
+              reason_blank: "Escolha o motivo"
+              note_blank: "Escreva o motivo na observação"
               started_on_invalid: "A data de início precisa ser hoje ou uma data futura"
               not_pending: "Só a admissão em andamento, antes do início do vínculo, muda de data"
               revision_before_start: "Há uma revisão do vínculo antes dessa data. Ajuste a revisão primeiro"
@@ -4847,6 +4928,7 @@ pt-BR:
               receipt_size: "O comprovante pode ter até %{count} MB"
               skip_reason_blank: "Um item obrigatório só é dispensado com justificativa"
               not_open: "Este item já foi resolvido"
+              aso_required: "O ASO do vínculo CLT é obrigatório e não pode ser dispensado"
               not_actionable: "Este item não pode ser concluído agora"
               material_not_ready: "O material ainda não está disponível"
         document_type:
@@ -4876,6 +4958,7 @@ pt-BR:
           attributes:
             base:
               not_reviewable: "Esta versão não está aguardando revisão"
+              aso_result_blank: "Informe o resultado e a data do exame"
               too_old: "Documento vencido: emitido há mais de %{count} dias. Peça a correção com o motivo \"Documento vencido\""
         acknowledgment:
           attributes:

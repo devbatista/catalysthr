@@ -103,6 +103,18 @@
                 <%= form.date_field :issued_on, max: Date.current, class: "input" %>
               </div>
             <% end %>
+            <%# The HR records the ASO's result, in place of the AI until spec 14 (RN-07-061, D-651). %>
+            <% if Admissions::Aso.admission_for(@document) %>
+              <div>
+                <%= form.label :issued_on, t(".aso_exam_on"), class: "field-label" %>
+                <%= form.date_field :issued_on, required: true, max: Date.current, class: "input" %>
+              </div>
+              <div>
+                <%= form.label :aso_result, t(".aso_result"), class: "field-label" %>
+                <%= form.select :aso_result, %w[fit unfit].map { |result| [ t(".aso_results.#{result}"), result ] }, { prompt: t(".aso_choose") }, required: true, class: "input" %>
+                <p class="field-hint"><%= t(".aso_hint") %></p>
+              </div>
+            <% end %>
             <%= form.submit t(".approve"), class: "btn btn-primary w-full sm:w-auto", data: { confirm: t(".approve_confirm") } %>
           <% end %>
           <details class="border-t border-line-soft pt-4">

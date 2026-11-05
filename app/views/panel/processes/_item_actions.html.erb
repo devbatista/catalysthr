@@ -1,7 +1,8 @@
 <%# What can be done on an item (D-641): who answers for it, or the HR, resolves a task, an
     approval or (the HR) a forward; the HR also edits, moves, skips and removes. %>
 <% actor = @instance.open? && item.pending? && can?(:act, item) %>
-<% if (actor && item.panel_kind?) || (editable && item.open?) %>
+<% refused = editable && item.rejected? && @instance.admission? %>
+<% if (actor && item.panel_kind?) || (editable && item.open?) || refused %>
   <div class="mt-3 flex flex-wrap items-start gap-2">
     <% if actor && item.task? %>
       <details class="w-full sm:w-auto">
@@ -37,16 +38,23 @@
       </details>
     <% end %>
 
-    <% if editable && item.open? %>
-      <% if index.positive? %>
+    <%# A refused approval: the HR gives it back to who answers for it, or skips it with a
+        reason; cancelling is on the admission's page (RN-07-083, D-648). %>
+    <% if refused %>
+      <%= button_to t("processes.actions.reopen"), reopen_process_item_path(@instance, item), method: :patch, class: "btn btn-secondary btn-sm" %>
+    <% end %>
+    <% if editable && (item.open? || refused) %>
+      <% if item.open? && index.positive? %>
         <%= button_to "↑", move_process_item_path(@instance, item, direction: "up"), method: :patch, class: "btn btn-secondary btn-sm",
           title: t("processes.actions.up"), "aria-label": t("processes.actions.up") %>
       <% end %>
-      <% if index < @items.size - 1 %>
+      <% if item.open? && index < @items.size - 1 %>
         <%= button_to "↓", move_process_item_path(@instance, item, direction: "down"), method: :patch, class: "btn btn-secondary btn-sm",
           title: t("processes.actions.down"), "aria-label": t("processes.actions.down") %>
       <% end %>
-      <%= link_to t("processes.actions.edit"), edit_process_item_path(@instance, item), class: "btn btn-secondary btn-sm" %>
+      <% if item.open? %><%= link_to t("processes.actions.edit"), edit_process_item_path(@instance, item), class: "btn btn-secondary btn-sm" %><% end %>
+      <%# The CLT's ASO is never skipped nor removed (P-07-11). %>
+      <% unless Admissions::Aso.required_item?(item) %>
       <details class="w-full sm:w-auto">
         <summary class="btn btn-secondary btn-sm"><%= t("processes.actions.skip") %></summary>
         <%= form_with url: skip_process_item_path(@instance, item), method: :patch, class: "mt-2 space-y-2 sm:w-80" do |form| %>
@@ -58,6 +66,7 @@
       </details>
       <%= button_to t("processes.actions.remove"), process_item_path(@instance, item), method: :delete, class: "btn btn-danger btn-sm",
         form: { data: { confirm: t("processes.actions.remove_confirm", title: item.title) } } %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

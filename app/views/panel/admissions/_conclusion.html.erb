@@ -1,0 +1,56 @@
+<%# "Concluir admissão" with the summary (RN-07-080, RN-07-081, CA-07-006): what's missing, or
+    the button, and the cancellation until the employment starts (RN-07-090 to RN-07-092). %>
+<section id="conclusion" class="card card-body mt-6 space-y-4">
+  <h2 class="card-title"><%= t(".title") %></h2>
+  <% if @admission.open? %>
+    <dl class="details-list">
+      <div><dt><%= t(".items") %></dt><dd><%= t(".items_done", done: @instance.items.count(&:resolved?), count: @instance.items.size) %></dd></div>
+      <% if employment.clt? %>
+        <%# The result only after the password (D-086, D-651). %>
+        <div>
+          <dt><%= t(".aso") %></dt>
+          <dd>
+            <% if @admission.aso_status == "missing" %>
+              <%= t(".aso_status.missing") %>
+            <% elsif revealed_sections.include?("health") %>
+              <%= reveal_confirmed(@admission, :aso_status, as: :text, section: :health, value: t(".aso_status.#{@admission.aso_status}")) %>
+            <% else %>
+              <%= link_to t(".see_result"), admission_path(@admission, reveal: "health", anchor: "conclusion"), class: "link-button" %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+      <div><dt><%= t(".contract") %></dt><dd><%= t(@generated.any?(&:signed?) ? ".contract_signed" : ".contract_none") %></dd></div>
+      <div><dt><%= t(".esocial") %></dt><dd><%= @admission.esocial_not_applicable? ? t(".esocial_na") : FeatureFlags.enabled?(FeatureFlags::ESOCIAL) ? t(".esocial_statuses.#{@admission.esocial_status}") : t(".esocial_outside") %></dd></div>
+    </dl>
+    <% if @blockers.any? %>
+      <div>
+        <p class="text-sm font-semibold"><%= t(".missing") %></p>
+        <ul class="mt-1 list-disc space-y-1 pl-5 text-sm">
+          <% @blockers.each do |blocker| %><li><%= t(".blockers.#{blocker}") %></li><% end %>
+        </ul>
+      </div>
+      <button type="button" class="btn btn-primary" disabled><%= t(".complete") %></button>
+    <% else %>
+      <%= button_to t(".complete"), complete_admission_path(@admission), method: :patch, class: "btn btn-primary",
+        form: { data: { confirm: t(".complete_confirm") } } %>
+    <% end %>
+  <% end %>
+  <% if employment.pending? %>
+    <details class="border-t border-line-soft pt-4">
+      <summary class="btn btn-danger"><%= t(".cancel") %></summary>
+      <%= form_with url: cancel_admission_path(@admission), method: :patch, class: "mt-3 space-y-3 sm:w-96" do |form| %>
+        <div>
+          <%= form.label :cancel_reason, t(".cancel_reason"), class: "field-label" %>
+          <%= form.select :cancel_reason, Admission::CANCEL_REASONS.map { |reason| [ t("admissions.cancel_reasons.#{reason}"), reason ] }, { prompt: t(".cancel_choose") }, required: true, class: "input" %>
+        </div>
+        <div>
+          <%= form.label :cancel_note, t(".cancel_note"), class: "field-label" %>
+          <%= form.text_area :cancel_note, rows: 2, maxlength: 2000, class: "input" %>
+        </div>
+        <p class="field-hint"><%= t(".cancel_hint") %></p>
+        <%= form.submit t(".cancel_submit"), class: "btn btn-danger", data: { confirm: t(".cancel_confirm") } %>
+      <% end %>
+    </details>
+  <% end %>
+</section>
