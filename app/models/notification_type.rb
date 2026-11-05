@@ -73,6 +73,9 @@ NotificationType::CATALOG = [
   # the portal (spec 16, D-641).
   NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[client_manager]),
+  # The admission released to who already has access; the others get the invitation
+  # (RN-07-020, D-648). WhatsApp comes with spec 15's rest.
+  NotificationType.new(code: "admission.started", mandatory: true, urgent: false, channels: %w[system email], roles: %w[employee]),
   # An item past its date, to whoever answers for it and to the process's HR (RN-06-028).
   NotificationType.new(code: "processes.task_overdue", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[manager client_manager hr_admin hr_analyst consultant]),

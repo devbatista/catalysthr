@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -135,6 +135,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_add_ons_on_code", unique: true
+  end
+
+  create_table "admissions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "employment_id", null: false
+    t.uuid "process_instance_id", null: false
+    t.string "source", default: "manual", null: false
+    t.string "source_ref"
+    t.datetime "invite_released_at"
+    t.uuid "invite_released_by_id"
+    t.string "esocial_status", default: "not_sent", null: false
+    t.uuid "esocial_event_id"
+    t.string "aso_status", default: "missing", null: false
+    t.datetime "completed_at"
+    t.uuid "completed_by_id"
+    t.datetime "cancelled_at"
+    t.string "cancel_reason"
+    t.text "cancel_note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_admissions_on_company_id"
+    t.index ["completed_by_id"], name: "index_admissions_on_completed_by_id"
+    t.index ["employment_id"], name: "index_admissions_on_employment_id", unique: true
+    t.index ["invite_released_by_id"], name: "index_admissions_on_invite_released_by_id"
+    t.index ["process_instance_id"], name: "index_admissions_on_process_instance_id"
   end
 
   create_table "allocation_client_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -299,6 +324,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.integer "read_only_period_days", default: 365, null: false
     t.integer "next_registration_number", default: 1, null: false
     t.boolean "uses_allocation_clients", default: false, null: false
+    t.boolean "uses_accounting_step", default: false, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end
@@ -996,6 +1022,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.index ["position_id", "document_type_id"], name: "index_position_document_expirations_unique", unique: true
   end
 
+  create_table "position_required_document_types", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "position_id", null: false
+    t.uuid "document_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_position_required_document_types_on_company_id"
+    t.index ["document_type_id"], name: "index_position_required_document_types_on_document_type_id"
+    t.index ["position_id", "document_type_id"], name: "index_position_required_document_types_unique", unique: true
+  end
+
   create_table "positions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.string "name", null: false
@@ -1102,6 +1139,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.text "skipped_reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stage"
     t.index ["company_id"], name: "index_process_items_on_company_id"
     t.index ["completed_by_id"], name: "index_process_items_on_completed_by_id"
     t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY ((ARRAY['blocked'::character varying, 'pending'::character varying])::text[]))"
@@ -1127,6 +1165,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.uuid "depends_on_item_ids", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stage"
     t.index ["company_id"], name: "index_process_template_items_on_company_id"
     t.index ["process_template_id", "position"], name: "idx_on_process_template_id_position_d337fec09d"
   end
@@ -1155,6 +1194,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
     t.uuid "onboarding_template_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "default_employment_kinds", default: [], null: false, array: true
     t.index ["company_id", "kind"], name: "index_process_templates_default", unique: true, where: "is_default"
     t.index ["company_id"], name: "index_process_templates_on_company_id"
     t.index ["onboarding_template_id"], name: "index_process_templates_on_onboarding_template_id"
@@ -1512,6 +1552,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "add_on_prices", "add_ons"
   add_foreign_key "add_on_prices", "users", column: "created_by_id"
+  add_foreign_key "admissions", "companies"
+  add_foreign_key "admissions", "employments"
+  add_foreign_key "admissions", "process_instances"
+  add_foreign_key "admissions", "users", column: "completed_by_id"
+  add_foreign_key "admissions", "users", column: "invite_released_by_id"
   add_foreign_key "allocation_client_managers", "allocation_clients", on_delete: :cascade
   add_foreign_key "allocation_client_managers", "companies"
   add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
@@ -1628,6 +1673,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_180000) do
   add_foreign_key "position_document_expirations", "companies"
   add_foreign_key "position_document_expirations", "document_types"
   add_foreign_key "position_document_expirations", "positions"
+  add_foreign_key "position_required_document_types", "companies"
+  add_foreign_key "position_required_document_types", "document_types"
+  add_foreign_key "position_required_document_types", "positions"
   add_foreign_key "positions", "companies"
   add_foreign_key "positions", "process_templates", column: "admission_template_id", on_delete: :nullify
   add_foreign_key "pre_activation_prices", "users", column: "created_by_id"

@@ -16,7 +16,10 @@ module FeatureFlags
   # removes the ones already registered either way (RN-16-076).
   PASSKEYS = :passkeys
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS ].freeze
+  # The admissions (spec 07, D-648). While off, the menu keeps "Em breve".
+  ADMISSIONS = :admissions
+
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

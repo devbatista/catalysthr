@@ -48,6 +48,7 @@ class Employment < ApplicationRecord
   belongs_to :worker_profile
   has_many :revisions, -> { order(:effective_on, :id) }, class_name: "EmploymentRevision", inverse_of: :employment,
     dependent: :restrict_with_error
+  has_one :admission, dependent: :restrict_with_error
 
   enum :kind, KINDS.index_by(&:itself), validate: true
   enum :status, STATUSES.index_by(&:itself), validate: true

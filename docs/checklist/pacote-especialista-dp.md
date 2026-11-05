@@ -64,7 +64,7 @@ Para cada item: **correto**, **incorreto** (com a regra certa e o fundamento) ou
   - cálculo da data projetada.
 - [ ] **2.7 (A) Prazos da rescisão:** pagamento em 10 dias corridos do término (art. 477, § 6º).
 - [ ] **2.8 (A) Exame demissional:** exigido conforme a NR-7, com dispensa se o último exame ocupacional for recente. Quais são os prazos por grau de risco?
-- [ ] **2.9 (A) Contrato de experiência:** soma de até 90 dias e uma única prorrogação (arts. 445 e 451). Sem decisão até o fim, o contrato passa a prazo indeterminado.
+- [ ] **2.9 (A) Contrato de experiência:** soma de até 90 dias e uma única prorrogação (arts. 445 e 451). Sem decisão até o fim, o contrato passa a prazo indeterminado. Se o RH já informou a prorrogação no cadastro (por exemplo, 45 + 45), o sistema entende que ela consta do contrato assinado e passa ao segundo período sozinho, com aviso ao RH (D-648). Está correto? Isso depende de o contrato prever a prorrogação automática?
 - [ ] **2.10 (A) Tipos de desligamento:** sem justa causa, justa causa, pedido de demissão, acordo (art. 484-A), término de contrato determinado ou de experiência, falecimento. Falta algum?
 
 ## 3. Jornada e banco de horas — prioridade B

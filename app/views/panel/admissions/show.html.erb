@@ -1,0 +1,173 @@
+<%# An admission (spec 07): the step bar, the data, "Liberar acesso", the model and the
+    checklist as in the prototype (item, responsible, date, status). The items' actions stay
+    on the process's page (spec 06). The client manager sees only the step, the status, the
+    date and their own items, never documents, salary nor notes (P-07-20, CA-03-011). %>
+<% profile = @admission.worker_profile %>
+<% employment = @admission.employment %>
+<% membership = profile.membership %>
+<% title = t(".title", name: profile.display_name) %>
+<% resolved = @items.count(&:resolved?) %>
+<% editable = @hr && can?(:update, @admission) && @admission.open? %>
+<% content_for :title, title %>
+
+<p class="text-sm"><%= link_to t(".back"), admissions_path, class: "link-button" %></p>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+  <span class="avatar" aria-hidden="true"><%= initials(profile.display_name) %></span>
+  <h1 class="page-title"><%= title %></h1>
+  <span class="pill <%= ProcessesHelper::STATUS_PILLS.fetch(@admission.status) %>"><%= t("admissions.statuses.#{@admission.status}") %></span>
+</div>
+<p class="page-subtitle">
+  <%= [ @revision&.position&.name, @revision&.unit&.name, t(".start_expected", date: l(@admission.started_on)) ].compact.join(" · ") %>
+</p>
+
+<% if @hr %>
+  <% if @admission.other_open_employment? %>
+    <p class="alert-info mt-6"><%= t(".other_employment") %></p>
+  <% end %>
+  <% if @instance.responsible_alert? %>
+    <p class="alert-bad mt-6" role="alert"><%= t(".responsible_alert") %></p>
+  <% end %>
+<% end %>
+
+<section class="card card-body mt-6 space-y-4">
+  <h2 class="card-title"><%= t(".progress") %></h2>
+  <%= render "steps", admission: @admission %>
+  <% if @admission.open? %>
+    <p class="text-sm text-ink-soft"><%= t(".current_step", step: t("admissions.steps.#{@admission.current_step}")) %></p>
+  <% end %>
+</section>
+
+<% if @hr %>
+  <section class="card card-body mt-6 space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="card-title"><%= t(".data") %></h2>
+      <div class="flex flex-wrap gap-3 text-sm">
+        <%= link_to t(".record"), employee_path(profile), class: "link-button" %>
+        <% if @completes_pay %>
+          <%= link_to t(".conditions"), edit_employment_revision_path(employment, @revision), class: "link-button" %>
+        <% end %>
+      </div>
+    </div>
+    <dl class="details-list">
+      <div><dt><%= t(".kind") %></dt><dd><%= t("employments.kinds.#{employment.kind}") %></dd></div>
+      <div><dt><%= t(".registration_number") %></dt><dd class="font-mono"><%= employment.registration_number %></dd></div>
+      <div><dt><%= t(".position") %></dt><dd><%= @revision&.position&.name || "—" %></dd></div>
+      <div><dt><%= t(".unit") %></dt><dd><%= @revision&.unit&.name || "—" %></dd></div>
+      <div><dt><%= t(".department") %></dt><dd><%= @revision&.department&.name || "—" %></dd></div>
+      <% if Current.company.uses_allocation_clients %>
+        <div><dt><%= t(".client") %></dt><dd><%= @revision&.allocation_client&.name || t(".no_client") %></dd></div>
+      <% end %>
+      <div><dt><%= t(".started_on") %></dt><dd><%= l(@admission.started_on) %></dd></div>
+      <div><dt><%= t(".template") %></dt><dd><%= @instance.template&.name || "—" %></dd></div>
+    </dl>
+
+    <% if editable %>
+      <div class="flex flex-wrap items-start gap-3 border-t border-line-soft pt-4">
+        <% if employment.pending? %>
+          <details class="w-full sm:w-auto">
+            <summary class="btn btn-secondary"><%= t(".reschedule") %></summary>
+            <%= form_with url: reschedule_admission_path(@admission), method: :patch, class: "mt-3 space-y-3 sm:w-80" do |form| %>
+              <%= form.label :started_on, t(".new_start"), class: "field-label" %>
+              <%= form.date_field :started_on, required: true, min: Date.current, value: @admission.started_on, class: "input" %>
+              <p class="field-hint"><%= t(".reschedule_hint") %></p>
+              <%= form.submit t(".reschedule_submit"), class: "btn btn-primary" %>
+            <% end %>
+          </details>
+        <% end %>
+        <%# Only before the invitation goes out (RN-07-013, D-648). %>
+        <% unless @admission.released? %>
+          <details class="w-full sm:w-auto">
+            <summary class="btn btn-secondary"><%= t(".change_template") %></summary>
+            <%= form_with url: change_template_admission_path(@admission), method: :patch, class: "mt-3 space-y-3 sm:w-96" do |form| %>
+              <%= form.label :process_template_id, t(".template"), class: "field-label" %>
+              <%= form.select :process_template_id, options_for_select(@templates.map { |template| [ template.name, template.id ] }, @instance.process_template_id),
+                {}, required: true, class: "input" %>
+              <p class="field-hint"><%= t(".change_template_hint") %></p>
+              <%= form.submit t(".change_template_submit"), class: "btn btn-primary", data: { confirm: t(".change_template_confirm") } %>
+            <% end %>
+          </details>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="card card-body mt-6 space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="card-title"><%= t(".access") %></h2>
+      <span class="pill <%= @admission.released? ? "pill-ok" : "pill-warn" %>"><%= t(".access_status.#{@admission.released? ? "released" : "waiting"}") %></span>
+    </div>
+    <% if @admission.released? %>
+      <p class="text-sm text-ink-soft"><%= t(".released_by", name: @admission.invite_released_by&.name, date: l(@admission.invite_released_at, format: "%d/%m/%Y %H:%M")) %></p>
+    <% else %>
+      <p class="text-sm text-ink-soft"><%= t(".access_hint") %></p>
+    <% end %>
+    <% if @admission.open? && can?(:release, @admission) %>
+      <% if membership.invited? %>
+        <%= form_with url: release_admission_path(@admission), method: :post, class: "space-y-2" do |form| %>
+          <% Membership::INVITATION_CHANNELS.each do |channel| %>
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag "channels[]", channel, channel == "email" ? membership.user.email_deliverable? : membership.user.email.blank?, id: "admission_channel_#{channel}",
+                disabled: channel == "email" && !membership.user.email_deliverable? %>
+              <%= t("invitation_channels.#{channel}") %>
+            </label>
+          <% end %>
+          <div class="pt-1"><%= form.submit t(@admission.released? ? ".release_again" : ".release"), class: "btn btn-primary" %></div>
+        <% end %>
+      <% elsif !@admission.released? %>
+        <p class="field-hint"><%= t(".has_access") %></p>
+        <%= button_to t(".release"), release_admission_path(@admission), class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  </section>
+<% else %>
+  <section class="card card-body mt-6">
+    <dl class="details-list">
+      <div><dt><%= t(".started_on") %></dt><dd><%= l(@admission.started_on) %></dd></div>
+      <div><dt><%= t(".status") %></dt><dd><%= t("admissions.statuses.#{@admission.status}") %></dd></div>
+      <div><dt><%= t(".step") %></dt><dd><%= t("admissions.steps.#{@admission.current_step}") %></dd></div>
+    </dl>
+  </section>
+<% end %>
+
+<section id="items" class="card card-body mt-6 space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="card-title"><%= t(@hr ? ".items" : ".my_items", done: resolved, count: @items.size) %></h2>
+    <% if @items.any? %><%= link_to t(".open_process"), process_path(@instance, anchor: "items"), class: "link-button text-sm" %><% end %>
+  </div>
+  <% if @items.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".no_items") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".item") %></th>
+            <th class="hidden md:table-cell"><%= t(".responsible") %></th>
+            <th class="hidden md:table-cell"><%= t(".due") %></th>
+            <th class="hidden lg:table-cell"><%= t(".item_status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% today = @instance.today %>
+          <% @items.each do |item| %>
+            <tr>
+              <td>
+                <span class="font-bold text-ink-strong"><%= item.title %></span>
+                <span class="mt-1 flex flex-wrap gap-1">
+                  <% if item.stage %><span class="pill pill-mute"><%= t("admissions.steps.#{item.stage}") %></span><% end %>
+                  <span class="contents lg:hidden"><%= process_item_pills(item, today) %></span>
+                </span>
+                <div class="mt-1 space-y-0.5 text-xs text-ink-soft md:hidden">
+                  <p><%= responsible_names(item, @people) %> · <%= process_item_due(item) %></p>
+                </div>
+              </td>
+              <td class="hidden md:table-cell"><%= responsible_names(item, @people) %></td>
+              <td class="hidden md:table-cell"><%= process_item_due(item) %></td>
+              <td class="hidden lg:table-cell"><span class="flex flex-wrap gap-1"><%= process_item_pills(item, today) %></span></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>

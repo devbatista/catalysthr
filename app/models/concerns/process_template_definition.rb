@@ -33,7 +33,7 @@ module ProcessTemplateDefinition
   end
 
   def archive!
-    update!(status: "archived", is_default: false)
+    update!(status: "archived", is_default: false, default_employment_kinds: [])
   end
 
   def editable?

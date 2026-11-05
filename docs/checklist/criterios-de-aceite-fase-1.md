@@ -1,9 +1,9 @@
 # Critérios de aceite das specs 01 a 05 e 19 (checklist)
 
-> Última atualização: 2026-10-28
+> Última atualização: 2026-11-05
 > Para o item "os critérios de aceite das specs 01 a 05 e 19 passam" da fase 1 (`plano-de-fases.md`). Uma CA marcada tem um exemplo do RSpec que a cita e testa o comportamento. A suíte roda no CI a cada PR.
 
-Resumo: **70** CAs. **59** com teste e **11** que dependem de módulos de fases seguintes.
+Resumo: **70** CAs. **62** com teste e **8** que dependem de módulos de fases seguintes.
 
 
 ## Spec 01 — Multiempresa e white label
@@ -48,14 +48,14 @@ Resumo: **70** CAs. **59** com teste e **11** que dependem de módulos de fases 
 - [x] **CA-03-001** Dado um RH analista com a unidade Caxias e o módulo `documentos`, quando ele lista os colaboradores, então só… Teste: `spec/requests/employees_spec.rb`, `spec/requests/navigation_spec.rb`
 - [x] **CA-03-002** Dado um gestor do departamento Produção, quando ele abre a ficha de um colaborador da Produção, então vê os… Teste: `spec/requests/employees_spec.rb`
 - [ ] **CA-03-003** Dado um colaborador, quando ele abre uma solicitação dele que tem nota interna, então não vê a nota. Fica para: Fase 2: solicitações (spec 09)
-- [ ] **CA-03-004** Dado um consultor atribuído às empresas A e B com os módulos `admissao` e `solicitacoes`, quando ele entra na… Fica para: Fase 2: admissão (spec 07). O consultor como RHN de todas as unidades já tem teste (D-192)
+- [x] **CA-03-004** Dado um consultor atribuído às empresas A e B com os módulos `admissao` e `solicitacoes`, quando ele entra na… Teste: `spec/requests/admissions_spec.rb`
 - [ ] **CA-03-005** Dado um contador ligado à empresa A, quando ele abre a folha de outubro, então vê os valores em leitura, sem… Fica para: Fase 4: folha (spec 12)
 - [x] **CA-03-006** Dado um parceiro inadimplente há 16 dias, quando um colaborador marca o ponto, então a marcação é aceita.… Teste: `spec/requests/contract_lock_spec.rb` Ressalva: a marcação de ponto aceita em somente leitura entra com o ponto (spec 10); o teste cobre a escrita recusada.
 - [x] **CA-03-007** Dada uma empresa sem o módulo de folha contratado, quando o RHA abre o menu, então não vê folha nem eSocial. Teste: `spec/requests/navigation_spec.rb` O eSocial não tem item de menu até a spec 13.
 - [x] **CA-03-008** Dada uma ação de controller nova sem `authorize!`, quando a suíte de testes roda, então o teste de cobertura… Teste: `spec/requests/authorization_coverage_spec.rb`, `spec/support/authorization_coverage.rb`
 - [ ] **CA-03-009** Dado um gestor que também é colaborador, quando ele abre a solicitação de férias dele, então não vê o botão… Fica para: Fase 4: férias (spec 09)
-- [ ] **CA-03-010** Dado um gestor do cliente X, quando ele abre a admissão de um colaborador alocado no cliente Y, então recebe… Fica para: Fase 2: admissão (spec 07)
-- [ ] **CA-03-011** Dado um gestor do cliente X, quando ele abre a admissão de um colaborador de X, então vê a etapa e os itens… Fica para: Fase 2: admissão (spec 07)
+- [x] **CA-03-010** Dado um gestor do cliente X, quando ele abre a admissão de um colaborador alocado no cliente Y, então recebe… Teste: `spec/requests/admissions_spec.rb`
+- [x] **CA-03-011** Dado um gestor do cliente X, quando ele abre a admissão de um colaborador de X, então vê a etapa e os itens… Teste: `spec/requests/admissions_spec.rb`
 
 ## Spec 04 — Cadastros
 

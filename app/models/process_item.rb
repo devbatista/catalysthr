@@ -37,6 +37,9 @@ class ProcessItem < ApplicationRecord
   normalizes :instructions, with: ->(text) { text.to_s.strip.presence }
   normalizes :skipped_reason, with: ->(text) { text.to_s.strip.presence }
 
+  # An item the HR adds to an admission takes its step from the kind (RN-07-001).
+  before_validation -> { self.stage ||= ProcessTemplateItemDefinition.default_stage(kind) }, if: -> { instance&.admission? }
+
   validates :title, presence: true, length: { maximum: 160 }
   validates :instructions, length: { maximum: 4000 }
   validates :responsible_role, inclusion: { in: ProcessTemplateItemDefinition::ROLES }

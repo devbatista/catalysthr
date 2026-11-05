@@ -1,7 +1,7 @@
 # 07 — Admissão e integração
 
-> Status: aprovado · Última atualização: 2026-10-14
-> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-11-05
+> Decisões: D-091, D-143, D-176, D-177, D-178, D-204, D-205, D-230 a D-241, D-250 a D-264, D-570, D-648 ([decisoes.md](decisoes.md))
 > Os itens **[P-07-01]** a **[P-07-18]** foram todos aprovados sem ajuste (D-264, seção 10). Os itens **[P-07-19]** e **[P-07-20]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -35,7 +35,8 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 
 - **RN-07-001** — Cada item do modelo de admissão pertence a uma etapa **[P-07-01]**.
 - **RN-07-002** — As etapas **não bloqueiam** os itens. Quem bloqueia são as dependências (D-237). A etapa atual mostrada na barra é a primeira que ainda tem item obrigatório pendente. Na prática, as etapas 2, 3 e 4 andam juntas, documento a documento **[P-07-02]**.
-- **RN-07-003** — Na empresa que não usa a etapa 5 (D-258), ela não aparece na barra, e itens de encaminhamento não entram no processo **[P-07-03]**.
+- **RN-07-003** — Na empresa que não usa a etapa 5 (D-258), ela não aparece na barra, e itens de encaminhamento não entram no processo **[P-07-03]**. A etapa nasce desligada na empresa (D-648).
+- **RN-07-004** — Até a spec 14, a etapa 3 aparece na barra sem itens e nunca é a etapa atual, e a conferência é manual (D-648).
 
 ## 3. Histórias de usuário
 
@@ -61,9 +62,9 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 - **RN-07-011** — Campos obrigatórios para criar (D-254):
   - nome, CPF, e celular ou e-mail;
   - tipo de vínculo, cargo, unidade e departamento;
-  - data prevista de início.
+  - data prevista de início, que é hoje ou futura; quem já começou entra pelo "Novo colaborador" (D-648).
 
-  Salário, jornada e os demais dados podem vir depois, até a revisão do RH.
+  Salário, jornada e os demais dados podem vir depois, até a revisão do RH. Quem opera a admissão completa o salário da primeira revisão do vínculo `pending`, mesmo sem o módulo `folha`, com a confirmação de senha e o evento de acesso (D-648).
 
   Na empresa que usa clientes de alocação (D-570), o cadastro inicial também tem o campo **cliente**, opcional ("sem cliente" para a equipe interna). Ele vai para a primeira revisão do vínculo **[P-07-19]**.
 - **RN-07-012** — Ao criar a admissão, o sistema:
@@ -74,16 +75,17 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
   5. inicia o processo a partir do modelo (spec 06).
 - **RN-07-013** — Escolha do modelo **[P-07-04]**, na ordem:
   1. o modelo de admissão do cargo (D-204);
-  2. o modelo padrão da empresa para aquele **tipo de vínculo**;
+  2. o modelo padrão da empresa para aquele **tipo de vínculo**: cada modelo de admissão lista os tipos de que é padrão, e cada tipo tem no máximo um modelo (D-648);
   3. o modelo padrão de admissão.
 
-  O RH pode trocar o modelo antes de liberar o convite.
+  O RH pode trocar o modelo antes de liberar o convite. O processo antigo fica `cancelled` com o motivo "modelo trocado", o histórico fica e os documentos continuam na pasta. Um item de documento cujo tipo já tem versão aprovada na pasta nasce resolvido, e o resto recomeça. A tela avisa antes de confirmar (D-648).
 - **RN-07-014** — Um CPF que já tem vínculo `pending` ou `active` na empresa gera um alerta: "Esta pessoa já tem vínculo". A admissão continua permitida, porque vínculos simultâneos são aceitos (D-205) **[P-07-05]**.
 
 ### Convite (D-252)
 
 - **RN-07-020** — O convite só sai quando o RH clica em "Liberar acesso", escolhendo os canais (D-177). Na importação em lote, há "Liberar acesso de todos" **[P-07-06]**.
-- **RN-07-021** — Antes de liberar, o colaborador não tem acesso. O RH já pode trabalhar na admissão (enviar documentos em nome dele, preencher dados).
+- **RN-07-021** — Antes de liberar, o colaborador não tem acesso. O RH já pode trabalhar na admissão (enviar documentos em nome dele, preencher dados). O convite em massa da lista de colaboradores deixa de fora quem tem admissão aberta (D-648).
+- **RN-07-022** — Até a aprovação da Twilio, os canais são e-mail e link com QR code (D-648).
 
 ### Documentos e formulários (etapas 2 a 4)
 
@@ -108,8 +110,8 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 
 ### ASO (D-259)
 
-- **RN-07-060** — Para CLT, a conclusão exige um ASO admissional **apto** validado. O item de ASO é obrigatório e não pode ser dispensado no vínculo CLT **[P-07-11]**.
-- **RN-07-061** — Se a IA ou o RH registra o ASO como **inapto**, a admissão mostra um alerta grave, e o RH escolhe entre **cancelar** (RN-07-090) e **reavaliar** (pede um novo ASO, e o inapto fica no histórico).
+- **RN-07-060** — Para CLT, a conclusão exige um ASO admissional **apto** validado. O item de ASO é obrigatório e não pode ser dispensado no vínculo CLT **[P-07-11]**. Se o processo não tem item do tipo `aso_admission`, o sistema acrescenta um (D-648).
+- **RN-07-061** — Se a IA ou o RH registra o ASO como **inapto**, a admissão mostra um alerta grave, e o RH escolhe entre **cancelar** (RN-07-090) e **reavaliar** (pede um novo ASO, e o inapto fica no histórico). Ao revisar o ASO, o RH escolhe apto ou inapto, o que preenche `aso_status` (D-648).
 
 ### Contabilidade (D-258)
 
@@ -120,9 +122,11 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 - **RN-07-080** — O botão "Concluir admissão" fica disponível quando:
   - todos os itens obrigatórios estão concluídos ou dispensados;
   - o ASO apto está validado (CLT);
-  - o eSocial foi **enviado**, ou não se aplica.
+  - o eSocial foi **enviado**, ou não se aplica;
+  - o salário está preenchido (D-648).
 
-  O aceite do eSocial não é exigido para concluir, mas a falta dele aparece no resumo **[P-07-12]**.
+  O aceite do eSocial não é exigido para concluir, mas a falta dele aparece no resumo **[P-07-12]**. Até a spec 13, a exigência de envio fica desligada (flag `esocial`), e o resumo diz que o envio é feito fora do sistema nesta fase (D-648).
+- **RN-07-083** — Um item de aprovação reprovado trava a conclusão. A admissão mostra um alerta com a justificativa, e o RH cancela a admissão (RN-07-090), reabre o item ou o dispensa com motivo (D-648).
 - **RN-07-081** — O RH confirma vendo um resumo: dados principais, documentos, contrato assinado, status do eSocial e status da contabilidade.
 - **RN-07-082** — Ao concluir, começa o processo de **integração** indicado no modelo (P-06-04).
 
@@ -132,6 +136,8 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
   - **com o eSocial aceito**, ou se não se aplica: ativa normalmente;
   - **sem o eSocial aceito**: ativa assim mesmo e cria um **alerta grave** para o RH, que fica no painel até o evento ser aceito;
   - **com a admissão ainda não concluída**: ativa assim mesmo, porque a pessoa já está trabalhando, e o alerta mostra os itens pendentes **[P-07-13]**.
+
+  O job vale para datas até hoje, para cobrir um dia em que não rodou. Até a spec 13, o alerta por eSocial não aceito fica desligado (flag `esocial`) (D-648).
 - **RN-07-086** — A partir da ativação, o colaborador aparece no ponto, na folha e nos painéis.
 
 ### Desistência e cancelamento (D-257)
@@ -154,8 +160,8 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 - **RN-07-101** — Antes do fim de cada período, o RH e os gestores recebem um aviso com antecedência configurável pela empresa, de 10 dias por padrão **[P-07-15]**. As ações são:
   - **prorrogar**, se ainda não houve prorrogação;
   - **efetivar**: o contrato segue por prazo indeterminado;
-  - **desligar**: inicia o desligamento (spec 09).
-- **RN-07-102** — Se nada for registrado até o fim do período, o contrato passa a prazo indeterminado, que é o efeito legal. O sistema registra isso e avisa o RH.
+  - **desligar**: inicia o desligamento (spec 09). Até a spec 09, aparece desabilitado, com o motivo (D-648).
+- **RN-07-102** — Se nada for registrado até o fim do período, o contrato passa a prazo indeterminado, que é o efeito legal. O sistema registra isso e avisa o RH. Exceção: com a prorrogação já informada, o fim do primeiro período passa o contrato a `extended` sozinho, com aviso ao RH, porque ela já consta do contrato (D-648, a conferir pelo especialista em DP).
 - **RN-07-103** — A avaliação de experiência ([spec 22](22-avaliacao-desempenho.md)) abre junto com o aviso (D-540), e a recomendação do gestor aparece na tela da decisão, que continua manual (RN-22-012).
 
 ### Integração
@@ -196,6 +202,14 @@ admissions                                             [P-07-18]
   esocial_status, esocial_event_id (spec 13),
   aso_status ('missing'|'fit'|'unfit'),
   completed_at, completed_by_id, cancelled_at, cancel_reason, cancel_note
+
+process_template_items + stage, process_items + stage  -- etapa do item (D-648)
+  'registration'|'documents'|'hr_review'|'accounting'|'conclusion'
+
+process_templates + default_employment_kinds (array)   -- padrão por tipo de vínculo (D-648)
+
+position_required_document_types                       -- documentos exigidos pelo cargo (D-648)
+  id, company_id, position_id, document_type_id
 
 document_templates                                     -- contratos e termos (D-253)
   id, company_id, name, employment_kinds (array), body (texto com marcação simples

@@ -39,7 +39,9 @@ module Panel
     private
 
     def save(template, notice)
-      attributes = params.expect(position: %i[name cbo_code salary_min salary_max description requirements status admission_template_id])
+      attributes = params.expect(position: [ :name, :cbo_code, :salary_min, :salary_max, :description, :requirements, :status,
+        :admission_template_id, { required_document_type_ids: [] } ])
+      required = attributes.delete(:required_document_type_ids)
       attributes[:admission_template_id] = attributes[:admission_template_id].presence if attributes.key?(:admission_template_id)
       amounts = %i[salary_min salary_max].index_with { |field| MoneyCents.parse(attributes.delete(field)) }
       @position.assign_attributes(attributes.merge(salary_min_cents: nil, salary_max_cents: nil))
@@ -48,6 +50,7 @@ module Panel
       end
 
       if @position.errors.none? && @position.save
+        @position.required_document_type_ids = DocumentType.usable.where(id: required).pluck(:id) if required
         redirect_to position_path(@position), notice: notice
       else
         render template, status: :unprocessable_content

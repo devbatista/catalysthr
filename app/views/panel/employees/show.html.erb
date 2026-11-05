@@ -102,7 +102,7 @@
                     <% if revision.justification %><p class="text-xs text-ink-muted"><%= revision.justification %></p><% end %>
                   </td>
                   <td class="whitespace-nowrap text-right">
-                    <% if revision.future? && pay && can?(:update, @profile) %>
+                    <% if revision.changeable? && pay && can?(:update, @profile) %>
                       <%= link_to t(".edit_revision"), edit_employment_revision_path(employment, revision), class: "link-button text-sm" %>
                     <% end %>
                   </td>
@@ -137,6 +137,12 @@
         <span class="pill <%= membership.invited? ? "pill-warn" : "pill-ok" %>"><%= t(".portal_status.#{membership.invited? ? (membership.invitation_open? ? "invited" : "no_access") : "active"}") %></span>
       </div>
       <% if membership.invited? %>
+        <% if @awaiting_release %>
+          <p class="text-sm text-ink-soft"><%= t(".portal_admission_hint") %></p>
+          <% if can?(:read_summary, @admission) %>
+            <p class="text-sm"><%= link_to t(".portal_admission"), admission_path(@admission), class: "link-button" %></p>
+          <% end %>
+        <% else %>
         <p class="text-sm text-ink-soft"><%= t(".portal_hint") %></p>
         <%= form_with url: invite_employee_path(@profile), method: :post, class: "space-y-2" do |form| %>
           <% Membership::INVITATION_CHANNELS.each do |channel| %>
@@ -147,6 +153,7 @@
             </label>
           <% end %>
           <div class="pt-1"><%= form.submit t(membership.invitation_sent_at ? ".portal_resend" : ".portal_invite"), class: "btn btn-secondary" %></div>
+        <% end %>
         <% end %>
       <% end %>
     </section>

@@ -325,7 +325,7 @@ Todas aprovadas. Quatro tiveram ajuste:
 | P-03-13 | 404 fora do escopo; 403 dentro do escopo |
 | P-03-14 | O PA cadastra empresas clientes na carteira e convida o primeiro RHA |
 | P-03-15 | O RHN convida colaboradores das unidades dele, se tiver o módulo `admissao` |
-| P-03-16 | O RHN só vê salário e dados bancários se tiver o módulo `folha` |
+| P-03-16 | O RHN só vê salário e dados bancários se tiver o módulo `folha`. Exceção: quem opera a admissão completa o salário da primeira revisão do vínculo em admissão (D-648) |
 | P-03-17 | O RHN vê dados e documentos de saúde das unidades dele |
 | P-03-18 | A contabilidade não vê dados nem documentos de saúde, mesmo com acesso à pasta |
 | P-03-19 | Só o RHA exclui documentos |
