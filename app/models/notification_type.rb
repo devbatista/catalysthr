@@ -73,6 +73,9 @@ NotificationType::CATALOG = [
   # the portal (spec 16, D-641).
   NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[client_manager]),
+  # An ASO that needs attention, without the result (RN-07-061, RN-15-005, D-651).
+  NotificationType.new(code: "admission.aso_unfit", mandatory: true, urgent: true, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
   # A form to review, and one given back to the person (D-649).
   NotificationType.new(code: "processes.form_submitted", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[hr_admin hr_analyst consultant]),

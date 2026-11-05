@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -147,7 +147,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_200000) do
     t.uuid "invite_released_by_id"
     t.string "esocial_status", default: "not_sent", null: false
     t.uuid "esocial_event_id"
-    t.string "aso_status", default: "missing", null: false
+    t.string "aso_status"
     t.datetime "completed_at"
     t.uuid "completed_by_id"
     t.datetime "cancelled_at"
@@ -155,6 +155,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_200000) do
     t.text "cancel_note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "aso_exam_on"
     t.index ["company_id"], name: "index_admissions_on_company_id"
     t.index ["completed_by_id"], name: "index_admissions_on_completed_by_id"
     t.index ["employment_id"], name: "index_admissions_on_employment_id", unique: true

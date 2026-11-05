@@ -55,12 +55,30 @@ module Processes
     def skip(reason:)
       reason = reason.to_s.strip.presence
       return error(:skip_reason_blank) if @item.required && reason.nil?
-      return error(:not_open) unless @item.open? && @item.instance.open?
+      return error(:aso_required) if Admissions::Aso.required_item?(@item)
+      return error(:not_open) unless skippable? && @item.instance.open?
 
       transition("skipped", "item_skipped", skipped_reason: reason, reason: reason) { ProcessFormResponse.discard(@item.id) }
     end
 
+    # A refused approval goes back to who answers for it (RN-07-083, D-648).
+    def reopen
+      return error(:not_open) unless @item.rejected? && @item.instance.open?
+
+      @item.with_lock do
+        @item.update!(status: "pending", completed_by: nil, completed_at: nil, result: @item.result.except("reason"))
+        Events.record(@item.instance, "item_reopened", by: @by, item: @item, title: @item.title)
+      end
+      Notices.assigned([ @item ])
+      true
+    end
+
     private
+
+    # The admission decides what a refused approval means (RN-07-083, D-641).
+    def skippable?
+      @item.open? || (@item.rejected? && @item.instance.admission?)
+    end
 
     def act(status, action, panel_kinds:, result: {}, **details, &)
       return error(:not_actionable) unless @item.kind.in?(panel_kinds) && @item.pending? && @item.instance.open?
@@ -70,7 +88,7 @@ module Processes
 
     def transition(status, action, result: @item.result, skipped_reason: nil, **details)
       @item.with_lock do
-        return error(:not_open) unless @item.open?
+        return error(:not_open) unless skippable?
 
         @item.update!(status: status, result: result, skipped_reason: skipped_reason, completed_by: @by,
           completed_at: Time.current)

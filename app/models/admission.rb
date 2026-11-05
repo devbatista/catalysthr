@@ -8,10 +8,12 @@ class Admission < ApplicationRecord
   ASO_STATUSES = %w[missing fit unfit].freeze
   # The bar's steps (D-250). The AI's has no items: it's the system's (RN-07-004).
   STEPS = %w[registration documents ai hr_review accounting conclusion].freeze
+  CANCEL_REASONS = %w[withdrew aso_unfit company_withdrew other].freeze
 
   acts_as_tenant :company
 
-  audited
+  # Fit or unfit is health data (D-086, D-651), and so is a cancellation for an unfit ASO.
+  audited sensitive: %i[aso_status aso_exam_on cancel_reason cancel_note]
 
   belongs_to :employment
   belongs_to :process_instance
@@ -20,7 +22,10 @@ class Admission < ApplicationRecord
 
   enum :source, SOURCES.index_by(&:itself), validate: true, prefix: :from
   enum :esocial_status, ESOCIAL_STATUSES.index_by(&:itself), validate: true, prefix: :esocial
-  enum :aso_status, ASO_STATUSES.index_by(&:itself), validate: true, prefix: :aso
+
+  encrypts :aso_status, :cancel_reason, :cancel_note
+
+  validates :aso_status, inclusion: { in: ASO_STATUSES }, allow_nil: true
 
   # Open and without the invitation released: who the portal's invitation must leave out
   # (D-252, D-648).
@@ -36,6 +41,24 @@ class Admission < ApplicationRecord
 
   def audit_company_id
     company_id
+  end
+
+  def aso_status
+    super || "missing"
+  end
+
+  def aso_fit?
+    aso_status == "fit"
+  end
+
+  def aso_unfit?
+    aso_status == "unfit"
+  end
+
+  # An exam after the start: the law asks for it before (CLT art. 168, D-651). It doesn't
+  # block, because it already happened; the screen warns.
+  def aso_late?
+    aso_exam_on.present? && aso_exam_on > started_on
   end
 
   def released?

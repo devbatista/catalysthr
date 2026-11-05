@@ -29,6 +29,35 @@
   <% end %>
 <% end %>
 
+<% if @hr %>
+  <% if @admission.open? && @admission.aso_unfit? %>
+    <div class="alert-bad mt-6 space-y-3" role="alert">
+      <p><%= t(".aso_decision") %></p>
+      <%= button_to t(".reassess"), reassess_aso_admission_path(@admission), method: :patch, class: "btn btn-secondary btn-sm",
+        form: { data: { confirm: t(".reassess_confirm") } } %>
+    </div>
+  <% end %>
+  <% if @admission.aso_late? %>
+    <p class="alert-info mt-6"><%= t(".aso_late") %></p>
+  <% end %>
+  <% @instance.items.select(&:rejected?).each do |item| %>
+    <p class="alert-bad mt-6" role="alert"><%= t(".item_rejected", title: item.title, reason: item.result["reason"]) %></p>
+  <% end %>
+  <% if @admission.cancelled_at %>
+    <%# The reason may tell an unfit ASO: only after the password (D-651). %>
+    <% reason = t("admissions.cancel_reasons.#{@admission.cancel_reason}") %>
+    <p class="alert-info mt-6">
+      <%= t(".cancelled_on", date: l(@admission.cancelled_at, format: "%d/%m/%Y")) %>
+      <% if revealed_sections.include?("health") %>
+        <%= reveal_confirmed(@admission, :cancel_reason, as: :text, section: :health, value: reason) %>
+        <%= reveal_confirmed(@admission, :cancel_note, as: :text, section: :health, value: @admission.cancel_note) %>
+      <% else %>
+        <%= link_to t(".see_reason"), admission_path(@admission, reveal: "health"), class: "link-button" %>
+      <% end %>
+    </p>
+  <% end %>
+<% end %>
+
 <section class="card card-body mt-6 space-y-4">
   <h2 class="card-title"><%= t(".progress") %></h2>
   <%= render "steps", admission: @admission %>
@@ -130,6 +159,9 @@
 <% end %>
 
 <% if @hr %><%= render "contracts" %><% end %>
+<% if @hr && can?(:update, @admission) && (@admission.open? || (employment.pending? && !@admission.cancelled?)) %>
+  <%= render "conclusion", employment: employment %>
+<% end %>
 
 <section id="items" class="card card-body mt-6 space-y-4">
   <div class="flex flex-wrap items-center justify-between gap-3">

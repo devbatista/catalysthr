@@ -31,10 +31,23 @@ module Admissions
   def required_document_items(employment, items)
     in_model = items.select(&:document?).map { |item| item.config["document_type_id"] }
     required = employment.effective_revision&.position&.required_document_type_ids.to_a - in_model
-    DocumentType.usable.where(id: required).order(:name).map do |type|
-      { kind: "document", title: type.name, responsible_role: "employee", required: true, stage: "documents",
-        config: { "document_type_id" => type.id } }
+    types = DocumentType.usable.where(id: required).order(:name).to_a
+    # The CLT's ASO even when the model doesn't have it or the company turned the type off
+    # (RN-07-060, D-648).
+    aso = Aso.type if employment.clt?
+    types |= [ aso ] if aso && !in_model.include?(aso.id)
+    types.map do |type|
+      # The employee doesn't send health documents (spec 03, section 4.5).
+      { kind: "document", title: type.name, responsible_role: type.category == "health" ? "hr" : "employee", required: true,
+        stage: "documents", config: { "document_type_id" => type.id } }
     end
   end
   private_class_method :accounting_item?, :required_document_items
+
+  # The PDFs generated live only in the process (D-650).
+  def delete_generated(employment)
+    return if Simulation.active?
+
+    GeneratedDocument.where(employment_id: employment.id).find_each { |generated| generated.file.purge if generated.file.attached? }
+  end
 end

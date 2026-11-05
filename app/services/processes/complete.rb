@@ -14,9 +14,10 @@ module Processes
       true
     end
 
-    def cancel(instance, by:, reason:)
+    # completed_too: an admission ended before the start can still be given up (D-651).
+    def cancel(instance, by:, reason:, completed_too: false)
       instance.with_lock do
-        return false unless instance.open?
+        return false unless instance.open? || (completed_too && instance.completed?)
 
         instance.assign_attributes(status: "cancelled", cancelled_at: Time.current, cancelled_by: by, cancel_reason: reason)
         return false unless instance.save

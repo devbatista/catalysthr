@@ -246,6 +246,9 @@ Rails.application.routes.draw do
           post :release
           patch :template, action: :change_template, as: :change_template
           patch "start-date", action: :reschedule, as: :reschedule
+          patch :complete
+          patch :cancel
+          patch :reassess_aso, path: "reassess-aso"
         end
         resources :generated_documents, path: "contracts", only: %i[create show] do
           patch :signed, on: :member
@@ -275,6 +278,7 @@ Rails.application.routes.draw do
             patch :reject
             patch :forward
             patch :skip
+            patch :reopen
             get :receipt
             get :material
           end

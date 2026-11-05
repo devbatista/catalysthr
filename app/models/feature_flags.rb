@@ -19,7 +19,11 @@ module FeatureFlags
   # The admissions (spec 07, D-648). While off, the menu keeps "Em breve".
   ADMISSIONS = :admissions
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS ].freeze
+  # The eSocial in the admission (spec 13, D-648): off, concluding doesn't ask for the sending
+  # and the activation doesn't warn about it.
+  ESOCIAL = :esocial
+
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

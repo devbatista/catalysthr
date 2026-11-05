@@ -125,7 +125,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   | `processes.task_overdue` | Item atrasado (RN-06-028) | Não | Não | S E |
   | `processes.form_submitted` | Formulário para revisar (D-649) | Não | Não | S E |
   | `admission.esocial_deadline` | S-2200 perto do prazo (RN-07-052) | Sim | Sim | S E P |
-  | `admission.aso_unfit` | ASO inapto (RN-07-061) | Sim | Sim | S E P |
+  | `admission.aso_unfit` | ASO inapto (RN-07-061). O texto diz só que a admissão precisa de atenção, sem o resultado (D-651) | Sim | Sim | S E P |
   | `admission.activated_with_pending` | Vínculo ativado sem eSocial aceito ou com pendências (RN-07-085) | Sim | Sim | S E P |
   | `employments.probation_ending` | Fim de experiência | Sim | Não | S E |
   | `employments.revisions_effective` | Revisões entrando em vigor no dia (P-04-29): um aviso por dia para cada pessoa, com as revisões do escopo dela, sem a de admissão (D-608) | Não | Não | S E |

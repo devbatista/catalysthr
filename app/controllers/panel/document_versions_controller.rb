@@ -50,7 +50,7 @@ module Panel
     def approve
       authorize! :review, @document
       done = Documents::Review.new(@version, by: current_user)
-        .approve(issued_on: parse_date(params[:issued_on]), valid_until: parse_date(params[:valid_until]))
+        .approve(issued_on: parse_date(params[:issued_on]), valid_until: parse_date(params[:valid_until]), aso_result: params[:aso_result])
       reviewed(done, ".approved")
     end
 
