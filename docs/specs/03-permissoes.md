@@ -154,7 +154,7 @@ O consultor (CON) segue a coluna RHN com escopo T. O administrador do parceiro (
 | Ação | RHA | RHN | GES | COL | ECA/ECC |
 |---|---|---|---|---|---|
 | Criar admissão, aplicar modelo | T | U · M | — | — | — |
-| Revisar documentos, pedir correção | T | U · M | — | — | — |
+| Revisar documentos, pedir correção (sem o módulo `documentos`, só com a admissão aberta, D-650) | T | U · M | — | — | — |
 | Itens do checklist sob responsabilidade do gestor (por exemplo, integração) | T | U · M | E | — | — |
 | Ver e enviar os próprios itens | — | — | — | P | — |
 | Registrar envio à contabilidade | T | U · M | — | — | — |

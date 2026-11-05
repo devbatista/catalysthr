@@ -211,6 +211,8 @@ class CompanyAbility
     can :adopt, SharedProcessTemplate, partner_id: [ nil, company.partner_id ].uniq, status: "active"
     processes(company, unit_ids: :all, modules: :all)
     admissions(company, unit_ids: :all)
+    # The models of contracts and terms (P-07-17).
+    can %i[read create update], DocumentTemplate, company_id: company.id
     # The company's document types, and turning off or adjusting the platform's (RN-08-002,
     # RN-08-004, D-272).
     can %i[read create update configure_expiration], DocumentType, company_id: company.id

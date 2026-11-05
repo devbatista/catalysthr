@@ -143,6 +143,7 @@ module NavigationHelper
         (nav_item(t("navigation.custom_fields"), custom_fields_path, controller_path == "panel/custom_fields") if can?(:read, CustomFieldDefinition)),
         (nav_item(t("navigation.process_templates"), process_templates_path,
           controller_path.in?(%w[panel/process_templates panel/process_template_items])) if can?(:read, ProcessTemplate)),
+        (nav_item(t("navigation.document_templates"), document_templates_path, controller_path == "panel/document_templates") if admissions_on? && can?(:create, DocumentTemplate)),
         (nav_item(t("navigation.document_types"), document_types_path,
           controller_path.in?(%w[panel/document_types panel/position_document_expirations])) if can?(:create, DocumentType)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),

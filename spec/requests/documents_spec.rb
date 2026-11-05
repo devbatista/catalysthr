@@ -145,7 +145,7 @@ RSpec.describe "Documents", type: :request do
   describe "Empresa → Tipos de documento (RN-08-002, RN-08-004)" do
     it "creates the company's own type and turns off a platform's one" do
       get "/document-types"
-      expect(response.body).to include("Da plataforma · 19", "Comprovante de residência", "A empresa ainda não criou tipos próprios")
+      expect(response.body).to include("Da plataforma · 20", "Comprovante de residência", "A empresa ainda não criou tipos próprios")
 
       post "/document-types", params: { document_type: { name: "Certificado NR-35", category: "other", expiration_rule: "none",
         alert_days: "30", max_files: "1" } }

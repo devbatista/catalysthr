@@ -856,6 +856,32 @@ pt-BR:
       form_submitted: "\"%{title}\" enviado ao RH"
       form_returned: "\"%{title}\" devolvido: %{reason}"
       form_applied: "\"%{title}\" aplicado na ficha"
+  # The contracts and terms (spec 07, D-650).
+  document_templates:
+    statuses:
+      active: "Ativo"
+      inactive: "Inativo"
+    variables:
+      colaborador_nome: "Colaborador: nome civil"
+      colaborador_cpf: "Colaborador: CPF"
+      colaborador_rg: "Colaborador: RG"
+      colaborador_ctps: "Colaborador: CTPS e série"
+      colaborador_pis: "Colaborador: PIS/NIS"
+      colaborador_nascimento: "Colaborador: data de nascimento"
+      colaborador_endereco: "Colaborador: endereço"
+      cargo_nome: "Cargo: nome"
+      cargo_cbo: "Cargo: CBO"
+      vinculo_salario: "Vínculo: salário"
+      vinculo_inicio: "Vínculo: data de início"
+      vinculo_matricula: "Vínculo: matrícula"
+      vinculo_jornada: "Vínculo: jornada semanal"
+      empresa_razao_social: "Empresa: razão social"
+      empresa_documento: "Empresa: CNPJ ou CPF"
+      empresa_endereco: "Empresa: endereço da matriz"
+      unidade_nome: "Unidade: nome"
+      unidade_endereco: "Unidade: endereço"
+      unidade_cidade: "Unidade: cidade e UF"
+      hoje: "Data de hoje, por extenso"
   # The admission (spec 07).
   admissions:
     steps_label: "Etapas da admissão"
@@ -1597,6 +1623,7 @@ pt-BR:
     settings: "Configurações"
     allocation_clients: "Clientes"
     custom_fields: "Campos da ficha"
+    document_templates: "Modelos de contrato"
     employees: "Colaboradores"
     features:
       admissions: "Admissões"
@@ -2096,6 +2123,60 @@ pt-BR:
         approved: "Versão aprovada."
       correction:
         requested: "Correção pedida."
+    document_templates:
+      index:
+        title: "Modelos de contrato"
+        subtitle: "Contratos e termos com variáveis, para gerar na admissão, imprimir e assinar."
+        new: "Novo modelo"
+        empty: "Nenhum modelo cadastrado."
+        name: "Nome"
+        kinds: "Tipos de vínculo"
+        status: "Situação"
+      new:
+        title: "Novo modelo de contrato"
+        subtitle: "O texto é da empresa. Confira a redação com o seu jurídico."
+        back: "Voltar para os modelos"
+      edit:
+        title: "Modelo de contrato"
+        subtitle: "Mudar o texto não altera o que já foi gerado."
+        back: "Voltar para os modelos"
+      create:
+        created: "Modelo criado."
+      update:
+        updated: "Modelo salvo."
+      form:
+        name: "Nome"
+        status: "Situação"
+        kinds: "Vale para os tipos de vínculo"
+        text: "Texto"
+        toolbar: "Formatação do texto"
+        body: "Texto do modelo"
+        body_hint: "Linhas em branco separam os parágrafos. Na prévia, cada variável aparece com o nome entre colchetes."
+        insert_variable: "Inserir variável"
+        submit: "Salvar modelo"
+        preview: "Ver prévia em PDF"
+        cancel: "Cancelar"
+        buttons:
+          title: "Título"
+          subtitle: "Subtítulo"
+          bullets: "Lista"
+          numbers: "Lista numerada"
+          bold: "Negrito"
+          italic: "Itálico"
+          table: "Tabela"
+    generated_documents:
+      create:
+        unsupported: "Não foi possível gerar: os dados têm caracteres que o PDF não aceita (%{chars}). Corrija o cadastro ou ajuste o modelo."
+        generating: "Gerando o documento. Ele aparece aqui em instantes."
+        signed_already: "Este documento já tem a versão assinada na pasta."
+      signed:
+        signed: "Versão assinada enviada para a pasta. Ela segue para a revisão do RH."
+      confirm:
+        title: "Há campos em branco"
+        subtitle: "O modelo %{template} usa dados que ainda não foram preenchidos:"
+        hint: "Preencha o cadastro antes, ou gere assim: cada campo sai como uma linha para completar à mão."
+        confirm: "Gerar com campo em branco"
+        back: "Voltar para a admissão"
     process_forms:
       edit:
         back: "Voltar para o checklist"
@@ -2161,6 +2242,30 @@ pt-BR:
         released_already: "Depois de liberar o acesso, o modelo não pode ser trocado."
       reschedule:
         rescheduled: "Data de início alterada."
+      contracts:
+        title: "Contratos e termos"
+        hint: "O PDF fica aqui, fora da pasta, e abre com a sua senha, porque pode trazer salário e documentos. Na pasta entra só a versão assinada."
+        document: "Documento"
+        generated_at: "Gerado em"
+        status: "Situação"
+        open: "Abrir o PDF"
+        open_signed: "Abrir a versão assinada"
+        send_signed: "Enviar a versão assinada"
+        send_signed_submit: "Enviar"
+        signed_hint: "PDF ou imagens, até 10 MB cada."
+        template: "Modelo"
+        choose: "Escolha o modelo"
+        generate: "Gerar documento"
+        generate_hint: "Gerar de novo substitui o PDF que ainda não foi assinado."
+        no_templates: "Nenhum modelo ativo para este tipo de vínculo. O RH administrador cadastra em Empresa → Modelos de contrato."
+        with_blanks:
+          one: "Gerado com %{count} campo em branco."
+          other: "Gerado com %{count} campos em branco."
+        statuses:
+          generating: "Gerando"
+          ready: "Pronto"
+          failed: "Falhou"
+          signed: "Assinado"
       released:
         title: "Acesso liberado: %{name}"
         validity: "O convite vale até %{date}."
@@ -4177,6 +4282,7 @@ pt-BR:
       holiday: "Feriado"
       unit_holiday: "Feriado da unidade"
       admission: "Admissão"
+      document_template: "Modelo de contrato"
       process_template: "Modelo de processo"
       shared_process_template: "Modelo de processo"
       process_template_item: "Item do modelo"
@@ -4202,6 +4308,11 @@ pt-BR:
         name: "Nome"
         status: "Situação"
         unit_opt_out: "O RH pode desmarcar na unidade"
+      document_template:
+        name: "Nome"
+        body: "Texto"
+        employment_kinds: "Tipos de vínculo"
+        status: "Situação"
       process_template:
         default_employment_kinds: "Padrão por tipo de vínculo"
         name: "Nome"
@@ -4640,6 +4751,11 @@ pt-BR:
             document:
               invalid_cnpj_root: "precisa ser a raiz do CNPJ, com 8 caracteres"
               invalid_cpf: "não é um CPF válido"
+        document_template:
+          attributes:
+            body:
+              unknown_variables: "usa variáveis que não existem: %{names}"
+              unsupported_characters: "tem caracteres que o PDF não aceita: %{chars}"
         admission:
           attributes:
             base:

@@ -1,0 +1,5 @@
+<% content_for :title, @template.name_was || t(".title") %>
+<p class="text-sm"><%= link_to t(".back"), document_templates_path, class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= @template.name_was || t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+<%= render "form", template: @template, url: document_template_path(@template), method: :patch %>

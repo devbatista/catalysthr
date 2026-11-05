@@ -38,7 +38,7 @@ A leitura dos documentos pela IA (classificação e extração) fica na [spec 14
 | Saúde | ASO, atestados, laudos | Sim (saúde) |
 | Dependentes | Certidões e documentos dos dependentes | Sim (dependentes) |
 | Declarações | Declarações escolares, de vínculo, comunicados com ciência | Não |
-| Contratos | Contratos e termos gerados (spec 07) | Não, exceto o salário mostrado no contrato **[P-08-02]** |
+| Contratos | Documentos gerados pelos módulos que entram na pasta. Os contratos e termos da admissão ficam no processo, e a versão assinada vai para Admissão (D-650) | Não, exceto o salário mostrado no contrato **[P-08-02]** |
 | Folha | Holerites, informe de rendimentos, TRCT (gerados) | Sim (remuneração) |
 | Ponto | Espelhos, comprovantes de marcação (gerados) | Não |
 | Outros | Tipos da empresa sem categoria específica | Conforme o tipo |
@@ -142,7 +142,7 @@ A leitura dos documentos pela IA (classificação e extração) fica na [spec 14
 
 ### Documentos gerados (D-273)
 
-- **RN-08-070** — Holerites, informe de rendimentos, TRCT, espelhos de ponto, comprovantes de marcação e contratos são gerados pelos módulos de origem e **registrados na pasta** na categoria deles. Na pasta, são **somente leitura**: não podem ser substituídos nem excluídos por ali **[P-08-18]**.
+- **RN-08-070** — Holerites, informe de rendimentos, TRCT, espelhos de ponto e comprovantes de marcação são gerados pelos módulos de origem e **registrados na pasta** na categoria deles. Na pasta, são **somente leitura**: não podem ser substituídos nem excluídos por ali **[P-08-18]**.
 - **RN-08-071** — Os comprovantes de marcação do ponto são muitos. Por isso, a pasta mostra só os do mês corrente, e os demais são vistos na tela do ponto **[P-08-19]**.
 
 ### Visibilidade, download e exclusão

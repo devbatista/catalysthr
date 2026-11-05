@@ -1,0 +1,5 @@
+<% content_for :title, t(".title") %>
+<p class="text-sm"><%= link_to t(".back"), document_templates_path, class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+<%= render "form", template: @template, url: document_templates_path, method: :post %>

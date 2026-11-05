@@ -30,6 +30,9 @@ module Panel
       @items = @items.select { |item| can?(:act, item) } unless @hr
       @people = Membership.where(id: @items.flat_map(&:responsible_membership_ids)).includes(:user).index_by(&:id)
       @templates = @hr ? ProcessTemplate.admission.active.order(:name).to_a : []
+      @generated = @hr ? GeneratedDocument.where(employment_id: @admission.employment_id)
+        .includes(:document_template, :signed_document, file_attachment: :blob).order(:created_at).to_a : []
+      @document_templates = @hr ? DocumentTemplate.active.for_kind(@admission.employment.kind).ordered.to_a : []
       @completes_pay = @revision&.completed_by_admission? && can?(:update, @admission) && can?(:update, @admission.worker_profile)
     end
 
