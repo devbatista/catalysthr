@@ -85,6 +85,7 @@ class CompanyAbility
     can :read_pay, WorkerProfile, people if modules.include?("folha")
     unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
     processes(company, unit_ids: unit_ids, modules: modules)
+    admissions(company, unit_ids: unit_ids) if modules.include?("admissao")
     if modules.include?("documentos")
       folders = { company_id: company.id }
       folders[:worker_profile_id] = people[:id] if people.key?(:id)
@@ -117,6 +118,21 @@ class CompanyAbility
     conditions[:unit_id] = unit_ids unless unit_ids == :all
     can %i[read adjust], ProcessInstance, conditions
     can :act, ProcessItem, company_id: company.id, instance: conditions
+  end
+
+  # The admissions the HR runs (spec 03, section 4.4, spec 07, section 6): those of their
+  # units; every one for the HR administrator. :admit_in says in which units a new one starts
+  # (the U scope). :read_summary is what the client manager also has: the step, the status,
+  # the date and their own items (P-07-20).
+  def admissions(company, unit_ids:)
+    instances = { kind: "admission" }
+    units = { company_id: company.id }
+    unless unit_ids == :all
+      instances[:unit_id] = unit_ids
+      units[:id] = unit_ids
+    end
+    can %i[read read_summary create update release], Admission, company_id: company.id, process_instance: instances
+    can :admit_in, Unit, units
   end
 
   # The manager and the client manager see and resolve only the items assigned to them
@@ -174,6 +190,7 @@ class CompanyAbility
       WorkerProfile.in_allocation_clients(clients).pluck(:id)
     end
     can :read, WorkerProfile, company_id: company.id, id: people
+    can :read_summary, Admission, company_id: company.id, employment: { worker_profile_id: people }
   end
 
   def hr_admin(user, company)
@@ -193,6 +210,7 @@ class CompanyAbility
     can %i[read create update], ProcessTemplate, company_id: company.id
     can :adopt, SharedProcessTemplate, partner_id: [ nil, company.partner_id ].uniq, status: "active"
     processes(company, unit_ids: :all, modules: :all)
+    admissions(company, unit_ids: :all)
     # The company's document types, and turning off or adjusting the platform's (RN-08-002,
     # RN-08-004, D-272).
     can %i[read create update configure_expiration], DocumentType, company_id: company.id
@@ -203,7 +221,7 @@ class CompanyAbility
     can %i[lookup geocode], :address
     can :lookup, :cbo
     # Every person of the company (spec 03, section 4.3). Only the HR administrator
-    # registers someone by hand for now (D-600); the admission comes with spec 07.
+    # registers by hand who already works there (D-600).
     can %i[read read_personal read_health read_pay update create], WorkerProfile, company_id: company.id
     # Custom fields and allocation clients, with their managers (RN-04-080, RN-04-090,
     # RN-04-094, RN-02-064, D-605).

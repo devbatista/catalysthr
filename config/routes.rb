@@ -233,10 +233,19 @@ Rails.application.routes.draw do
           patch :archive
           get "materials/:material_id", action: :material, as: :material
           patch :default
+          patch "default-kinds", action: :default_kinds, as: :default_kinds
         end
         post :adopt, on: :collection
         resources :items, controller: "process_template_items", except: %i[index show] do
           patch :move, on: :member
+        end
+      end
+      # The admissions (spec 07, D-648).
+      resources :admissions, only: %i[index new create show] do
+        member do
+          post :release
+          patch :template, action: :change_template, as: :change_template
+          patch "start-date", action: :reschedule, as: :reschedule
         end
       end
       # The processes under way (spec 06, RN-06-050 to RN-06-053, D-641): the generic page the

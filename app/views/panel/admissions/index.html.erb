@@ -1,0 +1,58 @@
+<%# The admissions (spec 07) of the person's scope, by status. The client manager sees those
+    of their clients, with the same columns: no document nor salary here (P-07-20). %>
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Admission) %>
+    <%= link_to t(".new"), new_admission_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".filters") %>">
+  <% ProcessInstance::STATUSES.each do |status| %>
+    <%= link_to "#{t("admissions.statuses.#{status}")} · #{@counts.fetch(status, 0)}", admissions_path(status: status),
+      class: "chip #{"chip-active" if @status == status}" %>
+  <% end %>
+</nav>
+
+<% if @admissions.empty? %>
+  <p class="card card-body mt-5 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-5 overflow-x-auto">
+    <table class="data-table min-w-[720px]">
+      <thead>
+        <tr>
+          <th><%= t(".name") %></th>
+          <th><%= t(".position") %></th>
+          <th><%= t(".unit") %></th>
+          <% if Current.company.uses_allocation_clients %><th><%= t(".client") %></th><% end %>
+          <th><%= t(".started_on") %></th>
+          <th><%= t(".step") %></th>
+          <th><%= t(".items") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @admissions.each do |admission| %>
+          <% revision = admission.employment.effective_revision %>
+          <% items = admission.process_instance.items %>
+          <tr>
+            <td>
+              <span class="flex items-center gap-2.5">
+                <span class="avatar" aria-hidden="true"><%= initials(admission.worker_profile.display_name) %></span>
+                <%= link_to admission.worker_profile.display_name, admission_path(admission), class: "link-button font-bold" %>
+              </span>
+            </td>
+            <td><%= revision&.position&.name || "—" %></td>
+            <td><%= revision&.unit&.name || "—" %></td>
+            <% if Current.company.uses_allocation_clients %><td><%= revision&.allocation_client&.name || "—" %></td><% end %>
+            <td><%= l(admission.started_on) %></td>
+            <td><%= admission.open? ? t("admissions.steps.#{admission.current_step}") : t("admissions.statuses.#{admission.status}") %></td>
+            <td class="whitespace-nowrap"><%= t(".done_of", done: items.count(&:resolved?), count: items.size) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

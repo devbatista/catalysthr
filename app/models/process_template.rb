@@ -31,6 +31,19 @@ class ProcessTemplate < ApplicationRecord
     end
   end
 
+  # The employment kinds this admission model is the default of: each one has at most one,
+  # so the previous model stops being it (RN-07-013, D-648). The company's lock keeps two
+  # people from taking the same kind.
+  def make_default_for!(kinds)
+    kinds = Array(kinds).compact_blank & Employment::KINDS
+    transaction do
+      company.lock!
+      self.class.admission.where.not(id: id).where("default_employment_kinds && ARRAY[?]::varchar[]", kinds.presence || [ "" ])
+        .find_each { |other| other.update!(default_employment_kinds: other.default_employment_kinds - kinds) }
+      update!(default_employment_kinds: kinds)
+    end
+  end
+
   private
 
   def onboarding_link
@@ -42,5 +55,9 @@ class ProcessTemplate < ApplicationRecord
 
   def default_only_when_active
     errors.add(:is_default, :not_active) if is_default && !active?
+    return if default_employment_kinds.empty?
+
+    errors.add(:default_employment_kinds, :not_active) unless active?
+    errors.add(:default_employment_kinds, :only_admission) unless admission?
   end
 end

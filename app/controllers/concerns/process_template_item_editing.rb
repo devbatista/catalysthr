@@ -102,7 +102,7 @@ module ProcessTemplateItemEditing
   # per line.
   def item_params
     attributes = params.expect(item: [ :title, :instructions, :required, :responsible_role, :due_anchor, :due_offset_days,
-      :due_direction, :due_business_days, :free_fields,
+      :due_direction, :due_business_days, :free_fields, :stage,
       { conditions: [ employment_kinds: [], position_ids: [], unit_ids: [], allocation_client_ids: [] ],
         config: [ :validated_documents, :record, :document_type_id, { groups: [], custom_field_keys: [] } ],
         depends_on_item_ids: [] } ])

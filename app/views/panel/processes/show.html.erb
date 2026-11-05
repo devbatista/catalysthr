@@ -18,6 +18,10 @@
   <% if @instance.template %> · <%= t(".from_template", name: @instance.template.name) %><% end %>
 </p>
 
+<% if @admission && can?(:read_summary, @admission) %>
+  <p class="mt-3 text-sm"><%= link_to t(".admission"), admission_path(@admission), class: "link-button" %></p>
+<% end %>
+
 <% if @hr %>
   <% if @instance.responsible_alert? %>
     <p class="alert-bad mt-6" role="alert"><%= t(".responsible_alert") %></p>
@@ -42,7 +46,7 @@
     <% end %>
   </dl>
 
-  <% if editable %>
+  <% if editable && @admission.nil? %>
     <div class="mt-5 flex flex-wrap items-start gap-3 border-t border-line-soft pt-4">
       <% if @instance.ready_to_complete? %>
         <%= button_to t(".complete"), complete_process_path(@instance), method: :patch, class: "btn btn-primary",

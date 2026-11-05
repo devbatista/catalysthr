@@ -49,7 +49,7 @@ class EmployeeRegistration < EmploymentRegistration
       mobile_phone: mobile_phone.presence)
 
     membership = Membership.find_or_initialize_by(user: user, organization: company)
-    if membership.persisted? && WorkerProfile.exists?(membership: membership)
+    if membership.persisted? && duplicate_record?(membership)
       errors.add(:cpf, :already_registered)
       raise ActiveRecord::Rollback
     end
@@ -62,5 +62,9 @@ class EmployeeRegistration < EmploymentRegistration
     end
     membership.save!
     membership
+  end
+
+  def duplicate_record?(membership)
+    WorkerProfile.exists?(membership: membership)
   end
 end

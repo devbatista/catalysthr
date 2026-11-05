@@ -6,9 +6,11 @@ module Panel
   class ProcessesController < BaseController
     before_action :require_current_company
     before_action :load_instance
+    before_action :admission_page, only: %i[complete cancel]
 
     def show
       authorize! :read, @instance
+      @admission = Admission.find_by(employment_id: @instance.subject_id) if @instance.admission?
       @hr = can?(:adjust, @instance)
       @items = @instance.items.includes(:depends_on, forward_receipt_attachment: { blob: :file_scan }).to_a
       @items = @items.select { |item| can?(:act, item) } unless @hr
@@ -40,6 +42,14 @@ module Panel
     # Out of the person's reach answers 404 (RN-03-006, CA-03-010).
     def load_instance
       @instance = ProcessInstance.accessible_by(current_ability, :read).find(params[:id])
+    end
+
+    # An admission ends and is cancelled by its own rules (RN-07-080, RN-07-090), never here:
+    # the employment and the access go with it.
+    def admission_page
+      return unless @instance.admission? && (admission = Admission.find_by(employment_id: @instance.subject_id))
+
+      redirect_to admission_path(admission), alert: t("panel.processes.admission_rules")
     end
   end
 end

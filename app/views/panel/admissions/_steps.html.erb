@@ -1,0 +1,16 @@
+<%# The step bar (D-250, RN-07-002): the first with a required item pending is the current
+    one; the AI's stays apart until spec 14 (RN-07-004), and the accounting's shows only in
+    the company that uses it (RN-07-003, CA-07-011). %>
+<% current = admission.steps.index(admission.current_step) %>
+<ol class="flex flex-wrap gap-2" aria-label="<%= t("admissions.steps_label") %>">
+  <% admission.steps.each_with_index do |step, index| %>
+    <% state = if admission.completed? then "pill-ok"
+       elsif admission.cancelled? || step == "ai" then "pill-mute"
+       elsif index < current then "pill-ok"
+       elsif index == current then "pill-info"
+       else "pill-mute" end %>
+    <li <%= 'aria-current="step"'.html_safe if index == current && admission.open? %>>
+      <span class="pill <%= state %>"><%= index + 1 %> · <%= t("admissions.steps.#{step}") %></span>
+    </li>
+  <% end %>
+</ol>

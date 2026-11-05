@@ -5,6 +5,8 @@ module ProcessTemplateItemDefinition
   extend ActiveSupport::Concern
 
   KINDS = %w[task document form acknowledgement forward approval].freeze
+  # The admission's steps an item belongs to (RN-07-001, D-648). The AI's has no items.
+  STAGES = %w[registration documents hr_review accounting conclusion].freeze
   # The kinds the editor offers (D-639, D-642).
   EDITOR_KINDS = %w[task document form acknowledgement forward approval].freeze
   ROLES = %w[employee hr manager upper_manager accountant client_manager initiator].freeze
@@ -26,6 +28,14 @@ module ProcessTemplateItemDefinition
   COMPANY_CONDITIONS = %w[position_ids unit_ids allocation_client_ids].freeze
   CONDITIONS = (%w[employment_kinds] + COMPANY_CONDITIONS).freeze
 
+  def self.default_stage(kind)
+    case kind
+    when "document", "form", "acknowledgement" then "documents"
+    when "forward" then "accounting"
+    else "hr_review"
+    end
+  end
+
   included do
     self.table_name = "process_template_items"
 
@@ -45,6 +55,7 @@ module ProcessTemplateItemDefinition
     validates :instructions, length: { maximum: 4000 }
     validates :responsible_role, inclusion: { in: ROLES }
     validates :position, presence: true
+    validates :stage, inclusion: { in: STAGES }, allow_nil: true
     validate :deadline
     validate :conditions_allowed
     validate :config_of_kind
@@ -80,12 +91,14 @@ module ProcessTemplateItemDefinition
   # The attributes an adopted copy takes (D-232); the dependencies are mapped afterwards.
   def copy_attributes
     attributes.slice(*%w[position kind title instructions required responsible_role due_anchor due_offset_days
-      due_business_days conditions config])
+      due_business_days conditions config stage])
   end
 
   private
 
   def clean_conditions_and_config
+    # Only the admission's items have a step (RN-07-001).
+    self.stage = template&.admission? ? stage.presence || ProcessTemplateItemDefinition.default_stage(kind) : nil
     self.conditions = CONDITIONS.to_h { |key| [ key, Array(conditions&.dig(key)).map(&:to_s).compact_blank.uniq ] }
       .select { |_key, values| values.any? }
     self.depends_on_item_ids = Array(depends_on_item_ids).compact_blank.uniq

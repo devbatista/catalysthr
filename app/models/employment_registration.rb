@@ -84,13 +84,18 @@ class EmploymentRegistration
 
   def create_employment!(profile, by, salary_cents)
     @employment = profile.employments.create!(kind: kind, category: category, registration_number: registration_number,
-      started_on: started_on, status: "active")
+      started_on: started_on, status: employment_status)
     @employment.revisions.create!(
       effective_on: started_on, position_id: position_id, unit_id: unit_id, department_id: department_id,
       allocation_client_id: allocation_client_id, salary_cents: salary_cents, salary_unit: salary_unit, variable_salary_description: variable_salary_description,
       weekly_hours: weekly_hours, reason: "admission", justification: justification, created_by: by
     )
     profile.company.advance_registration_number!(@employment.registration_number)
+  end
+
+  # An admission's is born pending (spec 07).
+  def employment_status
+    "active"
   end
 
   # Only an open internship becomes CLT, from a day after its start (CA-04-006).

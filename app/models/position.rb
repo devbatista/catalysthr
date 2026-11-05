@@ -11,6 +11,9 @@ class Position < ApplicationRecord
 
   # The position's own admission model, ahead of the company's default (D-204, RN-06-003).
   belongs_to :admission_template, class_name: "ProcessTemplate", optional: true, inverse_of: :positions
+  # The documents the position requires (RN-04-030, RN-06-037, D-648).
+  has_many :required_document_links, class_name: "PositionRequiredDocumentType", dependent: :destroy
+  has_many :required_document_types, through: :required_document_links, source: :document_type
 
   enum :status, STATUSES.index_by(&:itself), validate: true
 

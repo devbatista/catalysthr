@@ -34,6 +34,8 @@ module Panel
     def show
       authorize! :read, @profile
       reveal_sections(allowed_sections)
+      @admission = Admission.for_profile(@profile).order(:created_at).last
+      @awaiting_release = @admission && Admission.awaiting_release.exists?(@admission.id)
     end
 
     # The portal's invitation of one person, by e-mail or the link and the QR code to hand
@@ -42,6 +44,11 @@ module Panel
       profile = WorkerProfile.accessible_by(current_ability, :read).find(params[:id])
       membership = profile.membership
       authorize! :resend_invitation, membership
+      # While the admission waits, only "Liberar acesso" sends it (D-252, D-648).
+      if (admission = Admission.awaiting_release.for_profile(profile).first)
+        return redirect_to admission_path(admission), alert: t(".awaiting_release")
+      end
+
       @invitation = Invitations::Resend.call(membership: membership, channels: Array(params[:channels]), invited_by: current_user)
       @profile = profile
       render :portal_invited
@@ -56,6 +63,9 @@ module Panel
       authorize! :invite, Membership
       memberships = Membership.where(organization: Current.company, status: "invited").with_role("employee").includes(:user, :worker_profile).to_a
         .select { |membership| membership.worker_profile && can?(:resend_invitation, membership) && !membership.invitation_open? }
+      # Who is being admitted waits for "Liberar acesso" (D-252, D-648).
+      waiting = Admission.awaiting_release.joins(:employment).pluck("employments.worker_profile_id")
+      memberships = memberships.reject { |membership| membership.worker_profile.id.in?(waiting) }
       @sent, @without_email = memberships.partition { |membership| membership.user.email_deliverable? }
       @sent.each do |membership|
         Invitations::Resend.call(membership: membership, channels: %w[email], invited_by: current_user)

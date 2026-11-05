@@ -61,6 +61,22 @@
       <p class="field-hint"><%= t("panel.positions.form.admission_template_hint") %></p>
     </div>
 
+    <%# The documents the position requires enter the admission (RN-04-030, RN-06-037, D-648). %>
+    <div class="field-full">
+      <p class="field-label"><%= t("panel.positions.form.required_documents") %></p>
+      <%= hidden_field_tag "position[required_document_type_ids][]", "", id: nil %>
+      <% chosen = params.dig(:position, :required_document_type_ids) || position.required_document_type_ids %>
+      <div class="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <% DocumentType.usable.order(:name).each do |type| %>
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "position[required_document_type_ids][]", type.id, chosen.include?(type.id), id: "required_document_#{type.id}" %>
+            <%= type.name %>
+          </label>
+        <% end %>
+      </div>
+      <p class="field-hint"><%= t("panel.positions.form.required_documents_hint") %></p>
+    </div>
+
     <% if position.persisted? %>
       <div>
         <%= form.label :status, t("panel.positions.form.status"), class: "field-label" %>

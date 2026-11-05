@@ -45,7 +45,7 @@ class EmploymentRevision < ApplicationRecord
 
   validates :effective_on, presence: true
   validates :salary_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :salary_cents, presence: true, unless: :paid_by_variable_only?
+  validates :salary_cents, presence: true, unless: -> { paid_by_variable_only? || employment&.pending? }
   validates :variable_salary_description, presence: true, if: :paid_by_variable_only?
   validates :weekly_hours, numericality: { greater_than: 0, less_than: 100 }, allow_nil: true
   validate :justified_when_out_of_range
@@ -94,6 +94,17 @@ class EmploymentRevision < ApplicationRecord
     effective_on.present? && effective_on > Date.current
   end
 
+  # Until the employment starts, the first revision is completed by the HR, even on the
+  # start's own day: the salary and the rest come up to the review (RN-07-011).
+  def changeable?
+    future? || employment.pending?
+  end
+
+  # The first revision of an employment still in admission (RN-07-011, D-648).
+  def completed_by_admission?
+    reason_admission? && employment.pending? && employment.admission&.open? == true
+  end
+
   # A revision dated before today, after the first one, may require recalculating closed
   # payrolls and rectifying the eSocial (RN-04-062, P-04-21; specs 12 and 13).
   def retroactive?
@@ -107,7 +118,7 @@ class EmploymentRevision < ApplicationRecord
   end
 
   def only_future_changes
-    return if effective_on_in_database.nil? || effective_on_in_database > Date.current
+    return if effective_on_in_database.nil? || effective_on_in_database > Date.current || employment.pending?
 
     errors.add(:base, :in_force)
     throw :abort

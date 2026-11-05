@@ -1,0 +1,95 @@
+<%# The initial registration (RN-07-011, D-254): only the minimum. The salary and the rest
+    come later, and the invitation goes out only with "Liberar acesso" (D-252). %>
+<% content_for :title, t(".title") %>
+<% departments = department_options.to_a.group_by(&:unit) %>
+
+<p class="text-sm"><%= link_to t(".back"), admissions_path, class: "link-button" %></p>
+<h1 class="page-title mt-3"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with model: @registration, scope: :admission, url: admissions_path, method: :post, class: "mt-6 space-y-6" do |form| %>
+  <% if @registration.errors.any? %>
+    <div class="alert-bad" role="alert">
+      <ul class="list-disc space-y-1 pl-5">
+        <% @registration.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".person") %></h2>
+    <p class="field-hint"><%= t(".existing_person_hint") %></p>
+    <div class="form-grid">
+      <div>
+        <%= form.label :cpf, t(".cpf"), class: "field-label" %>
+        <%= form.text_field :cpf, required: true, inputmode: "numeric", autocomplete: "off", class: "input font-mono" %>
+      </div>
+      <div class="field-wide">
+        <%= form.label :name, t(".name"), class: "field-label" %>
+        <%= form.text_field :name, required: true, maxlength: 120, autocomplete: "off", class: "input" %>
+      </div>
+      <div>
+        <%= form.label :email, t(".email"), class: "field-label" %>
+        <%= form.email_field :email, autocomplete: "off", class: "input" %>
+      </div>
+      <div>
+        <%= form.label :mobile_phone, t(".mobile_phone"), class: "field-label" %>
+        <%= form.telephone_field :mobile_phone, autocomplete: "off", class: "input" %>
+      </div>
+    </div>
+    <p class="field-hint"><%= t(".contact_hint") %></p>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".employment") %></h2>
+    <div class="form-grid">
+      <div>
+        <%= form.label :kind, t(".kind"), class: "field-label" %>
+        <%= form.select :kind, Employment::KINDS.map { |kind| [ t("employments.kinds.#{kind}"), kind ] }, {}, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :category, t(".category"), class: "field-label" %>
+        <%= form.select :category, Employment::CLT_CATEGORIES.map { |category| [ t("employments.categories.#{category}"), category ] },
+          {}, class: "input" %>
+        <p class="field-hint"><%= t(".category_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :started_on, t(".started_on"), class: "field-label" %>
+        <%= form.date_field :started_on, required: true, min: Date.current, class: "input" %>
+        <p class="field-hint"><%= t(".started_on_hint") %></p>
+      </div>
+      <div class="field-wide">
+        <%= form.label :position_id, t("panel.employment_revisions.form.position"), class: "field-label" %>
+        <%= form.select :position_id, position_options.map { |position| [ "#{position.name} (CBO #{position.cbo_code})", position.id ] },
+          { prompt: t("panel.employment_revisions.form.choose_position") }, required: true, class: "input" %>
+        <% if position_options.none? %><p class="field-hint"><%= t("panel.employment_revisions.form.no_positions") %></p><% end %>
+      </div>
+      <div>
+        <%= form.label :unit_id, t("panel.employment_revisions.form.unit"), class: "field-label" %>
+        <%= form.select :unit_id, unit_options.map { |unit| [ unit.name, unit.id ] }, { prompt: t("panel.employment_revisions.form.choose_unit") },
+          required: true, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :department_id, t("panel.employment_revisions.form.department"), class: "field-label" %>
+        <%= form.select :department_id,
+          grouped_options_for_select(departments.map { |unit, items| [ unit.name, items.map { |department| [ department.name, department.id ] } ] },
+            @registration.department_id),
+          { prompt: t(".choose_department") }, required: true, class: "input" %>
+        <p class="field-hint"><%= t(departments.empty? ? ".no_departments" : "panel.employment_revisions.form.department_hint") %></p>
+      </div>
+      <% if Current.company.uses_allocation_clients %>
+        <div class="field-wide">
+          <%= form.label :allocation_client_id, t("panel.employment_revisions.form.allocation_client"), class: "field-label" %>
+          <%= form.select :allocation_client_id, allocation_client_options.map { |client| [ client.name, client.id ] },
+            { include_blank: t("panel.employment_revisions.form.no_allocation_client") }, class: "input" %>
+          <p class="field-hint"><%= t(".allocation_client_hint") %></p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), admissions_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

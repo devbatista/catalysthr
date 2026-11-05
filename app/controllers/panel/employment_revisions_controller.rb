@@ -35,7 +35,7 @@ module Panel
 
     def edit
       authorize! :update, @profile
-      authorize! :read_pay, @profile
+      authorize_pay
       return if only_future
 
       reveal_all_sections(%w[pay])
@@ -44,7 +44,7 @@ module Panel
 
     def update
       authorize! :update, @profile
-      authorize! :read_pay, @profile
+      authorize_pay
       return if only_future
 
       reveal_all_sections(%w[pay])
@@ -93,9 +93,16 @@ module Panel
       @revision = @employment.revisions.find(params[:id])
     end
 
+    # The pay permission, or, for the first revision of a pending employment, the admission's:
+    # who runs the admission completes the salary, with the password and the access event,
+    # even without the payroll module (RN-07-011, D-648).
+    def authorize_pay
+      authorize! :read_pay, @profile unless @revision.completed_by_admission? && can?(:update, @employment.admission)
+    end
+
     # A revision in force is corrected by a new one (D-603). True when it redirected.
     def only_future
-      return false if @revision.future?
+      return false if @revision.changeable?
 
       redirect_to employee_path(@profile), alert: t("panel.employment_revisions.in_force")
       true

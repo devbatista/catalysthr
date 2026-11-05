@@ -821,6 +821,21 @@ pt-BR:
       document_approved: "Documento de \"%{title}\" aprovado"
       document_correction_requested: "Correção pedida no documento de \"%{title}\""
       item_acknowledged: "\"%{title}\" lido e aceito"
+  # The admission (spec 07).
+  admissions:
+    steps_label: "Etapas da admissão"
+    template_changed: "Modelo trocado"
+    steps:
+      registration: "Cadastro inicial"
+      documents: "Envio de documentos"
+      ai: "Processamento pela IA"
+      hr_review: "Revisão do RH"
+      accounting: "Contabilidade"
+      conclusion: "Conclusão"
+    statuses:
+      open: "Em andamento"
+      completed: "Concluídas"
+      cancelled: "Canceladas"
   process_templates:
     library: "Biblioteca CatalystHR"
     default: "Padrão"
@@ -831,6 +846,7 @@ pt-BR:
     archived_read_only: "Este modelo está arquivado e não pode ser alterado."
     adopted: "Cópia de %{name} criada como rascunho. Ela é sua: as mudanças no original não chegam aqui."
     made_default: "Modelo marcado como padrão do tipo."
+    made_default_kinds: "Tipos de vínculo do modelo salvos."
     default_not_active: "Só um modelo ativo pode ser o padrão."
     statuses:
       draft: "Rascunho"
@@ -930,6 +946,9 @@ pt-BR:
       activate: "Ativar"
       activate_confirm: "Ativar o modelo? Ativo, ele pode ser adotado e iniciar processos."
       make_default: "Marcar como padrão"
+      default_kinds: "Padrão por tipo de vínculo"
+      default_kinds_hint: "Este modelo vale para os tipos marcados, quando o cargo não tem modelo próprio. Cada tipo tem um modelo só: marcar aqui tira do anterior."
+      default_kinds_submit: "Salvar os tipos de vínculo"
       make_default_confirm: "Este passa a ser o modelo padrão do tipo, no lugar do atual. Confirma?"
       archive: "Arquivar"
       archive_confirm: "Arquivar o modelo? Ele deixa de ser usado em processos novos e não pode mais ser alterado. Os processos já iniciados não mudam."
@@ -988,6 +1007,7 @@ pt-BR:
       edit:
         title: "Editar %{title}"
       form:
+        stage: "Etapa da admissão"
         item: "Item"
         title: "Título"
         responsible: "Responsável"
@@ -1463,6 +1483,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    admissions:
+      name: "Admissões"
+      description: "O módulo de admissão no painel, no lugar de \"Em breve\" (spec 07, D-648)."
     passkeys:
       name: "Passkeys"
       description: "Entrar e confirmar dados sensíveis com a digital ou o rosto do aparelho (spec 16, D-645)."
@@ -2031,8 +2054,111 @@ pt-BR:
         approved: "Versão aprovada."
       correction:
         requested: "Correção pedida."
-    processes:
+    admissions:
+      index:
+        title: "Admissões"
+        subtitle: "Da entrada da pessoa até a conclusão, com o que falta em cada etapa."
+        new: "Nova admissão"
+        filters: "Filtrar por situação"
+        empty: "Nenhuma admissão nesta situação."
+        name: "Pessoa"
+        position: "Cargo"
+        unit: "Unidade"
+        client: "Cliente"
+        started_on: "Início previsto"
+        step: "Etapa"
+        items: "Itens"
+        done_of: "%{done} de %{count}"
+      new:
+        title: "Nova admissão"
+        subtitle: "Só o básico agora: o salário, a jornada e o resto podem vir depois. O convite só sai quando você liberar o acesso."
+        back: "Voltar para as admissões"
+        person: "Pessoa"
+        employment: "Vínculo"
+        existing_person_hint: "Se o CPF já tiver conta na plataforma, a ficha nesta empresa é ligada a essa pessoa, e o nome e os contatos de acesso dela são mantidos."
+        cpf: "CPF"
+        name: "Nome completo"
+        email: "E-mail"
+        mobile_phone: "Celular"
+        contact_hint: "Informe o e-mail ou o celular: é por eles que a pessoa vai receber o acesso."
+        kind: "Tipo de vínculo"
+        category: "Categoria"
+        category_hint: "Só vale para CLT."
+        started_on: "Data prevista de início"
+        started_on_hint: "Hoje ou uma data futura. Quem já começou entra por Colaboradores."
+        choose_department: "Escolha o departamento"
+        no_departments: "Nenhum departamento disponível. Cadastre um em Empresa → Departamentos."
+        allocation_client_hint: "Deixe sem cliente para a equipe interna."
+        submit: "Criar admissão"
+        cancel: "Cancelar"
+      create:
+        created: "Admissão criada. O convite ainda não foi enviado."
+        created_existing_person: "Admissão criada para uma pessoa que já tem cadastro. O convite ainda não foi enviado."
+      release:
+        released: "Acesso liberado."
+      change_template:
+        changed: "Modelo trocado."
+        released_already: "Depois de liberar o acesso, o modelo não pode ser trocado."
+      reschedule:
+        rescheduled: "Data de início alterada."
+      released:
+        title: "Acesso liberado: %{name}"
+        validity: "O convite vale até %{date}."
+        back: "Voltar para a admissão"
+        email_sent: "Enviamos o convite para %{email}."
+        link_title: "Link para entregar em mãos"
+        link_instructions: "Quem tiver este link ou QR code cria a senha desta pessoa. Entregue só a ela."
       show:
+        title: "Admissão de %{name}"
+        back: "Voltar para as admissões"
+        start_expected: "início previsto em %{date}"
+        other_employment: "Esta pessoa já tem vínculo nesta empresa. A admissão continua permitida, porque vínculos simultâneos são aceitos."
+        responsible_alert: "Algum item ficou sem responsável do papel previsto e foi para o RH. Confira no checklist."
+        progress: "Etapas"
+        current_step: "Etapa atual: %{step}"
+        data: "Dados"
+        record: "Abrir a ficha"
+        conditions: "Completar salário e jornada"
+        kind: "Tipo de vínculo"
+        registration_number: "Matrícula"
+        position: "Cargo"
+        unit: "Unidade"
+        department: "Departamento"
+        client: "Cliente"
+        no_client: "Sem cliente"
+        started_on: "Início previsto"
+        status: "Situação"
+        step: "Etapa"
+        template: "Modelo de admissão"
+        reschedule: "Alterar a data de início"
+        new_start: "Nova data de início"
+        reschedule_hint: "Os prazos que contam dessa data acompanham a mudança, menos os ajustados à mão."
+        reschedule_submit: "Salvar a data"
+        change_template: "Trocar o modelo"
+        change_template_hint: "O checklist recomeça. Os documentos continuam na pasta, e um documento já aprovado resolve o item do mesmo tipo."
+        change_template_submit: "Trocar o modelo"
+        change_template_confirm: "Trocar o modelo? O checklist atual será cancelado e o trabalho feito nele, fora os documentos, recomeça."
+        access: "Acesso ao portal"
+        access_status:
+          waiting: "Aguardando liberação"
+          released: "Liberado"
+        access_hint: "A pessoa ainda não tem acesso. Enquanto isso, você já pode trabalhar na admissão."
+        released_by: "Liberado por %{name} em %{date}."
+        has_access: "Esta pessoa já tem acesso. Ao liberar, ela recebe um aviso com o que falta enviar."
+        release: "Liberar acesso"
+        release_again: "Enviar o convite de novo"
+        items: "Checklist · %{done} de %{count} concluídos"
+        my_items: "Seus itens · %{done} de %{count} concluídos"
+        no_items: "Nenhum item para mostrar."
+        open_process: "Abrir o checklist para agir nos itens"
+        item: "Item do checklist"
+        responsible: "Responsável"
+        due: "Prazo"
+        item_status: "Status"
+    processes:
+      admission_rules: "A admissão é concluída e cancelada pela tela dela."
+      show:
+        admission: "Abrir a admissão"
         ready: "Pronto para concluir"
         started: "Iniciado por %{name} em %{date}"
         from_template: "modelo %{name}"
@@ -2265,6 +2391,7 @@ pt-BR:
         requirements: "Requisitos"
         admission_template: "Modelo de admissão"
         default_admission_template: "O padrão da empresa"
+        required_documents: "Documentos exigidos"
         edit: "Editar"
       new:
         title: "Novo cargo"
@@ -2289,10 +2416,14 @@ pt-BR:
         admission_template: "Modelo de admissão"
         default_admission_template: "Usar o padrão da empresa"
         admission_template_hint: "Um modelo de admissão ativo da empresa, que vale para este cargo no lugar do padrão."
+        required_documents: "Documentos exigidos"
+        required_documents_hint: "Entram na admissão como itens de envio do colaborador, mesmo que o modelo não os tenha."
         status: "Situação"
         submit: "Salvar cargo"
         cancel: "Cancelar"
     employees:
+      invite:
+        awaiting_release: "Esta pessoa está em admissão: libere o acesso por aqui."
       index:
         title: "Colaboradores"
         subtitle: "As pessoas da empresa, com o cargo e a unidade de hoje."
@@ -2337,6 +2468,8 @@ pt-BR:
           invited: "Convite enviado"
           no_access: "Sem acesso"
           active: "Com acesso"
+        portal_admission_hint: "Esta pessoa está em admissão: o convite sai quando o RH liberar o acesso na tela da admissão."
+        portal_admission: "Abrir a admissão"
         portal_hint: "O colaborador usa o portal para os documentos, as ciências e os itens de processo. O convite vale por 72 horas."
         portal_invite: "Convidar para o portal"
         portal_resend: "Enviar o convite de novo"
@@ -2821,6 +2954,8 @@ pt-BR:
         next_registration_number: "Próxima matrícula"
         uses_allocation_clients: "Usar clientes de alocação"
         uses_allocation_clients_hint: "Para quem aloca colaboradores em clientes. Ligado, o vínculo indica o cliente e o RH convida os gestores de cada cliente. Só desliga sem colaboradores alocados; desligar tira o acesso dos gestores dos clientes."
+        uses_accounting_step: "Usar a etapa de contabilidade na admissão"
+        uses_accounting_step_hint: "Ligada, a admissão tem a etapa de encaminhamento à contabilidade. Desligada, a etapa não aparece e os itens de encaminhamento não entram no processo."
         next_registration_number_hint: "O número sugerido no cadastro de um vínculo novo. Matrículas já usadas são puladas."
         submit: "Salvar"
       update:
@@ -3297,6 +3432,12 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    admission:
+      started:
+        name: "Admissão liberada"
+        hint: "Quando o RH libera a sua admissão, com o que falta enviar."
+        title: "Sua admissão foi liberada"
+        body: "Veja no portal o que falta enviar."
     processes:
       task_assigned:
         name: "Item de processo atribuído"
@@ -3965,6 +4106,7 @@ pt-BR:
       pre_activation_price: "Mensalidade de pré-ativação"
       holiday: "Feriado"
       unit_holiday: "Feriado da unidade"
+      admission: "Admissão"
       process_template: "Modelo de processo"
       shared_process_template: "Modelo de processo"
       process_template_item: "Item do modelo"
@@ -3991,6 +4133,7 @@ pt-BR:
         status: "Situação"
         unit_opt_out: "O RH pode desmarcar na unidade"
       process_template:
+        default_employment_kinds: "Padrão por tipo de vínculo"
         name: "Nome"
         kind: "Tipo"
         description: "Descrição"
@@ -4427,6 +4570,12 @@ pt-BR:
             document:
               invalid_cnpj_root: "precisa ser a raiz do CNPJ, com 8 caracteres"
               invalid_cpf: "não é um CPF válido"
+        admission:
+          attributes:
+            base:
+              started_on_invalid: "A data de início precisa ser hoje ou uma data futura"
+              not_pending: "Só a admissão em andamento, antes do início do vínculo, muda de data"
+              revision_before_start: "Há uma revisão do vínculo antes dessa data. Ajuste a revisão primeiro"
         process_template:
           attributes:
             kind:
@@ -4434,6 +4583,9 @@ pt-BR:
             onboarding_template:
               only_admission: "só vale para modelo de admissão"
               invalid: "precisa ser um modelo de integração ativo da empresa"
+            default_employment_kinds:
+              not_active: "só vale para modelo ativo"
+              only_admission: "só vale para modelo de admissão"
             is_default:
               not_active: "só vale para modelo ativo"
             base:
@@ -4713,10 +4865,12 @@ pt-BR:
               client_manager_alone: "do gestor do cliente não podem incluir outros perfis da empresa"
             invitation_channels:
               unavailable: "incluem um canal que ainda não está disponível"
+              blank: "precisam ter ao menos um canal"
               email_missing: "incluem o e-mail, mas a pessoa não tem e-mail cadastrado"
               email_bounced: "incluem o e-mail, mas o e-mail da pessoa voltou e está marcado como inválido. Corrija o contato ou entregue o link"
             base:
               already_member: "A pessoa já tem acesso a esta organização"
+              admission_closed: "A admissão já foi encerrada"
               not_invited: "O convite já foi aceito ou cancelado"
               last_hr_admin: "A empresa precisa de pelo menos um RH administrador ativo"
               last_partner_admin: "O parceiro precisa de pelo menos um administrador ativo"
@@ -4912,6 +5066,13 @@ pt-BR:
               invalid_amount: "precisa ser um valor em reais, como 2.500,00"
             registration_number:
               taken: "já foi usada por outro vínculo desta empresa, inclusive encerrado"
+        admission:
+          attributes:
+            base:
+              no_template: "Nenhum modelo de admissão ativo serve para este cargo e vínculo. Marque um padrão em Modelos de processo."
+              contact_blank: "Informe o e-mail ou o celular"
+            started_on:
+              past: "precisa ser hoje ou uma data futura: quem já começou entra por Colaboradores"
         employee:
           attributes:
             cpf:

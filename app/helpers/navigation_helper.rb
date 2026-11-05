@@ -113,12 +113,14 @@ module NavigationHelper
     # A contracted module shows only when the company has it (D-616).
     groups = soon.to_h do |group, features|
       items = features.filter_map do |feature|
+        next admissions_item if feature == "admissions" && admissions_on?
+
         state = ComingSoon.state(feature, company)
         soon_item(feature, coming_soon_path(feature), state) if state && ComingSoon.released?(feature, current_ability)
       end
       [ group, items ]
     end
-    groups[:operation] ||= []
+    groups[:operation] ||= [ (admissions_item if admissions_on?) ].compact
     groups[:operation].unshift(
       nav_item(t("navigation.home"), root_path, controller_path == "panel/home"),
       (nav_item(t("navigation.employees"), employees_path, controller_path.in?(EMPLOYEE_CONTROLLERS)) if can?(:read, WorkerProfile))
@@ -126,7 +128,8 @@ module NavigationHelper
     # The review queue (spec 08, D-642), for who reaches the folders, in the prototype's
     # place, after the admissions.
     if can?(:review, Document)
-      after = groups[:operation].index { |item| item&.path == coming_soon_path("admissions") } || 1
+      paths = [ coming_soon_path("admissions"), admissions_path ]
+      after = groups[:operation].index { |item| item&.path.in?(paths) } || 1
       groups[:operation].insert(after + 1, nav_item(t("navigation.documents"), documents_path, controller_path.in?(DOCUMENT_CONTROLLERS)))
     end
 
@@ -196,6 +199,15 @@ module NavigationHelper
   end
 
   # state: :soon, or :after_contract for a module that waits for the contract (D-616).
+  def admissions_on?
+    FeatureFlags.enabled?(FeatureFlags::ADMISSIONS)
+  end
+
+  # Built, it leaves "Em breve" (D-598); the client manager sees theirs (P-07-20).
+  def admissions_item
+    nav_item(t("navigation.features.admissions"), admissions_path, controller_path == "panel/admissions") if can?(:read_summary, Admission)
+  end
+
   def soon_item(feature, path, state = :soon)
     active = controller_name == "coming_soon" && params[:feature] == feature
     NavItem.new(label: t(ComingSoon.translation_key(feature)), path: path, active: active, tag: t("navigation.tags.#{state}"))

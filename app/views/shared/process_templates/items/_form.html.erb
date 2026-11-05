@@ -23,6 +23,14 @@
         <%= form.label :responsible_role, t("process_templates.items.form.responsible"), class: "field-label" %>
         <%= form.select :responsible_role, responsible_roles(@template), {}, class: "input" %>
       </div>
+      <%# The admission's step the item belongs to (RN-07-001, D-648). %>
+      <% if @template.admission? %>
+        <div>
+          <%= form.label :stage, t("process_templates.items.form.stage"), class: "field-label" %>
+          <%= form.select :stage, ProcessTemplateItemDefinition::STAGES.map { |stage| [ t("admissions.steps.#{stage}"), stage ] },
+            { selected: @item.stage || ProcessTemplateItemDefinition.default_stage(@item.kind) }, class: "input" %>
+        </div>
+      <% end %>
       <div class="field-full">
         <%= form.label :instructions, t("process_templates.items.form.instructions"), class: "field-label" %>
         <%= form.text_area :instructions, rows: 3, maxlength: 4000, class: "input" %>

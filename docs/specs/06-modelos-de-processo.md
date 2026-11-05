@@ -62,7 +62,7 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
   - status: `draft`, `active` ou `archived`;
   - origem: o modelo de onde foi copiado.
 - **RN-06-002** — Só modelos `active` podem ser adotados ou iniciar processos. Arquivar um modelo não afeta os processos já iniciados (D-091).
-- **RN-06-003** — Cada empresa marca um modelo padrão por tipo. O cargo pode apontar um modelo de admissão específico (D-204), que tem prioridade sobre o padrão **[P-06-03]**.
+- **RN-06-003** — Cada empresa marca um modelo padrão por tipo. O cargo pode apontar um modelo de admissão específico (D-204), que tem prioridade sobre o padrão **[P-06-03]**. O modelo de admissão também pode ser o padrão de tipos de vínculo, que vêm antes do padrão de admissão (RN-07-013, D-648).
 - **RN-06-004** — Um modelo de admissão pode indicar um modelo de integração, que começa automaticamente quando a admissão é concluída **[P-06-04]**.
 
 ### Itens

@@ -22,6 +22,18 @@ module Panel
       end
     end
 
+    # The employment kinds this admission model is the default of (RN-07-013, D-648).
+    def default_kinds
+      template = template_scope.accessible_by(current_ability, :read).find(params[:id])
+      authorize! :update, template
+      if template.admission? && template.active?
+        template.make_default_for!(params[:employment_kinds])
+        redirect_to process_template_path(template), notice: t("process_templates.made_default_kinds")
+      else
+        redirect_to process_template_path(template), alert: t("process_templates.default_not_active")
+      end
+    end
+
     private
 
     def template_scope

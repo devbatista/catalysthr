@@ -179,7 +179,13 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 16b. PWA: manifest com abertura em `/` pelo perfil, service worker só com a casca, "Sem conexão", nova versão, convite de instalação e navegador antigo (RN-16-060 a RN-16-085, CA-16-006 a CA-16-008, CA-16-012, D-646) (PR #115)
   - [x] 16c. Passkeys: cadastro, login com a digital ou o rosto, MFA, confirmação de dado sensível, gestão e admin (RN-16-070 a RN-16-077, CA-16-009, CA-16-010, D-647) (PR #117). A flag `passkeys` fica desligada até a conferência em aparelhos reais, na fase de validação
   - Ficam com outras specs: CA-16-001 (abas de ponto e folha), CA-16-003 (spec 09), CA-16-004 (spec 10), CA-16-005 (spec 12 e WhatsApp) e CA-16-011, com os jobs `Memberships::ReadOnlyEndingJob` e `Portal::ExportMyDocumentsJob` (desligamento, spec 09)
-- [ ] **Spec 07:** admissão completa, sem as etapas de eSocial
+- [ ] **Spec 07:** admissão completa, sem as etapas de eSocial. Em 5 PRs (D-648), com a flag `admissions`; a etapa de IA fica sem itens até a spec 14:
+  - [ ] 07a. Admissão no painel: etapas nos modelos, documentos exigidos pelo cargo, padrão por tipo de vínculo, cadastro inicial, escolha e troca do modelo, barra de etapas, "Liberar acesso" (e-mail e link), lista e tela, visão do gestor do cliente e saída do "Em breve" (RN-07-001 a RN-07-022, RN-04-030, RN-06-037, CA-07-001 a CA-07-003, CA-07-011, CA-07-013, CA-07-014, CA-03-004, CA-03-010, CA-03-011)
+  - [ ] 07b. Formulários no portal e revisão do RH, com as respostas criptografadas e fora do PaperTrail (RN-06-030, RN-06-031, RN-07-031)
+  - [ ] 07c. Contratos e termos: modelos com variáveis, editor, PDF pelo Prawn e versão assinada (RN-07-040 a RN-07-043, CA-07-004)
+  - [ ] 07d. ASO, contabilidade, conclusão com o salário exigido, integração, cancelamento e aprovação reprovada (RN-07-060, RN-07-061, RN-07-070, RN-07-080 a RN-07-083, RN-07-090 a RN-07-092, RN-07-110 a RN-07-112, CA-07-006, CA-07-007, CA-07-012)
+  - [ ] 07e. Ativação e experiência (RN-07-085, RN-07-086, RN-07-100 a RN-07-102, CA-07-008 sem o eSocial, CA-07-009, CA-07-010)
+  - Ficam com outras specs: RN-07-032, RN-07-050 a RN-07-054 e o S-3000 (spec 13, fase 4, flag `esocial`, D-648), CA-07-005, o WhatsApp do CA-07-003, o recrutamento (spec 21), a importação em lote (spec 18), a recomendação da avaliação (RN-07-103, spec 22) e a purga da retenção (spec 05)
 - [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
