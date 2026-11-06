@@ -120,6 +120,19 @@ processes_overdue_items:
   class: "Processes::OverdueItemsJob"
   queue: "default"
 
+# The employments of the day, every hour because the day turns at a different hour in each
+# unit's time zone (spec 07, RN-07-085, D-653).
+employments_activate_starting:
+  cron: "5 * * * * America/Sao_Paulo"
+  class: "Employments::ActivateStartingJob"
+  queue: "default"
+
+# The experience's end and the passing to the next state (spec 07, RN-07-101, RN-07-102, D-653).
+employments_experience_alerts:
+  cron: "10 6 * * * America/Sao_Paulo"
+  class: "Employments::ExperienceAlertsJob"
+  queue: "default"
+
 # The documents' expirations and their notice (spec 08, RN-08-031, RN-08-032, D-643).
 documents_expirations:
   cron: "20 6 * * * America/Sao_Paulo"

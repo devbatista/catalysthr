@@ -886,6 +886,9 @@ pt-BR:
       vinculo_inicio: "Vínculo: data de início"
       vinculo_matricula: "Vínculo: matrícula"
       vinculo_jornada: "Vínculo: jornada semanal"
+      vinculo_experiencia_dias: "Vínculo: dias do primeiro período de experiência"
+      vinculo_experiencia_prorrogacao: "Vínculo: dias da prorrogação da experiência"
+      vinculo_experiencia_fim: "Vínculo: fim do primeiro período de experiência"
       empresa_razao_social: "Empresa: razão social"
       empresa_documento: "Empresa: CNPJ ou CPF"
       empresa_endereco: "Empresa: endereço da matriz"
@@ -1907,6 +1910,10 @@ pt-BR:
             one: "Documentos vencendo · %{count}"
             other: "Documentos vencendo · %{count}"
           no_expiring: "Nenhum documento da equipe vencendo."
+          probations:
+            one: "Fim de experiência · %{count}"
+            other: "Fins de experiência · %{count}"
+          probation_line: "%{person}: termina em %{date}. A decisão é do RH."
           expiring_line: "%{document} de %{person} vence em %{date}"
     documents:
       tabs:
@@ -2226,6 +2233,9 @@ pt-BR:
     admissions:
       index:
         title: "Admissões"
+        attention:
+          one: "1 admissão chegou à data de início sem terminar."
+          other: "%{count} admissões chegaram à data de início sem terminar."
         subtitle: "Da entrada da pessoa até a conclusão, com o que falta em cada etapa."
         new: "Nova admissão"
         filters: "Filtrar por situação"
@@ -2355,6 +2365,10 @@ pt-BR:
         reassess: "Reavaliar: pedir novo ASO"
         reassess_confirm: "Reabrir o item do ASO para um novo exame? O anterior fica no histórico."
         aso_late: "O exame admissional foi feito depois do início do vínculo."
+        activated_pending:
+          one: "O vínculo já está ativo, e a admissão ainda tem 1 item obrigatório pendente. Resolva o que falta e conclua a admissão."
+          other: "O vínculo já está ativo, e a admissão ainda tem %{count} itens obrigatórios pendentes. Resolva o que falta e conclua a admissão."
+        start_passed: "A data de início chegou e o vínculo não foi ativado. Veja o que precisa de decisão nesta admissão."
         item_rejected: "\"%{title}\" foi reprovado: %{reason}. Reabra ou dispense no checklist, ou cancele a admissão."
         cancelled_on: "Cancelada em %{date}."
         see_reason: "Ver o motivo"
@@ -2497,6 +2511,10 @@ pt-BR:
         greeting: "Olá, %{name}."
         company: "Empresa: %{company}."
         subtitle: "Você entrou em %{brand}. As telas do painel estão em construção."
+        admissions_attention:
+          one: "1 admissão chegou à data de início sem terminar."
+          other: "%{count} admissões chegaram à data de início sem terminar."
+        admissions_open: "Abrir as admissões"
     units:
       index:
         title: "Unidades"
@@ -2670,6 +2688,32 @@ pt-BR:
         submit: "Salvar cargo"
         cancel: "Cancelar"
     employees:
+      experience:
+        title: "Contrato de experiência"
+        statuses:
+          first_period: "Primeiro período"
+          extended: "Prorrogado"
+          indefinite: "Prazo indeterminado"
+        days:
+          one: "%{count} dia"
+          other: "%{count} dias"
+        first_days: "Primeiro período"
+        extension_days: "Prorrogação"
+        ends_on: "Termina em"
+        resolved_on: "Decidido em"
+        automatic: "automaticamente, pelo fim do período"
+        extend: "Prorrogar"
+        extend_days: "Dias da prorrogação"
+        extend_hint: "Só uma prorrogação, com até %{max} dias somando os dois períodos. A prorrogação precisa estar combinada com a pessoa."
+        extend_submit: "Confirmar prorrogação"
+        extend_informed:
+          one: "Prorrogar por %{count} dia"
+          other: "Prorrogar por %{count} dias"
+        extend_confirm: "Confirmar a prorrogação já informada?"
+        confirm: "Efetivar"
+        confirm_confirm: "Efetivar esta pessoa? O contrato segue por prazo indeterminado."
+        terminate: "Desligar"
+        terminate_reason: "O desligamento chega com as solicitações. Por enquanto, faça fora do sistema."
       invite:
         awaiting_release: "Esta pessoa está em admissão: libere o acesso por aqui."
       index:
@@ -3066,6 +3110,15 @@ pt-BR:
       close:
         closed: "Conta encerrada."
     employments:
+      experience:
+        title: "Contrato de experiência"
+        first_days: "Dias do primeiro período"
+        extension_days: "Dias da prorrogação, se já combinada"
+        hint: "Só para CLT da categoria padrão, com até %{max} dias somando os dois períodos. Em branco, o contrato não é de experiência. Depois do início, os dias só mudam ao prorrogar ou efetivar."
+      extend_experience:
+        extended: "Experiência prorrogada."
+      confirm_experience:
+        confirmed: "Colaborador efetivado. O contrato segue por prazo indeterminado."
       edit:
         title: "Dados do vínculo"
         back: "Voltar para %{name}"
@@ -3204,6 +3257,8 @@ pt-BR:
         uses_allocation_clients_hint: "Para quem aloca colaboradores em clientes. Ligado, o vínculo indica o cliente e o RH convida os gestores de cada cliente. Só desliga sem colaboradores alocados; desligar tira o acesso dos gestores dos clientes."
         uses_accounting_step: "Usar a etapa de contabilidade na admissão"
         uses_accounting_step_hint: "Ligada, a admissão tem a etapa de encaminhamento à contabilidade. Desligada, a etapa não aparece e os itens de encaminhamento não entram no processo."
+        experience_alert_days: "Aviso de fim de experiência (dias antes)"
+        experience_alert_days_hint: "De 1 a 30 dias antes do fim de cada período."
         next_registration_number_hint: "O número sugerido no cadastro de um vínculo novo. Matrículas já usadas são puladas."
         submit: "Salvar"
       update:
@@ -3714,6 +3769,13 @@ pt-BR:
         title: "Admissão encaminhada: %{person}"
         body: "%{company_name} encaminhou uma admissão ao escritório."
     admission:
+      activated_with_pending:
+        name: "Vínculo ativado com pendências"
+        hint: "Quando o vínculo começa e a admissão ainda não terminou."
+        title: "Vínculo ativado com pendências: %{person}"
+        body:
+          one: "A admissão ainda tem 1 item obrigatório pendente."
+          other: "A admissão ainda tem %{count} itens obrigatórios pendentes."
       aso_unfit:
         name: "Atenção em uma admissão"
         hint: "Quando uma admissão precisa de uma decisão do RH sobre o ASO."
@@ -3818,6 +3880,17 @@ pt-BR:
           title: "A verificação do domínio %{domain} falhou"
           body: "O SES não conseguiu verificar o domínio %{domain} de %{brand_name}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
     employments:
+      probation_ending:
+        name: "Fim de experiência"
+        hint: "Antes do fim de cada período de experiência."
+        title: "Fim de experiência: %{person}"
+        body: "O período termina em %{date}."
+        extended:
+          title: "Experiência prorrogada: %{person}"
+          body: "A prorrogação já informada começou. O contrato vai até %{date}."
+        indefinite:
+          title: "Prazo indeterminado: %{person}"
+          body: "A experiência terminou em %{date} sem registro, e o contrato passou a prazo indeterminado."
       revisions_effective:
         name: "Revisões que entram em vigor"
         hint: "Um aviso por dia, com as revisões das pessoas que você acompanha."
@@ -4643,6 +4716,8 @@ pt-BR:
         details_fgts_option_on: "Data de opção pelo FGTS"
         details_contract_term: "Tipo de contrato"
         details_contract_end_on: "Término do contrato"
+        details_experience_first_days: "Dias do primeiro período"
+        details_experience_extension_days: "Dias da prorrogação"
         details_union_cnpj: "CNPJ do sindicato"
         details_union_base_month: "Data-base"
         details_internship_nature: "Natureza do estágio"
@@ -5090,6 +5165,13 @@ pt-BR:
               invalid: "deve ter até 30 caracteres, com letras, números, ponto, barra ou hífen"
             worker_profile:
               other_company: "precisa ser desta empresa"
+            base:
+              experience_not_extendable: "Esta experiência não pode mais ser prorrogada"
+              experience_closed: "Esta experiência já foi decidida"
+            details_experience_first_days:
+              experience_category: "vale só para CLT da categoria padrão"
+            details_experience_extension_days:
+              experience_limit: "passa do limite de %{count} dias somando os dois períodos"
             details_fgts_option_on:
               invalid_date: "não é uma data válida"
             details_contract_end_on:

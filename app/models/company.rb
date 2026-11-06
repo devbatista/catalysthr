@@ -35,6 +35,7 @@ class Company < ApplicationRecord
   validates :document, presence: true, uniqueness: true
   validate :document_format
   validates :brand_display_mode, absence: true, unless: :partner
+  validates :experience_alert_days, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 30 }
   validates :read_only_period_days, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 3650 }
   validate :allocation_clients_off_when_unused, if: -> { uses_allocation_clients_changed? && !uses_allocation_clients }
   validates :next_registration_number, numericality: { only_integer: true, greater_than: 0, less_than: 10**15 }

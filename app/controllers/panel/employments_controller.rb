@@ -56,7 +56,10 @@ module Panel
     def update
       authorize! :update, @profile
       details = params.dig(:employment, :details)&.permit(*Employment::DETAILS.fetch(@employment.kind)).to_h || {}
-      @employment.assign_attributes(category: params.dig(:employment, :category), details: details)
+      editable = helpers.experience_on?(@employment) && @employment.experience_editable?
+      @employment.assign_attributes(category: params.dig(:employment, :category),
+        details: details.merge(@employment.details.slice(*Employment::EXPERIENCE_DETAILS)))
+      @employment.assign_experience(params.dig(:employment, :experience_first_days), params.dig(:employment, :experience_extension_days)) if editable
       if @employment.save
         redirect_to employee_path(@profile), notice: t(".updated")
       else
@@ -64,7 +67,27 @@ module Panel
       end
     end
 
+    # "Prorrogar" (RN-07-101, D-653).
+    def extend_experience
+      authorize! :update, @profile
+      decided(Employments::Experience.extend(@employment, days: params[:days], by: current_user), ".extended")
+    end
+
+    # "Efetivar" (RN-07-101, D-653).
+    def confirm_experience
+      authorize! :update, @profile
+      decided(Employments::Experience.confirm(@employment, by: current_user), ".confirmed")
+    end
+
     private
+
+    def decided(done, notice)
+      if done
+        redirect_to employee_path(@profile, anchor: "employment-#{@employment.id}"), notice: t(notice)
+      else
+        redirect_to employee_path(@profile, anchor: "employment-#{@employment.id}"), alert: @employment.errors.full_messages.to_sentence
+      end
+    end
 
     # Out of the person's scope answers 404 (RN-03-006).
     def load_profile

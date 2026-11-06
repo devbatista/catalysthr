@@ -61,7 +61,7 @@
       <% end %>
 
       <% if personal %>
-        <% details = employment.details.reject { |_key, value| value.nil? } %>
+        <% details = employment.shown_details.reject { |_key, value| value.nil? } %>
         <% if details.any? %>
           <details class="mt-4 rounded-lg border border-line-soft">
             <summary class="cursor-pointer px-4 py-2.5 text-sm font-semibold"><%= t(".details") %></summary>
@@ -111,6 +111,10 @@
             </tbody>
           </table>
         </div>
+      <% end %>
+
+      <% if personal && employment.experience? && experience_on?(employment) %>
+        <%= render "experience", employment: employment %>
       <% end %>
 
       <% if can?(:update, @profile) %>

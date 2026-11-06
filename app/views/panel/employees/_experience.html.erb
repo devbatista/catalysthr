@@ -1,0 +1,45 @@
+<%# The experience contract and the HR's decision (RN-07-100 to RN-07-102, D-653). "Desligar"
+    stays disabled until spec 09 (D-648). %>
+<div class="mt-5 space-y-3 border-t border-line-soft pt-4" id="experience-<%= employment.id %>">
+  <div class="flex flex-wrap items-center gap-2">
+    <h3 class="section-title"><%= t(".title") %></h3>
+    <span class="pill <%= employment.experience_open? ? "pill-info" : "pill-ok" %>"><%= t(".statuses.#{employment.detail(:experience_status)}") %></span>
+  </div>
+  <dl class="details-list">
+    <div><dt><%= t(".first_days") %></dt><dd><%= t(".days", count: employment.experience_first_days) %></dd></div>
+    <div><dt><%= t(".extension_days") %></dt><dd><%= employment.experience_extension_days ? t(".days", count: employment.experience_extension_days) : "—" %></dd></div>
+    <% if employment.experience_open? %>
+      <div><dt><%= t(".ends_on") %></dt><dd><%= l(employment.experience_ends_on) %></dd></div>
+    <% else %>
+      <div>
+        <dt><%= t(".resolved_on") %></dt>
+        <dd><%= l(Date.iso8601(employment.detail(:experience_resolved_on))) %> · <%= employment.detail(:experience_resolved_by) || t(".automatic") %></dd>
+      </div>
+    <% end %>
+  </dl>
+  <% if employment.experience_decidable? && can?(:update, @profile) %>
+    <div class="flex flex-wrap items-start gap-2">
+      <% if employment.experience_extendable? %>
+        <% if employment.experience_extension_days %>
+          <%= button_to t(".extend_informed", count: employment.experience_extension_days), extend_experience_employment_path(employment), method: :patch,
+            class: "btn btn-secondary btn-sm", form: { data: { confirm: t(".extend_confirm") } } %>
+        <% else %>
+          <details class="w-full sm:w-auto">
+            <summary class="btn btn-secondary btn-sm"><%= t(".extend") %></summary>
+            <%= form_with url: extend_experience_employment_path(employment), method: :patch, class: "mt-2 space-y-2 sm:w-80" do |form| %>
+              <%= form.label :days, t(".extend_days"), class: "field-label", for: "extend_days_#{employment.id}" %>
+              <%= form.number_field :days, id: "extend_days_#{employment.id}", min: 1, max: Employment::EXPERIENCE_MAX_DAYS - employment.experience_first_days,
+                required: true, class: "input" %>
+              <p class="field-hint"><%= t(".extend_hint", max: Employment::EXPERIENCE_MAX_DAYS) %></p>
+              <%= form.submit t(".extend_submit"), class: "btn btn-primary btn-sm" %>
+            <% end %>
+          </details>
+        <% end %>
+      <% end %>
+      <%= button_to t(".confirm"), confirm_experience_employment_path(employment), method: :patch, class: "btn btn-primary btn-sm",
+        form: { data: { confirm: t(".confirm_confirm") } } %>
+      <button type="button" class="btn btn-secondary btn-sm" disabled title="<%= t(".terminate_reason") %>"><%= t(".terminate") %></button>
+    </div>
+    <p class="field-hint"><%= t(".terminate_reason") %></p>
+  <% end %>
+</div>

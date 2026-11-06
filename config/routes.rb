@@ -353,6 +353,8 @@ Rails.application.routes.draw do
         member do
           get :conversion
           post :conversion, action: :convert
+          patch :extend_experience, path: "extend-experience"
+          patch :confirm_experience, path: "confirm-experience"
         end
         resources :revisions, controller: "employment_revisions", only: %i[new create edit update destroy]
       end

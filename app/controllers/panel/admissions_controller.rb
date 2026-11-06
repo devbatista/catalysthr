@@ -18,6 +18,7 @@ module Panel
       @status = params[:status].presence_in(ProcessInstance::STATUSES) || "open"
       reachable = Admission.where(id: Admission.accessible_by(current_ability, :read_summary).select(:id))
       @counts = reachable.joins(:process_instance).group("process_instances.status").count
+      @attention = reachable.needing_attention.count if can?(:create, Admission)
       @admissions = reachable.in_status(@status).includes(:process_instance, :company, process_instance: :items,
         employment: [ { worker_profile: :user }, { revisions: %i[position unit allocation_client] } ]).to_a
         .sort_by { |admission| [ admission.started_on, admission.id ] }
@@ -144,7 +145,7 @@ module Panel
 
     def registration_params
       params.expect(admission: %i[name cpf birth_date email mobile_phone social_name kind category started_on position_id unit_id
-        department_id allocation_client_id])
+        department_id allocation_client_id experience_first_days experience_extension_days])
     end
 
     # The HR analyst admits only in their units (U scope).

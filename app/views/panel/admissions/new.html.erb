@@ -88,6 +88,10 @@
     </div>
   </section>
 
+  <% if admissions_on? %>
+    <section class="card card-body"><%= render "panel/employments/experience_fields", form: form %></section>
+  <% end %>
+
   <div class="flex items-center gap-4">
     <%= form.submit t(".submit"), class: "btn btn-primary" %>
     <%= link_to t(".cancel"), admissions_path, class: "link-button text-sm" %>

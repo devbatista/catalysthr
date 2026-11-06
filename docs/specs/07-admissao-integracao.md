@@ -137,7 +137,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
   - **sem o eSocial aceito**: ativa assim mesmo e cria um **alerta grave** para o RH, que fica no painel até o evento ser aceito;
   - **com a admissão ainda não concluída**: ativa assim mesmo, porque a pessoa já está trabalhando, e o alerta mostra os itens pendentes **[P-07-13]**.
 
-  O job vale para datas até hoje, para cobrir um dia em que não rodou. Até a spec 13, o alerta por eSocial não aceito fica desligado (flag `esocial`) (D-648).
+  O job vale para datas até hoje, para cobrir um dia em que não rodou. Até a spec 13, o alerta por eSocial não aceito fica desligado (flag `esocial`) (D-648). Exceção: com o ASO inapto, o job não ativa, e o vínculo fica `pending`, com alerta grave de texto neutro, até o RH cancelar ou reavaliar (D-653).
 - **RN-07-086** — A partir da ativação, o colaborador aparece no ponto, na folha e nos painéis.
 
 ### Desistência e cancelamento (D-257)
@@ -156,8 +156,8 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 
 ### Contrato de experiência (D-261, D-262)
 
-- **RN-07-100** — No vínculo CLT com contrato de experiência, o RH informa os dias do primeiro período e, se houver, da prorrogação. A soma não pode passar de **90 dias**, e só é permitida **uma prorrogação** (CLT art. 445, parágrafo único, e art. 451).
-- **RN-07-101** — Antes do fim de cada período, o RH e os gestores recebem um aviso com antecedência configurável pela empresa, de 10 dias por padrão **[P-07-15]**. As ações são:
+- **RN-07-100** — No vínculo CLT com contrato de experiência, o RH informa os dias do primeiro período e, se houver, da prorrogação. A soma não pode passar de **90 dias**, e só é permitida **uma prorrogação** (CLT art. 445, parágrafo único, e art. 451). Vale para a categoria padrão, e o dia de início conta na data de fim. Depois do início, os dias só mudam por prorrogar ou efetivar (D-653).
+- **RN-07-101** — Antes do fim de cada período, o RH e os gestores recebem um aviso com antecedência configurável pela empresa, de 1 a 30 dias, 10 por padrão **[P-07-15]**. As ações ficam com o RH, na ficha do colaborador (D-653), e são:
   - **prorrogar**, se ainda não houve prorrogação;
   - **efetivar**: o contrato segue por prazo indeterminado;
   - **desligar**: inicia o desligamento (spec 09). Até a spec 09, aparece desabilitado, com o motivo (D-648).

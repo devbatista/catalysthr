@@ -95,6 +95,11 @@ module EmployeesHelper
     uses.map { |use| t("panel.employees.show.uses.#{use}") }.join(", ").presence || "—"
   end
 
+  # The experience follows the admission's flag (D-653).
+  def experience_on?(employment)
+    FeatureFlags.enabled?(FeatureFlags::ADMISSIONS) && employment.clt?
+  end
+
   # The firm's reading (D-652): the CPF as an access event, and the dependent without what
   # is about their health (P-03-18).
   def forward_cpf(user)

@@ -23,6 +23,9 @@ class EmploymentRegistration
   attribute :variable_salary_description, :string
   attribute :weekly_hours, :decimal
   attribute :justification, :string
+  # The experience's days (RN-07-100, D-653).
+  attribute :experience_first_days, :string
+  attribute :experience_extension_days, :string
 
   attr_reader :employment
 
@@ -30,6 +33,8 @@ class EmploymentRegistration
   FIELDS = {
     [ "Employment", :kind ] => :kind, [ "Employment", :category ] => :category,
     [ "Employment", :registration_number ] => :registration_number, [ "Employment", :started_on ] => :started_on,
+    [ "Employment", :details_experience_first_days ] => :experience_first_days,
+    [ "Employment", :details_experience_extension_days ] => :experience_extension_days,
     [ "EmploymentRevision", :position ] => :position_id, [ "EmploymentRevision", :unit ] => :unit_id,
     [ "EmploymentRevision", :department ] => :department_id, [ "EmploymentRevision", :allocation_client ] => :allocation_client_id, [ "EmploymentRevision", :salary_cents ] => :salary,
     [ "EmploymentRevision", :salary_unit ] => :salary_unit,
@@ -83,8 +88,10 @@ class EmploymentRegistration
   end
 
   def create_employment!(profile, by, salary_cents)
-    @employment = profile.employments.create!(kind: kind, category: category, registration_number: registration_number,
+    @employment = profile.employments.new(kind: kind, category: category, registration_number: registration_number,
       started_on: started_on, status: employment_status)
+    @employment.assign_experience(experience_first_days, experience_extension_days)
+    @employment.save!
     @employment.revisions.create!(
       effective_on: started_on, position_id: position_id, unit_id: unit_id, department_id: department_id,
       allocation_client_id: allocation_client_id, salary_cents: salary_cents, salary_unit: salary_unit, variable_salary_description: variable_salary_description,

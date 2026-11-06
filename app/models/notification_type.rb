@@ -69,6 +69,13 @@ NotificationType::CATALOG = [
     roles: %w[partner_admin hr_admin]),
   NotificationType.new(code: "billing.contract_closing", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin]),
+  # The employment started with the admission open, to the HR (RN-07-085, D-653).
+  NotificationType.new(code: "admission.activated_with_pending", mandatory: true, urgent: true, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant]),
+  # The end of an experience period, to the HR and the managers; the variants tell the HR what
+  # happened by itself (RN-07-101, RN-07-102, D-653).
+  NotificationType.new(code: "employments.probation_ending", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin hr_analyst consultant manager]),
   # An admission sent to the accounting firm, to its team (RN-06-065, D-652).
   NotificationType.new(code: "accounting.admission_forwarded", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[firm_admin accountant]),

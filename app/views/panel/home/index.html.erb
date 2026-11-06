@@ -3,6 +3,14 @@
   <p class="page-subtitle"><%= t(".company", company: Current.company.name) %></p>
 <% end %>
 
+<%# Until the panels of spec 17 (RN-07-085, D-653). %>
+<% if @admissions_attention.to_i.positive? %>
+  <p class="alert-bad mt-6" role="alert">
+    <%= t(".admissions_attention", count: @admissions_attention) %>
+    <%= link_to t(".admissions_open"), admissions_path, class: "link-button" %>
+  </p>
+<% end %>
+
 <div class="card card-body mt-6">
   <p class="text-sm text-ink-soft"><%= t(".subtitle", brand: Current.brand.commercial_name) %></p>
 </div>
