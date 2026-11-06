@@ -11,23 +11,27 @@ module Notifications
     module_function
 
     def handle(event)
-      delivery = delivery_of(event)
+      deliveries = deliveries_of(event)
       case event["eventType"] || event["notificationType"]
       when "Delivery"
-        delivery.update!(status: "delivered", delivered_at: Time.current) if delivery&.sent?
+        deliveries.select(&:sent?).each { |delivery| delivery.update!(status: "delivered", delivered_at: Time.current) }
       when "Bounce"
         return unless event.dig("bounce", "bounceType") == "Permanent"
 
-        delivery&.update!(status: "failed", failed_reason: "bounce")
+        deliveries.each { |delivery| delivery.update!(status: "failed", failed_reason: "bounce") }
         addresses(event.dig("bounce", "bouncedRecipients")).each { |address| mark(address, "bounced") }
       when "Complaint"
         addresses(event.dig("complaint", "complainedRecipients")).each { |address| mark(address, "complained") }
       end
     end
 
-    def delivery_of(event)
+    # One e-mail is one delivery, or all those of a daily digest (D-655).
+    def deliveries_of(event)
       message_id = event.dig("mail", "messageId")
-      message_id && NotificationDelivery.find_by(provider_message_id: message_id)
+      return [] unless message_id
+
+      delivery = NotificationDelivery.find_by(provider_message_id: message_id)
+      delivery ? [ delivery ] : NotificationDigest.find_by(provider_message_id: message_id)&.deliveries.to_a
     end
 
     def addresses(recipients)

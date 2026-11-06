@@ -27,7 +27,7 @@
             </tr>
           </table>
           <p style="max-width:560px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5B6B7F;">
-            <%= t(@notification.in_bell? ? "notification_mailer.footer_bell" : "notification_mailer.footer", brand: @sender_name) %>
+            <%= t(@in_bell ? "notification_mailer.footer_bell" : "notification_mailer.footer", brand: @sender_name) %>
             <% if @preferences_url %>
               <br><%= t("notification_mailer.preferences_html", url: link_to(t("notifications.preferences_link"), @preferences_url, style: "color:#{@color};")) %>
             <% end %>

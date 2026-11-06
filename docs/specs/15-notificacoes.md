@@ -1,7 +1,7 @@
 # 15 — Notificações
 
 > Status: aprovado · Última atualização: 2026-11-06
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609, D-643, D-654 ([decisoes.md](decisoes.md))
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609, D-643, D-654, D-655 ([decisoes.md](decisoes.md))
 > Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -184,7 +184,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
 ### 4.5 Resumo diário por e-mail (D-404)
 
-- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso. Até o resumo existir (fase 2), esses avisos vão por e-mail um a um (D-607).
+- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **de trabalho não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso. Ficam de fora os avisos `security.*` e `billing.*` e os que a pessoa recebe como colaboradora, que saem um a um. É um resumo por vínculo de acesso e marca (D-655). Até o resumo ser ligado, esses avisos vão por e-mail um a um (D-607).
 - **RN-15-041** — O resumo sai às **7h30**, no fuso da unidade da pessoa (RN-15-031), de segunda a sexta. Ele traz os avisos das últimas 24 horas (ou desde sexta, na segunda) que **ainda não foram lidos** no sistema, agrupados por assunto, com links. Sem nada pendente, não sai e-mail **[P-15-15]**.
 - **RN-15-042** — Os **urgentes** saem por e-mail na hora.
 - **RN-15-043** — O resumo diário é uma lista dos avisos, gerada sem IA. Ele não substitui o resumo operacional, que fica só na tela inicial (D-386).
@@ -285,7 +285,7 @@ notification_deliveries
   destination_masked, fallback_from_id, digest_id
 
 notification_digests
-  id, recipient_membership_id, sent_at, notification_ids (bigint[])
+  id, recipient_membership_id, brand_id, sent_at, provider_message_id, notification_ids (uuid[])
 
 push_subscriptions
   id, user_id, brand_id, endpoint, p256dh, auth, user_agent, last_success_at
@@ -328,7 +328,7 @@ users (acréscimo)
 | `Notifications::DeliverWhatsappJob` | Por entrega | Envia o modelo pela Twilio e lança o consumo |
 | `Notifications::DeliverPushJob` | Por entrega | Envia o Web Push |
 | `Notifications::ReleaseHeldJob` | A cada 5 minutos | Libera as entregas retidas cujo silêncio acabou, agrupando por tipo |
-| `Notifications::DigestJob` | A cada 30 minutos, das 7h às 8h | Monta e envia os resumos diários das 7h30 de cada fuso |
+| `Notifications::DigestJob` | A cada 30 minutos, das 6h às 12h30 de Brasília, de segunda a sexta | Monta e envia os resumos diários das 7h30 de cada fuso (D-655) |
 | `Notifications::PunchRemindersJob` | A cada 5 minutos | Procura marcações previstas sem registro além da tolerância |
 | `Notifications::FallbackJob` | Ao falhar uma entrega obrigatória | Cria a entrega no próximo canal |
 | `Notifications::UsageAlertsJob` | A cada hora | Avisos de 80% e 100% da cota de WhatsApp |

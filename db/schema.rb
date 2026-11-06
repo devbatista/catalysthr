@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -918,11 +918,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_120000) do
     t.datetime "held_until"
     t.uuid "fallback_from_id"
     t.uuid "grouped_into_id"
+    t.uuid "digest_id"
+    t.index ["digest_id"], name: "index_notification_deliveries_on_digest_id", where: "(digest_id IS NOT NULL)"
     t.index ["fallback_from_id"], name: "index_notification_deliveries_on_fallback_from_id", unique: true, where: "(fallback_from_id IS NOT NULL)"
     t.index ["grouped_into_id"], name: "index_notification_deliveries_on_grouped_into_id", where: "(grouped_into_id IS NOT NULL)"
     t.index ["held_until"], name: "index_notification_deliveries_on_held_until", where: "((status)::text = 'held'::text)"
     t.index ["notification_id"], name: "index_notification_deliveries_on_notification_id"
     t.index ["provider_message_id"], name: "index_notification_deliveries_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
+  end
+
+  create_table "notification_digests", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "recipient_membership_id", null: false
+    t.uuid "brand_id"
+    t.uuid "notification_ids", default: [], null: false, array: true
+    t.string "provider_message_id"
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_notification_digests_on_brand_id"
+    t.index ["created_at"], name: "index_notification_digests_on_created_at"
+    t.index ["provider_message_id"], name: "index_notification_digests_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
+    t.index ["recipient_membership_id"], name: "index_notification_digests_on_recipient_membership_id"
   end
 
   create_table "notification_preferences", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1734,6 +1750,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_120000) do
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "notification_deliveries", "notifications"
+  add_foreign_key "notification_digests", "brands"
+  add_foreign_key "notification_digests", "memberships", column: "recipient_membership_id"
   add_foreign_key "notification_preferences", "memberships"
   add_foreign_key "notifications", "brands"
   add_foreign_key "notifications", "companies"

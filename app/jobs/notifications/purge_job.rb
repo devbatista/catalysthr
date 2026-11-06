@@ -14,6 +14,7 @@ module Notifications
         NotificationDelivery.where(notification_id: batch.select(:id)).delete_all
         batch.delete_all
       end
+      NotificationDigest.where(created_at: ...Notification::RETENTION.ago).in_batches(of: BATCH, &:delete_all)
     end
   end
 end

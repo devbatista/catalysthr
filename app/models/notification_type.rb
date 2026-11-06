@@ -31,12 +31,24 @@ NotificationType = Data.define(:code, :mandatory, :urgent, :channels, :roles, :p
   # Security notices leave even in the quiet hours (RN-15-033).
   def security? = code.start_with?("security.")
 
+  # Who works with the notices gets those of the work in the daily digest; urgent ones go at
+  # once (RN-15-040, RN-15-042), and the person's own, security and the contract's go one by
+  # one (RN-15-044, D-655).
+  def digest_for?(person_roles)
+    return false if urgent || security? || code.start_with?("billing.") || roles == :all
+
+    roles.intersect?(self.class::DIGEST_ROLES & person_roles)
+  end
+
   # Without roles, as for the company's defaults, every channel of the type.
   def configurable_channels(roles = nil)
     available = external_channels & self.class.available_channels
     roles.nil? || push_roles.nil? || push_roles.intersect?(roles) ? available : available - %w[push]
   end
 end
+
+# The profiles of the daily digest (RN-15-040).
+NotificationType::DIGEST_ROLES = %w[hr_admin hr_analyst consultant manager firm_admin accountant].freeze
 
 NotificationType::CATALOG = [
   # The person. The unlock e-mail is already an access notice (RN-15-011), so the lockout
