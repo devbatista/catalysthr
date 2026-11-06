@@ -180,6 +180,7 @@ module NavigationHelper
     [
       nav_group(:firm, [
         nav_item(t("navigation.firm_companies"), firm_root_path, controller_path.in?(%w[panel/firm_panel/home panel/firm_panel/links])),
+        (nav_item(t("navigation.firm_forwards"), firm_forwards_path, controller_path == "panel/firm_panel/forwards") if admissions_on? && can?(:read, :firm_forwards)),
         (nav_item(t("navigation.team"), firm_team_members_path, controller_path == "panel/firm_panel/team_members") if can?(:read, Membership.new(organization: firm)))
       ])
     ]

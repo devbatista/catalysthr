@@ -802,6 +802,8 @@ pt-BR:
       rejected: "Reprovado: %{text}"
       skipped: "Dispensado: %{text}"
       sent_on: "Enviado em %{date}"
+      sent_to_firm: "Encaminhado a %{firm} em %{date}"
+      waiting_firm: "aguardando a confirmação do escritório"
       receipt: "Comprovante"
       document: "Ver o documento"
     document_hint: "O item é concluído quando o RH aprova o documento."
@@ -817,7 +819,9 @@ pt-BR:
       reason: "Justificativa"
       reject_submit: "Confirmar reprovação"
       forward: "Registrar envio"
-      forward_hint: "Sem escritório contábil ligado, registre a data do envio e o comprovante. PDF, JPG ou PNG, até 10 MB."
+      forward_hint: "Registre a data do envio feito por fora e o comprovante. PDF, JPG ou PNG, até 10 MB."
+      send_to_firm: "Encaminhar ao escritório"
+      send_to_firm_confirm: "Encaminhar a ficha e os documentos a %{firm}? O escritório poderá ler esses dados."
       sent_on: "Data do envio"
       receipt: "Comprovante"
       forward_submit: "Registrar"
@@ -860,6 +864,9 @@ pt-BR:
       aso_reviewed: "ASO admissional revisado"
       aso_reassessment: "Novo exame pedido para o ASO admissional"
       item_reopened: "\"%{title}\" reaberto para nova decisão"
+      item_sent_to_firm: "\"%{title}\" encaminhado a %{firm}"
+      item_received: "Recebimento de \"%{title}\" confirmado pelo escritório"
+      item_forward_returned: "\"%{title}\" voltou para o RH: %{firm} foi desligado"
   # The contracts and terms (spec 07, D-650).
   document_templates:
     statuses:
@@ -1612,6 +1619,7 @@ pt-BR:
     firm_companies: "Empresas atendidas"
     partner_area: "Painel do parceiro"
     firm_area: "Área do escritório"
+    firm_forwards: "Encaminhamentos"
     brands: "Marcas"
     admin_users: "Usuários"
     impersonate: "Ver como um usuário"
@@ -2274,6 +2282,7 @@ pt-BR:
         title: "Conclusão"
         items: "Itens do checklist"
         items_done: "%{done} de %{count} concluídos"
+        accounting: "Contabilidade"
         aso: "ASO admissional"
         see_result: "Ver o resultado"
         aso_status:
@@ -2448,6 +2457,7 @@ pt-BR:
         rejected: "Item reprovado."
         skipped: "Item dispensado."
         pending: "Item reaberto."
+        sent: "Encaminhado ao escritório."
       new:
         title: "Novo item"
         back: "Voltar para o processo"
@@ -3319,6 +3329,33 @@ pt-BR:
       destroy:
         ended: "Ligação encerrada."
     firm_panel:
+      forwards:
+        statuses:
+          sent: "Aguardando confirmação"
+          received: "Recebido"
+        index:
+          title: "Encaminhamentos"
+          subtitle: "As admissões que o RH das empresas encaminhou ao escritório."
+          empty: "Nenhum encaminhamento por aqui."
+          person: "Pessoa"
+          company: "Empresa"
+          started_on: "Início"
+          status: "Situação"
+          actions: "Ações"
+          open: "Abrir"
+        show:
+          back: "Voltar para os encaminhamentos"
+          confirm: "Confirmar recebimento"
+          confirm_confirm: "Confirmar que o escritório recebeu estes dados e documentos?"
+          started_on: "Início"
+          name: "Nome civil"
+          validated_documents: "Documentos validados"
+          no_documents: "Nenhum documento validado."
+          open: "Abrir"
+          not_ready: "Ainda em preparo"
+          impersonating: "Indisponível na visão de suporte"
+        confirm:
+          confirmed: "Recebimento confirmado."
       home:
         index:
           subtitle: "Empresas de %{brand} atendidas pelo escritório."
@@ -3670,6 +3707,12 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    accounting:
+      admission_forwarded:
+        name: "Admissão encaminhada"
+        hint: "Quando o RH de uma empresa encaminha uma admissão ao escritório."
+        title: "Admissão encaminhada: %{person}"
+        body: "%{company_name} encaminhou uma admissão ao escritório."
     admission:
       aso_unfit:
         name: "Atenção em uma admissão"
@@ -4930,6 +4973,8 @@ pt-BR:
               not_open: "Este item já foi resolvido"
               aso_required: "O ASO do vínculo CLT é obrigatório e não pode ser dispensado"
               not_actionable: "Este item não pode ser concluído agora"
+              documents_pending: "Ainda há documentos obrigatórios sem validar"
+              firm_missing: "A empresa não tem escritório contábil ligado"
               material_not_ready: "O material ainda não está disponível"
         document_type:
           attributes:

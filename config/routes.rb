@@ -277,6 +277,7 @@ Rails.application.routes.draw do
             patch :approve
             patch :reject
             patch :forward
+            patch :send_to_firm, path: "send-to-firm"
             patch :skip
             patch :reopen
             get :receipt
@@ -408,6 +409,13 @@ Rails.application.routes.draw do
           member do
             post :accept
             post :refuse
+          end
+        end
+        # What the HR forwarded (RN-06-065, D-651, D-652).
+        resources :forwards, only: %i[index show] do
+          member do
+            patch :confirm
+            get "documents/:document_id", action: :document, as: :document
           end
         end
         resources :team_members, path: "team" do

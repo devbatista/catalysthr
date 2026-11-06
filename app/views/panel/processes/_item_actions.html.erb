@@ -2,7 +2,10 @@
     approval or (the HR) a forward; the HR also edits, moves, skips and removes. %>
 <% actor = @instance.open? && item.pending? && can?(:act, item) %>
 <% refused = editable && item.rejected? && @instance.admission? %>
-<% if (actor && item.panel_kind?) || (editable && item.open?) || refused %>
+<%# The HR records a forward also after sending it to the firm (D-652). %>
+<% recordable = @instance.open? && item.forward? && @hr && (actor || (item.sent? && can?(:adjust, @instance))) %>
+<% firm = linked_firm if actor && item.forward? && @hr && @instance.admission? %>
+<% if (actor && item.panel_kind?) || recordable || (editable && item.open?) || refused %>
   <div class="mt-3 flex flex-wrap items-start gap-2">
     <% if actor && item.task? %>
       <details class="w-full sm:w-auto">
@@ -24,9 +27,13 @@
           <%= form.submit t("processes.actions.reject_submit"), class: "btn btn-danger btn-sm" %>
         <% end %>
       </details>
-    <% elsif actor && item.forward? && @hr %>
+    <% elsif recordable %>
+      <% if firm %>
+        <%= button_to t("processes.actions.send_to_firm"), send_to_firm_process_item_path(@instance, item), method: :patch, class: "btn btn-primary btn-sm",
+          form: { data: { confirm: t("processes.actions.send_to_firm_confirm", firm: firm.name) } } %>
+      <% end %>
       <details class="w-full sm:w-auto">
-        <summary class="btn btn-primary btn-sm"><%= t("processes.actions.forward") %></summary>
+        <summary class="btn <%= firm || item.sent? ? "btn-secondary" : "btn-primary" %> btn-sm"><%= t("processes.actions.forward") %></summary>
         <%= form_with url: forward_process_item_path(@instance, item), method: :patch, multipart: true, class: "mt-2 space-y-2 sm:w-80" do |form| %>
           <p class="field-hint"><%= t("processes.actions.forward_hint") %></p>
           <%= form.label :sent_on, t("processes.actions.sent_on"), class: "field-label", for: "sent_on_#{item.id}" %>
