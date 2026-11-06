@@ -33,7 +33,7 @@
           <div><dt><%= t("#{labels}.weekly_hours") %></dt><dd><%= current.weekly_hours ? t("#{labels}.hours", hours: number_with_precision(current.weekly_hours, strip_insignificant_zeros: true)) : "—" %></dd></div>
           <div><dt><%= t("#{labels}.salary") %></dt><dd><%= revision_salary(current) %></dd></div>
         <% end %>
-        <% @employment.details.reject { |_key, value| value.nil? }.each do |key, value| %>
+        <% @employment.shown_details.reject { |_key, value| value.nil? }.each do |key, value| %>
           <div><dt><%= t("employments.details.#{key}") %></dt><dd><%= employment_detail_value(key, value) %></dd></div>
         <% end %>
       </dl>

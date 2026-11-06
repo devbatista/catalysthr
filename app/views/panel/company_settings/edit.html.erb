@@ -66,6 +66,11 @@
         </label>
         <p class="field-hint"><%= t(".uses_accounting_step_hint") %></p>
       </div>
+      <div>
+        <%= form.label :experience_alert_days, t(".experience_alert_days"), class: "field-label" %>
+        <%= form.number_field :experience_alert_days, min: 1, max: 30, required: true, class: "input" %>
+        <p class="field-hint"><%= t(".experience_alert_days_hint") %></p>
+      </div>
     </div>
   </section>
 

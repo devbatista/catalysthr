@@ -30,6 +30,12 @@
 <% end %>
 
 <% if @hr %>
+  <%# The serious alert of the activation (RN-07-085, D-653). %>
+  <% if @admission.open? && !@admission.employment.pending? %>
+    <p class="alert-bad mt-6" role="alert"><%= t(".activated_pending", count: @instance.items.count { |item| item.required && !item.resolved? }) %></p>
+  <% elsif @admission.open? && @admission.started_on <= Date.current %>
+    <p class="alert-bad mt-6" role="alert"><%= t(".start_passed") %></p>
+  <% end %>
   <% if @admission.open? && @admission.aso_unfit? %>
     <div class="alert-bad mt-6 space-y-3" role="alert">
       <p><%= t(".aso_decision") %></p>

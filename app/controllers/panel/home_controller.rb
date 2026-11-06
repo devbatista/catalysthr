@@ -9,7 +9,11 @@ module Panel
     def index
       authorize! :read, :panel_home
       return redirect_to(portal_root_path) if portal_first?
-      return if Current.company
+
+      if Current.company
+        @admissions_attention = admissions_attention
+        return
+      end
 
       if partner_membership
         redirect_to partner_root_path
@@ -21,6 +25,13 @@ module Panel
     end
 
     private
+
+    # Until the panels of spec 17, the serious alert of the activation (RN-07-085, D-653).
+    def admissions_attention
+      return 0 unless FeatureFlags.enabled?(FeatureFlags::ADMISSIONS) && can?(:create, Admission)
+
+      Admission.where(id: Admission.accessible_by(current_ability, :read_summary).select(:id)).needing_attention.count
+    end
 
     def portal_first?
       return false if Current.company.nil? || params[:panel].present? || impersonating? || Current.support_access

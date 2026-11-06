@@ -1,0 +1,15 @@
+<%# The experience's days (RN-07-100, D-653). Blank means no experience contract. %>
+<div class="space-y-4">
+  <h2 class="card-title"><%= t("panel.employments.experience.title") %></h2>
+  <div class="form-grid">
+    <div>
+      <%= form.label :experience_first_days, t("panel.employments.experience.first_days"), class: "field-label" %>
+      <%= form.number_field :experience_first_days, min: 1, max: Employment::EXPERIENCE_MAX_DAYS, class: "input" %>
+    </div>
+    <div>
+      <%= form.label :experience_extension_days, t("panel.employments.experience.extension_days"), class: "field-label" %>
+      <%= form.number_field :experience_extension_days, min: 1, max: Employment::EXPERIENCE_MAX_DAYS - 1, class: "input" %>
+    </div>
+  </div>
+  <p class="field-hint"><%= t("panel.employments.experience.hint", max: Employment::EXPERIENCE_MAX_DAYS) %></p>
+</div>

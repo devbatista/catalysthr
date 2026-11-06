@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -326,6 +326,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_220000) do
     t.integer "next_registration_number", default: 1, null: false
     t.boolean "uses_allocation_clients", default: false, null: false
     t.boolean "uses_accounting_step", default: false, null: false
+    t.integer "experience_alert_days", default: 10, null: false
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
   end

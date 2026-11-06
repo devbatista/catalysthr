@@ -1,10 +1,11 @@
 module Documents
   # The variables of contracts and terms (RN-07-041, D-650): a fixed catalog, whose values
   # come from the record, the employment and the company. Sensitive ones are in it, so the
-  # PDF is protected as a whole (D-650). The experience's periods come with block 07e.
+  # PDF is protected as a whole (D-650).
   class TemplateVariables
     CATALOG = %w[colaborador.nome colaborador.cpf colaborador.rg colaborador.ctps colaborador.pis colaborador.nascimento
       colaborador.endereco cargo.nome cargo.cbo vinculo.salario vinculo.inicio vinculo.matricula vinculo.jornada
+      vinculo.experiencia_dias vinculo.experiencia_prorrogacao vinculo.experiencia_fim
       empresa.razao_social empresa.documento empresa.endereco unidade.nome unidade.endereco unidade.cidade hoje].freeze
     PATTERN = /\{\{\s*([^{}]*?)\s*\}\}/
 
@@ -46,6 +47,9 @@ module Documents
       when "vinculo.inicio" then I18n.l(@employment.started_on)
       when "vinculo.matricula" then @employment.registration_number
       when "vinculo.jornada" then @revision&.weekly_hours && "#{@revision.weekly_hours.to_s("F").delete_suffix(".0")} horas semanais"
+      when "vinculo.experiencia_dias" then @employment.experience_first_days
+      when "vinculo.experiencia_prorrogacao" then @employment.experience_extension_days
+      when "vinculo.experiencia_fim" then @employment.experience_first_ends_on && I18n.l(@employment.experience_first_ends_on)
       when "empresa.razao_social" then @company.legal_name
       when "empresa.documento" then @company.formatted_document
       when "empresa.endereco" then @company.headquarters && address(@company.headquarters)

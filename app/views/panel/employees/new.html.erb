@@ -73,6 +73,10 @@
     </div>
   </section>
 
+  <% if admissions_on? %>
+    <section class="card card-body"><%= render "panel/employments/experience_fields", form: form %></section>
+  <% end %>
+
   <section class="card card-body space-y-4">
     <h2 class="card-title"><%= t(".conditions") %></h2>
     <%= render "panel/employment_revisions/conditions_fields", form: form, revision: @registration, salary: @registration.salary %>

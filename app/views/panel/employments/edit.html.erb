@@ -1,7 +1,8 @@
 <%# The fields of the employment's kind (RN-04-053, P-04-27). The final list is checked
     against the eSocial layout in spec 13 (P-04-15, D-602). %>
 <% content_for :title, t(".title") %>
-<% fields = Employment::DETAILS.fetch(@employment.kind) %>
+<%# While the experience runs, the system keeps the contract's term and end (D-653). %>
+<% fields = Employment::DETAILS.fetch(@employment.kind) - (@employment.experience_open? ? %w[contract_term contract_end_on] : []) %>
 
 <p class="text-sm"><%= link_to t(".back", name: @profile.display_name), employee_path(@profile), class: "link-button" %></p>
 <h1 class="page-title mt-3"><%= t(".title") %></h1>
@@ -61,6 +62,10 @@
       <% end %>
     </div>
     <p class="field-hint"><%= t(".esocial_hint") %></p>
+  <% end %>
+
+  <% if experience_on?(@employment) && @employment.experience_editable? %>
+    <%= render "panel/employments/experience_fields", form: form %>
   <% end %>
 
   <div class="flex items-center gap-4 border-t border-line-soft pt-5">

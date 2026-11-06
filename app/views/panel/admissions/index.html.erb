@@ -10,6 +10,10 @@
 </div>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
+<% if @attention.to_i.positive? %>
+  <p class="alert-bad mt-5" role="alert"><%= t(".attention", count: @attention) %></p>
+<% end %>
+
 <nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".filters") %>">
   <% ProcessInstance::STATUSES.each do |status| %>
     <%= link_to "#{t("admissions.statuses.#{status}")} · #{@counts.fetch(status, 0)}", admissions_path(status: status),

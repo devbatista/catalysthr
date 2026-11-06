@@ -1,7 +1,8 @@
 <%# "Minha equipe" (spec 16, RN-16-030, RN-16-031, D-420, D-645): the process items
     assigned to the manager, resolved in the process's page in the panel, and the team's
-    documents expiring, the text only (P-08-11). Approvals, absences, the schedule and the
-    probation's end come with their specs. %>
+    documents expiring, the text only (P-08-11), and the experiences about to end, without
+    an action (RN-07-101, D-653). Approvals, absences and the schedule come with their
+    specs. %>
 <% content_for :title, t(".title") %>
 
 <p class="text-sm"><%= link_to t(".back"), portal_more_path, class: "link-button" %></p>
@@ -43,4 +44,15 @@
       </ul>
     <% end %>
   </section>
+
+  <% if @team.probations.any? %>
+    <section class="card card-body space-y-3">
+      <h2 class="card-title"><%= t(".probations", count: @team.probations.size) %></h2>
+      <ul class="divide-y divide-line-soft text-sm">
+        <% @team.probations.each do |entry| %>
+          <li class="py-2"><%= t(".probation_line", person: entry.person, date: l(entry.date)) %></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
 </div>

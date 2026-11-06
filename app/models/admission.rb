@@ -31,6 +31,12 @@ class Admission < ApplicationRecord
   # (D-252, D-648).
   scope :in_status, ->(status) { joins(:process_instance).where(process_instances: { status: status }) }
   scope :awaiting_release, -> { in_status("open").where(invite_released_at: nil) }
+  # Started with the admission open, or past the start and held: the serious alert of the
+  # activation, until the admission ends (RN-07-085, D-653). Says nothing about the ASO.
+  scope :needing_attention, lambda {
+    in_status("open").joins(:employment).where("employments.status IN ('active', 'on_leave') OR " \
+      "(employments.status = 'pending' AND employments.started_on <= ?)", Date.current)
+  }
 
   delegate :open?, :completed?, :cancelled?, :status, to: :process_instance
   delegate :worker_profile, :started_on, to: :employment

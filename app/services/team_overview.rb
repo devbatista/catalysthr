@@ -1,9 +1,10 @@
 # What a manager follows of the team in the portal (spec 16, RN-16-030, D-420, D-645): the
 # process items assigned to them, and the team's documents expiring, the text only and
-# never the file (P-08-11). Approvals, absences, the schedule and the probation's end come
-# with specs 09, 10, 11 and 07.
+# never the file (P-08-11), and the experiences about to end, without an action (RN-07-101,
+# D-653). Approvals, absences and the schedule come with specs 09, 10 and 11.
 class TeamOverview
   Expiring = Data.define(:document, :person, :date, :status)
+  Probation = Data.define(:person, :date)
 
   def initialize(membership)
     @membership = membership
@@ -24,7 +25,17 @@ class TeamOverview
     end
   end
 
+  def probations
+    @probations ||= begin
+      team = WorkerProfile.in_departments(Department.team_ids_for(@membership)).select(:id)
+      lead = Current.company.experience_alert_days
+      Employment.with_experience_open(Employment.where(worker_profile_id: team)).includes(worker_profile: :user).to_a
+        .select { |employment| employment.experience_ends_on <= Date.current + lead }.sort_by(&:experience_ends_on)
+        .map { |employment| Probation.new(employment.worker_profile.display_name, employment.experience_ends_on) }
+    end
+  end
+
   def empty?
-    items.empty? && expiring.empty?
+    items.empty? && expiring.empty? && probations.empty?
   end
 end

@@ -126,7 +126,8 @@ module Panel
 
     def registration_params
       params.expect(employee: %i[name cpf birth_date email mobile_phone social_name kind category registration_number
-        started_on position_id unit_id department_id allocation_client_id salary salary_unit variable_salary_description weekly_hours justification])
+        started_on position_id unit_id department_id allocation_client_id salary salary_unit variable_salary_description weekly_hours justification
+        experience_first_days experience_extension_days])
     end
 
     def profile_params
