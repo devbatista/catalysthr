@@ -7,7 +7,7 @@ module Notifications
     queue_as :notifications
 
     def perform
-      due = NotificationDelivery.held.where(held_until: ..Time.current).includes(:notification)
+      due = NotificationDelivery.held.where(channel: "push", held_until: ..Time.current).includes(:notification)
       due.group_by { |delivery| group_of(delivery) }.each_value { |group| release(group.map(&:id)) }
     end
 

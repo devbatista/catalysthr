@@ -1,0 +1,16 @@
+<p style="margin:0 0 12px;"><%= t("notification_mailer.notice.greeting", name: @user.first_name) %></p>
+<h1 style="margin:0 0 16px;font-size:19px;line-height:1.35;color:#0A2A4A;"><%= t(".intro", count: @total) %></h1>
+<% @groups.each do |name, notifications| %>
+  <h2 style="margin:16px 0 6px;font-size:15px;color:#0A2A4A;"><%= name %></h2>
+  <ul style="margin:0;padding:0 0 0 18px;">
+    <% notifications.each do |notification| %>
+      <li style="margin:0 0 6px;">
+        <% if notification.url %>
+          <a href="<%= notification.url %>" style="color:<%= @color %>;"><%= notification.title %></a>
+        <% else %>
+          <%= notification.title %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

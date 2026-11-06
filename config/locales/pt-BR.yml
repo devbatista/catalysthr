@@ -1564,6 +1564,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    notification_digest:
+      name: "Resumo diário dos avisos"
+      description: "Ligada, os avisos de trabalho não urgentes de RH, gestores e contabilidade vão num e-mail às 7h30. Desligada, vão um a um (spec 15, D-655)."
     push_notifications:
       name: "Push dos avisos"
       description: "Ligada, as pessoas ativam o push no aparelho e o canal aparece nas preferências. Depende das chaves VAPID e da conferência em aparelhos reais (spec 15, D-654)."
@@ -4037,6 +4040,13 @@ pt-BR:
     notice:
       greeting: "Olá, %{name}."
       open: "Abrir no sistema"
+    digest:
+      subject:
+        one: "Resumo de %{brand}: 1 aviso pendente"
+        other: "Resumo de %{brand}: %{count} avisos pendentes"
+      intro:
+        one: "Você tem 1 aviso ainda não lido."
+        other: "Você tem %{count} avisos ainda não lidos."
   notifications:
     preferences_link: "Minhas notificações"
     channels:

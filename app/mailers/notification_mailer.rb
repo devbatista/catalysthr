@@ -10,22 +10,40 @@ class NotificationMailer < ApplicationMailer
 
   def notice(notification)
     @notification = notification
-    @user = notification.recipient_user
-    @brand = notification.brand
-    @sender_name = notification.recipient_membership&.sender_name(@brand) || @brand&.commercial_name || PLATFORM_NAME
-    @color = @brand&.colors&.fetch(:primary) || Brand::DEFAULT_COLORS[:primary]
-    @logo_url = logo_url
+    brand_the_mail(notification.recipient_user, notification.brand, notification.recipient_membership)
     @url = notification.url
-    @preferences_url = preferences_url
+    @in_bell = notification.in_bell?
 
     mail(to: @user.email, subject: notification.title, **brand_headers(brand: @brand, sender_name: @sender_name))
   end
 
+  # The daily digest (RN-15-041): the notices by subject, with their links. Only the titles,
+  # so the same e-mail never grows with what each notice says (RN-15-005).
+  def digest(digest)
+    membership = digest.recipient_membership
+    brand_the_mail(membership.user, digest.brand, membership)
+    notifications = digest.notifications.to_a
+    @total = notifications.size
+    @in_bell = true
+    @groups = notifications.group_by { |notification| t("notification_types.#{notification.notification_type}.name") }.sort.to_h
+
+    mail(to: @user.email, subject: t(".subject", count: @total, brand: @sender_name), **brand_headers(brand: @brand, sender_name: @sender_name))
+  end
+
   private
+
+  def brand_the_mail(user, brand, membership)
+    @user = user
+    @brand = brand
+    @sender_name = membership&.sender_name(@brand) || @brand&.commercial_name || PLATFORM_NAME
+    @color = @brand&.colors&.fetch(:primary) || Brand::DEFAULT_COLORS[:primary]
+    @logo_url = logo_url
+    @preferences_url = preferences_url
+  end
 
   # "Minhas notificações", where the panel's people choose the channels (RN-15-002).
   def preferences_url
-    return if @notification.area == "admin" || @brand&.active_subdomain.nil?
+    return if @notification&.area == "admin" || @brand&.active_subdomain.nil?
 
     @brand.panel_url("/notification-preferences/edit")
   end

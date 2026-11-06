@@ -9,8 +9,10 @@ class NotificationDelivery < ApplicationRecord
   # The delivery whose message speaks for this one too, released together (RN-15-034).
   belongs_to :grouped_into, class_name: "NotificationDelivery", optional: true
   has_many :grouped, class_name: "NotificationDelivery", foreign_key: :grouped_into_id, inverse_of: :grouped_into, dependent: nil
+  # The daily e-mail this one went in (RN-15-040).
+  belongs_to :digest, class_name: "NotificationDigest", optional: true
 
-  # queued → (held, in the quiet hours)? → sending → sent → delivered | failed, or
+  # queued → (held, in the quiet hours or for the digest)? → sending → sent → delivered | failed, or
   # cancelled when read in the system first (RN-15-035). The fallback is a new delivery.
   enum :status, { queued: "queued", held: "held", sending: "sending", sent: "sent", delivered: "delivered", failed: "failed",
     cancelled: "cancelled" }, validate: true

@@ -54,10 +54,14 @@ module Notifications
     notification
   end
 
-  # The push waits for the quiet hours, unless it is a security notice (RN-15-033).
+  # The push waits for the quiet hours, unless it is a security notice (RN-15-033). The
+  # e-mail of the work notices waits for the daily digest (RN-15-040); a fallback does not.
   def add_delivery(notification, channel, fallback_from: nil)
     state = case channel
-    when "email" then { destination_masked: NotificationDelivery.mask_email(notification.recipient_user.email) }
+    when "email"
+      digest_at = DailyDigest.send_at(notification) unless fallback_from
+      { destination_masked: NotificationDelivery.mask_email(notification.recipient_user.email), status: digest_at ? "held" : "queued",
+        held_until: digest_at }
     when "push"
       held_until = QuietHours.release_at(notification.recipient_membership) unless notification.type.security?
       { status: held_until ? "held" : "queued", held_until: held_until }
