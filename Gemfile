@@ -124,3 +124,5 @@ group :test do
   gem "webmock"
   gem "simplecov", require: false
 end
+
+gem "web-push", "~> 3.1"

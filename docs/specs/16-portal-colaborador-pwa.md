@@ -89,7 +89,7 @@ O portal é um **PWA**: abre no navegador e pode ser instalado na tela inicial, 
   | 7 | **Último holerite** | Competência e o botão abrir. O valor só aparece depois da confirmação (RN-16-021) |
 
 - **RN-16-021** — Nenhum valor de salário ou líquido, nem outro dado sensível, aparece no Início sem a confirmação de senha ou passkey (RN-02-052). Isso vale para quem está olhando por cima do ombro ou para um celular emprestado **[P-16-05]**.
-- **RN-16-022** — Convites que aparecem no Início, quando se aplicam: instalar o app (seção 4.7), ativar o push (spec 15), cadastrar uma passkey (seção 4.8). No máximo um convite por vez **[P-16-06]**: o de instalar vem antes do da passkey, que, dispensado, volta em 30 dias (D-647).
+- **RN-16-022** — Convites que aparecem no Início, quando se aplicam: instalar o app (seção 4.7), ativar o push (spec 15), cadastrar uma passkey (seção 4.8). No máximo um convite por vez **[P-16-06]**, na ordem instalar, push e passkey (D-647, D-654). Dispensados, o do push e o da passkey voltam em 30 dias.
 
 ### 4.4 Minha equipe (D-420)
 

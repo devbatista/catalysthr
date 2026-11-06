@@ -1,20 +1,26 @@
 <%# The channels of each notice type (RN-15-020 to RN-15-022): the bell is always on; the
-    external channels of this phase can be chosen. A mandatory type with a single external
+    external channels that exist now can be chosen. A mandatory type with a single external
     channel keeps it, shown checked and locked (RN-15-022). locals: types, channels (code =>
-    channels chosen), name (the field's prefix), errors (code => messages) %>
+    channels chosen), name (the field's prefix), errors (code => messages) and, on a
+    person's own table, roles %>
+<% roles = local_assigns[:roles] %>
+<% columns = NotificationType.available_channels %>
 <div class="overflow-x-auto">
   <table class="data-table">
     <thead>
       <tr>
         <th scope="col"><%= t("notifications.channels.type") %></th>
         <th scope="col" class="w-20 text-center"><%= t("notifications.channels.system") %></th>
-        <th scope="col" class="w-20 text-center"><%= t("notifications.channels.email") %></th>
+        <% columns.each do |channel| %>
+          <th scope="col" class="w-20 text-center"><%= t("notifications.channels.#{channel}") %></th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
       <% types.each do |type| %>
         <% chosen = channels.fetch(type.code) %>
-        <% locked = type.mandatory && type.configurable_channels.one? %>
+        <% configurable = type.configurable_channels(roles) %>
+        <% locked = type.mandatory && configurable.one? %>
         <tr>
           <td>
             <span class="block font-semibold text-ink-strong"><%= t("notification_types.#{type.code}.name") %></span>
@@ -23,14 +29,16 @@
             <% Array(errors[type.code]).each do |message| %><span class="mt-1 block text-xs font-semibold text-bad"><%= message %></span><% end %>
           </td>
           <td class="text-center text-xs text-ink-muted"><%= type.in_bell? ? t("notifications.channels.always") : "—" %></td>
-          <td class="text-center">
-            <%= hidden_field_tag "#{name}[#{type.code}][]", "", id: nil %>
-            <% if type.configurable_channels.include?("email") %>
-              <% if locked %><%= hidden_field_tag "#{name}[#{type.code}][]", "email", id: nil %><% end %>
-              <%= check_box_tag "#{name}[#{type.code}][]", "email", chosen.include?("email") || locked, id: "#{name.parameterize}_#{type.code.parameterize}_email",
-                disabled: locked, class: "size-4", "aria-label": t("notifications.channels.email_for", type: t("notification_types.#{type.code}.name")) %>
-            <% else %>—<% end %>
-          </td>
+          <% columns.each_with_index do |channel, index| %>
+            <td class="text-center">
+              <% if index.zero? %><%= hidden_field_tag "#{name}[#{type.code}][]", "", id: nil %><% end %>
+              <% if configurable.include?(channel) %>
+                <% if locked %><%= hidden_field_tag "#{name}[#{type.code}][]", channel, id: nil %><% end %>
+                <%= check_box_tag "#{name}[#{type.code}][]", channel, chosen.include?(channel) || locked, id: "#{name.parameterize}_#{type.code.parameterize}_#{channel}",
+                  disabled: locked, class: "size-4", "aria-label": t("notifications.channels.#{channel}_for", type: t("notification_types.#{type.code}.name")) %>
+              <% else %>—<% end %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

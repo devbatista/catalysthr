@@ -4,26 +4,39 @@
 # "push" are external. A type without "system" stays out of the bell (D-608). Texts are
 # in config/locales, under notification_types, and never carry sensitive data (RN-15-005).
 # roles: who gets the type, which decides where its channels can be chosen; :all is
-# everyone.
-NotificationType = Data.define(:code, :mandatory, :urgent, :channels, :roles) do
+# everyone. push_roles: for a type whose push is only some roles' in the catalog, those
+# roles; nil is everyone who gets the type.
+NotificationType = Data.define(:code, :mandatory, :urgent, :channels, :roles, :push_roles) do
+  def initialize(push_roles: nil, **fields) = super(push_roles: push_roles, **fields)
+
   def self.find(code) = self::CATALOG.fetch(code.to_s)
 
   def self.all = self::CATALOG.values
 
+  # The external channels that exist now: the push waits for its flag (D-654), and WhatsApp
+  # for its block.
+  def self.available_channels
+    FeatureFlags.enabled?(FeatureFlags::PUSH_NOTIFICATIONS) ? %w[email push] : %w[email]
+  end
+
   # The types a person with these roles can configure: those with a channel to choose.
   def self.configurable_for(roles)
-    all.select { |type| type.configurable_channels.any? && (type.roles == :all || type.roles.intersect?(roles)) }
+    all.select { |type| type.configurable_channels(roles).any? && (type.roles == :all || type.roles.intersect?(roles)) }
   end
 
   def in_bell? = channels.include?("system")
 
   def external_channels = channels - %w[system]
 
-  def configurable_channels = external_channels & self.class::AVAILABLE_CHANNELS
-end
+  # Security notices leave even in the quiet hours (RN-15-033).
+  def security? = code.start_with?("security.")
 
-# External channels that exist in this phase; WhatsApp and push come in phase 2 (D-607).
-NotificationType::AVAILABLE_CHANNELS = %w[email].freeze
+  # Without roles, as for the company's defaults, every channel of the type.
+  def configurable_channels(roles = nil)
+    available = external_channels & self.class.available_channels
+    roles.nil? || push_roles.nil? || push_roles.intersect?(roles) ? available : available - %w[push]
+  end
+end
 
 NotificationType::CATALOG = [
   # The person. The unlock e-mail is already an access notice (RN-15-011), so the lockout
@@ -70,12 +83,12 @@ NotificationType::CATALOG = [
   NotificationType.new(code: "billing.contract_closing", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin]),
   # The employment started with the admission open, to the HR (RN-07-085, D-653).
-  NotificationType.new(code: "admission.activated_with_pending", mandatory: true, urgent: true, channels: %w[system email],
+  NotificationType.new(code: "admission.activated_with_pending", mandatory: true, urgent: true, channels: %w[system email push],
     roles: %w[hr_admin hr_analyst consultant]),
   # The end of an experience period, to the HR and the managers; the variants tell the HR what
   # happened by itself (RN-07-101, RN-07-102, D-653).
-  NotificationType.new(code: "employments.probation_ending", mandatory: true, urgent: false, channels: %w[system email],
-    roles: %w[hr_admin hr_analyst consultant manager]),
+  NotificationType.new(code: "employments.probation_ending", mandatory: true, urgent: false, channels: %w[system email push],
+    roles: %w[hr_admin hr_analyst consultant manager], push_roles: %w[manager]),
   # An admission sent to the accounting firm, to its team (RN-06-065, D-652).
   NotificationType.new(code: "accounting.admission_forwarded", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[firm_admin accountant]),
@@ -84,7 +97,7 @@ NotificationType::CATALOG = [
   NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[client_manager]),
   # An ASO that needs attention, without the result (RN-07-061, RN-15-005, D-651).
-  NotificationType.new(code: "admission.aso_unfit", mandatory: true, urgent: true, channels: %w[system email],
+  NotificationType.new(code: "admission.aso_unfit", mandatory: true, urgent: true, channels: %w[system email push],
     roles: %w[hr_admin hr_analyst consultant]),
   # A form to review, and one given back to the person (D-649).
   NotificationType.new(code: "processes.form_submitted", mandatory: false, urgent: false, channels: %w[system email],
@@ -95,8 +108,8 @@ NotificationType::CATALOG = [
   # (RN-07-020, D-648). WhatsApp comes with spec 15's rest.
   NotificationType.new(code: "admission.started", mandatory: true, urgent: false, channels: %w[system email], roles: %w[employee]),
   # An item past its date, to whoever answers for it and to the process's HR (RN-06-028).
-  NotificationType.new(code: "processes.task_overdue", mandatory: false, urgent: false, channels: %w[system email],
-    roles: %w[manager client_manager hr_admin hr_analyst consultant]),
+  NotificationType.new(code: "processes.task_overdue", mandatory: false, urgent: false, channels: %w[system email push],
+    roles: %w[manager client_manager hr_admin hr_analyst consultant], push_roles: %w[manager]),
   # A document expiring: to the unit's HR, with the link, and to the department's managers,
   # the text only (RN-08-031, P-08-11, D-643).
   NotificationType.new(code: "documents.hr_expiring", mandatory: false, urgent: false, channels: %w[system email],
@@ -104,13 +117,12 @@ NotificationType::CATALOG = [
   NotificationType.new(code: "documents.team_expiring", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[manager]),
   # The employee's documents in the portal (spec 16, D-645): asked, a correction, expiring
-  # and an acknowledgment waiting. WhatsApp and push come with spec 15's rest, so the
-  # first three stay in the bell for now.
-  NotificationType.new(code: "documents.requested", mandatory: false, urgent: false, channels: %w[system], roles: %w[employee]),
-  NotificationType.new(code: "documents.correction_requested", mandatory: false, urgent: false, channels: %w[system],
+  # and an acknowledgment waiting. WhatsApp comes with its block.
+  NotificationType.new(code: "documents.requested", mandatory: false, urgent: false, channels: %w[system push], roles: %w[employee]),
+  NotificationType.new(code: "documents.correction_requested", mandatory: false, urgent: false, channels: %w[system push],
     roles: %w[employee]),
-  NotificationType.new(code: "documents.expiring", mandatory: false, urgent: false, channels: %w[system], roles: %w[employee]),
-  NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email],
+  NotificationType.new(code: "documents.expiring", mandatory: false, urgent: false, channels: %w[system push], roles: %w[employee]),
+  NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
   # A version the employee sent, to the unit's HR (D-645).
   NotificationType.new(code: "documents.review_pending", mandatory: false, urgent: false, channels: %w[system email],

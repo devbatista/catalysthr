@@ -6,6 +6,7 @@
   ([ t(".team"), t(".team_hint"), portal_team_path ] if portal_manager?),
   ([ t(".profile"), t(".profile_hint"), portal_profile_path ] if current_profile),
   [ t(".notifications"), t(".notifications_hint"), portal_notifications_path ],
+  [ t(".preferences"), t(".preferences_hint"), edit_portal_notification_preferences_path ],
   ([ t(".security"), t(".security_hint"), account_root_path ] unless impersonating?),
   ([ t(".panel"), t(".panel_hint"), root_path(panel: 1) ] if panel_access?)
 ].compact %>

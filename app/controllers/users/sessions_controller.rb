@@ -12,6 +12,7 @@ module Users
     real_writes_during_impersonation :destroy
     before_action :leave_impersonation, only: :destroy, if: :impersonating?
     before_action :leave_support_access, only: :destroy, if: -> { Current.support_access }
+    before_action :forget_push, only: :destroy
 
     def create
       user = User.find_for_database_authentication(login: sign_in_params[:login])
@@ -48,6 +49,13 @@ module Users
     end
 
     private
+
+    # The browser sends its push address when the person clicks Sair (D-654).
+    def forget_push
+      return if params[:push_endpoint].blank? || !user_signed_in?
+
+      PushSubscription.where(user: current_user, endpoint: params[:push_endpoint].to_s).delete_all
+    end
 
     def leave_impersonation
       end_impersonation(Current.impersonation, :manual)

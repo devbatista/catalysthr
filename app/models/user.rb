@@ -28,6 +28,7 @@ class User < ApplicationRecord
   has_many :trusted_devices, dependent: :delete_all
   has_many :user_sessions, dependent: :delete_all
   has_many :webauthn_credentials, dependent: :delete_all
+  has_many :push_subscriptions, dependent: :delete_all
 
   enum :status, { active: "active", deactivated: "deactivated" }, validate: true
   enum :platform_role, PLATFORM_ROLES.index_by(&:itself), validate: { allow_nil: true }

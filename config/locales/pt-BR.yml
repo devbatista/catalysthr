@@ -1564,6 +1564,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    push_notifications:
+      name: "Push dos avisos"
+      description: "Ligada, as pessoas ativam o push no aparelho e o canal aparece nas preferências. Depende das chaves VAPID e da conferência em aparelhos reais (spec 15, D-654)."
     esocial:
       name: "eSocial na admissão"
       description: "Ligada, a conclusão da admissão exige o eSocial enviado, e a ativação avisa sem o aceite (spec 13, D-648)."
@@ -1781,6 +1784,11 @@ pt-BR:
           text: "Cadastre uma passkey neste aparelho e entre com um toque, sem digitar a senha. A biometria fica só no aparelho."
           register: "Cadastrar"
           dismiss: "Agora não"
+        push_invite:
+          title: "Receba os avisos no aparelho"
+          text: "Saiba na hora quando houver um documento para enviar ou assinar, mesmo com o app fechado. Os avisos de rotina esperam o horário comercial, e valores nunca aparecem na notificação."
+          enable: "Ativar"
+          dismiss: "Agora não"
         install_invite:
           title: "Instale o app"
           prompt: "Abra o portal direto da tela inicial, como um aplicativo."
@@ -1879,6 +1887,8 @@ pt-BR:
           profile_hint: "Cargo, unidade e contato"
           notifications: "Notificações"
           notifications_hint: "Os avisos dos últimos 90 dias"
+          preferences: "Minhas notificações"
+          preferences_hint: "Como você recebe cada aviso"
           security: "Segurança"
           security_hint: "Senha, autenticação em duas etapas e sessões"
           panel: "Abrir painel"
@@ -3227,7 +3237,7 @@ pt-BR:
     notification_preferences:
       edit:
         title: "Minhas notificações"
-        subtitle: "Como você recebe os avisos. O sino vale sempre; os avisos obrigatórios mantêm o e-mail."
+        subtitle: "Como você recebe os avisos. O sino vale sempre; os avisos obrigatórios mantêm ao menos um canal além dele."
         email_missing: "Você não tem um e-mail cadastrado e recebe os avisos só no sino. Peça ao RH para cadastrar o seu e-mail."
         email_bounced: "O seu e-mail voltou e foi marcado como inválido: os avisos chegam só no sino. Peça ao RH para corrigir o contato."
         empty: "Não há avisos para configurar no seu perfil."
@@ -3770,6 +3780,7 @@ pt-BR:
         body: "%{company_name} encaminhou uma admissão ao escritório."
     admission:
       activated_with_pending:
+        grouped: "%{count} vínculos ativados com pendências"
         name: "Vínculo ativado com pendências"
         hint: "Quando o vínculo começa e a admissão ainda não terminou."
         title: "Vínculo ativado com pendências: %{person}"
@@ -3777,6 +3788,7 @@ pt-BR:
           one: "A admissão ainda tem 1 item obrigatório pendente."
           other: "A admissão ainda tem %{count} itens obrigatórios pendentes."
       aso_unfit:
+        grouped: "%{count} admissões precisam de atenção"
         name: "Atenção em uma admissão"
         hint: "Quando uma admissão precisa de uma decisão do RH sobre o ASO."
         title: "Atenção na admissão de %{person}"
@@ -3803,27 +3815,32 @@ pt-BR:
         title: "Item para você: %{item}"
         body: "O item \"%{item}\" do processo de %{person} ficou com você. Prazo: %{due}."
       task_overdue:
+        grouped: "%{count} itens de processo atrasados"
         name: "Item de processo atrasado"
         hint: "Uma vez por item, quando ele passa do prazo."
         title: "Item atrasado: %{item}"
         body: "O item \"%{item}\" do processo de %{person} passou do prazo de %{due}."
     documents:
       requested:
+        grouped: "Você tem %{count} documentos pedidos"
         name: "Documento pedido"
         hint: "Quando o RH pede um documento."
         title: "O RH pediu: %{document}"
         body: "Envie pelo portal até %{due}."
       correction_requested:
+        grouped: "Você tem %{count} correções de documento pedidas"
         name: "Correção pedida"
         hint: "Quando o RH pede a correção de um documento enviado."
         title: "Corrigir %{document}"
         body: "Motivo: %{reason}."
       expiring:
+        grouped: "Você tem %{count} documentos vencendo"
         name: "Documento vencendo"
         hint: "Na antecedência que o tipo define."
         title: "%{document} vence em %{date}"
         body: "Envie o novo documento pelo portal."
       acknowledgment_pending:
+        grouped: "Você tem %{count} documentos pedindo ciência"
         name: "Documento para ciência"
         hint: "Quando o RH publica um documento pedindo a sua ciência."
         title: "Documento para ciência: %{title}"
@@ -3881,6 +3898,7 @@ pt-BR:
           body: "O SES não conseguiu verificar o domínio %{domain} de %{brand_name}. Confira se os registros estão no DNS do domínio, exatamente como aparecem na tela da marca. Enquanto isso, os e-mails continuam saindo do endereço da plataforma."
     employments:
       probation_ending:
+        grouped: "%{count} períodos de experiência terminando"
         name: "Fim de experiência"
         hint: "Antes do fim de cada período de experiência."
         title: "Fim de experiência: %{person}"
@@ -4025,9 +4043,21 @@ pt-BR:
       type: "Aviso"
       system: "Sino"
       email: "E-mail"
+      push: "Push"
       always: "Sempre"
       mandatory: "Obrigatório"
       email_for: "E-mail: %{type}"
+      push_for: "Push: %{type}"
+    push:
+      title: "Notificações neste aparelho"
+      purpose: "Receba os avisos do sistema neste aparelho, mesmo com o app fechado. Os avisos de rotina esperam o horário comercial, e valores nunca aparecem na notificação."
+      enable: "Ativar neste aparelho"
+      disable: "Desativar neste aparelho"
+      active: "Ativo neste aparelho."
+      unsupported: "Este navegador não recebe notificações."
+      ios: "No iPhone, as notificações funcionam com o app instalado (iOS 16.4 ou superior). Toque em Compartilhar, depois em Adicionar à Tela de Início, e ative aqui pelo app."
+      denied: "As notificações estão bloqueadas neste navegador. Libere nas configurações do navegador para ativar."
+      error: "Não foi possível concluir. Tente de novo."
     email_status:
       bounced: "Voltou em %{date}"
       complained: "Marcado como spam em %{date}"

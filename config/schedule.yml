@@ -37,6 +37,12 @@ employments_apply_scheduled_revisions:
   class: "Employments::ApplyScheduledRevisionsJob"
   queue: "default"
 
+# Releases the push held by the quiet hours, grouped by type (spec 15, RN-15-031, RN-15-034)
+notifications_release_held:
+  cron: "*/5 * * * * America/Sao_Paulo"
+  class: "Notifications::ReleaseHeldJob"
+  queue: "notifications"
+
 # Takes old notices out of the bell and deletes them after 1 year (spec 15, RN-15-090, D-608)
 notifications_purge:
   cron: "30 3 * * * America/Sao_Paulo"

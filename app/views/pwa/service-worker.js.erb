@@ -31,6 +31,20 @@ self.addEventListener("message", (event) => {
   if (event.data === "precache") event.waitUntil(precache())
 })
 
+// A notice (spec 15, RN-15-003): the text comes ciphered, is shown and is not kept. Opening
+// it leads to the system, which asks for the sign-in (RN-15-005).
+self.addEventListener("push", (event) => {
+  if (!event.data) return
+
+  const { title, body, path, tag, icon } = event.data.json()
+  event.waitUntil(self.registration.showNotification(title, { body: body || undefined, tag, icon, data: { path } }))
+})
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close()
+  event.waitUntil(self.clients.openWindow(new URL(event.notification.data.path, self.location.origin).href))
+})
+
 self.addEventListener("fetch", (event) => {
   const request = event.request
   const url = new URL(request.url)

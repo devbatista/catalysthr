@@ -12,4 +12,8 @@ class NotificationPreference < ApplicationRecord
   def audit_company_id
     membership.audit_company_id
   end
+
+  private
+
+  def channel_roles = membership&.roles
 end

@@ -217,6 +217,8 @@ Rails.application.routes.draw do
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
+      # This browser's push subscription (spec 15, RN-15-003, D-654).
+      resource :push_subscription, path: "push-subscriptions", only: %i[create destroy]
       resources :units, except: :destroy do
         # The unit's holidays and optional days, and Good Friday turned off (RN-06-029, D-638).
         resources :holidays, only: %i[create destroy], controller: "unit_holidays"
@@ -374,6 +376,7 @@ Rails.application.routes.draw do
       # data, "Minha equipe" and the bell.
       namespace :portal do
         root "home#index"
+        resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
         resources :documents, only: %i[index show new create] do
           get :file, on: :member
           resources :versions, controller: "document_versions", only: %i[new create]

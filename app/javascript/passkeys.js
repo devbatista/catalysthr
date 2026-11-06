@@ -191,8 +191,8 @@ if (confirmBox && supported) {
   })
 }
 
-// The invite on the start (RN-16-022, D-647): only on a device with fingerprint or face, and
-// one invite at a time, so it gives way to the install invite while that one shows.
+// The invite on the start (RN-16-022, D-647, D-654): only on a device with fingerprint or face,
+// and one invite at a time, so it gives way to the install and the push invites while they show.
 // Dismissed, it comes back in 30 days. Only this choice stays in the browser (RN-16-063).
 const invite = document.querySelector("[data-passkey-invite]")
 if (invite && supported) {
@@ -205,9 +205,11 @@ if (invite && supported) {
   if (!dismissed) {
     PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then((available) => {
       if (!available) return
-      const installInvite = document.querySelector("[data-install-invite]")
-      const place = () => { invite.hidden = Boolean(installInvite && !installInvite.hidden) }
-      if (installInvite) new MutationObserver(place).observe(installInvite, { attributes: true, attributeFilter: [ "hidden" ] })
+      const others = document.querySelectorAll("[data-install-invite], [data-push-invite]")
+      const place = () => { invite.hidden = [ ...others ].some((other) => !other.hidden && other.isConnected) }
+      const watch = new MutationObserver(place)
+      others.forEach((other) => watch.observe(other, { attributes: true, attributeFilter: [ "hidden" ] }))
+      if (others.length) watch.observe(document.body, { childList: true, subtree: true })
       place()
     }).catch(() => {})
   }
