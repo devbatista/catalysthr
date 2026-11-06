@@ -1,0 +1,34 @@
+<%# What the HR forwarded to the firm (RN-06-065, D-652). Only the person's name before the
+    password. %>
+<% content_for :title, t(".title") %>
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @rows.empty? %>
+  <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="card mt-6 overflow-x-auto">
+    <table class="data-table min-w-[640px]">
+      <thead>
+        <tr>
+          <th><%= t(".person") %></th>
+          <th><%= t(".company") %></th>
+          <th><%= t(".started_on") %></th>
+          <th><%= t(".status") %></th>
+          <th class="text-right"><span class="sr-only"><%= t(".actions") %></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr>
+            <td class="font-bold text-ink-strong"><%= row.person %></td>
+            <td><%= row.company.name %></td>
+            <td class="whitespace-nowrap"><%= l(row.started_on) %></td>
+            <td><%= firm_forward_pill(row.item) %></td>
+            <td class="text-right"><%= link_to t(".open"), firm_forward_path(row.item), class: "btn btn-secondary btn-sm" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

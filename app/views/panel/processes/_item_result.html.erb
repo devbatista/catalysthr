@@ -10,6 +10,12 @@
 <% if result["comment"] %><p class="mt-1 text-xs text-ink-soft"><%= t("processes.result.comment", text: result["comment"]) %></p><% end %>
 <% if result["reason"] %><p class="mt-1 text-xs text-bad"><%= t("processes.result.rejected", text: result["reason"]) %></p><% end %>
 <% if item.skipped? && item.skipped_reason %><p class="mt-1 text-xs text-ink-soft"><%= t("processes.result.skipped", text: item.skipped_reason) %></p><% end %>
+<% if result["sent_at"] %>
+  <p class="mt-1 text-xs text-ink-soft">
+    <%= t("processes.result.sent_to_firm", firm: result["accounting_firm_name"], date: l(Time.iso8601(result["sent_at"]).in_time_zone, format: "%d/%m/%Y %H:%M")) %>
+    <% if item.sent? %> · <%= t("processes.result.waiting_firm") %><% end %>
+  </p>
+<% end %>
 <% if result["sent_on"] %>
   <p class="mt-1 text-xs text-ink-soft">
     <%= t("processes.result.sent_on", date: l(Date.iso8601(result["sent_on"]), format: "%d/%m/%Y")) %>

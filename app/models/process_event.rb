@@ -4,7 +4,7 @@ class ProcessEvent < ApplicationRecord
   ACTIONS = %w[started item_completed item_approved item_rejected item_forwarded item_skipped item_unblocked item_added
     item_removed item_updated item_moved responsible_changed client_changed due_recalculated completed cancelled
     document_submitted document_approved document_correction_requested item_acknowledged form_submitted form_returned
-    form_applied aso_reviewed aso_reassessment item_reopened].freeze
+    form_applied aso_reviewed aso_reassessment item_reopened item_sent_to_firm item_received item_forward_returned].freeze
 
   acts_as_tenant :company
 

@@ -1,7 +1,8 @@
 module Processes
   # What the person responsible, or the HR, does on an item (spec 06, section 4, D-641):
-  # a task done, an approval given or refused, a forward recorded by the HR (RN-06-066)
-  # and, by the HR only, an item skipped (RN-06-052). Each one goes to the history
+  # a task done, an approval given or refused, a forward recorded by the HR (RN-06-066) or
+  # sent to the accounting firm, which confirms it (RN-06-065, D-652), and, by the HR only,
+  # an item skipped (RN-06-052). Each one goes to the history
   # (RN-06-051); a resolved item frees the ones that wait for it (UnblockItemsJob). The
   # item is locked meanwhile, so two people never resolve it twice. Returns false with the
   # errors on the item.
@@ -35,9 +36,49 @@ module Processes
       return error(:receipt_type) unless FileSignature.content_type(receipt)
       return error(:receipt_size, count: ProcessItem::RECEIPT_MAX_SIZE / 1.megabyte) if receipt.size > ProcessItem::RECEIPT_MAX_SIZE
 
-      act("done", "item_forwarded", panel_kinds: %w[forward], result: { "sent_on" => date.iso8601 }) do
+      act("done", "item_forwarded", panel_kinds: %w[forward], from: %w[pending sent], result: { "sent_on" => date.iso8601 }) do
         attach_receipt(receipt) unless Simulation.active?
       end
+    end
+
+    # To the company's accounting firm, only by the HR and with every required document
+    # resolved (RN-06-065, RN-07-070, D-652). Nothing is completed: the firm confirms.
+    def send_to_firm
+      return error(:not_actionable) unless @item.forward? && @item.pending? && @item.instance.open? && @item.instance.admission?
+      return error(:documents_pending) if documents_pending?
+
+      firm = FirmForward.linked_firm(@item.company)
+      return error(:firm_missing) unless firm
+
+      @item.with_lock do
+        return error(:not_actionable) unless @item.pending?
+
+        @item.update!(status: "sent", result: @item.result.merge("accounting_firm_id" => firm.id,
+          "accounting_firm_name" => firm.name, "sent_at" => Time.current.iso8601))
+        Events.record(@item.instance, "item_sent_to_firm", by: @by, item: @item, title: @item.title, firm: firm.name)
+      end
+      FirmForward.notify(@item)
+      true
+    end
+
+    # The firm confirms what it received (RN-06-065, D-143). A cancelled admission is out
+    # of the firm's reach; a concluded one may still have an optional forward.
+    def confirm_receipt
+      return error(:not_actionable) unless @item.forward? && @item.sent? && !@item.instance.cancelled?
+
+      transition("received", "item_received", result: @item.result)
+    end
+
+    # The firm was unlinked before confirming (RN-02-073, D-652).
+    def return_from_firm
+      firm = @item.result["accounting_firm_name"]
+      @item.with_lock do
+        return error(:not_actionable) unless @item.sent?
+
+        @item.update!(status: "pending", result: @item.result.except(*FirmForward::RESULT_KEYS))
+        Events.record(@item.instance, "item_forward_returned", by: @by, item: @item, title: @item.title, firm: firm)
+      end
+      true
     end
 
     # The employee read the PDF and accepts it (RN-06-060, P-06-17, D-645): the version read,
@@ -80,8 +121,12 @@ module Processes
       @item.open? || (@item.rejected? && @item.instance.admission?)
     end
 
-    def act(status, action, panel_kinds:, result: {}, **details, &)
-      return error(:not_actionable) unless @item.kind.in?(panel_kinds) && @item.pending? && @item.instance.open?
+    def documents_pending?
+      @item.instance.items.document.where(required: true).any? { |item| !item.resolved? }
+    end
+
+    def act(status, action, panel_kinds:, from: %w[pending], result: {}, **details, &)
+      return error(:not_actionable) unless @item.kind.in?(panel_kinds) && @item.status.in?(from) && @item.instance.open?
 
       transition(status, action, result: @item.result.merge(result), **details, &)
     end

@@ -18,6 +18,18 @@ module ProcessesHelper
   end
 
   # The status, and "Atrasado" for an open item past its date (RN-06-028).
+  # The firm an item may be sent to now (D-652).
+  def linked_firm
+    return @linked_firm if defined?(@linked_firm)
+
+    @linked_firm = Processes::FirmForward.linked_firm(Current.company)
+  end
+
+  # The firm's own words for where a forward is (D-652).
+  def firm_forward_pill(item)
+    tag.span(t("panel.firm_panel.forwards.statuses.#{item.status}"), class: "pill #{ITEM_PILLS.fetch(item.status)}")
+  end
+
   def process_item_pills(item, today)
     pills = [ tag.span(t("processes.item_statuses.#{item.status}"), class: "pill #{ITEM_PILLS.fetch(item.status)}") ]
     pills << tag.span(t("processes.overdue"), class: "pill pill-bad") if item.overdue?(today)

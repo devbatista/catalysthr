@@ -95,6 +95,18 @@ module EmployeesHelper
     uses.map { |use| t("panel.employees.show.uses.#{use}") }.join(", ").presence || "—"
   end
 
+  # The firm's reading (D-652): the CPF as an access event, and the dependent without what
+  # is about their health (P-03-18).
+  def forward_cpf(user)
+    value = reveal_confirmed(user, :cpf, as: :text, section: :documents)
+    value.presence && value != SensitiveData::HIDDEN && !impersonating? ? Cpf.format(value) : value.presence || "—"
+  end
+
+  def forward_dependent_uses(dependent)
+    uses = %i[irrf family_allowance].select { |use| dependent.public_send(use) }
+    uses.map { |use| t("panel.employees.show.uses.#{use}") }.join(", ").presence || "—"
+  end
+
   # "PIX (e-mail): ana@…" or "Banco 001 · agência 1234 · conta corrente 12345-6", the
   # number and the key shown only after the password (RN-02-052).
   def bank_account_summary(account)

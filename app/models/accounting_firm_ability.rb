@@ -11,6 +11,9 @@ class AccountingFirmAbility
   def initialize(user, brand)
     Membership.active.for_brand(brand).where(user: user, organization_type: "AccountingFirm").find_each do |membership|
       can :read, :firm_panel
+      # What the HR forwarded (D-143, D-651, D-652), for the firm's whole team (RN-06-065). The
+      # controller reads only the items of this firm.
+      can %i[read confirm_receipt], :firm_forwards
       admin(user, membership.organization, brand) if membership.roles.include?("firm_admin")
       folders(membership.organization)
     end
@@ -19,8 +22,8 @@ class AccountingFirmAbility
   private
 
   # The folders of the linked companies' people, read only and without health (spec 03,
-  # section 4.5, D-193, P-03-18, CA-08-009). The screen comes with the admission's forward
-  # (spec 07, D-642).
+  # section 4.5, D-193, P-03-18, CA-08-009). The forward shows only what was sent (D-652); the
+  # general reading has its screen with spec 12 (D-651).
   def folders(firm)
     companies = AccountingFirmCompany.where(accounting_firm_id: firm.id, status: "active").pluck(:company_id)
     can :read, Document, company_id: companies, document_type: { category: DocumentCategory.readable(health: false, pay: true) }

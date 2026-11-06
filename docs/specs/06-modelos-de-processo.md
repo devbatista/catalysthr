@@ -159,9 +159,10 @@ Biblioteca CatalystHR ──adotar (cópia)──► Modelos do parceiro ──a
 
 - **RN-06-065** — Com escritório contábil ligado (D-171), o encaminhamento:
   - reúne os arquivos e dados escolhidos no item (por exemplo, todos os documentos validados e a ficha);
-  - fica disponível para os contadores do escritório;
-  - é concluído quando um contador confirma o recebimento (D-143).
-- **RN-06-066** — Sem escritório ligado, o RH registra o envio à mão (anexo e data), como no protótipo, e o item é concluído com esse registro **[P-06-18]**.
+  - fica disponível para os contadores do escritório quando o RH clica em "Encaminhar ao escritório", e o item vai para `sent` (D-652);
+  - é concluído quando um contador confirma o recebimento (D-143);
+  - fica disponível enquanto a ligação estiver ativa. Desligado o escritório, o item sem confirmação volta para `pending` (D-652).
+- **RN-06-066** — Sem escritório ligado, o RH registra o envio à mão (anexo e data), como no protótipo, e o item é concluído com esse registro **[P-06-18]**. Com escritório ligado, o RH também pode registrar à mão, mesmo depois de encaminhar, e o acesso do escritório àquele item termina (D-652).
 
 ## 5. Estados
 

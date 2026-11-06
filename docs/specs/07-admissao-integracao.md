@@ -115,7 +115,7 @@ Funciona para todos os tipos de vínculo (CLT, estágio, autônomo, sócio, PJ),
 
 ### Contabilidade (D-258)
 
-- **RN-07-070** — Na empresa que usa a etapa, o item de encaminhamento junta a ficha e os documentos validados, com dependência de todos os documentos obrigatórios (P-06-13). O contador confirma o recebimento (D-143), ou o RH registra o envio manual (P-06-18).
+- **RN-07-070** — Na empresa que usa a etapa, o item de encaminhamento junta a ficha e os documentos validados, com dependência de todos os documentos obrigatórios (P-06-13). O RH encaminha ao escritório, e o contador confirma o recebimento (D-143), ou o RH registra o envio manual (P-06-18). O escritório lê a ficha sem dados de saúde e os documentos aprovados nos itens da admissão, sem a categoria Saúde, com a senha e o evento de acesso (D-651, D-652).
 
 ### Conclusão (D-260)
 

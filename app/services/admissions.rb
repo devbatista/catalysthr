@@ -21,7 +21,19 @@ module Admissions
     Processes::Start.call(template: template, employment: employment, started_by: by, starter: starter,
       anchors: { "work_start" => employment.started_on },
       skip: (->(item) { accounting_item?(item) } unless employment.company.uses_accounting_step),
-      extras: ->(items) { required_document_items(employment, items) })
+      extras: ->(items) { required_document_items(employment, items) }).tap { |instance| hold_forwards(instance) }
+  end
+
+  # The forward waits for every required document, also the ones the position brought
+  # (RN-07-070, P-06-13).
+  def hold_forwards(instance)
+    items = instance.items.reload.to_a
+    documents = items.select { |item| item.document? && item.required }.map(&:id)
+    items.select(&:forward?).each do |forward|
+      missing = documents - forward.dependencies.pluck(:depends_on_item_id)
+      missing.each { |id| forward.dependencies.create!(depends_on_item_id: id) }
+      forward.update!(status: "blocked") if forward.pending? && documents.any?
+    end
   end
 
   def accounting_item?(item)
@@ -42,7 +54,7 @@ module Admissions
         stage: "documents", config: { "document_type_id" => type.id } }
     end
   end
-  private_class_method :accounting_item?, :required_document_items
+  private_class_method :hold_forwards, :accounting_item?, :required_document_items
 
   # The PDFs generated live only in the process (D-650).
   def delete_generated(employment)
