@@ -99,9 +99,11 @@ jobs:
         uses: actions/checkout@v7
 
       # libvips straightens and cleans a document's images before the PDF (spec 08, RN-08-011);
-      # 7-Zip writes the folder's ZIP (RN-08-082, D-514).
+      # 7-Zip writes the folder's ZIP (RN-08-082, D-514). ruby-vips needs only the library, as in
+      # the Dockerfiles. A slow mirror fails here in minutes, and the run can be repeated.
       - name: Install libvips and 7-Zip
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips-dev 7zip
+        timeout-minutes: 5
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y -o Acquire::Retries=3 libvips 7zip
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
