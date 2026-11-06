@@ -120,6 +120,12 @@ module Panel
       resolve(item_actions.forward(sent_on: params[:sent_on], receipt: receipt))
     end
 
+    # To the company's accounting firm (RN-06-065, D-652).
+    def send_to_firm
+      authorize! :adjust, @instance
+      resolve(item_actions.send_to_firm)
+    end
+
     def reopen
       authorize! :adjust, @instance
       resolve(item_actions.reopen)

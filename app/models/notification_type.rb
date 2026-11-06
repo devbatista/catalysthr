@@ -69,6 +69,9 @@ NotificationType::CATALOG = [
     roles: %w[partner_admin hr_admin]),
   NotificationType.new(code: "billing.contract_closing", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[partner_admin hr_admin]),
+  # An admission sent to the accounting firm, to its team (RN-06-065, D-652).
+  NotificationType.new(code: "accounting.admission_forwarded", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[firm_admin accountant]),
   # An item of a process to the client's manager (P-15-35); the person's notice comes with
   # the portal (spec 16, D-641).
   NotificationType.new(code: "processes.task_assigned", mandatory: false, urgent: false, channels: %w[system email],

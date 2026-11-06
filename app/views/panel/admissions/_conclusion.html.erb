@@ -21,6 +21,10 @@
         </div>
       <% end %>
       <div><dt><%= t(".contract") %></dt><dd><%= t(@generated.any?(&:signed?) ? ".contract_signed" : ".contract_none") %></dd></div>
+      <% forwards = @instance.items.select(&:forward?) %>
+      <% if forwards.any? %>
+        <div><dt><%= t(".accounting") %></dt><dd><%= forwards.map { |item| t("processes.item_statuses.#{item.status}") }.uniq.to_sentence %></dd></div>
+      <% end %>
       <div><dt><%= t(".esocial") %></dt><dd><%= @admission.esocial_not_applicable? ? t(".esocial_na") : FeatureFlags.enabled?(FeatureFlags::ESOCIAL) ? t(".esocial_statuses.#{@admission.esocial_status}") : t(".esocial_outside") %></dd></div>
     </dl>
     <% if @blockers.any? %>
