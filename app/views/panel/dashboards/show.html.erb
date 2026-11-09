@@ -1,0 +1,80 @@
+<%# The HR panel (spec 17, section 4.2, D-657, D-658), as in the prototype: the indicators,
+    the pending items by unit, the next expirations, the recent activity and, for the HR
+    administrator, the contract. Each block comes in its own request, in parallel
+    (RN-17-090), with the filter of unit and client (RN-17-004, RN-17-005). What depends on a
+    module not built yet does not show (D-657): the AI's summary, the approvals, the payroll,
+    the time tracking and the eSocial. The export comes with the reports, in phase 5. %>
+<% content_for :title, t(".title") %>
+
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div>
+    <p class="text-sm text-ink-soft"><%= l(@filter.today, format: :weekday_long).upcase_first %></p>
+    <h1 class="page-title"><%= t(".title") %></h1>
+  </div>
+  <% if @new_admission %>
+    <%= link_to t(".new_admission"), new_admission_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<%# Until the admissions' indicator absorbs it, the serious alert of the activation (RN-07-085, D-653). %>
+<% if @admissions_attention.to_i.positive? %>
+  <p class="alert-bad mt-6" role="alert">
+    <%= t("panel.home.index.admissions_attention", count: @admissions_attention) %>
+    <%= link_to t("panel.home.index.admissions_open"), admissions_path, class: "link-button" %>
+  </p>
+<% end %>
+
+<% if @filter.units.many? || @filter.clients? %>
+  <%= form_with url: root_path, method: :get, class: "card card-body mt-6" do |form| %>
+    <div class="form-grid">
+      <% if @filter.units.many? %>
+        <div>
+          <%= form.label :unit_id, t(".unit"), class: "field-label" %>
+          <%= form.select :unit_id, @filter.units.map { |unit| [ unit.name, unit.id ] }, { include_blank: t(".all_units"), selected: @filter.unit_id },
+            class: "input" %>
+        </div>
+      <% end %>
+      <% if @filter.clients? %>
+        <div>
+          <%= form.label :client_id, t(".client"), class: "field-label" %>
+          <%= form.select :client_id, @filter.clients.map { |client| [ client.name, client.id ] } + [ [ t(".no_client"), Dashboards::Filter::NO_CLIENT ] ],
+            { include_blank: t(".all_clients"), selected: @filter.client_id }, class: "input" %>
+        </div>
+      <% end %>
+      <div class="flex items-end">
+        <%= form.submit t(".filter"), class: "btn btn-secondary", name: nil %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<div data-dashboard data-updated-now="<%= t(".updated_now") %>" data-updated-seconds="<%= t(".updated_seconds") %>"
+  data-updated-minutes="<%= t(".updated_minutes") %>" data-failed="<%= t(".failed") %>">
+  <p class="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
+    <span data-dashboard-updated aria-live="polite"><%= t(".loading") %></span>
+    <button type="button" class="link-button" data-dashboard-refresh><%= t(".refresh") %></button>
+  </p>
+  <noscript><p class="alert-info mt-4"><%= t(".noscript") %></p></noscript>
+
+  <% params_for = ->(block) { dashboard_block_path(block, **@filter.params) } %>
+  <section class="mt-4" aria-label="<%= t(".indicators") %>" data-dashboard-block="<%= params_for.call("indicators") %>">
+    <p class="card card-body text-sm text-ink-soft"><%= t(".loading") %></p>
+  </section>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+    <section data-dashboard-block="<%= params_for.call("pending_by_unit") %>">
+      <p class="card card-body text-sm text-ink-soft"><%= t(".loading") %></p>
+    </section>
+    <section data-dashboard-block="<%= params_for.call("upcoming") %>">
+      <p class="card card-body text-sm text-ink-soft"><%= t(".loading") %></p>
+    </section>
+    <section data-dashboard-block="<%= params_for.call("activity") %>">
+      <p class="card card-body text-sm text-ink-soft"><%= t(".loading") %></p>
+    </section>
+    <% if @usage %>
+      <section data-dashboard-block="<%= dashboard_block_path("usage") %>">
+        <p class="card card-body text-sm text-ink-soft"><%= t(".loading") %></p>
+      </section>
+    <% end %>
+  </div>
+</div>

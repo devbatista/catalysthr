@@ -170,3 +170,9 @@ documents_batch_expirations:
   cron: "40 6 * * * America/Sao_Paulo"
   class: "Documents::BatchExpirationsJob"
   queue: "default"
+
+# The HR panel's recent activity older than 90 days (spec 17, RN-17-011, D-657).
+dashboards_purge_activity:
+  cron: "0 4 * * * America/Sao_Paulo"
+  class: "Dashboards::PurgeActivityJob"
+  queue: "default"

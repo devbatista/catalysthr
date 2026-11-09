@@ -1,0 +1,16 @@
+<%# The HR panel's filter carried to the list an indicator opens (RN-17-002, RN-17-004,
+    RN-17-005), with the way back to the whole scope. %>
+<% if filter.any? %>
+  <p class="mt-5 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
+    <span><%= t("panel.dashboards.filter_notice.label") %></span>
+    <% if filter.unit %>
+      <span class="pill pill-info"><%= filter.unit.name %></span>
+    <% end %>
+    <% if filter.client %>
+      <span class="pill pill-info"><%= filter.client.name %></span>
+    <% elsif filter.no_client? %>
+      <span class="pill pill-info"><%= t("panel.dashboards.filter_notice.no_client") %></span>
+    <% end %>
+    <%= link_to t("panel.dashboards.filter_notice.clear"), clear_path, class: "link-button" %>
+  </p>
+<% end %>

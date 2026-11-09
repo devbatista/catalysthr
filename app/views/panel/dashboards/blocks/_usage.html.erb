@@ -1,0 +1,37 @@
+<%# The contract (RN-17-030) in a direct company, or only the company's own usage in a
+    partner's (RN-17-031, P-17-06). The AI credits and the WhatsApp messages come with their
+    modules (D-657). %>
+<div class="card card-body">
+  <h2 class="card-title"><%= t(usage.direct? ? ".title_contract" : ".title_usage") %></h2>
+  <dl class="details-list mt-3">
+    <% if usage.direct? %>
+      <% subscription = usage.subscription %>
+      <div>
+        <dt><%= t(".plan") %></dt>
+        <dd><%= usage.plan_name %></dd>
+      </div>
+      <div>
+        <dt><%= t(".status") %></dt>
+        <dd>
+          <%= subscription_status_pill(subscription) %>
+          <% if subscription.trialing? && subscription.trial_ends_on %>
+            <span class="field-hint"><%= t(".trial_ends", date: l(subscription.trial_ends_on, format: "%d/%m/%Y")) %></span>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+    <div>
+      <dt><%= t(".employees") %></dt>
+      <dd>
+        <% if usage.employees %>
+          <%= t(".employees_peak", count: usage.employees) %>
+        <% else %>
+          <%= t(".employees_pending") %>
+        <% end %>
+      </dd>
+    </div>
+  </dl>
+  <% if usage.direct? && can?(:read_invoices, Current.company) %>
+    <p class="mt-4"><%= link_to t(".invoices"), invoices_path, class: "link-button text-sm" %></p>
+  <% end %>
+</div>

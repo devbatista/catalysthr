@@ -18,6 +18,11 @@ class CompanyAbility
   # :all (P-15-22, D-656).
   attr_reader :announcement_unit_ids
 
+  # The units of the HR panel's numbers (RN-17-001, RN-17-014): :all for the HR
+  # administrator, the consultant and the support, the HR analyst's own units, or nil for who
+  # has no HR panel.
+  attr_reader :hr_unit_ids
+
   def initialize(user, company, support_access: nil)
     @user = user
     membership = Membership.with_access.find_by(user: user, organization: company)
@@ -110,6 +115,7 @@ class CompanyAbility
     can %i[read read_personal read_health update], WorkerProfile, people
     can :read_pay, WorkerProfile, people if modules.include?("folha")
     unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
+    hr_dashboard(unit_ids)
     processes(company, unit_ids: unit_ids, modules: modules)
     admissions(company, unit_ids: unit_ids) if modules.include?("admissao")
     admission_documents(company, unit_ids) if modules.include?("admissao") && !modules.include?("documentos")
@@ -117,6 +123,17 @@ class CompanyAbility
       folders = { company_id: company.id }
       folders[:worker_profile_id] = people[:id] if people.key?(:id)
       documents(folders, pay: modules.include?("folha"))
+    end
+  end
+
+  # The HR panel (spec 17, section 6): the HR administrator with the whole company, the HR
+  # analyst, the consultant and the support with their units (RN-17-014). A person with more
+  # than one of these keeps the widest.
+  def hr_dashboard(unit_ids)
+    can :read, :hr_dashboard
+    @hr_unit_ids = if unit_ids == :all || @hr_unit_ids == :all then :all
+    else
+      (Array(@hr_unit_ids) + unit_ids).uniq
     end
   end
 
@@ -242,6 +259,10 @@ class CompanyAbility
     # The billing address, the NFS-e's customer at Asaas (D-635).
     can %i[read_invoices contract cancel_contract update_billing_address], Company, id: company.id if company.direct?
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
+    hr_dashboard(:all)
+    # The company's usage on the panel (RN-17-030, RN-17-031): with the contract and its
+    # billing in a direct company, only the company's own usage in a partner's.
+    can :read_usage, Company, id: company.id
     # The unit's holidays and optional days, and turning off Good Friday (RN-06-029, D-638).
     can %i[read create destroy], UnitHoliday, company_id: company.id
     # The company's models of process, and adopting the active ones of its partner and of

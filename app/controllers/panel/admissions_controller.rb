@@ -17,6 +17,10 @@ module Panel
       authorize! :read_summary, Admission
       @status = params[:status].presence_in(ProcessInstance::STATUSES) || "open"
       reachable = Admission.where(id: Admission.accessible_by(current_ability, :read_summary).select(:id))
+      # The HR panel's filter, so "Admissões em andamento" opens with the same number
+      # (RN-17-002, RN-17-005).
+      @filter = Dashboards::Filter.new(current_ability, Current.company, unit_id: params[:unit_id], client_id: params[:client_id])
+      reachable = Dashboards::HrPanel.new(@filter).filter_admissions(reachable) if @filter.any?
       @counts = reachable.joins(:process_instance).group("process_instances.status").count
       @attention = reachable.needing_attention.count if can?(:create, Admission)
       @admissions = reachable.in_status(@status).includes(:process_instance, :company, process_instance: :items,

@@ -58,6 +58,7 @@ module Processes
         Events.record(@item.instance, "item_sent_to_firm", by: @by, item: @item, title: @item.title, firm: firm.name)
       end
       FirmForward.notify(@item)
+      Dashboards::Activity.admission_forwarded(@item, by: @by)
       true
     end
 

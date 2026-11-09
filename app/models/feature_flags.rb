@@ -35,8 +35,12 @@ module FeatureFlags
   # portal, and nothing goes up; what was scheduled waits.
   ANNOUNCEMENTS = :announcements
 
+  # The HR panel (spec 17, D-657). Off, the start page stays as it was, and the panel's
+  # blocks and lists answer 404.
+  DASHBOARDS = :dashboards
+
   ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL, PUSH_NOTIFICATIONS,
-    NOTIFICATION_DIGEST, ANNOUNCEMENTS ].freeze
+    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

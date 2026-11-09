@@ -92,6 +92,13 @@ class WorkerProfile < ApplicationRecord
     where(id: Employment.open.where(id: employment_ids).select(:worker_profile_id))
   end
 
+  # People with an open employment whose current revision has no client: the panel's
+  # "sem cliente" (RN-17-005, P-17-25).
+  def self.without_allocation_client
+    employment_ids = EmploymentRevision.counting.where(allocation_client_id: nil).select(:employment_id)
+    where(id: Employment.open.where(id: employment_ids).select(:worker_profile_id))
+  end
+
   # The values typed for the company's active custom fields (RN-04-080, RN-04-081). A
   # field left out keeps its value; the values of inactive fields stay as they are.
   def custom_field_values=(values)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -115,6 +115,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.uuid "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activity_events", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "unit_id"
+    t.uuid "department_id"
+    t.uuid "allocation_client_id"
+    t.string "module_code", null: false
+    t.string "kind", null: false
+    t.string "actor_name"
+    t.text "text", null: false
+    t.string "url"
+    t.datetime "occurred_at", null: false
+    t.index ["allocation_client_id"], name: "index_activity_events_on_allocation_client_id"
+    t.index ["company_id", "occurred_at"], name: "index_activity_events_on_company_id_and_occurred_at"
+    t.index ["department_id"], name: "index_activity_events_on_department_id"
+    t.index ["occurred_at"], name: "index_activity_events_on_occurred_at"
+    t.index ["unit_id"], name: "index_activity_events_on_unit_id"
   end
 
   create_table "add_on_prices", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1668,6 +1686,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   add_foreign_key "acknowledgments", "worker_profiles"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activity_events", "allocation_clients"
+  add_foreign_key "activity_events", "companies"
+  add_foreign_key "activity_events", "departments"
+  add_foreign_key "activity_events", "units"
   add_foreign_key "add_on_prices", "add_ons"
   add_foreign_key "add_on_prices", "users", column: "created_by_id"
   add_foreign_key "admissions", "companies"
