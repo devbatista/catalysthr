@@ -67,8 +67,8 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 | 2 | Colaboradores e vínculos | CPF + matrícula | Ficha (spec 04), vínculo com tipo, cargo, unidade, departamento, salário, jornada, data de admissão |
 | 3 | Dependentes | CPF do titular + CPF ou nome do dependente | Dependentes com parentesco, IRRF e salário-família |
 | 4 | Dados bancários e PIX | CPF | Banco, agência, conta, chave PIX |
-| 5 | Gestores dos departamentos | Código do departamento + CPF | Gestores (vários por departamento) |
-| 6 | Histórico salarial e de cargos | CPF + data | Revisões do vínculo com vigência e motivo (D-207) |
+| 5 | Gestores dos departamentos | Código do departamento + CPF | Gestores (vários por departamento), só os já ativos com o perfil de gestor; a importação não remove nenhum (D-664) |
+| 6 | Histórico salarial e de cargos | CPF + matrícula + data (D-664) | Revisões do vínculo com vigência e motivo (D-207). Na data de uma revisão existente, com outras condições, vira "Correção" (D-603, D-664) |
 | 7 | Férias | CPF + início do período aquisitivo | Períodos aquisitivos, dias gozados, vendidos e o saldo |
 | 8 | Banco de horas | CPF | Saldo inicial na data de corte, com o vencimento de cada parcela |
 | 9 | Acumulados da folha | CPF + competência + rubrica | Valores por rubrica no ano em curso, para médias, 13º, informe e IR |

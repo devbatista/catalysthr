@@ -44,6 +44,9 @@
     <% else %>
       <p class="text-sm text-ink-soft"><%= t(".none_valid") %></p>
     <% end %>
+    <% if @import.kind_class.respond_to?(:preview_note) %>
+      <p class="alert-info text-sm" data-preview-note><%= @import.kind_class.preview_note %></p>
+    <% end %>
     <% if @import.kind_class.sensitive? %>
       <p class="text-sm text-ink-soft"><%= t(".sensitive") %></p>
     <% end %>

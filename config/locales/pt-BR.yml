@@ -1624,6 +1624,14 @@ pt-BR:
         title: "Dados bancários e PIX"
         file: "dados-bancarios"
         description: "A conta ou a chave PIX de cada pessoa já cadastrada. A conta principal nova encerra a anterior, que fica no histórico."
+      department_managers:
+        title: "Gestores dos departamentos"
+        file: "gestores"
+        description: "Os gestores de cada departamento, pelo código do departamento e o CPF. Só quem já é gestor ativo na empresa; a importação acrescenta e não remove ninguém."
+      employment_history:
+        title: "Histórico salarial e de cargos"
+        file: "historico"
+        description: "As revisões de cada vínculo com a data e o motivo: promoções, reajustes e transferências. Uma célula vazia mantém o que valia antes."
     structure:
       sheets:
         units: "Unidades"
@@ -1768,6 +1776,39 @@ pt-BR:
         account_number: "Com o dígito, sem traço."
         pix_key: "Para uma conta e uma chave da mesma pessoa, use duas linhas."
         primary: "Sim ou Não. Vazio vale Sim: a nova principal encerra a anterior, que fica no histórico."
+    department_managers:
+      sheet: "Gestores"
+      columns:
+        department_code: "Código do departamento"
+        cpf: "CPF do gestor"
+        name: "Nome do gestor"
+      hints:
+        department_code: "O código de um departamento já cadastrado (importação de Estrutura)."
+        cpf: "Quem já tem o perfil Gestor e aceitou o convite. Para dar o perfil, use a tela Usuários."
+        name: "Opcional, só para conferir a planilha: o sistema usa o CPF."
+    employment_history:
+      sheet: "Histórico"
+      retroactive_note: "As revisões com data passada são retroativas: quando a folha e o eSocial estiverem no sistema, podem pedir recálculo e retificação. Uma linha na data de uma revisão já cadastrada, com outras condições, vira uma Correção nessa data."
+      columns:
+        cpf: "CPF"
+        registration_number: "Matrícula"
+        effective_on: "Vigente a partir de"
+        reason: "Motivo"
+        position_code: "Código do cargo"
+        unit_code: "Código da unidade"
+        department_code: "Código do departamento"
+        salary: "Salário"
+        salary_unit: "Unidade do salário"
+        variable_salary_description: "Descrição do salário variável"
+        weekly_hours: "Horas semanais"
+        justification: "Justificativa do salário fora da faixa"
+      hints:
+        registration_number: "A matrícula de um vínculo já cadastrado desta pessoa."
+        effective_on: "Como 01/05/2024. Não pode ser antes da admissão. Uma linha por data em cada vínculo."
+        reason: "Na data de uma revisão já cadastrada, com outras condições, vira Correção."
+        position_code: "Vazio mantém o cargo que valia antes desta data. O mesmo vale para as outras colunas."
+        salary: "Em reais, como 2.500,00."
+        justification: "Obrigatória quando o salário mensal sai da faixa do cargo."
     template:
       instructions: "Instruções"
       lists: "Listas"
@@ -1814,6 +1855,11 @@ pt-BR:
       repeated_dependent: "Este dependente já aparece na linha %{line}."
       repeated_primary: "Esta pessoa já tem uma conta principal na linha %{line}. Marque Não na coluna Principal das outras."
       unexpected: "Não foi possível validar esta linha (%{kind}). Tente de novo ou fale com o suporte."
+      employment_missing: "Nenhum vínculo com esta matrícula na empresa. Importe antes os colaboradores."
+      repeated_revision: "Este vínculo já tem uma linha nesta data, na linha %{line}."
+      person_missing: "Nenhuma pessoa com este CPF na empresa."
+      not_active_manager: "Esta pessoa não é gestor ativo na empresa. Dê o perfil Gestor na tela Usuários; depois que ela aceitar o convite, importe de novo."
+      repeated_manager: "Esta pessoa já aparece como gestor deste departamento na linha %{line}."
     errors_file:
       column: "Erros"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).

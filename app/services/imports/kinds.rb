@@ -7,7 +7,9 @@ module Imports
       "structure" => "Imports::Structure",
       "employees" => "Imports::Employees",
       "dependents" => "Imports::Dependents",
-      "bank_accounts" => "Imports::BankAccounts"
+      "bank_accounts" => "Imports::BankAccounts",
+      "department_managers" => "Imports::DepartmentManagers",
+      "employment_history" => "Imports::EmploymentHistory"
     }.freeze
 
     module_function

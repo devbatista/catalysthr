@@ -262,11 +262,11 @@ class CompanyAbility
     can %i[read_invoices contract cancel_contract update_billing_address], Company, id: company.id if company.direct?
     can %i[read create update], [ Unit, Department, Position ], company_id: company.id
     hr_dashboard(:all)
-    # The implementation's imports (spec 18, RN-18-042, D-661, D-663): only the HR
+    # The implementation's imports (spec 18, RN-18-042, D-661, D-663, D-664): only the HR
     # administrator, and the support through the assisted import (block 18d). The people,
-    # their dependents and their accounts, as the manual registration (D-600).
+    # their dependents, accounts, managers and history, as the manual registration (D-600).
     can %i[read create confirm cancel download_errors], DataImport, company_id: company.id
-    can :import, %i[structure employees dependents bank_accounts]
+    can :import, %i[structure employees dependents bank_accounts department_managers employment_history]
     # The company's usage on the panel (RN-17-030, RN-17-031): with the contract and its
     # billing in a direct company, only the company's own usage in a partner's.
     can :read_usage, Company, id: company.id
