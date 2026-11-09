@@ -9,6 +9,26 @@
   <% end %>
 </div>
 
+<%# The consolidated view (spec 17, RN-17-040 to RN-17-042, D-660): numbers by company, never
+    people. The payroll and eSocial block and the comparison come in phases 4 and 5 (D-657). %>
+<% if @overview %>
+  <% shown = "panel.dashboards.show" %>
+  <div data-dashboard data-updated-now="<%= t("#{shown}.updated_now") %>" data-updated-seconds="<%= t("#{shown}.updated_seconds") %>"
+    data-updated-minutes="<%= t("#{shown}.updated_minutes") %>" data-failed="<%= t("#{shown}.failed") %>">
+    <p class="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
+      <span data-dashboard-updated aria-live="polite"><%= t("#{shown}.loading") %></span>
+      <button type="button" class="link-button" data-dashboard-refresh><%= t("#{shown}.refresh") %></button>
+    </p>
+    <noscript><p class="alert-info mt-4"><%= t("#{shown}.noscript") %></p></noscript>
+    <% %w[portfolio health adoption].each do |block| %>
+      <section class="mt-4" data-dashboard-block="<%= partner_overview_block_path(block) %>">
+        <p class="card card-body text-sm text-ink-soft"><%= t("#{shown}.loading") %></p>
+      </section>
+    <% end %>
+  </div>
+  <h2 class="section-title mt-8"><%= t(".portfolio_title") %></h2>
+<% end %>
+
 <% if @companies.empty? %>
   <p class="card card-body mt-6 text-sm text-ink-soft"><%= t(".empty") %></p>
 <% else %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -1578,6 +1578,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.string "email_status", default: "valid", null: false
     t.datetime "email_status_at"
     t.string "webauthn_handle"
+    t.datetime "app_opened_at"
     t.index ["cpf"], name: "index_users_on_cpf", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(email IS NOT NULL)"
     t.index ["platform_role"], name: "index_users_on_platform_role", where: "(platform_role IS NOT NULL)"

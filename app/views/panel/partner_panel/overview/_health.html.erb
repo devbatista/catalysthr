@@ -1,0 +1,45 @@
+<%# Saúde operacional (RN-17-041, RN-17-042, D-660): the counts of each company and its signal,
+    the red first. Only numbers: nothing opens the lists (CA-17-005). %>
+<% pills = { red: "pill-bad", yellow: "pill-warn", green: "pill-ok" } %>
+<% order = { red: 0, yellow: 1, green: 2 } %>
+<% rows = overview.health.sort_by { |row| [ order.fetch(row.signal), row.company.name ] } %>
+<div class="card">
+  <h2 class="card-title px-5 pt-5"><%= t(".title") %></h2>
+  <p class="field-hint px-5"><%= t(".legend", stopped: Dashboards::PartnerOverview::STOPPED_DAYS, red: Dashboards::PartnerOverview::RED_STOPPED_DAYS) %></p>
+  <div class="mt-3 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".company") %></th>
+          <th><%= t(".signal") %></th>
+          <th class="text-right"><%= t(".stopped", days: Dashboards::PartnerOverview::STOPPED_DAYS) %></th>
+          <th class="hidden text-right md:table-cell"><%= t(".documents") %></th>
+          <th class="hidden text-right md:table-cell"><%= t(".late_requests") %></th>
+          <th class="hidden text-right md:table-cell"><%= t(".overdue") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |row| %>
+          <tr data-health-company="<%= row.company.id %>" data-signal="<%= row.signal %>">
+            <td class="font-bold">
+              <%= row.company.name %>
+              <p class="mt-1 text-xs font-normal text-ink-soft md:hidden">
+                <%= t(".compact", documents: row.documents, late: row.late_requests, overdue: row.overdue) %>
+              </p>
+            </td>
+            <td><span class="pill <%= pills.fetch(row.signal) %>"><%= t(".signals.#{row.signal}") %></span></td>
+            <td class="text-right">
+              <%= row.stopped %>
+              <% if row.stopped_red.positive? %>
+                <span class="field-hint"><%= t(".stopped_red", count: row.stopped_red, days: Dashboards::PartnerOverview::RED_STOPPED_DAYS) %></span>
+              <% end %>
+            </td>
+            <td class="hidden text-right md:table-cell"><%= row.documents %></td>
+            <td class="hidden text-right md:table-cell"><%= row.late_requests %></td>
+            <td class="hidden text-right md:table-cell"><%= row.overdue %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

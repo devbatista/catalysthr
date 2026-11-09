@@ -1,0 +1,29 @@
+<%# Adoção (RN-17-041, D-657): of the people active or on leave, who used the portal in the last
+    30 days and who opened it as the installed app or has the push on. The assistant's
+    questions and the documents read by the AI come with spec 14. %>
+<% rows = overview.adoption %>
+<div class="card">
+  <h2 class="card-title px-5 pt-5"><%= t(".title") %></h2>
+  <div class="mt-3 overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".company") %></th>
+          <th class="hidden text-right sm:table-cell"><%= t(".people") %></th>
+          <th class="text-right"><%= t(".portal", days: Dashboards::PartnerOverview::PORTAL_DAYS) %></th>
+          <th class="text-right"><%= t(".app_or_push") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |row| %>
+          <tr data-adoption-company="<%= row.company.id %>">
+            <td class="font-bold"><%= row.company.name %></td>
+            <td class="hidden text-right sm:table-cell"><%= number_with_delimiter(row.people) %></td>
+            <td class="text-right"><%= row.portal_percent ? t(".percent", percent: row.portal_percent) : "—" %></td>
+            <td class="text-right"><%= row.app_or_push_percent ? t(".percent", percent: row.app_or_push_percent) : "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

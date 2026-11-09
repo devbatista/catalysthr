@@ -390,6 +390,8 @@ Rails.application.routes.draw do
       # data, "Minha equipe" and the bell.
       namespace :portal do
         root "home#index"
+        # The portal opened as the installed app, for the partner's adoption (RN-17-041, D-657).
+        post "app-opened", to: "app_openings#create", as: :app_opened
         resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
         resources :documents, only: %i[index show new create] do
           get :file, on: :member
@@ -453,6 +455,8 @@ Rails.application.routes.draw do
       # client companies (D-584, D-585).
       namespace :partner, module: :partner_panel do
         root "home#index"
+        # The consolidated view's blocks, each in its own request (spec 17, RN-17-090, D-660).
+        get "overview/:block", to: "overview_blocks#show", as: :overview_block
         # The partner's models of process, adopting the library's (spec 06, D-126, D-232, D-639).
         resources :process_templates, path: "process-templates", except: :destroy do
           member do

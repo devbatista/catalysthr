@@ -72,12 +72,16 @@ module Dashboards
     end
 
     def overdue_items
-      reachable = ProcessItem.accessible_by(ability, :act).select(:id)
-      items = ProcessItem.where(id: reachable, status: ProcessItem::OPEN).where.not(due_on: nil)
+      filter.instances(self.class.overdue(ProcessItem.where(id: ProcessItem.accessible_by(ability, :act).select(:id))))
+    end
+
+    # The open items of open processes past their date in the unit's time zone (RN-06-028), as
+    # ProcessItem#overdue? says, in one query. The partner's view counts them too (D-660).
+    def self.overdue(items)
+      items.where(status: ProcessItem::OPEN).where.not(due_on: nil)
         .joins(:instance).where(process_instances: { status: "open" })
         .joins("LEFT JOIN units item_units ON item_units.id = process_instances.unit_id")
         .where("process_items.due_on < (now() AT TIME ZONE COALESCE(item_units.time_zone, '#{DEFAULT_TIME_ZONE}'))::date")
-      filter.instances(items)
     end
 
     # The unit with the most overdue items, for the support line.
