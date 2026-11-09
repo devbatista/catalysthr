@@ -3,7 +3,7 @@ module Panel
   # edits them, the HR analyst reads them (spec 03, section 4.2). A unit is never
   # deleted, only inactivated (RN-04-014); the headquarters stays active.
   class UnitsController < BaseController
-    PERMITTED = %i[name registration_type registration_number postal_code street street_number complement
+    PERMITTED = %i[name code registration_type registration_number postal_code street street_number complement
       district city ibge_city_code state latitude longitude time_zone status].freeze
 
     before_action :require_current_company

@@ -300,6 +300,16 @@ Rails.application.routes.draw do
       get "documents/pending", to: "pending_documents#index", as: :pending_documents
       get "overdue-items", to: "overdue_items#index", as: :overdue_items
       get "upcoming-expirations", to: "upcoming_expirations#index", as: :upcoming_expirations
+      # The imports (spec 18, D-661, D-662): the template, the sending, the preview, the
+      # confirmation and the result.
+      resources :data_imports, path: "imports", only: %i[index new create show] do
+        get "templates/:kind", action: :template, on: :collection, as: :template
+        member do
+          patch :confirm
+          patch :cancel
+          get :errors
+        end
+      end
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       # The documents (spec 08, D-642): the review queue, each document with its versions and
       # the review, and the person's folder; the company's types and the platform's settings.

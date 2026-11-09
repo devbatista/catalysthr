@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -475,6 +475,55 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
     t.index ["company_id", "date"], name: "index_daily_usages_on_company_id_and_date", unique: true
   end
 
+  create_table "data_import_rows", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "data_import_id", null: false
+    t.string "sheet", null: false
+    t.integer "line_number", null: false
+    t.integer "position", null: false
+    t.string "status", null: false
+    t.string "action", default: "none", null: false
+    t.text "payload"
+    t.text "issues"
+    t.text "diff"
+    t.string "record_type"
+    t.uuid "record_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_import_id", "position"], name: "index_data_import_rows_on_data_import_id_and_position", unique: true
+    t.index ["data_import_id", "status"], name: "index_data_import_rows_on_data_import_id_and_status"
+  end
+
+  create_table "data_imports", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "kind", null: false
+    t.string "status", default: "uploaded", null: false
+    t.string "original_filename", null: false
+    t.integer "row_count", default: 0, null: false
+    t.integer "valid_count", default: 0, null: false
+    t.integer "created_count", default: 0, null: false
+    t.integer "updated_count", default: 0, null: false
+    t.integer "unchanged_count", default: 0, null: false
+    t.integer "error_count", default: 0, null: false
+    t.integer "failed_count", default: 0, null: false
+    t.string "failure_reason"
+    t.jsonb "options", default: {}, null: false
+    t.uuid "created_by_id", null: false
+    t.boolean "assisted", default: false, null: false
+    t.datetime "validated_at"
+    t.datetime "confirmed_at"
+    t.datetime "finished_at"
+    t.datetime "purged_at"
+    t.datetime "undone_at"
+    t.uuid "undone_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "created_at"], name: "index_data_imports_on_company_id_and_created_at"
+    t.index ["created_by_id"], name: "index_data_imports_on_created_by_id"
+    t.index ["status", "created_at"], name: "index_data_imports_on_status_and_created_at"
+    t.index ["undone_by_id"], name: "index_data_imports_on_undone_by_id"
+  end
+
   create_table "department_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "company_id", null: false
     t.uuid "department_id", null: false
@@ -495,6 +544,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code"
+    t.index ["company_id", "code"], name: "index_departments_on_company_id_and_code", unique: true, where: "(code IS NOT NULL)"
     t.index ["company_id"], name: "index_departments_on_company_id"
     t.index ["parent_id"], name: "index_departments_on_parent_id"
     t.index ["unit_id"], name: "index_departments_on_unit_id"
@@ -1148,7 +1199,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "admission_template_id"
+    t.string "code"
     t.index ["admission_template_id"], name: "index_positions_on_admission_template_id"
+    t.index ["company_id", "code"], name: "index_positions_on_company_id_and_code", unique: true, where: "(code IS NOT NULL)"
     t.index ["company_id"], name: "index_positions_on_company_id"
   end
 
@@ -1511,6 +1564,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code"
+    t.index ["company_id", "code"], name: "index_units_on_company_id_and_code", unique: true, where: "(code IS NOT NULL)"
     t.index ["company_id"], name: "index_units_on_company_headquarters", unique: true, where: "headquarters"
     t.index ["company_id"], name: "index_units_on_company_id"
   end
@@ -1733,6 +1788,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_110000) do
   add_foreign_key "custom_field_definitions", "companies"
   add_foreign_key "daily_usages", "billing_accounts"
   add_foreign_key "daily_usages", "companies"
+  add_foreign_key "data_import_rows", "companies"
+  add_foreign_key "data_import_rows", "data_imports"
+  add_foreign_key "data_imports", "companies"
+  add_foreign_key "data_imports", "users", column: "created_by_id"
+  add_foreign_key "data_imports", "users", column: "undone_by_id"
   add_foreign_key "department_managers", "companies"
   add_foreign_key "department_managers", "departments", on_delete: :cascade
   add_foreign_key "department_managers", "memberships", on_delete: :cascade

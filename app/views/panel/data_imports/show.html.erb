@@ -1,0 +1,124 @@
+<%# One import (RN-18-001, steps 3 to 6): while it is read or recorded, the page refreshes
+    itself; then the preview with the counts, the errors line by line and the fields that
+    change (RN-18-006, RN-18-007); the confirmation of everything or only the valid lines;
+    and the result with the file of errors to fix and send again (P-18-04). %>
+<% content_for :title, data_import_kind_title(@import.kind) %>
+
+<p class="text-sm"><%= link_to t(".back"), data_imports_path, class: "link-button" %></p>
+<div class="mt-2 flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <h1 class="page-title"><%= data_import_kind_title(@import.kind) %></h1>
+    <p class="page-subtitle">
+      <%= t(".sent", file: @import.original_filename, name: @import.created_by.name, at: l(@import.created_at, format: "%d/%m/%Y %H:%M")) %>
+    </p>
+  </div>
+  <%= data_import_status_pill(@import) %>
+</div>
+
+<% if @import.working? %>
+  <p class="alert-info mt-6" role="status" data-reload-after="3000"><%= t(".working.#{@import.status}") %></p>
+<% elsif @import.failed? %>
+  <p class="alert-bad mt-6" role="alert"><%= @import.failure_reason %></p>
+<% end %>
+
+<% if @import.row_count.positive? %>
+  <section class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5" aria-label="<%= t(".counts") %>">
+    <% done = @import.finished? && !@import.cancelled? %>
+    <% [ [ :rows, @import.row_count ], [ (done ? :created : :to_create), @import.created_count ], [ (done ? :updated : :to_update), @import.updated_count ],
+         [ :unchanged, @import.unchanged_count ], [ :errors, @import.error_count + @import.failed_count ] ].each do |key, value| %>
+      <div class="card card-body" data-count="<%= key %>">
+        <p class="eyebrow"><%= t(".count.#{key}") %></p>
+        <p class="mt-2 text-2xl font-extrabold <%= key == :errors && value.positive? ? "text-bad" : "text-ink-strong" %>"><%= number_with_delimiter(value) %></p>
+      </div>
+    <% end %>
+  </section>
+<% end %>
+
+<% if @import.preview? %>
+  <section class="card card-body mt-6 space-y-3">
+    <h2 class="card-title"><%= t(".confirm_title") %></h2>
+    <% if @import.all_valid? %>
+      <p class="text-sm text-ink-soft"><%= t(".all_valid") %></p>
+    <% elsif @import.importable? %>
+      <p class="text-sm text-ink-soft"><%= t(".some_invalid", count: @import.error_count) %></p>
+    <% else %>
+      <p class="text-sm text-ink-soft"><%= t(".none_valid") %></p>
+    <% end %>
+    <div class="flex flex-wrap gap-3">
+      <% if @import.importable? && @import.all_valid? %>
+        <%= button_to t(".import_all"), confirm_data_import_path(@import), method: :patch, class: "btn btn-primary" %>
+      <% elsif @import.importable? %>
+        <%= button_to t(".import_valid", count: @import.valid_count), confirm_data_import_path(@import), method: :patch,
+          params: { only_valid: "1" }, class: "btn btn-primary", form: { data: { confirm: t(".import_valid_confirm", count: @import.error_count) } } %>
+      <% end %>
+      <%= button_to t(".cancel"), cancel_data_import_path(@import), method: :patch, class: "btn btn-secondary" %>
+    </div>
+  </section>
+<% end %>
+
+<% if @rows.any? %>
+  <section class="card mt-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 px-5 pt-5">
+      <h2 class="card-title"><%= t(".errors_title") %></h2>
+      <% if can?(:download_errors, @import) && Imports::ErrorsFile.new(@import).available? %>
+        <%= link_to t(".errors_file"), errors_data_import_path(@import), class: "btn btn-secondary btn-sm" %>
+      <% end %>
+    </div>
+    <div class="mt-3 overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".line") %></th>
+            <th><%= t(".column") %></th>
+            <th class="hidden md:table-cell"><%= t(".value") %></th>
+            <th><%= t(".message") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rows.each do |row| %>
+            <% row.issues.each do |issue| %>
+              <tr data-error-line="<%= row.line_number %>">
+                <td class="whitespace-nowrap">
+                  <%= t(".line_of", sheet: @sheets[row.sheet]&.title, line: row.line_number) %>
+                </td>
+                <td><%= issue["column"] ? data_import_column(@sheets, row, issue["column"]) : "—" %></td>
+                <td class="hidden md:table-cell font-mono text-sm"><%= issue["value"].presence || "—" %></td>
+                <td class="text-sm"><%= issue["message"] %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>
+
+<% if @updates.any? && @import.preview? %>
+  <section class="card mt-6">
+    <h2 class="card-title px-5 pt-5"><%= t(".updates_title") %></h2>
+    <div class="mt-3 overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".line") %></th>
+            <th><%= t(".column") %></th>
+            <th><%= t(".before") %></th>
+            <th><%= t(".after") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @updates.each do |row| %>
+            <% row.diff.each do |column, (before, after)| %>
+              <tr>
+                <td class="whitespace-nowrap"><%= t(".line_of", sheet: @sheets[row.sheet]&.title, line: row.line_number) %></td>
+                <td><%= data_import_column(@sheets, row, column) %></td>
+                <td class="text-sm text-ink-soft"><%= before.presence || "—" %></td>
+                <td class="text-sm font-bold"><%= after.presence || "—" %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

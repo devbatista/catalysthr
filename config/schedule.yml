@@ -176,3 +176,9 @@ dashboards_purge_activity:
   cron: "0 4 * * * America/Sao_Paulo"
   class: "Dashboards::PurgeActivityJob"
   queue: "default"
+
+# The imports' files and the lines' data after 90 days (spec 18, RN-18-010, P-18-07).
+imports_purge:
+  cron: "10 4 * * * America/Sao_Paulo"
+  class: "Imports::PurgeJob"
+  queue: "imports"

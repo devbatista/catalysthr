@@ -1591,8 +1591,100 @@ pt-BR:
       admission_forwarded: "%{actor} encaminhou a admissão de %{person} ao escritório %{firm}"
     hr:
       experience_end: "Fim da experiência"
+  # The code of units, departments and positions (spec 18, D-662)
+  structure_code:
+    label: "Código"
+    hint: "Opcional. Único na empresa, em letras maiúsculas, números, ponto, hífen ou sublinhado. A importação usa o código para achar este cadastro."
+  # The imports (spec 18, D-661, D-662)
+  imports:
+    statuses:
+      uploaded: "Enviada"
+      validating: "Validando"
+      preview: "Aguardando confirmação"
+      importing: "Importando"
+      completed: "Concluída"
+      completed_with_errors: "Concluída com erros"
+      failed: "Não lida"
+      cancelled: "Cancelada"
+      undone: "Desfeita"
+    kinds:
+      structure:
+        title: "Estrutura"
+        file: "estrutura"
+        description: "Unidades, departamentos com o departamento pai e cargos com o CBO, num arquivo XLSX com três abas. O código é a chave: um código que já existe atualiza o cadastro, e um novo cria."
+    structure:
+      sheets:
+        units: "Unidades"
+        departments: "Departamentos"
+        positions: "Cargos"
+      columns:
+        code: "Código"
+        unit_name: "Nome da unidade"
+        registration_type: "Tipo de inscrição"
+        registration_number: "Número de inscrição"
+        postal_code: "CEP"
+        street: "Logradouro"
+        street_number: "Número"
+        complement: "Complemento"
+        district: "Bairro"
+        city: "Cidade"
+        state: "UF"
+        time_zone: "Fuso horário"
+        department_name: "Nome do departamento"
+        unit_code: "Código da unidade"
+        parent_code: "Código do departamento pai"
+        position_name: "Nome do cargo"
+        cbo_code: "CBO"
+        salary_min: "Salário mínimo"
+        salary_max: "Salário máximo"
+        description: "Descrição"
+        requirements: "Requisitos"
+      hints:
+        code: "Letras maiúsculas, números, ponto, hífen ou sublinhado, até 30 caracteres. Único em cada aba."
+        time_zone: "Sem fuso, vale America/Sao_Paulo."
+        unit_code: "O código de uma unidade já cadastrada ou da aba Unidades."
+        parent_code: "Opcional. O código de um departamento já cadastrado ou desta aba, da mesma unidade."
+        cbo_code: "Os 6 números do código da CBO."
+        amount: "Em reais, como 2.500,00 ou 2500.00."
+    template:
+      instructions: "Instruções"
+      lists: "Listas"
+      intro:
+        - "Preencha uma linha por cadastro em cada aba. A primeira linha é o cabeçalho e não pode mudar de nome; a ordem das colunas não importa."
+        - "As colunas em azul são obrigatórias. Uma célula vazia não apaga o que já está cadastrado."
+        - "Antes de gravar, o sistema mostra uma prévia com os erros linha a linha. Nada muda até você confirmar."
+      tab: "Aba %{tab}"
+      columns: [ "Coluna", "Preenchimento", "Como preencher" ]
+      required: "Obrigatória"
+      optional: "Opcional"
+      see_list: "Escolha na lista da célula."
+      list_title: "Valor fora da lista"
+      list_error: "Esse valor não está na lista. A importação vai apontar o erro na prévia."
+    reader:
+      empty: "O arquivo não tem nenhuma linha preenchida."
+      too_many_rows: "O arquivo tem mais de %{max} linhas. Divida em arquivos menores e envie um de cada vez."
+      unreadable: "Não foi possível ler o arquivo. Confira se é uma planilha XLSX ou CSV válida, salva sem senha."
+      xlsx_only: "Esta importação tem mais de uma aba e só aceita o modelo em XLSX."
+      missing_columns: "Faltam colunas obrigatórias na aba %{sheet}: %{columns}. Use os nomes do modelo no cabeçalho."
+    errors:
+      blank: "%{column} é obrigatório."
+      repeated: "Este código já aparece na linha %{line} desta aba."
+      not_in_list: "%{column} não está na lista de opções."
+      invalid_amount: "%{column} não é um valor em reais."
+      unit_missing: "Nenhuma unidade com o código %{code}, nem cadastrada nem na aba Unidades."
+      unit_invalid: "A unidade %{code} tem erro na linha %{line} da aba Unidades."
+      unit_changes: "Um departamento cadastrado não muda de unidade. Crie outro departamento na unidade nova."
+      parent_missing: "Nenhum departamento com o código %{code}, nem cadastrado nem nesta aba."
+      parent_invalid: "O departamento pai %{code} tem erro na linha %{line}."
+      other_unit: "O departamento pai precisa ser da mesma unidade."
+      cycle: "Os departamentos pai desta aba voltam para este departamento."
+    errors_file:
+      column: "Erros"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    data_imports:
+      name: "Importações"
+      description: "Ligada, o RH administrador importa a estrutura e os cadastros da implantação pela planilha modelo, com prévia e confirmação. Desligada, o menu não mostra as importações (spec 18, D-661)."
     dashboards:
       name: "Painel do RH"
       description: "Ligada, a tela inicial do RH vira o painel, com os indicadores, as pendências por unidade, os vencimentos, a atividade recente e o contrato. Desligada, a tela inicial fica como antes (spec 17, D-657)."
@@ -1651,6 +1743,7 @@ pt-BR:
       legal: "Jurídico"
     home: "Painel"
     users: "Usuários"
+    data_imports: "Importações"
     accounting_firm: "Escritório contábil"
     companies: "Empresas"
     portfolio: "Carteira"
@@ -2795,6 +2888,83 @@ pt-BR:
           other: "em %{count} dias"
         empty: "Nada vence nos próximos 30 dias."
         expired: "Ver os documentos já vencidos"
+    data_imports:
+      index:
+        title: "Importações"
+        subtitle: "Para colocar a empresa no sistema sem digitar de novo. Baixe o modelo, preencha e envie: o sistema mostra os erros antes de gravar."
+        kinds: "Tipos de importação"
+        step: "Passo %{number}"
+        template: "Baixar o modelo"
+        send: "Enviar o arquivo"
+        history: "Histórico"
+        empty: "Nenhuma importação ainda."
+        sent: "Enviada em"
+        kind: "Tipo"
+        file: "Arquivo"
+        status: "Situação"
+        counts: "Linhas"
+        counts_line: "%{rows} linhas · %{created} criadas · %{updated} atualizadas · %{errors} com erro"
+      new:
+        back: "Importações"
+        steps_title: "Como funciona"
+        steps:
+          - "Baixe o modelo, que já vem com as listas de opções."
+          - "Preencha e envie o arquivo."
+          - "Confira a prévia: quantas linhas serão criadas e atualizadas, e os erros linha a linha."
+          - "Confirme. Só então o sistema grava."
+        template: "Baixar o modelo"
+        file: "Arquivo"
+        file_hint: "%{formats}, até %{size} MB e %{rows} linhas."
+        submit: "Enviar e validar"
+        errors:
+          blank: "Escolha o arquivo para enviar."
+          format: "Esta importação aceita só %{formats}."
+          size: "O arquivo passa de %{size} MB. Divida em arquivos menores."
+      show:
+        back: "Importações"
+        sent: "%{file}, enviado por %{name} em %{at}."
+        working:
+          uploaded: "Arquivo recebido. A validação começa em instantes; esta página se atualiza sozinha."
+          validating: "Validando as linhas. Esta página se atualiza sozinha."
+          importing: "Gravando as linhas confirmadas. Esta página se atualiza sozinha."
+        counts: "Contagens"
+        count:
+          rows: "Linhas"
+          to_create: "Serão criadas"
+          to_update: "Serão atualizadas"
+          created: "Criadas"
+          updated: "Atualizadas"
+          unchanged: "Sem mudança"
+          errors: "Com erro"
+        confirm_title: "Confirmar a importação"
+        all_valid: "Nenhuma linha tem erro. Confira as mudanças abaixo e confirme."
+        some_invalid:
+          one: "1 linha tem erro e não será gravada. Corrija e envie de novo, ou importe só as válidas."
+          other: "%{count} linhas têm erro e não serão gravadas. Corrija e envie de novo, ou importe só as válidas."
+        none_valid: "Nenhuma linha pode ser gravada. Corrija os erros e envie o arquivo de novo."
+        import_all: "Importar tudo"
+        import_valid:
+          one: "Importar só a linha válida"
+          other: "Importar só as %{count} válidas"
+        import_valid_confirm:
+          one: "A linha com erro fica de fora. Importar as outras?"
+          other: "As %{count} linhas com erro ficam de fora. Importar as outras?"
+        cancel: "Cancelar"
+        errors_title: "Erros"
+        errors_file: "Baixar o arquivo com os erros"
+        line: "Linha"
+        line_of: "%{sheet}, linha %{line}"
+        column: "Coluna"
+        value: "Valor"
+        message: "Erro"
+        updates_title: "O que muda nos cadastros existentes"
+        before: "Antes"
+        after: "Depois"
+      confirm:
+        not_ready: "Esta importação não pode ser confirmada assim."
+        confirmed: "Importação confirmada. As linhas estão sendo gravadas."
+      cancel:
+        cancelled: "Importação cancelada. Nada foi gravado."
     home:
       coming_soon:
         default_welcome: "Acesse sua conta."
@@ -5148,6 +5318,7 @@ pt-BR:
         employment: "Vínculo"
       department:
         name: "Nome"
+        code: "Código"
         unit: "Unidade"
         parent: "Departamento pai"
         status: "Situação"
@@ -5155,6 +5326,7 @@ pt-BR:
         membership: "Gestor"
       position:
         name: "Nome"
+        code: "Código"
         cbo_code: "CBO"
         salary_min_cents: "Salário mínimo"
         salary_max_cents: "Salário máximo"
@@ -5163,6 +5335,7 @@ pt-BR:
         status: "Situação"
       unit:
         name: "Nome"
+        code: "Código"
         registration_type: "Tipo de inscrição"
         registration_number: "Número de inscrição"
         postal_code: "CEP"

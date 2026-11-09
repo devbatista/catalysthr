@@ -14,6 +14,11 @@
       <%= form.label :name, t("panel.departments.form.name"), class: "field-label" %>
       <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
     </div>
+    <div>
+      <%= form.label :code, t("structure_code.label"), class: "field-label" %>
+      <%= form.text_field :code, maxlength: StructureCode::MAX_LENGTH, autocapitalize: "characters", class: "input font-mono", aria: { describedby: "department_code_hint" } %>
+      <p class="field-hint" id="department_code_hint"><%= t("structure_code.hint") %></p>
+    </div>
 
     <% if department.persisted? %>
       <p class="text-sm"><span class="field-label inline"><%= t("panel.departments.form.unit") %>:</span> <%= department.unit.name %></p>

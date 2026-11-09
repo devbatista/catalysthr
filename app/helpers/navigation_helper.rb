@@ -153,6 +153,8 @@ module NavigationHelper
         (nav_item(t("navigation.document_templates"), document_templates_path, controller_path == "panel/document_templates") if admissions_on? && can?(:create, DocumentTemplate)),
         (nav_item(t("navigation.document_types"), document_types_path,
           controller_path.in?(%w[panel/document_types panel/position_document_expirations])) if can?(:create, DocumentType)),
+        # The implementation's imports (spec 18, D-661), before the accounting firm.
+        (nav_item(t("navigation.data_imports"), data_imports_path, controller_path == "panel/data_imports") if FeatureFlags.enabled?(FeatureFlags::DATA_IMPORTS) && can?(:read, DataImport)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.contract"), new_contract_path, controller_path == "panel/contracts") if checkout_allowed?(company)),
         (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),

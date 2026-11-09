@@ -19,6 +19,7 @@ class Unit < ApplicationRecord
   POSTAL_CODE_FORMAT = /\A\d{8}\z/
 
   acts_as_tenant :company
+  include StructureCode
 
   has_many :membership_units, dependent: :destroy
 

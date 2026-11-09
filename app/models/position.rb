@@ -8,6 +8,7 @@ class Position < ApplicationRecord
   STATUSES = %w[active inactive].freeze
 
   acts_as_tenant :company
+  include StructureCode
 
   # The position's own admission model, ahead of the company's default (D-204, RN-06-003).
   belongs_to :admission_template, class_name: "ProcessTemplate", optional: true, inverse_of: :positions
