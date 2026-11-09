@@ -100,8 +100,6 @@ module Imports
       model.where.not(code: nil).order(:code).pluck(:code).map { |code| [ code, code ] }
     end
 
-    def self.key(code) = code.to_s.strip.upcase.presence
-
     # The preview (RN-18-005, RN-18-006): a new employment is recorded and undone, so it goes
     # through every rule of the manual form; an existing one is compared. Nothing stays.
     def validate(lines)
@@ -109,7 +107,6 @@ module Imports
       @profiles = People.profiles_by_cpf(lines.map { |line| People.cpf(line.values["cpf"]) })
       numbers = lines.filter_map { |line| line.values["registration_number"]&.strip }
       @employments = Employment.where(registration_number: numbers).includes(revisions: %i[position unit department]).index_by(&:registration_number)
-      @structure = %w[Position Unit Department].to_h { |name| [ name, name.constantize.where.not(code: nil).index_by(&:code) ] }
       seen = {}
       numbers_seen = {}
       lines.map do |line|
@@ -127,7 +124,6 @@ module Imports
       @profiles = People.profiles_by_cpf([ People.cpf(values["cpf"]) ])
       @employments = Employment.where(registration_number: values["registration_number"]&.strip).includes(revisions: %i[position unit department])
         .index_by(&:registration_number)
-      @structure = nil
       parsed = read(line)
       apply_error!(parsed.issues) if parsed.issues.any?
 
@@ -152,19 +148,8 @@ module Imports
     def read(line)
       parsed = parse(line, TYPES)
       parsed.values["registration_number"] = parsed["registration_number"]&.strip
-      %w[position_code unit_code department_code].each do |column|
-        code = self.class.key(parsed[column])
-        next unless code
-
-        record = find_structure(column, code)
-        record ? parsed.values[column] = record : parsed.issues << issue(column, line, :code_missing, code: code)
-      end
+      resolve_codes(parsed)
       parsed
-    end
-
-    def find_structure(column, code)
-      model = { "position_code" => Position, "unit_code" => Unit, "department_code" => Department }.fetch(column)
-      @structure ? @structure.fetch(model.name)[code] : model.with_code(code).first
     end
 
     # The same employment twice, or a registration number of two CPFs, in the file.

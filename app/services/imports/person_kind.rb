@@ -67,6 +67,24 @@ module Imports
       end
     end
 
+    # The structure's records by the code (D-662), loaded once per import.
+    CODED = { "position_code" => "Position", "unit_code" => "Unit", "department_code" => "Department" }.freeze
+
+    # The codes of the line replaced by their records; a code that does not exist is an error.
+    def resolve_codes(parsed)
+      CODED.each do |column, model|
+        code = parsed[column].to_s.strip.upcase.presence
+        next unless code
+
+        record = coded(model)[code]
+        record ? parsed.values[column] = record : parsed.issues << issue(column, parsed.line, :code_missing, code: code)
+      end
+    end
+
+    def coded(model)
+      (@coded ||= {})[model] ||= model.constantize.where.not(code: nil).index_by(&:code)
+    end
+
     # The model's errors by the column they belong to; the others without a column.
     def model_issues(record, line, columns = {})
       record.errors.map do |error|
