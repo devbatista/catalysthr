@@ -4,7 +4,8 @@
     bar with the tabs, each with its count. Ordinary links, without a single page app. %>
 <% tabs = portal_tabs %>
 <% heading = content_for(:portal_title) || content_for(:title) %>
-<div class="lg:flex">
+<%# data-app-opened: the installed app tells the server it was opened, for the partner's adoption (RN-17-041, D-657). %>
+<div class="lg:flex" data-app-opened="<%= portal_app_opened_path %>">
   <aside aria-label="<%= t("navigation.menu") %>"
     class="sticky top-(--top-banners) hidden h-[calc(100dvh-var(--top-banners))] w-[228px] shrink-0 flex-col gap-5 overflow-y-auto bg-brand-secondary px-3 py-5 text-brand-on-secondary lg:flex">
     <div class="px-1.5">

@@ -12,6 +12,9 @@ class PartnerAbility
     return if membership.nil?
 
     can :read, :partner_panel
+    # The consolidated view, by company and never by person: the whole portfolio for the
+    # administrator, the assigned companies for the consultant (spec 17, RN-17-040).
+    can :read, :partner_overview
     # The partner's models of process: the consultant reads them (spec 06, section 6).
     can :read, SharedProcessTemplate, partner_id: partner.id
     admin(user, partner) if membership.roles.include?("partner_admin")

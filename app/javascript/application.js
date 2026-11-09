@@ -446,3 +446,21 @@ if (dashboard) {
   loadAll(false)
   setInterval(showUpdated, 5_000)
 }
+
+// The portal opened as the installed app (spec 17, RN-17-041, D-657): the server keeps only
+// the date, for the partner's adoption figures. Once a day per device; the day stays in the
+// browser, never anything about the person (RN-16-063).
+const appOpened = document.querySelector("[data-app-opened]")
+if (appOpened && (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true)) {
+  const today = new Date().toISOString().slice(0, 10)
+  let last = null
+  try { last = window.localStorage.getItem("app_opened.day") } catch { /* private mode */ }
+  if (last !== today) {
+    fetch(appOpened.dataset.appOpened, {
+      method: "POST",
+      headers: { "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || "" }
+    }).then((response) => {
+      if (response.ok) try { window.localStorage.setItem("app_opened.day", today) } catch { /* private mode */ }
+    }).catch(() => { /* offline: tries again on the next opening */ })
+  }
+}

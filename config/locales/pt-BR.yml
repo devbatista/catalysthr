@@ -3735,12 +3735,51 @@ pt-BR:
           back: "Voltar para a equipe"
           revoke_confirm: "Remover o acesso desta pessoa ao escritório? As sessões dela serão encerradas."
     partner_panel:
+      overview:
+        portfolio:
+          title: "Carteira e consumo"
+          company: "Empresa"
+          employees: "Colaboradores ativos"
+          modules: "Módulos"
+          no_modules: "Nenhum módulo ligado"
+          total: "Total da carteira"
+          contract_peak:
+            one: "1 colaborador no pico do mês"
+            other: "%{count} colaboradores no pico do mês"
+          contract_band:
+            one: "1 de %{band} colaboradores da faixa no pico do mês"
+            other: "%{count} de %{band} colaboradores da faixa no pico do mês"
+        health:
+          title: "Saúde operacional"
+          legend: "Verde sem atrasos. Amarelo com item de processo vencido, pedido de documento vencido ou admissão parada há mais de %{stopped} dias. Vermelho com admissão parada há mais de %{red} dias."
+          company: "Empresa"
+          signal: "Sinal"
+          stopped: "Admissões paradas há mais de %{days} dias"
+          stopped_red:
+            one: "1 há mais de %{days} dias"
+            other: "%{count} há mais de %{days} dias"
+          documents: "Documentos pendentes"
+          late_requests: "Pedidos vencidos"
+          overdue: "Itens atrasados"
+          compact: "Documentos %{documents} · pedidos vencidos %{late} · itens atrasados %{overdue}"
+          signals:
+            green: "Verde"
+            yellow: "Amarelo"
+            red: "Vermelho"
+        adoption:
+          title: "Adoção"
+          company: "Empresa"
+          people: "Colaboradores ativos"
+          portal: "Usaram o portal em %{days} dias"
+          app_or_push: "App instalado ou push ativo"
+          percent: "%{percent}%"
       invoices:
         index:
           title: "Faturas"
           subtitle: "As faturas do contrato do parceiro com a CatalystHR, uma por mês, emitidas 3 dias antes do vencimento."
       home:
         index:
+          portfolio_title: "Empresas da carteira"
           title: "Carteira"
           subtitle: "Empresas clientes de %{partner} que você atende."
           company: "Empresa"
