@@ -1,7 +1,7 @@
 # 17 — Painéis e relatórios gerenciais
 
-> Status: aprovado (fórmulas na conferência do especialista em DP) · Última atualização: 2026-10-14
-> Decisões: D-085, D-086, D-107, D-190, D-221, D-386, D-440 a D-451, D-570 ([decisoes.md](decisoes.md))
+> Status: aprovado (fórmulas na conferência do especialista em DP) · Última atualização: 2026-11-09
+> Decisões: D-085, D-086, D-107, D-190, D-221, D-386, D-440 a D-451, D-570, D-657 ([decisoes.md](decisoes.md))
 > Os itens **[P-17-01]** a **[P-17-24]** foram todos aprovados sem ajuste (D-451, seção 10). Os itens **[P-17-25]** e **[P-17-26]** (clientes de alocação, D-570) foram aprovados sem ajuste (D-572).
 
 ## 1. Objetivo
