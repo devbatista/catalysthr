@@ -43,6 +43,13 @@ notifications_release_held:
   class: "Notifications::ReleaseHeldJob"
   queue: "notifications"
 
+# Puts up the scheduled notices of the board and ends the ones past their validity (spec 15,
+# RN-15-071, D-656).
+announcements_publish_scheduled:
+  cron: "*/5 * * * * America/Sao_Paulo"
+  class: "Announcements::PublishScheduledJob"
+  queue: "notifications"
+
 # Sends the daily digests whose hour came, 7h30 in each time zone, from Monday to Friday. The
 # window goes past 7h30 in Acre, so a run lost to a deploy is made up (spec 15, RN-15-041, D-655)
 notifications_digest:

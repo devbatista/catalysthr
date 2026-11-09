@@ -15,6 +15,18 @@ module Notifications
         batch.delete_all
       end
       NotificationDigest.where(created_at: ...Notification::RETENTION.ago).in_batches(of: BATCH, &:delete_all)
+      purge_announcements
+    end
+
+    private
+
+    # The board's history keeps a notice 2 years after its validity or its withdrawal
+    # (RN-15-091, D-656); its reads and its file leave with it.
+    def purge_announcements
+      company_ids = CrossCompany.scope(Announcement, Company.all).past_retention.distinct.pluck(:company_id)
+      Company.where(id: company_ids).find_each do |company|
+        ActsAsTenant.with_tenant(company) { Announcement.past_retention.find_each(&:destroy!) }
+      end
     end
   end
 end

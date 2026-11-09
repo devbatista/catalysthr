@@ -1,0 +1,47 @@
+<%# The HR's board (spec 15, RN-15-070, RN-15-072, D-656): the scheduled first, then the drafts,
+    the published and the ended, each with its audience and validity. The HR analyst sees those
+    for everyone and those of their units. %>
+<% content_for :title, t(".title") %>
+<% zone = Announcements::Form.zone(Current.company) %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <% if can?(:create, Announcement) %>
+    <%= link_to t(".new"), new_announcement_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<section class="card card-body mt-6 space-y-3">
+  <% if @announcements.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".announcement") %></th>
+            <th class="hidden md:table-cell"><%= t(".audience") %></th>
+            <th class="hidden md:table-cell"><%= t(".expires_at") %></th>
+            <th><%= t(".status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @announcements.each do |announcement| %>
+            <tr>
+              <td>
+                <%= link_to announcement.title, announcement_path(announcement), class: "link-button font-bold" %>
+                <% if announcement.pinned %><span class="pill pill-info ml-1"><%= t("announcements.pinned") %></span><% end %>
+                <p class="mt-1 text-xs text-ink-soft"><%= t(".author", name: announcement.author.name) %></p>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= announcement_audience_summary(announcement.audience_filter) %></p>
+              </td>
+              <td class="hidden text-sm md:table-cell"><%= announcement_audience_summary(announcement.audience_filter) %></td>
+              <td class="hidden text-sm md:table-cell"><%= l(announcement.expires_at.in_time_zone(zone).to_date) %></td>
+              <td><%= announcement_status_pill(announcement) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</section>

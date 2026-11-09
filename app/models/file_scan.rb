@@ -11,8 +11,10 @@ class FileScan < ApplicationRecord
   enum :status, STATUSES.index_by(&:itself), validate: true
 
   after_create_commit -> { Antivirus::ScanJob.perform_later(self) }, if: :scanning?
-  # A document's version waits for its files' scans (spec 08, RN-08-020).
+  # A document's version waits for its files' scans (spec 08, RN-08-020), and a notice of the
+  # board for its attachment's (spec 15, D-656).
   after_update_commit -> { Documents::ScanFinished.call(self) }, if: -> { saved_change_to_status? && !scanning? }
+  after_update_commit -> { Announcements::ScanFinished.call(self) }, if: -> { saved_change_to_status? && !scanning? }
 
   # A file just uploaded waits for its scan; a copy of a scanned file takes its result,
   # since the content is the same (D-640).

@@ -1,9 +1,11 @@
-<%# "Mais" (spec 16, RN-16-011, D-645): the items that already exist. Payslips, invoices,
-    evaluations, the assistant, the board, internal jobs, privacy and help come with their
-    specs. %>
+<%# "Mais" (spec 16, RN-16-011, D-645): the items that already exist, the board among them
+    (D-656). Payslips, invoices, evaluations, the assistant, internal jobs, privacy and help
+    come with their specs. %>
 <% content_for :title, t(".title") %>
+<% board = current_profile && FeatureFlags.enabled?(FeatureFlags::ANNOUNCEMENTS) && can?(:read_board, Announcement) %>
 <% items = [
   ([ t(".team"), t(".team_hint"), portal_team_path ] if portal_manager?),
+  ([ t(".announcements"), t(".announcements_hint"), portal_announcements_path ] if board),
   ([ t(".profile"), t(".profile_hint"), portal_profile_path ] if current_profile),
   [ t(".notifications"), t(".notifications_hint"), portal_notifications_path ],
   [ t(".preferences"), t(".preferences_hint"), edit_portal_notification_preferences_path ],

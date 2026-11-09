@@ -1,7 +1,8 @@
 <%# The portal's start (spec 16, RN-16-020, D-429, D-645), as in the prototype: "Minha
-    equipe" for managers, the pending items with their dates and the processes' progress.
-    The time tracking, notices, requests and payslip blocks come with their specs; an empty
-    block does not show. Nothing sensitive appears here (RN-16-021). %>
+    equipe" for managers, the pending items with their dates, the board's pinned and unread
+    notices (D-656) and the processes' progress. The time tracking, requests and payslip
+    blocks come with their specs; an empty block does not show. Nothing sensitive appears
+    here (RN-16-021). %>
 <% name = (current_profile&.display_name || current_user.name).split.first %>
 <% content_for :title, t(".title") %>
 <% content_for :portal_title, t(".hello", name: name) %>
@@ -46,6 +47,18 @@
         <% end %>
       <% end %>
     </section>
+
+    <% if @announcements.any? %>
+      <section aria-labelledby="announcements-title" class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 id="announcements-title" class="section-title"><%= t(".announcements") %></h2>
+          <%= link_to t(".announcements_open"), portal_announcements_path, class: "link-button text-sm" %>
+        </div>
+        <% @announcements.each do |announcement| %>
+          <%= render "panel/portal/announcements/item", announcement: announcement, unread: !@announcement_read_ids.include?(announcement.id) %>
+        <% end %>
+      </section>
+    <% end %>
   </div>
 
   <div class="space-y-6">

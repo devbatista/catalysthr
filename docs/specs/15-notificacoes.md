@@ -215,12 +215,12 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 - **RN-15-070** — Quem publica: o **RH administrador**, para a empresa toda, e o **RH analista**, para as unidades dele **[P-15-22]**.
 - **RN-15-071** — O comunicado tem:
   - título e texto, com o botão "Escrever com IA" (D-391);
-  - anexo opcional (PDF ou imagem, até 10 MB);
-  - público: todos, ou um filtro por unidade, departamento, cargo e tipo de vínculo;
+  - anexo opcional (PDF ou imagem, até 10 MB), que passa pela varredura de vírus antes de o comunicado ir ao ar (D-656);
+  - público: todos, ou um filtro por unidade, departamento, cargo e tipo de vínculo. O filtro é aplicado na hora da leitura: quem entra depois vê o comunicado enquanto ele valer, e o aviso vai para quem estava no público na publicação (D-656);
   - publicação imediata ou agendada;
-  - validade, depois da qual sai do mural;
+  - validade, obrigatória, sugerida em 30 dias, depois da qual sai do mural (D-656);
   - opção de **fixar no topo**.
-- **RN-15-072** — O mural fica no portal do colaborador e no painel do RH. O RH vê quantas pessoas do público abriram o comunicado.
+- **RN-15-072** — O mural fica no portal do colaborador e no painel do RH. O RH vê quantas pessoas do público abriram o comunicado, contra o público de hoje com acesso ao portal (D-656). Publicado, o comunicado só muda a validade e o fixar no topo; para corrigir o texto, é retirado e publicado de novo (D-656).
 - **RN-15-073** — O comunicado não tem valor de ciência. Para registrar ciência, o RH publica um documento com ciência (D-279). A tela de publicação lembra disso **[P-15-23]**.
 - **RN-15-074** — O aviso usa o tipo `announcements.published`: sino, push e e-mail com o título e o texto (sem anexo, só o link). No WhatsApp, vai o modelo padrão "Você tem um novo comunicado de {{marca}}" com o link. Comunicados seguem o horário de silêncio como qualquer aviso.
 
@@ -261,6 +261,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 | Canais padrão da empresa por tipo | RH administrador |
 | Lembrete de marcação | RH administrador |
 | Publicar comunicado | RH administrador (empresa toda), RH analista (unidades dele) **[P-15-22]** |
+| Editar e retirar comunicado | Quem publicou, RH administrador (D-656) |
 | Ver quantos abriram o comunicado | Quem publicou, RH administrador |
 | Modelos de WhatsApp, números e catálogo | Superadmin, suporte |
 | Consumo de WhatsApp | Como a linha "Consumo" da spec 03 |
@@ -310,10 +311,11 @@ punch_reminder_settings
 
 announcements
   id, company_id, author_id, title, body, attachment (Active Storage),
-  audience (jsonb), publish_at, expires_at, pinned, status
+  audience (jsonb), publish_at, expires_at, pinned, status,
+  published_at, withdrawn_at, withdrawn_by_id
 
 announcement_reads
-  announcement_id, membership_id, read_at
+  id, company_id, announcement_id, membership_id, read_at
 
 users (acréscimo)
   email_status ('valid'|'bounced'|'complained'), email_status_at
@@ -332,8 +334,9 @@ users (acréscimo)
 | `Notifications::PunchRemindersJob` | A cada 5 minutos | Procura marcações previstas sem registro além da tolerância |
 | `Notifications::FallbackJob` | Ao falhar uma entrega obrigatória | Cria a entrega no próximo canal |
 | `Notifications::UsageAlertsJob` | A cada hora | Avisos de 80% e 100% da cota de WhatsApp |
-| `Announcements::PublishScheduledJob` | A cada 5 minutos | Publica os comunicados agendados e retira os vencidos |
-| `Notifications::PurgeJob` | Diário | Arquiva notificações de 90 dias e apaga entregas de 1 ano |
+| `Announcements::PublishScheduledJob` | A cada 5 minutos | Publica os comunicados agendados com o anexo limpo e encerra os vencidos (D-656) |
+| `Announcements::NotifyJob` | Ao publicar um comunicado | Avisa o público daquele momento (D-656) |
+| `Notifications::PurgeJob` | Diário | Arquiva notificações de 90 dias, apaga entregas de 1 ano e comunicados 2 anos depois da validade ou da retirada (RN-15-091) |
 
 - **Fila:** os envios ficam na fila `notifications` do Sidekiq. O ponto continua prioritário (P-10-26) **[P-15-31]**.
 - **E-mail:** Action Mailer com o SES pela gem `aws-sdk-rails`, com um *configuration set* que publica os eventos de entrega, devolução e reclamação no SNS, recebidos num endpoint com a assinatura conferida **[P-15-24]**.
