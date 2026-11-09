@@ -191,10 +191,11 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 15c. Push e silêncio: inscrições, service worker, convite no Início, "Minhas notificações" no portal, silêncio pela regra fixa, liberação agrupada, cancelamento do que já foi lido e canal de reserva, com a flag `push_notifications` (RN-15-003, RN-15-004, RN-15-030, RN-15-031, RN-15-033 a RN-15-035, RN-15-080, RN-15-081, CA-15-001 sem o WhatsApp, CA-15-004, CA-15-013) (PR #128)
   - [x] 15d. Resumo diário por e-mail, com a flag `notification_digest` (RN-15-040 a RN-15-044, CA-15-005, CA-15-006, D-655) (PR #129, na `main` pelo #128)
   - [x] 15e. Mural de comunicados no portal e no painel, com a flag `announcements`: publicação pelo RH administrador e pelo analista nas unidades dele, público lido na hora, espera pela varredura do anexo, aviso pelo sino, e-mail e push, contagem de quem abriu e histórico de 2 anos (RN-15-070 a RN-15-074, RN-15-091, CA-15-011, D-656). O WhatsApp do aviso entra com o bloco dele (PR #130, na `main` pelo #128). As flags `push_notifications`, `notification_digest` e `announcements` ficam desligadas em produção até a fase de validação (chaves VAPID, aparelhos reais e saída do sandbox do SES)
-- [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro. Em 3 PRs (D-657), com a flag `dashboards`; o que depende de módulo ainda não construído não aparece e entra com o módulo, e a exportação e a comparação entre empresas ficam para a fase 5:
+- [x] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro. Em 3 PRs (D-657), com a flag `dashboards`; o que depende de módulo ainda não construído não aparece e entra com o módulo, e a exportação e a comparação entre empresas ficam para a fase 5:
   - [x] 17a. Painel do RH: indicadores, pendências por unidade, próximos vencimentos, atividade recente (90 dias), bloco Contrato e consumo, filtros de unidade e cliente, cache de 60 segundos e blocos em paralelo, com as listas novas de documentos pendentes, tarefas atrasadas e vencimentos (RN-17-001 a RN-17-005, RN-17-010 a RN-17-014, RN-17-030, RN-17-031, RN-17-090, RN-17-091, CA-17-001, CA-17-002, D-658) (PR #133). O CA-17-012 está coberto pela estrutura, e o CA-17-003 vale com o bloco Folha, na fase 4
   - [x] 17b. Painel do gestor: equipe ativa e afastada, "Esperando por você" com os itens de processo, vencimentos só com o texto e fins de experiência, com as mesmas consultas do "Minha equipe" do portal (RN-17-004, RN-17-020, RN-17-021, D-659) (PR #134). O CA-17-004 fica para a fase 3, com o banco de horas
-  - [ ] 17c. Visão consolidada do parceiro: carteira e consumo, saúde operacional com os sinais e adoção com o registro do app instalado (RN-17-040 a RN-17-042, CA-17-005)
+  - [x] 17c. Visão consolidada do parceiro na tela inicial dele: carteira e consumo, saúde operacional com os sinais e adoção com o registro do app instalado (RN-17-040 a RN-17-042, CA-17-005, D-660) (PR #135)
+  - Ficam com outras specs e fases: a aprovação de solicitações no painel do RH e no do gestor (spec 09), o resumo operacional e as partes de IA da adoção e do consumo (spec 14), o certificado A1 nos vencimentos (spec 13), os blocos e as ausências de ponto, com o CA-17-004 (fase 3), os blocos de folha e eSocial, com o CA-17-003 (fase 4), e a exportação, a comparação entre empresas e os relatórios (fase 5). A flag `dashboards` fica desligada em produção até o responsável ligar
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
 
 **Leva 2, cada uma depois da resposta que muda o desenho:**
@@ -256,7 +257,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige. Criar antes a chave `alias/catalysthr-a1` no KMS, com rotação anual (RN-20-052), e dar ao usuário da aplicação a permissão de criptografar e descriptografar com ela
 - [ ] **Spec 11:** regras de ponto, jornadas, feriados, apuração, banco de horas, fechamento, espelho, contestação
 - [ ] **Spec 15:** lembrete de marcação e silêncio pela jornada (RN-15-032, CA-15-002, CA-15-003, D-654)
-- [ ] **Spec 17:** blocos de ponto e relatório de absenteísmo e jornada
+- [ ] **Spec 17:** blocos de ponto, ausências e banco de horas no painel do gestor (CA-17-004) e relatório de absenteísmo e jornada
 - [ ] **Spec 18:** importação de jornadas e saldos
 - [ ] **Spec 20:** teste de carga com 2.000 marcações por minuto
 
@@ -286,7 +287,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 09:** férias (pedido, validações, férias coletivas, calendário, aviso com ciência) e rescisão com pagamento
 - [ ] **Spec 07:** S-2190 e S-2200 na admissão
 - [ ] **Spec 18:** acumulados da folha, XMLs do eSocial e conversores de Domínio, Questor e Alterdata
-- [ ] **Spec 17:** bloco de folha e relatório de custo de pessoal
+- [ ] **Spec 17:** blocos de folha e eSocial no painel do RH e na visão do parceiro (CA-17-003) e relatório de custo de pessoal
 
 ### Pronto quando
 - [ ] As telas novas da fase seguem a base visual e o protótipo, conferidas no computador e no celular, e os módulos entregues saíram do "Em breve" (D-598)
