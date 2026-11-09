@@ -1606,6 +1606,7 @@ pt-BR:
       completed_with_errors: "Concluída com erros"
       failed: "Não lida"
       cancelled: "Cancelada"
+      undoing: "Desfazendo"
       undone: "Desfeita"
     kinds:
       structure:
@@ -1809,6 +1810,14 @@ pt-BR:
         position_code: "Vazio mantém o cargo que valia antes desta data. O mesmo vale para as outras colunas."
         salary: "Em reais, como 2.500,00."
         justification: "Obrigatória quando o salário mensal sai da faixa do cargo."
+    undo:
+      employment: "Matrícula %{number} de %{name}"
+      blockers:
+        invitation_accepted: "aceitou o convite e já acessa o portal."
+        changed_later: "mudou depois da importação."
+        used_by: "tem cadastro ligado criado depois da importação (%{what})."
+        missing: "%{model} atualizado pela importação não existe mais."
+        linked: "outro cadastro aponta para um registro desta importação (%{kind})."
     template:
       instructions: "Instruções"
       lists: "Listas"
@@ -3109,6 +3118,7 @@ pt-BR:
           uploaded: "Arquivo recebido. A validação começa em instantes; esta página se atualiza sozinha."
           validating: "Validando as linhas. Esta página se atualiza sozinha."
           importing: "Gravando as linhas confirmadas. Esta página se atualiza sozinha."
+          undoing: "Desfazendo a importação. Esta página se atualiza sozinha."
         counts: "Contagens"
         count:
           rows: "Linhas"
@@ -3147,10 +3157,19 @@ pt-BR:
         invite_title: "Próximo passo: liberar o acesso ao portal"
         invite_text: "A importação não enviou nenhum convite. Quando quiser, convide de uma vez quem ainda não tem acesso; quem não tem e-mail aparece na lista para receber o link."
         invite_all: "Convidar todos sem acesso"
+        undo_title: "Desfazer a importação"
+        undo_text: "Volta tudo o que esta importação mudou: os cadastros criados são excluídos e os atualizados voltam aos valores de antes. Só é possível enquanto nada dela foi usado, e até 90 dias depois do envio."
+        undo: "Desfazer a importação"
+        undo_confirm: "Desfazer a importação inteira? Os cadastros criados por ela serão excluídos."
+        undo_blocked_title: "A importação não pode ser desfeita"
+        undo_blocked_text: "Estes cadastros já foram usados ou mudaram depois. Corrija o que for preciso com uma nova importação de atualização ou pelas telas."
+        undone: "Importação desfeita por %{name} em %{at}. Nada do que ela gravou continua no sistema."
       confirm:
         not_ready: "Esta importação não pode ser confirmada assim."
         declaration_missing: "Marque a declaração de que as contas estão no CPF das pessoas para confirmar."
         confirmed: "Importação confirmada. As linhas estão sendo gravadas."
+      undo:
+        not_available: "Esta importação não pode mais ser desfeita."
       cancel:
         cancelled: "Importação cancelada. Nada foi gravado."
     home:

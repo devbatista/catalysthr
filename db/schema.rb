@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -490,6 +490,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
     t.uuid "record_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "undo_data"
     t.index ["data_import_id", "position"], name: "index_data_import_rows_on_data_import_id_and_position", unique: true
     t.index ["data_import_id", "status"], name: "index_data_import_rows_on_data_import_id_and_status"
   end
@@ -518,6 +519,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
     t.uuid "undone_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "undo_blockers"
     t.index ["company_id", "created_at"], name: "index_data_imports_on_company_id_and_created_at"
     t.index ["created_by_id"], name: "index_data_imports_on_created_by_id"
     t.index ["status", "created_at"], name: "index_data_imports_on_status_and_created_at"

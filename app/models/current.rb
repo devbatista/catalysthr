@@ -17,4 +17,7 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :impersonation, :simulation
   # The support's running entry into a direct company, if any (D-581).
   attribute :support_access
+  # What a confirmed import line changes, recorded to undo it (Imports::Tracker), and
+  # whether an import is being undone (RN-18-052, D-665).
+  attribute :import_tracker, :import_undo
 end

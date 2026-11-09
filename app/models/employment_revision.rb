@@ -37,8 +37,9 @@ class EmploymentRevision < ApplicationRecord
 
   before_validation :copy_cbo, if: -> { position && (new_record? || position_id_changed?) }
   before_update :only_future_changes
-  before_destroy :only_future_changes
-  before_destroy :keep_first_revision
+  # Undoing an import that nothing used deletes its revisions, even in force (RN-18-052, D-665).
+  before_destroy :only_future_changes, unless: -> { Current.import_undo }
+  before_destroy :keep_first_revision, unless: -> { Current.import_undo }
   # The open processes follow a new allocation client once in force (RN-06-036, D-641);
   # a future one, on its date (Employments::ApplyScheduledRevisionsJob).
   after_create_commit -> { Processes::FollowClientChange.call(employment, by: created_by) }, unless: :future?

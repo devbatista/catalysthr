@@ -307,6 +307,7 @@ Rails.application.routes.draw do
         member do
           patch :confirm
           patch :cancel
+          patch :undo
           get :errors
         end
       end

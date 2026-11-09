@@ -18,7 +18,10 @@ class DataImportRow < ApplicationRecord
   serialize :payload, coder: JSON
   serialize :issues, coder: JSON
   serialize :diff, coder: JSON
-  encrypts :payload, :issues, :diff
+  # What the recorded line created and the values it replaced, to undo it (D-665):
+  # { "sequence" => n, "entries" => [...] } (Imports::Tracker).
+  serialize :undo_data, coder: JSON
+  encrypts :payload, :issues, :diff, :undo_data
 
   def issues
     super || []

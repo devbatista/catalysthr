@@ -70,6 +70,31 @@
   </section>
 <% end %>
 
+<% if @import.undo_blockers.any? && !@import.undone? %>
+  <section class="card card-body mt-6 space-y-3" role="alert" data-undo-blockers>
+    <h2 class="card-title text-bad"><%= t(".undo_blocked_title") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".undo_blocked_text") %></p>
+    <ul class="list-disc space-y-1 pl-5 text-sm">
+      <% @import.undo_blockers.each do |blocker| %>
+        <li><% if blocker["record"] %><strong><%= blocker["record"] %>:</strong> <% end %><%= blocker["message"] %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<% if @import.undone? %>
+  <p class="alert-info mt-6" role="status">
+    <%= t(".undone", name: @import.undone_by&.name, at: l(@import.undone_at, format: "%d/%m/%Y %H:%M")) %>
+  </p>
+<% elsif can?(:undo, @import) && Imports::Undo.available?(@import) %>
+  <section class="card card-body mt-6 space-y-3" data-undo>
+    <h2 class="card-title"><%= t(".undo_title") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".undo_text") %></p>
+    <%= button_to t(".undo"), undo_data_import_path(@import), method: :patch, class: "btn btn-secondary",
+      form: { data: { confirm: t(".undo_confirm") } } %>
+  </section>
+<% end %>
+
 <% if @import.kind == "employees" && @import.created_count.positive? && %w[completed completed_with_errors].include?(@import.status) %>
   <section class="card card-body mt-6 space-y-3" data-next-step="invite">
     <h2 class="card-title"><%= t(".invite_title") %></h2>
