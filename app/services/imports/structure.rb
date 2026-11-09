@@ -18,12 +18,11 @@ module Imports
     }.freeze
     UNIT_FIELDS = %w[name registration_number postal_code street street_number complement district city state time_zone].freeze
 
-    class ApplyError < StandardError; end
-
     Entry = Struct.new(:line, :record, :issues)
 
     def self.code = CODE
     def self.formats = %w[xlsx]
+    def self.sensitive? = false
 
     # Only the HR administrator, and the support in the assisted import (RN-18-042, D-661).
     def self.allowed?(ability) = ability.can?(:import, :structure)

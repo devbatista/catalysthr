@@ -52,7 +52,7 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 - **RN-18-004** — **Normalização** antes de validar: CPF, CNPJ, CEP e telefone com ou sem máscara; datas em `dd/mm/aaaa` ou `aaaa-mm-dd`; valores com vírgula ou ponto decimal; espaços extras removidos; textos de lista comparados sem acento e sem diferenciar maiúsculas **[P-18-03]**.
 - **RN-18-005** — **Validação:** as mesmas regras do cadastro manual (modelos do Rails), mais as regras de cada tipo. Também confere **repetição dentro do arquivo** (o mesmo CPF duas vezes) e **referências** (cargo, unidade e departamento existentes, ou criados na mesma importação de estrutura).
 - **RN-18-006** — **Prévia:** total de linhas, quantas serão criadas, atualizadas, ignoradas (iguais ao que já existe) e com erro. Para cada erro: linha, coluna, valor e mensagem em português, por exemplo "Linha 42, coluna CPF: dígito verificador inválido (123.456.789-00)". O RH baixa o arquivo original com uma coluna "Erros" para corrigir e reenviar **[P-18-04]**.
-- **RN-18-007** — **Criar ou atualizar:** cada tipo tem uma chave (por exemplo, CPF para pessoas, código para cargos). Se a chave já existe, a linha **atualiza** o registro, e a prévia mostra o antes e o depois dos campos que mudam. Campos vazios na planilha **não apagam** o que existe **[P-18-05]**.
+- **RN-18-007** — **Criar ou atualizar:** cada tipo tem uma chave (por exemplo, CPF para pessoas, código para cargos). Se a chave já existe, a linha **atualiza** o registro, e a prévia mostra o antes e o depois dos campos que mudam. Campos vazios na planilha **não apagam** o que existe **[P-18-05]**. Nos colaboradores, uma matrícula que já existe atualiza só a ficha: as condições do vínculo mudam por revisão com vigência (D-207, D-663).
 - **RN-18-008** — **Gravação:** só depois da confirmação, em lotes com transação por linha. Uma linha com erro inesperado na gravação não desfaz as outras e aparece no resultado **[P-18-06]**.
 - **RN-18-009** — Toda alteração feita pela importação fica no PaperTrail com a origem `import:<id>`, e a importação gera um evento de acesso (D-085).
 - **RN-18-010** — O arquivo enviado fica guardado por **90 dias** e depois é excluído. O resultado (contagens e erros, sem os dados) fica no histórico de importações **[P-18-07]**.
@@ -73,7 +73,7 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 | 8 | Banco de horas | CPF | Saldo inicial na data de corte, com o vencimento de cada parcela |
 | 9 | Acumulados da folha | CPF + competência + rubrica | Valores por rubrica no ano em curso, para médias, 13º, informe e IR |
 
-- **RN-18-020** — A importação de colaboradores **não envia convites** nem eventos ao eSocial. Pessoas já admitidas entram como vínculos **ativos**, com o eSocial marcado como "já enviado por outro sistema" quando a empresa migra pelo corte de competência (D-377). Os convites saem pelo botão "Liberar acesso de todos" **[P-18-09]**.
+- **RN-18-020** — A importação de colaboradores **não envia convites** nem eventos ao eSocial. Pessoas já admitidas entram como vínculos **ativos**, com o eSocial marcado como "já enviado por outro sistema" quando a empresa migra pelo corte de competência (D-377). Os convites saem pelo botão "Liberar acesso de todos" **[P-18-09]**. A marca do eSocial entra com a spec 13, e o botão é o "Convidar todos sem acesso" da lista de colaboradores (D-663).
 - **RN-18-021** — Saldos (férias, banco de horas, acumulados) entram com uma **data de corte**, a partir da qual a plataforma calcula. Antes dela, só valem os saldos importados **[P-18-10]**.
 - **RN-18-022** — **XMLs do eSocial** (D-377): seguem a spec 13 (RN-13-080). Os XMLs podem criar a estrutura, as pessoas e os vínculos, e a planilha completa o que o eSocial não traz (e-mail, celular, gestor, PIX). Quando há conflito, a prévia mostra os dois valores, e o RH escolhe **[P-18-11]**.
 
@@ -211,7 +211,7 @@ company_exports
 
 - **CA-18-001** — Dada uma planilha com 300 linhas, 3 com CPF inválido, quando o RH envia, então a prévia mostra 297 válidas e 3 erros com linha, coluna e motivo, e nada foi gravado.
 - **CA-18-002** — Dada a prévia do caso anterior, quando o RH escolhe "importar só as válidas", então 297 pessoas são criadas, e o relatório lista as 3 rejeitadas.
-- **CA-18-003** — Dado um CPF que já existe, quando a planilha traz um celular novo e o e-mail vazio, então a prévia mostra a troca do celular, e o e-mail atual continua.
+- **CA-18-003** — Dado um CPF que já existe, quando a planilha traz um celular novo e o e-mail vazio, então a prévia mostra a troca do celular, e o e-mail atual continua. São o telefone e o e-mail pessoais da ficha: os de login de quem já tem conta não mudam pela importação (D-602, D-663).
 - **CA-18-004** — Dada uma importação de colaboradores, quando é confirmada, então nenhum convite e nenhum evento do eSocial são enviados.
 - **CA-18-005** — Dado um RH analista da unidade Caxias, quando importa uma linha da unidade Bento Gonçalves, então ela vira erro "fora do seu escopo".
 - **CA-18-006** — Dada uma planilha de comissões importada duas vezes na mesma competência aberta, quando a segunda é confirmada, então os lançamentos da primeira são substituídos, sem duplicar.

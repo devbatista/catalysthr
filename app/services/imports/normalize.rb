@@ -43,6 +43,31 @@ module Imports
       (BigDecimal(text) * 100).to_i
     end
 
+    # A number with a decimal comma or point, or :invalid.
+    def decimal(value)
+      return if value.blank?
+
+      text = value.to_s.strip.delete(" ")
+      text = text.delete(".").tr(",", ".") if text.include?(",")
+      return :invalid unless text.match?(/\A\d+(\.\d+)?\z/)
+
+      BigDecimal(text)
+    end
+
+    YES = %w[sim s yes y true 1 x].freeze
+    NO = %w[nao n no false 0].freeze
+
+    # Sim or Não, as typed in a spreadsheet, or :invalid.
+    def boolean(value)
+      return if value.blank?
+
+      wanted = key(value)
+      return true if YES.include?(wanted)
+      return false if NO.include?(wanted)
+
+      :invalid
+    end
+
     # The text to compare a list's option: without accents, case or extra spaces.
     def key(value)
       I18n.transliterate(value.to_s).downcase.gsub(/\s+/, " ").strip

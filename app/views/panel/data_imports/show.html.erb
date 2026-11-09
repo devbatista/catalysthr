@@ -44,15 +44,37 @@
     <% else %>
       <p class="text-sm text-ink-soft"><%= t(".none_valid") %></p>
     <% end %>
-    <div class="flex flex-wrap gap-3">
-      <% if @import.importable? && @import.all_valid? %>
-        <%= button_to t(".import_all"), confirm_data_import_path(@import), method: :patch, class: "btn btn-primary" %>
-      <% elsif @import.importable? %>
-        <%= button_to t(".import_valid", count: @import.valid_count), confirm_data_import_path(@import), method: :patch,
-          params: { only_valid: "1" }, class: "btn btn-primary", form: { data: { confirm: t(".import_valid_confirm", count: @import.error_count) } } %>
+    <% if @import.kind_class.sensitive? %>
+      <p class="text-sm text-ink-soft"><%= t(".sensitive") %></p>
+    <% end %>
+    <div class="flex flex-wrap items-end gap-3">
+      <% if @import.importable? %>
+        <% only_valid = !@import.all_valid? %>
+        <%= form_with url: confirm_data_import_path(@import), method: :patch, class: "flex flex-wrap items-end gap-3",
+          data: (only_valid ? { confirm: t(".import_valid_confirm", count: @import.error_count) } : {}) do %>
+          <%= hidden_field_tag :only_valid, "1" if only_valid %>
+          <% if declaration?(@import.kind_class) %>
+            <label class="flex items-start gap-2 text-sm field-full">
+              <%= check_box_tag :declaration, "1", false, required: true, class: "mt-1" %>
+              <span><%= t(".declaration") %></span>
+            </label>
+          <% end %>
+          <%= submit_tag only_valid ? t(".import_valid", count: @import.valid_count) : t(".import_all"), class: "btn btn-primary" %>
+        <% end %>
       <% end %>
       <%= button_to t(".cancel"), cancel_data_import_path(@import), method: :patch, class: "btn btn-secondary" %>
     </div>
+  </section>
+<% end %>
+
+<% if @import.kind == "employees" && @import.created_count.positive? && %w[completed completed_with_errors].include?(@import.status) %>
+  <section class="card card-body mt-6 space-y-3" data-next-step="invite">
+    <h2 class="card-title"><%= t(".invite_title") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".invite_text") %></p>
+    <% if can?(:invite, Membership) %>
+      <%= button_to t(".invite_all"), invite_employees_path, method: :post, class: "btn btn-primary",
+        form: { data: { confirm: t("panel.employees.index.invite_all_confirm") } } %>
+    <% end %>
   </section>
 <% end %>
 
@@ -82,7 +104,7 @@
                   <%= t(".line_of", sheet: @sheets[row.sheet]&.title, line: row.line_number) %>
                 </td>
                 <td><%= issue["column"] ? data_import_column(@sheets, row, issue["column"]) : "—" %></td>
-                <td class="hidden md:table-cell font-mono text-sm"><%= issue["value"].presence || "—" %></td>
+                <td class="hidden md:table-cell whitespace-nowrap font-mono text-sm"><%= data_import_value(@sheets, row, issue["column"], issue["value"]) || "—" %></td>
                 <td class="text-sm"><%= issue["message"] %></td>
               </tr>
             <% end %>
@@ -112,8 +134,8 @@
               <tr>
                 <td class="whitespace-nowrap"><%= t(".line_of", sheet: @sheets[row.sheet]&.title, line: row.line_number) %></td>
                 <td><%= data_import_column(@sheets, row, column) %></td>
-                <td class="text-sm text-ink-soft"><%= before.presence || "—" %></td>
-                <td class="text-sm font-bold"><%= after.presence || "—" %></td>
+                <td class="text-sm text-ink-soft"><%= data_import_value(@sheets, row, column, before) || "—" %></td>
+                <td class="text-sm font-bold"><%= data_import_value(@sheets, row, column, after) || "—" %></td>
               </tr>
             <% end %>
           <% end %>
