@@ -4,7 +4,13 @@ module Panel
   # by line, confirm everything or only the valid lines, and see the result. Nothing is
   # recorded before the confirmation (D-462). Each sending and each confirmation is an access
   # event (RN-18-009).
+  #
+  # The kinds with people's data (D-663) ask for the password or a passkey again to send, to
+  # confirm and to download the file of errors, which carry salaries, documents and accounts
+  # (RN-18-041, RN-02-052); the pages show those values masked.
   class DataImportsController < BaseController
+    include SensitiveAccess
+
     before_action :require_current_company
     before_action -> { head :not_found unless FeatureFlags.enabled?(FeatureFlags::DATA_IMPORTS) }
     before_action :load_import, only: %i[show confirm cancel errors]
@@ -18,6 +24,7 @@ module Panel
     def new
       authorize! :create, DataImport
       @kind = allowed_kind or return head(:not_found)
+      require_sensitive_confirmation if @kind.sensitive?
     end
 
     def template
@@ -32,6 +39,7 @@ module Panel
     def create
       authorize! :create, DataImport
       @kind = allowed_kind or return head(:not_found)
+      return redirect_to(new_data_import_path(kind: @kind.code)) if @kind.sensitive? && !sensitive_ready?
 
       file = params[:file]
       @error = upload_error(file)
@@ -60,6 +68,13 @@ module Panel
       authorize! :confirm, @import
       only_valid = params[:only_valid] == "1"
       return redirect_to(data_import_path(@import), alert: t(".not_ready")) unless @import.importable? && (only_valid || @import.all_valid?)
+      if @import.kind_class.sensitive? && !sensitive_ready?
+        return redirect_to(new_sensitive_confirmation_path(return_to: data_import_path(@import)))
+      end
+      # Who confirms the accounts declares they are in the people's CPF (P-04-17, D-663).
+      if declaration?(@import.kind_class) && params[:declaration] != "1"
+        return redirect_to(data_import_path(@import), alert: t(".declaration_missing"))
+      end
 
       @import.with_lock do
         return redirect_to(data_import_path(@import)) unless @import.preview?
@@ -81,6 +96,10 @@ module Panel
     # event.
     def errors
       authorize! :download_errors, @import
+      if @import.kind_class.sensitive?
+        require_sensitive_confirmation
+        return if performed?
+      end
       file = Imports::ErrorsFile.new(@import)
       return head(:not_found) unless file.available?
 
@@ -89,6 +108,16 @@ module Panel
     end
 
     private
+
+    # During an impersonate nothing is recorded, and the password is not asked (RN-02-087).
+    def sensitive_ready?
+      impersonating? || sensitive_confirmed?
+    end
+
+    def declaration?(kind)
+      kind.respond_to?(:declaration?) && kind.declaration?
+    end
+    helper_method :declaration?
 
     def load_import
       @import = DataImport.find(params[:id])

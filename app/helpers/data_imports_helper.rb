@@ -12,6 +12,15 @@ module DataImportsHelper
     t("imports.kinds.#{code}.title")
   end
 
+  # A value of the line as the page shows it: a sensitive column's masked (D-086, D-663). The
+  # values in full are only in the file of errors, after the password (RN-18-041).
+  def data_import_value(sheets, row, column, value)
+    return if value.blank?
+
+    sensitive = sheets[row.sheet]&.column(column)&.sensitive
+    sensitive ? SensitiveData.mask(value, as: sensitive) : value
+  end
+
   # The column's header in the sheet, for an error or a change.
   def data_import_column(sheets, row, column)
     sheets[row.sheet]&.column(column)&.header || column

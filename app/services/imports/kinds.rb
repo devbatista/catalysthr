@@ -3,7 +3,12 @@ module Imports
   # (P-18-08). Each kind says its sheets and columns, who may use it, the formats it takes,
   # how a line is validated and how it is recorded. Blocks 18b to 18f add the others (D-661).
   module Kinds
-    ALL = { "structure" => "Imports::Structure" }.freeze
+    ALL = {
+      "structure" => "Imports::Structure",
+      "employees" => "Imports::Employees",
+      "dependents" => "Imports::Dependents",
+      "bank_accounts" => "Imports::BankAccounts"
+    }.freeze
 
     module_function
 

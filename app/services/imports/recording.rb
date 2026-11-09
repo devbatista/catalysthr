@@ -28,7 +28,7 @@ module Imports
         record, action = kind.apply(row.sheet, row.payload)
         row.update!(status: "imported", action: action, record_type: record.class.name, record_id: record.id)
       end
-    rescue ActiveRecord::ActiveRecordError, Imports::Structure::ApplyError => error
+    rescue ActiveRecord::ActiveRecordError, Imports::ApplyError => error
       message = error.is_a?(ActiveRecord::RecordInvalid) ? error.record.errors.full_messages.to_sentence : error.message
       row.update!(status: "failed", issues: [ { "column" => nil, "value" => nil, "message" => message.presence || error.class.name } ])
     end
