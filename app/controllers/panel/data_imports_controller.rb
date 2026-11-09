@@ -5,6 +5,8 @@ module Panel
   # recorded before the confirmation (D-462). Each sending and each confirmation is an access
   # event (RN-18-009).
   #
+  # The HR administrator undoes a whole import while nothing of it was used (D-665).
+  #
   # The kinds with people's data (D-663) ask for the password or a passkey again to send, to
   # confirm and to download the file of errors, which carry salaries, documents and accounts
   # (RN-18-041, RN-02-052); the pages show those values masked.
@@ -13,7 +15,7 @@ module Panel
 
     before_action :require_current_company
     before_action -> { head :not_found unless FeatureFlags.enabled?(FeatureFlags::DATA_IMPORTS) }
-    before_action :load_import, only: %i[show confirm cancel errors]
+    before_action :load_import, only: %i[show confirm cancel undo errors]
 
     def index
       authorize! :read, DataImport
@@ -84,6 +86,25 @@ module Panel
       AccessEvent.record!(kind: "import", action: "confirm", user: current_user, subject: @import, metadata: { kind: @import.kind })
       Imports::ApplyJob.perform_later(@import)
       redirect_to data_import_path(@import), notice: t(".confirmed")
+    end
+
+    # Undoes the whole import in the background, while nothing of it was used (RN-18-050 to
+    # RN-18-052, D-665). It changes people's data back, so it asks for the password again.
+    def undo
+      authorize! :undo, @import
+      return redirect_to(data_import_path(@import), alert: t(".not_available")) unless Imports::Undo.available?(@import)
+      return redirect_to(new_sensitive_confirmation_path(return_to: data_import_path(@import))) unless sensitive_ready?
+      # An impersonate only simulates: nothing goes to the queue (RN-02-085).
+      return redirect_to(data_import_path(@import)) if Simulation.active?
+
+      @import.with_lock do
+        return redirect_to(data_import_path(@import)) unless @import.status.in?(Imports::Undo::UNDOABLE)
+
+        @import.update!(status: "undoing", undo_blockers: nil, options: @import.options.merge("undo_from" => @import.status))
+      end
+      AccessEvent.record!(kind: "import", action: "undo", user: current_user, subject: @import, metadata: { kind: @import.kind })
+      Imports::UndoJob.perform_later(@import, current_user)
+      redirect_to data_import_path(@import)
     end
 
     def cancel

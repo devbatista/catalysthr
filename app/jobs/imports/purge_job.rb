@@ -1,6 +1,7 @@
 module Imports
   # Daily: 90 days after the sending, the file and the lines' data leave; the counts and the
-  # messages stay, without the values (RN-18-010, P-18-07). Idempotent.
+  # messages stay, without the values (RN-18-010, P-18-07). What undoing needs leaves too, so
+  # the import can no longer be undone (D-665). Idempotent.
   class PurgeJob < ApplicationJob
     queue_as :imports
 
@@ -19,7 +20,7 @@ module Imports
     def purge(import)
       import.file.purge if import.file.attached?
       import.rows.find_each do |row|
-        row.update!(payload: nil, diff: nil, issues: row.issues.map { |issue| issue.slice("column", "message") })
+        row.update!(payload: nil, diff: nil, undo_data: nil, issues: row.issues.map { |issue| issue.slice("column", "message") })
       end
       import.update!(purged_at: Time.current)
     end

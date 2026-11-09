@@ -2,7 +2,7 @@
 module DataImportsHelper
   STATUS_PILLS = { "uploaded" => "pill-info", "validating" => "pill-info", "importing" => "pill-info", "preview" => "pill-warn",
     "completed" => "pill-ok", "completed_with_errors" => "pill-warn", "failed" => "pill-bad", "cancelled" => "pill-mute",
-    "undone" => "pill-mute" }.freeze
+    "undoing" => "pill-info", "undone" => "pill-mute" }.freeze
 
   def data_import_status_pill(import)
     tag.span(t("imports.statuses.#{import.status}"), class: "pill #{STATUS_PILLS.fetch(import.status)}")

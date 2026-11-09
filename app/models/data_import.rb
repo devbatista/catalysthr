@@ -3,7 +3,7 @@
 # and its errors. The file stays 90 days (RN-18-010); afterwards only the counts and the
 # messages, without the data.
 class DataImport < ApplicationRecord
-  STATUSES = %w[uploaded validating preview importing completed completed_with_errors failed cancelled undone].freeze
+  STATUSES = %w[uploaded validating preview importing completed completed_with_errors failed cancelled undoing undone].freeze
   # A file is split above these (RN-18-002, P-18-01).
   MAX_SIZE = 20.megabytes
   MAX_ROWS = 10_000
@@ -18,6 +18,11 @@ class DataImport < ApplicationRecord
   has_one_attached :file
 
   enum :status, STATUSES.index_by(&:itself), validate: true
+
+  # What kept the last attempt from undoing it (RN-18-051, D-665): [{ "record", "message" }].
+  # Encrypted: it names people.
+  serialize :undo_blockers, coder: JSON
+  encrypts :undo_blockers
 
   validates :kind, inclusion: { in: ->(_) { Imports::Kinds.codes } }
   validates :original_filename, presence: true, length: { maximum: 255 }
@@ -36,7 +41,11 @@ class DataImport < ApplicationRecord
 
   # Waiting for the background: the page refreshes itself meanwhile.
   def working?
-    uploaded? || validating? || importing?
+    uploaded? || validating? || importing? || undoing?
+  end
+
+  def undo_blockers
+    super || []
   end
 
   # Everything is imported only without errors; otherwise, only the valid lines (RN-18-001).

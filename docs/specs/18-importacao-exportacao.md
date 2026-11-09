@@ -104,7 +104,7 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
   - convite aceito;
   - documento enviado.
 - **RN-18-051** — Se algum registro foi usado, o botão mostra o motivo e quais registros impedem. A saída é corrigir com uma nova importação de atualização.
-- **RN-18-052** — Desfazer volta cada registro ao estado anterior pela versão do PaperTrail (atualizados) ou o exclui (criados), e fica na auditoria.
+- **RN-18-052** — Desfazer volta cada registro ao estado anterior pela versão do PaperTrail (atualizados) ou o exclui (criados), e fica na auditoria. Como os campos sensíveis ficam fora do PaperTrail (D-086), cada linha guarda os valores anteriores e o que criou, criptografados, até os 90 dias da RN-18-010; a exclusão vale também para os vínculos e as revisões em vigor criados pela importação (D-665).
 
 ### 4.5 Importação assistida (D-468)
 
