@@ -63,7 +63,7 @@ module Panel
     # The unit is chosen at creation only: moving a department would leave its
     # subdepartments in another unit (RN-04-020).
     def department_params
-      fields = @department&.persisted? ? %i[name parent_id status] : %i[name unit_id parent_id]
+      fields = @department&.persisted? ? %i[name code parent_id status] : %i[name code unit_id parent_id]
       params.expect(department: fields)
     end
 

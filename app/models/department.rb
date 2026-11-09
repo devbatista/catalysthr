@@ -7,6 +7,7 @@ class Department < ApplicationRecord
   STATUSES = %w[active inactive].freeze
 
   acts_as_tenant :company
+  include StructureCode
 
   belongs_to :unit
   belongs_to :parent, class_name: "Department", optional: true

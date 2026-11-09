@@ -39,7 +39,7 @@ module Panel
     private
 
     def save(template, notice)
-      attributes = params.expect(position: [ :name, :cbo_code, :salary_min, :salary_max, :description, :requirements, :status,
+      attributes = params.expect(position: [ :name, :code, :cbo_code, :salary_min, :salary_max, :description, :requirements, :status,
         :admission_template_id, { required_document_type_ids: [] } ])
       required = attributes.delete(:required_document_type_ids)
       attributes[:admission_template_id] = attributes[:admission_template_id].presence if attributes.key?(:admission_template_id)

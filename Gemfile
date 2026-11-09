@@ -34,6 +34,11 @@ gem "ruby-vips", "~> 2.3", require: false
 # PDFs (stack, spec 08): a document's images joined in one PDF (RN-08-011)
 gem "prawn", "~> 2.5"
 
+# Imports (spec 18, P-18-25): roo reads the XLSX sent, caxlsx writes the templates and the
+# errors' spreadsheet. roo 3, a year old, instead of the 4 of weeks ago, with the same needs.
+gem "roo", "~> 3.0"
+gem "caxlsx", "~> 4.5"
+
 # Background jobs and schedules (D-108, spec 20)
 gem "sidekiq"
 gem "sidekiq-cron"

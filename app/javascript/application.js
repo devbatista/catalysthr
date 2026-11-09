@@ -464,3 +464,8 @@ if (appOpened && (window.matchMedia("(display-mode: standalone)").matches || win
     }).catch(() => { /* offline: tries again on the next opening */ })
   }
 }
+
+// A page waiting for the background, such as an import being read or recorded (spec 18,
+// RN-18-001): it reloads itself until the work is done. Without JavaScript, the person reloads.
+const reloadAfter = document.querySelector("[data-reload-after]")
+if (reloadAfter) setTimeout(() => window.location.reload(), Number(reloadAfter.dataset.reloadAfter) || 3000)

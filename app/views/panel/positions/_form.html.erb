@@ -14,6 +14,11 @@
       <%= form.label :name, t("panel.positions.form.name"), class: "field-label" %>
       <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
     </div>
+    <div>
+      <%= form.label :code, t("structure_code.label"), class: "field-label" %>
+      <%= form.text_field :code, maxlength: StructureCode::MAX_LENGTH, autocapitalize: "characters", class: "input font-mono", aria: { describedby: "position_code_hint" } %>
+      <p class="field-hint" id="position_code_hint"><%= t("structure_code.hint") %></p>
+    </div>
 
     <div class="field-wide" data-cbo-picker data-url="<%= cbo_search_path %>" data-empty="<%= t("panel.positions.form.cbo_none") %>">
       <%= label_tag "cbo_query", t("panel.positions.form.cbo"), class: "field-label" %>

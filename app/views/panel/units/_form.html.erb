@@ -17,6 +17,11 @@
         <%= form.text_field :name, required: true, maxlength: 120, class: "input" %>
       </div>
       <div>
+        <%= form.label :code, t("structure_code.label"), class: "field-label" %>
+        <%= form.text_field :code, maxlength: StructureCode::MAX_LENGTH, autocapitalize: "characters", class: "input font-mono", aria: { describedby: "unit_code_hint" } %>
+        <p class="field-hint" id="unit_code_hint"><%= t("structure_code.hint") %></p>
+      </div>
+      <div>
         <%= form.label :registration_type, t("panel.units.form.registration_type"), class: "field-label" %>
         <%= form.select :registration_type, Unit::REGISTRATION_TYPES.map { |type| [ t("units.registration_types.#{type}"), type ] },
           { include_blank: t("panel.units.form.no_registration") }, class: "input" %>
