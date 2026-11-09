@@ -229,6 +229,8 @@ class CompanyAbility
     end
     can :read, Department, company_id: company.id, id: department_ids
     can :read, Unit, company_id: company.id, id: unit_ids
+    # The manager's panel, only the team (spec 17, RN-17-020, D-190).
+    can :read, :manager_dashboard
     # The team's basic data only (spec 03, section 4.3).
     team = ActsAsTenant.with_tenant(company) { WorkerProfile.in_departments(department_ids).pluck(:id) }
     can :read, WorkerProfile, company_id: company.id, id: team
