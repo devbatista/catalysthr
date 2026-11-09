@@ -2643,6 +2643,9 @@ pt-BR:
         title: "Faturas"
         subtitle: "As faturas do contrato da empresa com a CatalystHR, uma por mês, emitidas 3 dias antes do vencimento."
     dashboards:
+      manager:
+        title: "Painel do gestor"
+        subtitle: "A sua equipe: quem está ativo ou afastado, o que espera por você, os documentos vencendo e as experiências terminando."
       show:
         title: "Painel do RH"
         new_admission: "Nova admissão"
@@ -2665,6 +2668,36 @@ pt-BR:
         no_client: "Sem cliente"
         clear: "Ver tudo"
       blocks:
+        manager_team:
+          title:
+            one: "Equipe · 1 pessoa"
+            other: "Equipe · %{count} pessoas"
+          on_leave_count:
+            one: "1 afastada"
+            other: "%{count} afastadas"
+          name: "Nome"
+          position: "Cargo"
+          department: "Departamento"
+          unit: "Unidade"
+          status: "Situação"
+          active: "Ativo"
+          on_leave: "Afastado"
+          empty: "Ninguém ativo na sua equipe."
+        manager_waiting:
+          title:
+            one: "Esperando por você · 1"
+            other: "Esperando por você · %{count}"
+          empty: "Nada esperando por você."
+        manager_team_expiring:
+          title:
+            one: "Documentos vencendo · 1"
+            other: "Documentos vencendo · %{count}"
+          empty: "Nenhum documento da equipe vencendo."
+        manager_probations:
+          title:
+            one: "Fim de experiência · 1"
+            other: "Fins de experiência · %{count}"
+          empty: "Nenhuma experiência terminando."
         indicators:
           admissions: "Admissões em andamento"
           admissions_hint:

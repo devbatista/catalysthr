@@ -1,0 +1,49 @@
+<%# The manager's panel (spec 17, RN-17-020, D-659): only the team (D-190), with the same
+    content as the portal's "Minha equipe" (RN-17-021). Each block comes in its own request
+    (RN-17-090). Absences, the approvals of requests, the hour bank and the AI's summary come
+    with specs 09, 10, 11 and 14 (D-657). %>
+<% content_for :title, t(".title") %>
+<% shown = "panel.dashboards.show" %>
+
+<div>
+  <p class="text-sm text-ink-soft"><%= l(Date.current, format: :weekday_long).upcase_first %></p>
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <p class="page-subtitle"><%= t(".subtitle") %></p>
+</div>
+
+<% if @overview.units.many? %>
+  <%= form_with url: root_path, method: :get, class: "card card-body mt-6" do |form| %>
+    <%= form.hidden_field :panel, value: params[:panel] if params[:panel].present? %>
+    <div class="form-grid">
+      <div>
+        <%= form.label :unit_id, t("#{shown}.unit"), class: "field-label" %>
+        <%= form.select :unit_id, @overview.units.map { |unit| [ unit.name, unit.id ] },
+          { include_blank: t("#{shown}.all_units"), selected: @overview.unit_id }, class: "input" %>
+      </div>
+      <div class="flex items-end">
+        <%= form.submit t("#{shown}.filter"), class: "btn btn-secondary", name: nil %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<div data-dashboard data-updated-now="<%= t("#{shown}.updated_now") %>" data-updated-seconds="<%= t("#{shown}.updated_seconds") %>"
+  data-updated-minutes="<%= t("#{shown}.updated_minutes") %>" data-failed="<%= t("#{shown}.failed") %>">
+  <p class="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
+    <span data-dashboard-updated aria-live="polite"><%= t("#{shown}.loading") %></span>
+    <button type="button" class="link-button" data-dashboard-refresh><%= t("#{shown}.refresh") %></button>
+  </p>
+  <noscript><p class="alert-info mt-4"><%= t("#{shown}.noscript") %></p></noscript>
+
+  <% filter = { unit_id: @overview.unit_id }.compact %>
+  <section class="mt-4" data-dashboard-block="<%= dashboard_block_path("team", **filter) %>">
+    <p class="card card-body text-sm text-ink-soft"><%= t("#{shown}.loading") %></p>
+  </section>
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+    <% %w[waiting team_expiring probations].each do |block| %>
+      <section data-dashboard-block="<%= dashboard_block_path(block, **filter) %>">
+        <p class="card card-body text-sm text-ink-soft"><%= t("#{shown}.loading") %></p>
+      </section>
+    <% end %>
+  </div>
+</div>

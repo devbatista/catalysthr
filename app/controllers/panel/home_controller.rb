@@ -12,7 +12,12 @@ module Panel
 
       if Current.company
         @admissions_attention = admissions_attention
-        hr_dashboard if FeatureFlags.enabled?(FeatureFlags::DASHBOARDS) && can?(:read, :hr_dashboard)
+        if FeatureFlags.enabled?(FeatureFlags::DASHBOARDS)
+          # Who is also HR sees the HR's panel, the widest (RN-17-014).
+          if can?(:read, :hr_dashboard) then hr_dashboard
+          elsif can?(:read, :manager_dashboard) then manager_dashboard
+          end
+        end
         return
       end
 
@@ -34,6 +39,15 @@ module Panel
       @new_admission = FeatureFlags.enabled?(FeatureFlags::ADMISSIONS) && can?(:create, Admission)
       @usage = Dashboards::Usage.shown?(current_ability, Current.company)
       render "panel/dashboards/show"
+    end
+
+    # The manager's panel (spec 17, RN-17-020, D-659): only the team, with the same content as
+    # the portal's "Minha equipe" (RN-17-021). The manager starts at the portal; "Abrir
+    # painel" brings them here.
+    def manager_dashboard
+      membership = Membership.with_access.find_by!(user: current_user, organization: Current.company)
+      @overview = TeamOverview.new(membership, unit_id: params[:unit_id])
+      render "panel/dashboards/manager"
     end
 
     # The serious alert of the activation (RN-07-085, D-653).

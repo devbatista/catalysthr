@@ -1,0 +1,18 @@
+<%# The team's documents expiring and expired, the text only, never the file (P-08-11,
+    D-659), as in the portal. %>
+<% entries = overview.expiring %>
+<div class="card card-body">
+  <h2 class="card-title"><%= t(".title", count: entries.size) %></h2>
+  <% if entries.empty? %>
+    <p class="mt-2 text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="mt-3 divide-y divide-line-soft text-sm">
+      <% entries.each do |entry| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 py-2">
+          <span><%= t("panel.portal.teams.show.expiring_line", document: entry.document, person: entry.person, date: l(entry.date)) %></span>
+          <span class="pill <%= entry.status == "expired" ? "pill-bad" : "pill-warn" %>"><%= t("documents.statuses.#{entry.status}") %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
