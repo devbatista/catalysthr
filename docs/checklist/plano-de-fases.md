@@ -189,8 +189,8 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - Ficam com outras specs: RN-07-032, RN-07-050 a RN-07-054 e o S-3000 (spec 13, fase 4, flag `esocial`, D-648), CA-07-005, o WhatsApp do CA-07-003, o recrutamento (spec 21), a importação em lote (spec 18), a recomendação da avaliação (RN-07-103, spec 22), o efeito da RN-07-086 no ponto, na folha e nos painéis (specs 10 a 12 e 17) e a purga da retenção (spec 05)
 - [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural. Em 3 PRs (D-654); o silêncio pela jornada entra com a spec 11 e o "Escrever com IA" do mural, com a spec 14:
   - [x] 15c. Push e silêncio: inscrições, service worker, convite no Início, "Minhas notificações" no portal, silêncio pela regra fixa, liberação agrupada, cancelamento do que já foi lido e canal de reserva, com a flag `push_notifications` (RN-15-003, RN-15-004, RN-15-030, RN-15-031, RN-15-033 a RN-15-035, RN-15-080, RN-15-081, CA-15-001 sem o WhatsApp, CA-15-004, CA-15-013) (PR #128)
-  - [ ] 15d. Resumo diário por e-mail, com a flag `notification_digest` (RN-15-040 a RN-15-044, CA-15-005, CA-15-006, D-655)
-  - [ ] 15e. Mural de comunicados no portal e no painel (RN-15-070 a RN-15-074, RN-15-091, CA-15-011)
+  - [x] 15d. Resumo diário por e-mail, com a flag `notification_digest` (RN-15-040 a RN-15-044, CA-15-005, CA-15-006, D-655) (PR #129, que entra na `main` pelo #128)
+  - [ ] 15e. Mural de comunicados no portal e no painel, com a flag `announcements`: publicação pelo RH administrador e pelo analista nas unidades dele, público lido na hora, espera pela varredura do anexo, aviso pelo sino, e-mail e push, contagem de quem abriu e histórico de 2 anos (RN-15-070 a RN-15-074, RN-15-091, CA-15-011, D-656). O WhatsApp do aviso entra com o bloco dele
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
 

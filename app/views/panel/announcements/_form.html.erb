@@ -1,0 +1,124 @@
+<%# A notice of the board (RN-15-071, D-656): the title and the text, the attachment, the
+    audience, now, later or as a draft, the validity and the pin. A published one changes only
+    its validity and the pin. The dates are the headquarters'. Checked lists and radio
+    buttons, without JavaScript (D-022). "Escrever com IA" comes with spec 14 (D-654). %>
+<% announcement = form.announcement %>
+<% editable = form.content_editable? %>
+<% unit_ids = current_ability.announcement_unit_ids %>
+<% filter = form.audience_filter.filter %>
+
+<%= form_with url: announcement.persisted? ? announcement_path(announcement) : announcements_path,
+  method: announcement.persisted? ? :patch : :post, multipart: true, class: "mt-6 space-y-6" do |f| %>
+  <%= render "admin/plans/errors", records: [ form ] %>
+  <section class="card card-body space-y-4">
+    <p class="alert-info">
+      <%= t(".no_acknowledgment") %>
+      <% if can?(:create, DocumentPublication) %>
+        <%= link_to t(".acknowledgment_link"), new_document_publication_path, class: "link-button" %>
+      <% end %>
+    </p>
+    <% if editable %>
+      <div class="form-grid">
+        <div class="field-full">
+          <%= label_tag "announcement_title", t(".title"), class: "field-label" %>
+          <%= text_field_tag "announcement[title]", form.title, required: true, maxlength: 160, id: "announcement_title", class: "input" %>
+        </div>
+        <div class="field-full">
+          <%= label_tag "announcement_body", t(".body"), class: "field-label" %>
+          <%= text_area_tag "announcement[body]", form.body, rows: 8, required: true, maxlength: Announcement::MAX_BODY, id: "announcement_body", class: "input" %>
+          <p class="field-hint"><%= t(".body_hint") %></p>
+        </div>
+        <div class="field-wide">
+          <%= label_tag "announcement_file", t(".file"), class: "field-label" %>
+          <%= file_field_tag "announcement[file]", accept: Announcement::ATTACHMENT_TYPES.join(","), id: "announcement_file", class: "input" %>
+          <p class="field-hint"><%= t(".file_hint", size: Announcement::MAX_ATTACHMENT_SIZE / 1.megabyte) %></p>
+          <% if announcement.attachment.attached? %>
+            <p class="mt-2 text-sm">
+              <%= t(".current_file", name: announcement.attachment.filename) %>
+              <% if announcement.scan_status == "infected" %>
+                <span class="pill pill-bad ml-1"><%= t("announcements.scan.infected") %></span>
+              <% elsif announcement.scan_status == "scanning" %>
+                <span class="pill pill-warn ml-1"><%= t("announcements.scan.scanning") %></span>
+              <% end %>
+            </p>
+            <label class="mt-1 flex items-center gap-2 text-sm">
+              <%= check_box_tag "announcement[remove_attachment]", "1", false, id: "announcement_remove_attachment" %>
+              <%= t(".remove_file") %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div>
+        <h2 class="card-title"><%= announcement.title %></h2>
+        <p class="mt-2 whitespace-pre-line text-sm"><%= announcement.body %></p>
+        <p class="field-hint mt-2"><%= t(".published_locked") %></p>
+      </div>
+    <% end %>
+  </section>
+
+  <% if editable %>
+    <section class="card card-body space-y-4">
+      <div>
+        <h2 class="card-title"><%= t(".audience") %></h2>
+        <p class="field-hint"><%= unit_ids == :all ? t(".audience_hint") : t(".audience_hint_units") %></p>
+      </div>
+      <% announcement_audience_options(unit_ids).each do |key, options| %>
+        <% next if options.empty? %>
+        <fieldset>
+          <legend class="field-label"><%= t("announcements.audience.#{key}") %></legend>
+          <%= hidden_field_tag "audience[#{key}][]", "", id: nil %>
+          <div class="mt-1 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <% options.each do |label, value| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= check_box_tag "audience[#{key}][]", value, Array(filter[key]).include?(value.to_s), id: "audience_#{key}_#{value}" %>
+                <%= label %>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
+    </section>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".publication") %></h2>
+    <div class="form-grid">
+      <% if editable %>
+        <fieldset class="field-full">
+          <legend class="field-label"><%= t(".mode") %></legend>
+          <div class="mt-1 flex flex-wrap gap-x-6 gap-y-2">
+            <% Announcements::Form::MODES.each do |mode| %>
+              <label class="flex items-center gap-2 text-sm">
+                <%= radio_button_tag "announcement[mode]", mode, form.mode == mode, id: "announcement_mode_#{mode}" %>
+                <%= t(".modes.#{mode}") %>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+        <div>
+          <%= label_tag "announcement_publish_at", t(".publish_at"), class: "field-label" %>
+          <%= datetime_local_field_tag "announcement[publish_at]", form.publish_at, id: "announcement_publish_at", class: "input" %>
+          <p class="field-hint"><%= t(".publish_at_hint") %></p>
+        </div>
+      <% end %>
+      <div>
+        <%= label_tag "announcement_expires_on", t(".expires_on"), class: "field-label" %>
+        <%= date_field_tag "announcement[expires_on]", form.expires_on, required: true, id: "announcement_expires_on", class: "input" %>
+        <p class="field-hint"><%= t(".expires_on_hint") %></p>
+      </div>
+      <div class="field-full">
+        <%= hidden_field_tag "announcement[pinned]", "0", id: nil %>
+        <label class="flex items-center gap-2 text-sm">
+          <%= check_box_tag "announcement[pinned]", "1", ActiveModel::Type::Boolean.new.cast(form.pinned), id: "announcement_pinned" %>
+          <%= t(".pinned") %>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <%= f.submit t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), announcement.persisted? ? announcement_path(announcement) : announcements_path, class: "link-button text-sm" %>
+  </div>
+<% end %>

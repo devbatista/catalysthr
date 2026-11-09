@@ -1181,6 +1181,26 @@ pt-BR:
       expiring: "Vencendo"
       valid: "Validado"
       in_review: "Em revisão"
+  # The board of notices (spec 15, D-656).
+  announcements:
+    pinned: "Fixado"
+    unread: "Novo"
+    statuses:
+      draft: "Rascunho"
+      scheduled: "Agendado"
+      waiting_scan: "Aguardando a varredura"
+      published: "No mural"
+      expired: "Encerrado"
+      withdrawn: "Retirado"
+    audience:
+      everyone: "Todos"
+      unit_ids: "Unidades"
+      department_ids: "Departamentos"
+      position_ids: "Cargos"
+      employment_kinds: "Tipos de vínculo"
+    scan:
+      scanning: "Na varredura"
+      infected: "Vírus encontrado"
   # Documents (spec 08, D-642).
   documents:
     categories:
@@ -1564,6 +1584,9 @@ pt-BR:
   # The sidebar's menus (D-597)
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    announcements:
+      name: "Mural de comunicados"
+      description: "Ligada, o RH publica comunicados no painel, e os colaboradores do público veem o mural no portal e recebem o aviso. Desligada, o mural some e os agendados esperam (spec 15, D-656)."
     notification_digest:
       name: "Resumo diário dos avisos"
       description: "Ligada, os avisos de trabalho não urgentes de RH, gestores e contabilidade vão num e-mail às 7h30. Desligada, vão um a um (spec 15, D-655)."
@@ -1644,6 +1667,7 @@ pt-BR:
     holidays: "Feriados"
     document_types: "Tipos de documento"
     documents: "Documentos"
+    announcements: "Comunicados"
     my_portal: "Meu portal"
     process_templates: "Modelos de processo"
     process_library: "Biblioteca de modelos"
@@ -1782,6 +1806,8 @@ pt-BR:
           due: "até %{date}"
           progress: "%{kind} · %{done} de %{count}"
           progress_label: "%{done} de %{count} itens concluídos"
+          announcements: "Comunicados"
+          announcements_open: "Ver mural"
         passkey_invite:
           title: "Entre com a digital ou o rosto"
           text: "Cadastre uma passkey neste aparelho e entre com um toque, sem digitar a senha. A biometria fica só no aparelho."
@@ -1886,6 +1912,8 @@ pt-BR:
           title: "Mais"
           team: "Minha equipe"
           team_hint: "Itens de processo e documentos vencendo da equipe"
+          announcements: "Mural de comunicados"
+          announcements_hint: "Os comunicados do RH para você"
           profile: "Meus dados"
           profile_hint: "Cargo, unidade e contato"
           notifications: "Notificações"
@@ -1896,6 +1924,16 @@ pt-BR:
           security_hint: "Senha, autenticação em duas etapas e sessões"
           panel: "Abrir painel"
           panel_hint: "A área de gestão, que também funciona no celular"
+      announcements:
+        index:
+          title: "Mural de comunicados"
+          empty: "Nenhum comunicado no momento."
+          past: "Anteriores"
+        show:
+          back: "Mural"
+          published: "Publicado em %{date}"
+          ended: "Fora do mural"
+          attachment: "Abrir anexo (%{name})"
       profiles:
         show:
           title: "Meus dados"
@@ -2103,6 +2141,83 @@ pt-BR:
           other: "Pessoas · %{count}"
         person: "Pessoa"
         status: "Situação"
+    # The board of notices (spec 15, D-656).
+    announcements:
+      index:
+        title: "Comunicados"
+        subtitle: "O mural do portal. O comunicado avisa, mas não tem valor de ciência."
+        new: "Novo comunicado"
+        empty: "Nenhum comunicado ainda."
+        announcement: "Comunicado"
+        audience: "Público"
+        expires_at: "Validade"
+        status: "Situação"
+        author: "Por %{name}"
+      new:
+        title: "Novo comunicado"
+        subtitle: "Vai para o mural do portal e avisa o público pelo sino, e-mail e push, conforme as preferências de cada pessoa."
+        back: "Comunicados"
+      edit:
+        title: "Editar comunicado"
+        back: "Voltar"
+      form:
+        no_acknowledgment: "O comunicado não tem valor de ciência. Para registrar que a pessoa leu, publique um documento com ciência."
+        acknowledgment_link: "Publicar documento com ciência"
+        title: "Título"
+        body: "Texto"
+        body_hint: "O e-mail do aviso leva o título e o texto; o anexo fica só no sistema. Não escreva dados pessoais."
+        file: "Anexo (opcional)"
+        file_hint: "PDF, JPG ou PNG, até %{size} MB. O comunicado só vai ao ar depois da varredura de vírus do anexo."
+        current_file: "Anexo atual: %{name}"
+        remove_file: "Tirar o anexo"
+        published_locked: "Depois de publicado, só a validade e o fixar no topo mudam. Para corrigir o texto, retire e publique outro."
+        audience: "Público"
+        audience_hint: "Sem nenhuma opção marcada, vai para todos os colaboradores. Dentro de um grupo vale qualquer opção marcada; entre grupos, todas."
+        audience_hint_units: "Marque ao menos uma das suas unidades. Dentro de um grupo vale qualquer opção marcada; entre grupos, todas."
+        publication: "Publicação e validade"
+        mode: "Quando publicar"
+        modes:
+          draft: "Guardar como rascunho"
+          now: "Publicar agora"
+          schedule: "Agendar"
+        publish_at: "Data e hora (para agendar)"
+        publish_at_hint: "No fuso da matriz."
+        expires_on: "Validade"
+        expires_on_hint: "Sai do mural no fim deste dia e fica no histórico por 2 anos."
+        pinned: "Fixar no topo do mural"
+        submit: "Salvar"
+        cancel: "Cancelar"
+      show:
+        back: "Comunicados"
+        edit: "Editar"
+        withdraw:
+          draft: "Descartar rascunho"
+          scheduled: "Cancelar publicação"
+          published: "Retirar do mural"
+        withdraw_confirm:
+          draft: "Descartar este rascunho?"
+          scheduled: "Cancelar a publicação deste comunicado? Ele não vai ao ar."
+          published: "Retirar este comunicado do mural? Quem já recebeu o aviso não consegue mais abri-lo."
+        infected: "O anexo tinha vírus e foi removido, e o comunicado voltou para rascunho. Edite para enviar outro arquivo ou tirar o anexo."
+        scanning: "O anexo está na varredura de vírus. O comunicado vai ao ar assim que ela terminar, em geral em poucos segundos."
+        attachment: "Abrir anexo (%{name})"
+        audience: "Público"
+        publish_at: "Publicação agendada"
+        published_at: "Publicado em"
+        expires_at: "Validade"
+        withdrawn: "Retirado"
+        withdrawn_value: "Por %{name} em %{date}"
+        reads: "Abriram"
+        reads_value: "%{opened} de %{count}"
+        reads_hint: "Contra o público de hoje, entre quem tem acesso ao portal."
+      withdraw:
+        done: "Comunicado retirado do mural."
+      saved:
+        draft: "Rascunho guardado."
+        scheduled: "Comunicado agendado."
+        published: "Comunicado publicado. O público vai receber o aviso."
+        waiting_scan: "Comunicado salvo. Ele vai ao ar quando a varredura de vírus do anexo terminar."
+        expired: "Comunicado salvo."
     document_publications:
       index:
         title: "Documentos com ciência"
@@ -3775,6 +3890,13 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    announcements:
+      published:
+        grouped: "%{count} comunicados novos no mural"
+        name: "Comunicado novo no mural"
+        hint: "Quando o RH publica um comunicado para você."
+        title: "Comunicado: %{title}"
+        body: "%{body}"
     accounting:
       admission_forwarded:
         name: "Admissão encaminhada"
@@ -4533,6 +4655,11 @@ pt-BR:
       shared_process_template_material: "Material do item"
       file_scan: "Varredura de vírus"
     attributes:
+      announcement:
+        title: "Título"
+        body: "Texto"
+        expires_at: "Validade"
+        publish_at: "Data e hora da publicação"
       holiday:
         level: "Abrangência"
         state: "UF"
@@ -4911,6 +5038,11 @@ pt-BR:
         slug: "Subdomínio"
     errors:
       models:
+        announcement:
+          attributes:
+            expires_at:
+              after_publication: "precisa ser depois da publicação"
+              past: "precisa ser hoje ou depois"
         billing_account:
           attributes:
             owner:
@@ -5424,6 +5556,15 @@ pt-BR:
         document_type: "Tipo de documento"
         due_on: "Prazo"
         message: "Mensagem"
+      announcements/form:
+        title: "Título"
+        body: "Texto"
+        file: "Anexo"
+        audience: "Público"
+        mode: "Publicação"
+        publish_at: "Data e hora da publicação"
+        expires_on: "Validade"
+        expires_at: "Validade"
       documents/publish:
         title: "Título"
         document_type: "Tipo de documento"
@@ -5449,6 +5590,19 @@ pt-BR:
             base:
               audience_blank: "Escolha uma pessoa ou marque ao menos um filtro do grupo"
               nobody: "Nenhuma pessoa do seu escopo, com vínculo aberto, atende a esses filtros"
+        announcements/form:
+          attributes:
+            publish_at:
+              blank: "precisa ser informada para agendar"
+              past: "precisa ser depois de agora"
+            expires_on:
+              blank: "precisa ser uma data válida"
+            audience:
+              units_required: "precisa ter ao menos uma das suas unidades, e só as suas"
+            file:
+              type: "precisa ser um PDF, JPG ou PNG"
+              too_large: "pode ter até %{count} MB"
+              infected: "tinha vírus e foi removido. Envie outro arquivo ou marque para tirar o anexo"
         documents/publish:
           attributes:
             due_on:

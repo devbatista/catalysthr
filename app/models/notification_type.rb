@@ -134,6 +134,10 @@ NotificationType::CATALOG = [
   NotificationType.new(code: "documents.correction_requested", mandatory: false, urgent: false, channels: %w[system push],
     roles: %w[employee]),
   NotificationType.new(code: "documents.expiring", mandatory: false, urgent: false, channels: %w[system push], roles: %w[employee]),
+  # A new notice on the board, with the title and the text; the file stays in the system
+  # (RN-15-074, D-656). WhatsApp comes with its block.
+  NotificationType.new(code: "announcements.published", mandatory: false, urgent: false, channels: %w[system email push],
+    roles: %w[employee]),
   NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
   # A version the employee sent, to the unit's HR (D-645).

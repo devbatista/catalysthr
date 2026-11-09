@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -185,6 +185,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_130000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "document"], name: "index_allocation_clients_on_company_id_and_document", unique: true, where: "(document IS NOT NULL)"
     t.index ["company_id"], name: "index_allocation_clients_on_company_id"
+  end
+
+  create_table "announcement_reads", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "announcement_id", null: false
+    t.uuid "membership_id", null: false
+    t.datetime "read_at", null: false
+    t.index ["announcement_id", "membership_id"], name: "index_announcement_reads_on_announcement_id_and_membership_id", unique: true
+    t.index ["company_id"], name: "index_announcement_reads_on_company_id"
+    t.index ["membership_id"], name: "index_announcement_reads_on_membership_id"
+  end
+
+  create_table "announcements", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "author_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.jsonb "audience", default: {}, null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "publish_at"
+    t.datetime "expires_at", null: false
+    t.boolean "pinned", default: false, null: false
+    t.datetime "published_at"
+    t.datetime "withdrawn_at"
+    t.uuid "withdrawn_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_announcements_on_author_id"
+    t.index ["company_id", "status", "expires_at"], name: "index_announcements_on_company_id_and_status_and_expires_at"
+    t.index ["company_id"], name: "index_announcements_on_company_id"
+    t.index ["status", "publish_at"], name: "index_announcements_on_status_and_publish_at"
+    t.index ["withdrawn_by_id"], name: "index_announcements_on_withdrawn_by_id"
   end
 
   create_table "backup_runs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1647,6 +1679,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_130000) do
   add_foreign_key "allocation_client_managers", "companies"
   add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
   add_foreign_key "allocation_clients", "companies"
+  add_foreign_key "announcement_reads", "announcements"
+  add_foreign_key "announcement_reads", "companies"
+  add_foreign_key "announcement_reads", "memberships"
+  add_foreign_key "announcements", "companies"
+  add_foreign_key "announcements", "users", column: "author_id"
+  add_foreign_key "announcements", "users", column: "withdrawn_by_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"

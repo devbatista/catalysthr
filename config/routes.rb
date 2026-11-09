@@ -325,6 +325,13 @@ Rails.application.routes.draw do
           post :distribute
         end
       end
+      # The board of notices (spec 15, RN-15-070 to RN-15-073, D-656).
+      resources :announcements, except: :destroy do
+        member do
+          patch :withdraw
+          get :attachment
+        end
+      end
       resources :document_folder_exports, path: "document-exports", only: [] do
         get :download, on: :member
       end
@@ -396,6 +403,10 @@ Rails.application.routes.draw do
         get "my-data", to: "profiles#show", as: :profile
         get "team", to: "teams#show", as: :team
         resources :notifications, only: %i[index show]
+        # The board (spec 15, RN-15-072, D-656).
+        resources :announcements, only: %i[index show] do
+          get :attachment, on: :member
+        end
       end
 
       # The prototype's modules not built yet (D-597).

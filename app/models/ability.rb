@@ -25,7 +25,16 @@ class Ability
       can :update, :own_notification_preferences
       merge(PartnerAbility.new(user, brand.owner)) if brand&.owner.is_a?(Partner)
       merge(AccountingFirmAbility.new(user, brand)) if brand
-      merge(CompanyAbility.new(user, company, support_access: support_access)) if company
+      if company
+        @company_ability = CompanyAbility.new(user, company, support_access: support_access)
+        merge(@company_ability)
+      end
     end
+  end
+
+  # The units whose notices of the board the person sees in the panel and may choose, or :all
+  # (D-656); none outside a company.
+  def announcement_unit_ids
+    @company_ability&.announcement_unit_ids || []
   end
 end
