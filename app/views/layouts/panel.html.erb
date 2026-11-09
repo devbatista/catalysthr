@@ -11,6 +11,7 @@
     <%= csp_meta_tag %>
 
     <%= tag.link rel: "manifest", href: manifest_path %>
+    <%= push_meta_tag %>
     <%# The brand's icons, or the CatalystHR ones when it has none (D-159, RN-01-035) %>
     <% if (favicon = brand_image_path(Current.brand, :favicon)) %>
       <%= tag.link rel: "icon", href: favicon %>

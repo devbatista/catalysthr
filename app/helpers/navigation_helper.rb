@@ -132,6 +132,13 @@ module NavigationHelper
       after = groups[:operation].index { |item| item&.path.in?(paths) } || 1
       groups[:operation].insert(after + 1, nav_item(t("navigation.documents"), documents_path, controller_path.in?(DOCUMENT_CONTROLLERS)))
     end
+    # The board of notices (spec 15, D-656), which the prototype does not have, after the
+    # documents.
+    if FeatureFlags.enabled?(FeatureFlags::ANNOUNCEMENTS) && can?(:read, Announcement)
+      after = groups[:operation].index { |item| item&.path == documents_path } ||
+        groups[:operation].index { |item| item&.path.in?([ coming_soon_path("admissions"), admissions_path ]) } || 1
+      groups[:operation].insert(after + 1, nav_item(t("navigation.announcements"), announcements_path, controller_path == "panel/announcements"))
+    end
 
     groups.map { |group, items| nav_group(group, items) } + [
       nav_group(:company, [

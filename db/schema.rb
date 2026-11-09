@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -185,6 +185,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "document"], name: "index_allocation_clients_on_company_id_and_document", unique: true, where: "(document IS NOT NULL)"
     t.index ["company_id"], name: "index_allocation_clients_on_company_id"
+  end
+
+  create_table "announcement_reads", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "announcement_id", null: false
+    t.uuid "membership_id", null: false
+    t.datetime "read_at", null: false
+    t.index ["announcement_id", "membership_id"], name: "index_announcement_reads_on_announcement_id_and_membership_id", unique: true
+    t.index ["company_id"], name: "index_announcement_reads_on_company_id"
+    t.index ["membership_id"], name: "index_announcement_reads_on_membership_id"
+  end
+
+  create_table "announcements", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "author_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.jsonb "audience", default: {}, null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "publish_at"
+    t.datetime "expires_at", null: false
+    t.boolean "pinned", default: false, null: false
+    t.datetime "published_at"
+    t.datetime "withdrawn_at"
+    t.uuid "withdrawn_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_announcements_on_author_id"
+    t.index ["company_id", "status", "expires_at"], name: "index_announcements_on_company_id_and_status_and_expires_at"
+    t.index ["company_id"], name: "index_announcements_on_company_id"
+    t.index ["status", "publish_at"], name: "index_announcements_on_status_and_publish_at"
+    t.index ["withdrawn_by_id"], name: "index_announcements_on_withdrawn_by_id"
   end
 
   create_table "backup_runs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -915,8 +947,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.datetime "delivered_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "held_until"
+    t.uuid "fallback_from_id"
+    t.uuid "grouped_into_id"
+    t.uuid "digest_id"
+    t.index ["digest_id"], name: "index_notification_deliveries_on_digest_id", where: "(digest_id IS NOT NULL)"
+    t.index ["fallback_from_id"], name: "index_notification_deliveries_on_fallback_from_id", unique: true, where: "(fallback_from_id IS NOT NULL)"
+    t.index ["grouped_into_id"], name: "index_notification_deliveries_on_grouped_into_id", where: "(grouped_into_id IS NOT NULL)"
+    t.index ["held_until"], name: "index_notification_deliveries_on_held_until", where: "((status)::text = 'held'::text)"
     t.index ["notification_id"], name: "index_notification_deliveries_on_notification_id"
     t.index ["provider_message_id"], name: "index_notification_deliveries_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
+  end
+
+  create_table "notification_digests", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "recipient_membership_id", null: false
+    t.uuid "brand_id"
+    t.uuid "notification_ids", default: [], null: false, array: true
+    t.string "provider_message_id"
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_notification_digests_on_brand_id"
+    t.index ["created_at"], name: "index_notification_digests_on_created_at"
+    t.index ["provider_message_id"], name: "index_notification_digests_on_provider_message_id", unique: true, where: "(provider_message_id IS NOT NULL)"
+    t.index ["recipient_membership_id"], name: "index_notification_digests_on_recipient_membership_id"
   end
 
   create_table "notification_preferences", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1265,6 +1319,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.index ["created_by_id"], name: "index_prorations_on_created_by_id"
   end
 
+  create_table "push_subscriptions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "brand_id", null: false
+    t.text "endpoint", null: false
+    t.string "p256dh", null: false
+    t.string "auth", null: false
+    t.string "user_agent"
+    t.datetime "last_success_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_push_subscriptions_on_brand_id"
+    t.index ["endpoint"], name: "index_push_subscriptions_on_endpoint", unique: true
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
   create_table "reserved_slugs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "slug", limit: 40, null: false
     t.datetime "created_at", null: false
@@ -1610,6 +1679,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   add_foreign_key "allocation_client_managers", "companies"
   add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
   add_foreign_key "allocation_clients", "companies"
+  add_foreign_key "announcement_reads", "announcements"
+  add_foreign_key "announcement_reads", "companies"
+  add_foreign_key "announcement_reads", "memberships"
+  add_foreign_key "announcements", "companies"
+  add_foreign_key "announcements", "users", column: "author_id"
+  add_foreign_key "announcements", "users", column: "withdrawn_by_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"
@@ -1713,6 +1788,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "invited_by_id"
   add_foreign_key "notification_deliveries", "notifications"
+  add_foreign_key "notification_digests", "brands"
+  add_foreign_key "notification_digests", "memberships", column: "recipient_membership_id"
   add_foreign_key "notification_preferences", "memberships"
   add_foreign_key "notifications", "brands"
   add_foreign_key "notifications", "companies"
@@ -1766,6 +1843,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   add_foreign_key "process_templates", "process_templates", column: "source_template_id", on_delete: :nullify
   add_foreign_key "prorations", "billing_accounts"
   add_foreign_key "prorations", "users", column: "created_by_id"
+  add_foreign_key "push_subscriptions", "brands"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "service_invoices", "invoices"
   add_foreign_key "subscription_items", "add_on_prices"
   add_foreign_key "subscription_items", "subscriptions"

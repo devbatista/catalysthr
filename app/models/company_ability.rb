@@ -14,6 +14,10 @@ class CompanyAbility
   INVITABLE_ROLES = %w[hr_admin hr_analyst manager].freeze
   HR_ROLES = %w[hr_admin hr_analyst].freeze
 
+  # The units whose notices of the board the person sees in the panel and may choose, or
+  # :all (P-15-22, D-656).
+  attr_reader :announcement_unit_ids
+
   def initialize(user, company, support_access: nil)
     @user = user
     membership = Membership.with_access.find_by(user: user, organization: company)
@@ -30,6 +34,7 @@ class CompanyAbility
     elsif support_at?(user, company, support_access)
       hr_analyst(company, units: :all, modules: contracted)
     end
+    announcements(user, company, membership, roles, reader: consultant || support_at?(user, company, support_access))
     manager(company, membership) if roles.include?("manager")
     employee(company, membership) if roles.include?("employee")
     # The portal (spec 16, RN-16-002, D-645): the employee and the manager.
@@ -51,6 +56,27 @@ class CompanyAbility
       [ (membership.enabled_modules if roles.include?("hr_analyst")), consultant&.enabled_modules, (contracted if support) ].flatten.compact
     end
     released.uniq.each { |code| can :use_module, code.to_sym }
+  end
+
+  # The board of notices (RN-15-070, P-15-22, D-656): the HR administrator publishes to the
+  # whole company and the HR analyst to their units; each edits and withdraws their own, the
+  # HR administrator any. Who published and the HR administrator see how many opened it
+  # (spec 15, section 6). The consultant and the support only read it (D-656). The employee
+  # reads it in the portal, by the audience.
+  def announcements(user, company, membership, roles, reader:)
+    if roles.include?("hr_admin")
+      @announcement_unit_ids = :all
+      can %i[read create update withdraw read_reads], Announcement, company_id: company.id
+    elsif roles.include?("hr_analyst")
+      @announcement_unit_ids = ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: membership).pluck(:unit_id) }
+      can :read, Announcement, company_id: company.id
+      can :create, Announcement, company_id: company.id if @announcement_unit_ids.any?
+      can %i[update withdraw read_reads], Announcement, company_id: company.id, author_id: user.id
+    elsif reader
+      @announcement_unit_ids = :all
+      can :read, Announcement, company_id: company.id
+    end
+    can :read_board, Announcement if roles.include?("employee")
   end
 
   def support_at?(user, company, support_access)

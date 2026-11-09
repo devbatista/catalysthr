@@ -1,0 +1,11 @@
+<%= t("notification_mailer.notice.greeting", name: @user.first_name) %>
+
+<%= t(".intro", count: @total) %>
+<% @groups.each do |name, notifications| %>
+
+<%= name %>
+<% notifications.each do |notification| %>
+- <%= notification.title %><% if notification.url %>: <%= notification.url %><% end %>
+
+<% end %>
+<% end %>

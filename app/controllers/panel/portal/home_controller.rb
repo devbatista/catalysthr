@@ -9,9 +9,21 @@ module Panel
         authorize! :read, :portal
         @team = TeamOverview.new(current_membership) if portal_manager?
         @processes = current_profile ? open_processes : []
+        @announcements = board_highlights
+        @announcement_read_ids = AnnouncementRead.where(membership: current_membership, announcement_id: @announcements.map(&:id))
+          .pluck(:announcement_id).to_set
       end
 
       private
+
+      # "Comunicados" (RN-16-020, block 4): the pinned and the unread ones in force (D-656).
+      def board_highlights
+        return [] unless current_profile && FeatureFlags.enabled?(FeatureFlags::ANNOUNCEMENTS) && can?(:read_board, Announcement)
+
+        read = AnnouncementRead.where(membership: current_membership).select(:announcement_id)
+        Announcement.reaching(current_profile).live.where("announcements.pinned OR announcements.id NOT IN (?)", read)
+          .board_order.limit(3).to_a
+      end
 
       # The admission's and the onboarding's progress (spec 06, spec 07).
       def open_processes

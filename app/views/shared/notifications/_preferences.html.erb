@@ -1,0 +1,40 @@
+<%# "Minhas notificações", in the panel and in the portal (RN-15-021 to RN-15-023, D-654).
+    locals: form_path, cancel_path and, in the portal, whose header already has the title on
+    the phone, heading_class %>
+<% scope = "panel.notification_preferences.edit" %>
+<% content_for :title, t("title", scope: scope) %>
+
+<h1 class="<%= class_names("page-title", local_assigns[:heading_class]) %>"><%= t("title", scope: scope) %></h1>
+<p class="page-subtitle"><%= t("subtitle", scope: scope) %></p>
+
+<% push_active = NotificationType.available_channels.include?("push") && PushSubscription.exists?(user: current_user, brand: Current.brand) %>
+<% unless current_user.email_deliverable? || push_active %>
+  <p class="alert-bad mt-6" role="alert"><%= t(current_user.email_bounced? ? "email_bounced" : "email_missing", scope: scope) %></p>
+<% end %>
+
+<% if push_available? %>
+  <%= render "shared/notifications/push_device" %>
+<% end %>
+
+<%= form_with url: form_path, method: :patch, class: "mt-6 space-y-6" do |form| %>
+  <% if @sections.empty? %>
+    <p class="card card-body text-sm text-ink-soft"><%= t("empty", scope: scope) %></p>
+  <% end %>
+  <% @sections.each do |section| %>
+    <section class="card overflow-hidden">
+      <div class="border-b border-line-soft px-5 py-3">
+        <h2 class="card-title"><%= section.membership.organization.name %></h2>
+      </div>
+      <%= render "shared/notifications/channels", types: section.types, name: "preferences[#{section.membership.id}]",
+        roles: section.membership.roles,
+        channels: section.types.to_h { |type| [ type.code, section.preferences[type.code]&.channels || section.defaults[type.code] || type.configurable_channels(section.membership.roles) ] },
+        errors: section.preferences.transform_values { |preference| preference.errors.full_messages } %>
+    </section>
+  <% end %>
+  <% if @sections.any? %>
+    <div class="flex items-center gap-3">
+      <%= form.submit t("save", scope: scope), class: "btn btn-primary" %>
+      <%= link_to t("cancel", scope: scope), cancel_path, class: "link-button text-sm" %>
+    </div>
+  <% end %>
+<% end %>

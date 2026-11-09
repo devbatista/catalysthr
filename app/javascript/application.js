@@ -1,6 +1,7 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "passkeys"
 import "template_editor"
+import { forgetPush } from "push"
 
 // Forms with data-confirm ask before submitting, for actions that remove access.
 document.addEventListener("submit", (event) => {
@@ -9,7 +10,8 @@ document.addEventListener("submit", (event) => {
 })
 
 // Leaving the session clears the app's caches on the device (spec 16, RN-16-061,
-// CA-16-008). They hold only the shell, never data, but nothing stays after a sign-out.
+// CA-16-008). They hold only the shell, never data, but nothing stays after a sign-out, and
+// the push of this browser goes too (D-654).
 document.addEventListener("submit", async (event) => {
   const form = event.target
   if (event.defaultPrevented || form.dataset.cachesCleared || !("caches" in window)) return
@@ -17,6 +19,7 @@ document.addEventListener("submit", async (event) => {
 
   event.preventDefault()
   try {
+    await forgetPush(form).catch(() => {})
     await Promise.all((await caches.keys()).map((key) => caches.delete(key)))
   } finally {
     form.dataset.cachesCleared = "true"

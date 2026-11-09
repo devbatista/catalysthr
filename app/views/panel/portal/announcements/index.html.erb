@@ -1,0 +1,28 @@
+<%# The board in the portal (spec 15, RN-15-072; spec 16, RN-16-011, D-656): the notices in
+    force for the person, the pinned first, the new ones marked, and the ones that ended
+    below. %>
+<% content_for :title, t(".title") %>
+<% content_for :portal_title, t(".title") %>
+
+<h1 class="page-title hidden lg:block"><%= t(".title") %></h1>
+
+<% if @live.empty? %>
+  <p class="card card-body mt-4 text-sm text-ink-soft lg:mt-6"><%= t(".empty") %></p>
+<% else %>
+  <ul class="mt-4 grid gap-3 lg:mt-6 lg:grid-cols-2">
+    <% @live.each do |announcement| %>
+      <li><%= render "item", announcement: announcement, unread: !@read_ids.include?(announcement.id) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @past.any? %>
+  <section class="mt-8 space-y-3" aria-labelledby="past-title">
+    <h2 id="past-title" class="section-title"><%= t(".past") %></h2>
+    <ul class="grid gap-3 lg:grid-cols-2">
+      <% @past.each do |announcement| %>
+        <li><%= render "item", announcement: announcement, unread: false %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

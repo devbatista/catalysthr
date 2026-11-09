@@ -12,7 +12,7 @@ module Panel
 
     # Changes when the assets or the worker change, so the browser installs the new one
     # and the page offers "Nova versão disponível" (RN-16-064).
-    WORKER_REVISION = 1
+    WORKER_REVISION = 2
 
     def show
       @version = Digest::SHA256.hexdigest([ WORKER_REVISION, helpers.stylesheet_path("tailwind"), helpers.stylesheet_path("application"),

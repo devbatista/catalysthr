@@ -123,6 +123,8 @@ No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `
 - [x] **[Claude]** Rodar o workflow **Deploy** e conferir a página e o `/up` no endereço provisório do Railway (https://web-production-4e2f3.up.railway.app, 2026-10-14)
 - [x] **[Claude]** Depois do domínio e da Cloudflare: adicionar `*.painel.catalysthr.com.br` e `admin.catalysthr.com.br` no serviço `web` e acompanhar o certificado (emitido em minutos; Let's Encrypt válido até 12/01/2027, renovação automática)
 
+- [ ] **[Claude]** Gerar o par de chaves VAPID do push (spec 15, P-15-33, D-654) e gravar `VAPID_PUBLIC_KEY` e `VAPID_PRIVATE_KEY` em `web` e `worker`, sem passar pelo chat, antes de ligar a flag `push_notifications`, na fase de validação. Sem novo fornecedor. Trocar as chaves depois invalida as inscrições já feitas
+
 > Os serviços `clamav` e `backup` (pg_dump diário) entram na fase 1, junto das funções que dependem deles.
 
 ## 6. GitHub

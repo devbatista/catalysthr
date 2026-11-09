@@ -37,6 +37,26 @@ employments_apply_scheduled_revisions:
   class: "Employments::ApplyScheduledRevisionsJob"
   queue: "default"
 
+# Releases the push held by the quiet hours, grouped by type (spec 15, RN-15-031, RN-15-034)
+notifications_release_held:
+  cron: "*/5 * * * * America/Sao_Paulo"
+  class: "Notifications::ReleaseHeldJob"
+  queue: "notifications"
+
+# Puts up the scheduled notices of the board and ends the ones past their validity (spec 15,
+# RN-15-071, D-656).
+announcements_publish_scheduled:
+  cron: "*/5 * * * * America/Sao_Paulo"
+  class: "Announcements::PublishScheduledJob"
+  queue: "notifications"
+
+# Sends the daily digests whose hour came, 7h30 in each time zone, from Monday to Friday. The
+# window goes past 7h30 in Acre, so a run lost to a deploy is made up (spec 15, RN-15-041, D-655)
+notifications_digest:
+  cron: "*/30 6-12 * * 1-5 America/Sao_Paulo"
+  class: "Notifications::DigestJob"
+  queue: "notifications"
+
 # Takes old notices out of the bell and deletes them after 1 year (spec 15, RN-15-090, D-608)
 notifications_purge:
   cron: "30 3 * * * America/Sao_Paulo"

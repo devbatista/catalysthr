@@ -1,0 +1,10 @@
+<%# The invite to turn on the push (RN-15-003, RN-16-022, RN-16-066, D-654), shown by push.js
+    from the second visit on, after the install invite and before the passkey's. Not shown
+    with the push on or refused; dismissed, it comes back in 30 days. The card explains what
+    it is for, and only its button brings the browser's request. %>
+<section hidden data-push-invite class="card card-body space-y-3 border-brand-primary/30" aria-labelledby="push-invite-title">
+  <h2 id="push-invite-title" class="card-title"><%= t(".title") %></h2>
+  <p class="text-sm text-ink-soft"><%= t(".text") %></p>
+  <button type="button" class="btn btn-primary min-h-11 w-full sm:w-auto" data-push-invite-enable><%= t(".enable") %></button>
+  <button type="button" class="link-button min-h-11 text-sm" data-push-invite-dismiss><%= t(".dismiss") %></button>
+</section>

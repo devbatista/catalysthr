@@ -23,7 +23,20 @@ module FeatureFlags
   # and the activation doesn't warn about it.
   ESOCIAL = :esocial
 
-  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL ].freeze
+  # The push of the notices (spec 15, D-654), off until the check on real devices. Off, the
+  # channel is not offered and nothing is sent.
+  PUSH_NOTIFICATIONS = :push_notifications
+
+  # The daily digest (spec 15, D-655). Off, the e-mails go one by one (D-607); turned off
+  # later, what was already held still leaves in the next digest.
+  NOTIFICATION_DIGEST = :notification_digest
+
+  # The board of notices (spec 15, D-656). Off, the board is in neither the panel nor the
+  # portal, and nothing goes up; what was scheduled waits.
+  ANNOUNCEMENTS = :announcements
+
+  ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL, PUSH_NOTIFICATIONS,
+    NOTIFICATION_DIGEST, ANNOUNCEMENTS ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

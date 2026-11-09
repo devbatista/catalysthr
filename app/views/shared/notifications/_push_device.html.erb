@@ -1,0 +1,17 @@
+<%# This device's push (RN-15-003, RN-15-004, RN-16-066): push.js shows the state that
+    applies. The browser's request only comes after the person reads what it is for. %>
+<section class="card card-body mt-6 space-y-3" data-push-device aria-labelledby="push-device-title">
+  <h2 id="push-device-title" class="card-title"><%= t("notifications.push.title") %></h2>
+  <p class="text-sm text-ink-soft"><%= t("notifications.push.purpose") %></p>
+  <p hidden data-push-state="unsupported" class="text-sm"><%= t("notifications.push.unsupported") %></p>
+  <p hidden data-push-state="ios" class="text-sm"><%= t("notifications.push.ios") %></p>
+  <p hidden data-push-state="denied" class="text-sm"><%= t("notifications.push.denied") %></p>
+  <div hidden data-push-state="off">
+    <button type="button" class="btn btn-primary min-h-11 w-full sm:w-auto" data-push-enable><%= t("notifications.push.enable") %></button>
+  </div>
+  <div hidden data-push-state="on" class="space-y-2">
+    <p class="text-sm font-semibold"><%= t("notifications.push.active") %></p>
+    <button type="button" class="btn btn-secondary min-h-11 w-full sm:w-auto" data-push-disable><%= t("notifications.push.disable") %></button>
+  </div>
+  <p hidden data-push-error class="text-sm font-semibold text-bad" role="alert"><%= t("notifications.push.error") %></p>
+</section>

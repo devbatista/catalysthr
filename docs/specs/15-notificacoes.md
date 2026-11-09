@@ -1,7 +1,7 @@
 # 15 — Notificações
 
-> Status: aprovado · Última atualização: 2026-10-18
-> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609, D-643 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-11-06
+> Decisões: D-012, D-026, D-034, D-040, D-041, D-092, D-160, D-161, D-177, D-179, D-181, D-182, D-186, D-314, D-386, D-400 a D-410, D-570, D-607 a D-609, D-643, D-654, D-655 ([decisoes.md](decisoes.md))
 > Os itens **[P-15-01]** a **[P-15-34]** foram todos aprovados sem ajuste (D-410, seção 10). O item **[P-15-35]** (gestor do cliente, D-570) foi aprovado sem ajuste (D-572).
 
 ## 1. Objetivo
@@ -57,8 +57,8 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
 - **RN-15-001** — **Sino:** fica no topo do painel e do portal, com o contador de não lidas. A lista mostra as notificações dos últimos 90 dias. Abrir uma notificação marca como lida e leva à tela de origem. O contador é atualizado a cada 60 segundos com `fetch` em JavaScript puro, sem WebSocket **[P-15-01]**.
 - **RN-15-002** — **E-mail:** sai pelo domínio da marca (RN-01-040), com logo e cores da marca, e um rodapé que explica por que a pessoa recebeu e leva às preferências **[P-15-02]**.
-- **RN-15-003** — **Push:** Web Push com chaves VAPID, pelo service worker do PWA (spec 16). A permissão é pedida **depois do primeiro acesso**, com uma tela explicando para que serve, e não logo ao abrir. No iPhone, só funciona com o PWA instalado na tela inicial (iOS 16.4 ou superior), e a tela explica como instalar **[P-15-03]**.
-- **RN-15-004** — Uma pessoa pode ter várias inscrições de push (celular e computador). Todas recebem.
+- **RN-15-003** — **Push:** Web Push com chaves VAPID, pelo service worker do PWA (spec 16). A permissão é pedida **depois do primeiro acesso**, com uma tela explicando para que serve, e não logo ao abrir. No iPhone, só funciona com o PWA instalado na tela inicial (iOS 16.4 ou superior), e a tela explica como instalar **[P-15-03]**. O convite fica no Início do portal, a partir da segunda visita, e no painel a ativação fica em "Minhas notificações" (D-654).
+- **RN-15-004** — Uma pessoa pode ter várias inscrições de push (celular e computador). Todas recebem. Sair da conta remove a inscrição daquele navegador; a sessão que só expira mantém (D-654).
 - **RN-15-005** — **Nenhum dado sensível sai do sistema** nos canais externos: nada de salário, valores, CID, números de documentos, motivo de desligamento ou conteúdo de advertências. O aviso diz **o que aconteceu** e leva ao sistema, que pede login. Exemplo: "Seu holerite de outubro está disponível", e não o valor líquido **[P-15-04]**.
 - **RN-15-006** — Tudo em português do Brasil, com o nome comercial da marca de quem recebe (spec 01).
 - **RN-15-007** — No impersonate, nenhum aviso sai (D-186).
@@ -172,8 +172,8 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 ### 4.4 Horário de silêncio (D-402, D-403)
 
 - **RN-15-030** — Vale para **WhatsApp e push**. O sino e o e-mail não têm horário de silêncio.
-- **RN-15-031** — **Regra fixa:** das 20h às 8h, sábados, domingos e feriados da unidade da pessoa (calendário da spec 11), no fuso da unidade (RN-04-013). O aviso fica retido e sai às 8h do próximo dia útil **[P-15-10]**.
-- **RN-15-032** — **Pela jornada** (D-403), para quem tem jornada fixa semanal, escala cíclica ou escala do gestor (RN-11-010, 011, 013): o silêncio é **fora do turno**, com uma margem de **30 minutos** antes da entrada e depois da saída, e nos dias de folga, DSR, férias e afastamento. O aviso retido sai no início do próximo turno, menos a margem. A jornada flexível por carga (RN-11-012) usa a regra fixa **[P-15-11]**.
+- **RN-15-031** — **Regra fixa:** das 20h às 8h, sábados, domingos e feriados da unidade da pessoa (calendário da spec 11), no fuso da unidade (RN-04-013). O aviso fica retido e sai às 8h do próximo dia útil **[P-15-10]**. A unidade é a do vínculo atual; sem vínculo, a matriz da empresa; sem empresa, vale o fuso de Brasília com os feriados nacionais (D-654).
+- **RN-15-032** — **Pela jornada** (D-403), a partir da spec 11 (fase 3, D-654), para quem tem jornada fixa semanal, escala cíclica ou escala do gestor (RN-11-010, 011, 013): o silêncio é **fora do turno**, com uma margem de **30 minutos** antes da entrada e depois da saída, e nos dias de folga, DSR, férias e afastamento. O aviso retido sai no início do próximo turno, menos a margem. A jornada flexível por carga (RN-11-012) usa a regra fixa **[P-15-11]**.
 - **RN-15-033** — Saem **na hora**, mesmo no silêncio:
   - avisos de acesso (RN-15-011);
   - avisos de segurança (`security.*`) **[P-15-12]**.
@@ -184,8 +184,8 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 
 ### 4.5 Resumo diário por e-mail (D-404)
 
-- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso. Até o resumo existir (fase 2), esses avisos vão por e-mail um a um (D-607).
-- **RN-15-041** — O resumo sai às **7h30**, no fuso da unidade principal da pessoa, de segunda a sexta. Ele traz os avisos das últimas 24 horas (ou desde sexta, na segunda) que **ainda não foram lidos** no sistema, agrupados por assunto, com links. Sem nada pendente, não sai e-mail **[P-15-15]**.
+- **RN-15-040** — Para quem tem perfil de **RH, consultor, gestor ou contabilidade**, os avisos **de trabalho não urgentes** que iriam por e-mail entram num **resumo diário**, e não num e-mail por aviso. Ficam de fora os avisos `security.*` e `billing.*` e os que a pessoa recebe como colaboradora, que saem um a um. É um resumo por vínculo de acesso e marca (D-655). Até o resumo ser ligado, esses avisos vão por e-mail um a um (D-607).
+- **RN-15-041** — O resumo sai às **7h30**, no fuso da unidade da pessoa (RN-15-031), de segunda a sexta. Ele traz os avisos das últimas 24 horas (ou desde sexta, na segunda) que **ainda não foram lidos** no sistema, agrupados por assunto, com links. Sem nada pendente, não sai e-mail **[P-15-15]**.
 - **RN-15-042** — Os **urgentes** saem por e-mail na hora.
 - **RN-15-043** — O resumo diário é uma lista dos avisos, gerada sem IA. Ele não substitui o resumo operacional, que fica só na tela inicial (D-386).
 - **RN-15-044** — Colaboradores recebem os e-mails um a um, porque são poucos **[P-15-16]**.
@@ -215,12 +215,12 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 - **RN-15-070** — Quem publica: o **RH administrador**, para a empresa toda, e o **RH analista**, para as unidades dele **[P-15-22]**.
 - **RN-15-071** — O comunicado tem:
   - título e texto, com o botão "Escrever com IA" (D-391);
-  - anexo opcional (PDF ou imagem, até 10 MB);
-  - público: todos, ou um filtro por unidade, departamento, cargo e tipo de vínculo;
+  - anexo opcional (PDF ou imagem, até 10 MB), que passa pela varredura de vírus antes de o comunicado ir ao ar (D-656);
+  - público: todos, ou um filtro por unidade, departamento, cargo e tipo de vínculo. O filtro é aplicado na hora da leitura: quem entra depois vê o comunicado enquanto ele valer, e o aviso vai para quem estava no público na publicação (D-656);
   - publicação imediata ou agendada;
-  - validade, depois da qual sai do mural;
+  - validade, obrigatória, sugerida em 30 dias, depois da qual sai do mural (D-656);
   - opção de **fixar no topo**.
-- **RN-15-072** — O mural fica no portal do colaborador e no painel do RH. O RH vê quantas pessoas do público abriram o comunicado.
+- **RN-15-072** — O mural fica no portal do colaborador e no painel do RH. O RH vê quantas pessoas do público abriram o comunicado, contra o público de hoje com acesso ao portal (D-656). Publicado, o comunicado só muda a validade e o fixar no topo; para corrigir o texto, é retirado e publicado de novo (D-656).
 - **RN-15-073** — O comunicado não tem valor de ciência. Para registrar ciência, o RH publica um documento com ciência (D-279). A tela de publicação lembra disso **[P-15-23]**.
 - **RN-15-074** — O aviso usa o tipo `announcements.published`: sino, push e e-mail com o título e o texto (sem anexo, só o link). No WhatsApp, vai o modelo padrão "Você tem um novo comunicado de {{marca}}" com o link. Comunicados seguem o horário de silêncio como qualquer aviso.
 
@@ -230,7 +230,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
   - SES: entrega, devolução (bounce) e reclamação (complaint), pelo SNS **[P-15-24]**;
   - Twilio: enviada, entregue, lida e falhou, por callback;
   - Web Push: resposta 404 ou 410 apaga a inscrição.
-- **RN-15-081** — **Obrigatórios:** se a entrega falha, o sistema tenta o **próximo canal disponível**, na ordem **WhatsApp → e-mail → push**, pulando os já usados. O sino sempre tem o aviso **[P-15-25]**.
+- **RN-15-081** — **Obrigatórios:** se a entrega falha, o sistema tenta o **próximo canal disponível**, na ordem **WhatsApp → e-mail → push**, pulando os já usados. O sino sempre tem o aviso **[P-15-25]**. Disponível é o canal que a pessoa consegue receber, mesmo fora das preferências ou do catálogo do tipo, e o push da reserva respeita o silêncio (D-654).
 - **RN-15-082** — **Opcionais:** sem reserva. O aviso fica no sino.
 - **RN-15-083** — **E-mail que volta** (bounce permanente): o endereço é marcado como **inválido**, deixa de receber e-mails, aparece em destaque no cadastro e gera `contacts.email_invalid` ao RH do escopo. A marca sai quando o e-mail é alterado. **Reclamação de spam** suspende os e-mails opcionais daquele endereço **[P-15-26]**. O e-mail inválido não recebe nenhum e-mail do sistema, nem convite nem recuperação de senha, e a tela que tentaria enviar avisa na hora. O mesmo endereço volta a receber quando o suporte o libera pelo admin, o que também o tira da lista de supressão do SES (D-609).
 - **RN-15-084** — Falhas temporárias do provedor têm até 3 novas tentativas, com 1, 5 e 15 minutos de intervalo, antes de contar como falha (como RN-14-120) **[P-15-27]**.
@@ -261,6 +261,7 @@ As outras specs dizem **quando** um aviso nasce. Esta spec diz **como** ele cheg
 | Canais padrão da empresa por tipo | RH administrador |
 | Lembrete de marcação | RH administrador |
 | Publicar comunicado | RH administrador (empresa toda), RH analista (unidades dele) **[P-15-22]** |
+| Editar e retirar comunicado | Quem publicou, RH administrador (D-656) |
 | Ver quantos abriram o comunicado | Quem publicou, RH administrador |
 | Modelos de WhatsApp, números e catálogo | Superadmin, suporte |
 | Consumo de WhatsApp | Como a linha "Consumo" da spec 03 |
@@ -285,7 +286,7 @@ notification_deliveries
   destination_masked, fallback_from_id, digest_id
 
 notification_digests
-  id, recipient_membership_id, sent_at, notification_ids (bigint[])
+  id, recipient_membership_id, brand_id, sent_at, provider_message_id, notification_ids (uuid[])
 
 push_subscriptions
   id, user_id, brand_id, endpoint, p256dh, auth, user_agent, last_success_at
@@ -310,10 +311,11 @@ punch_reminder_settings
 
 announcements
   id, company_id, author_id, title, body, attachment (Active Storage),
-  audience (jsonb), publish_at, expires_at, pinned, status
+  audience (jsonb), publish_at, expires_at, pinned, status,
+  published_at, withdrawn_at, withdrawn_by_id
 
 announcement_reads
-  announcement_id, membership_id, read_at
+  id, company_id, announcement_id, membership_id, read_at
 
 users (acréscimo)
   email_status ('valid'|'bounced'|'complained'), email_status_at
@@ -328,12 +330,13 @@ users (acréscimo)
 | `Notifications::DeliverWhatsappJob` | Por entrega | Envia o modelo pela Twilio e lança o consumo |
 | `Notifications::DeliverPushJob` | Por entrega | Envia o Web Push |
 | `Notifications::ReleaseHeldJob` | A cada 5 minutos | Libera as entregas retidas cujo silêncio acabou, agrupando por tipo |
-| `Notifications::DigestJob` | A cada 30 minutos, das 7h às 8h | Monta e envia os resumos diários das 7h30 de cada fuso |
+| `Notifications::DigestJob` | A cada 30 minutos, das 6h às 12h30 de Brasília, de segunda a sexta | Monta e envia os resumos diários das 7h30 de cada fuso (D-655) |
 | `Notifications::PunchRemindersJob` | A cada 5 minutos | Procura marcações previstas sem registro além da tolerância |
 | `Notifications::FallbackJob` | Ao falhar uma entrega obrigatória | Cria a entrega no próximo canal |
 | `Notifications::UsageAlertsJob` | A cada hora | Avisos de 80% e 100% da cota de WhatsApp |
-| `Announcements::PublishScheduledJob` | A cada 5 minutos | Publica os comunicados agendados e retira os vencidos |
-| `Notifications::PurgeJob` | Diário | Arquiva notificações de 90 dias e apaga entregas de 1 ano |
+| `Announcements::PublishScheduledJob` | A cada 5 minutos | Publica os comunicados agendados com o anexo limpo e encerra os vencidos (D-656) |
+| `Announcements::NotifyJob` | Ao publicar um comunicado | Avisa o público daquele momento (D-656) |
+| `Notifications::PurgeJob` | Diário | Arquiva notificações de 90 dias, apaga entregas de 1 ano e comunicados 2 anos depois da validade ou da retirada (RN-15-091) |
 
 - **Fila:** os envios ficam na fila `notifications` do Sidekiq. O ponto continua prioritário (P-10-26) **[P-15-31]**.
 - **E-mail:** Action Mailer com o SES pela gem `aws-sdk-rails`, com um *configuration set* que publica os eventos de entrega, devolução e reclamação no SNS, recebidos num endpoint com a assinatura conferida **[P-15-24]**.

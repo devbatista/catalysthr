@@ -187,7 +187,10 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 07d-2. Encaminhamento à contabilidade, com a tela do escritório e a confirmação de recebimento (RN-07-070, RN-06-065, RN-06-066, D-651, D-652) (PR #124)
   - [x] 07e. Ativação e experiência (RN-07-085, RN-07-086, RN-07-100 a RN-07-102, CA-07-008 sem o eSocial, CA-07-009, CA-07-010, D-653) (PR #126). A flag `admissions` fica desligada em produção até a spec 09
   - Ficam com outras specs: RN-07-032, RN-07-050 a RN-07-054 e o S-3000 (spec 13, fase 4, flag `esocial`, D-648), CA-07-005, o WhatsApp do CA-07-003, o recrutamento (spec 21), a importação em lote (spec 18), a recomendação da avaliação (RN-07-103, spec 22), o efeito da RN-07-086 no ponto, na folha e nos painéis (specs 10 a 12 e 17) e a purga da retenção (spec 05)
-- [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural
+- [ ] **Spec 15 (resto, sem o WhatsApp):** push, horário de silêncio, resumo diário por e-mail, mural. Em 3 PRs (D-654); o silêncio pela jornada entra com a spec 11 e o "Escrever com IA" do mural, com a spec 14:
+  - [x] 15c. Push e silêncio: inscrições, service worker, convite no Início, "Minhas notificações" no portal, silêncio pela regra fixa, liberação agrupada, cancelamento do que já foi lido e canal de reserva, com a flag `push_notifications` (RN-15-003, RN-15-004, RN-15-030, RN-15-031, RN-15-033 a RN-15-035, RN-15-080, RN-15-081, CA-15-001 sem o WhatsApp, CA-15-004, CA-15-013) (PR #128)
+  - [x] 15d. Resumo diário por e-mail, com a flag `notification_digest` (RN-15-040 a RN-15-044, CA-15-005, CA-15-006, D-655) (PR #129, que entra na `main` pelo #128)
+  - [ ] 15e. Mural de comunicados no portal e no painel, com a flag `announcements`: publicação pelo RH administrador e pelo analista nas unidades dele, público lido na hora, espera pela varredura do anexo, aviso pelo sino, e-mail e push, contagem de quem abriu e histórico de 2 anos (RN-15-070 a RN-15-074, RN-15-091, CA-15-011, D-656). O WhatsApp do aviso entra com o bloco dele
 - [ ] **Spec 17 (parte):** painel do RH e do gestor e visão consolidada do parceiro
 - [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
 
@@ -215,6 +218,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] AWS SES: decidir entre o plano Essentials (padrão da conta, US$ 0,16 a cada 1.000 e-mails) e o avulso (US$ 0,10), com a estimativa de volume do primeiro cliente
 - [ ] Asaas: a primeira NFS-e real, com a flag `nfse` ligada (`pendencias-fornecedores.md`)
 - [ ] Passkeys em aparelhos reais (iPhone, Android, Windows, D-647): cadastro, login e o que cada aparelho mostra como nome (CA-16-010). Só o Chrome com autenticador virtual foi conferido. Depois, ligar a flag `passkeys`
+- [ ] Push em aparelhos reais (iPhone instalado, Android, computador, D-654): ativar, receber, abrir pelo aviso e sair da conta. No Chrome do computador, ativar, o convite e sair foram conferidos em 2026-11-06, sem o recebimento, porque nada é enviado no desenvolvimento (P-15-34). Confirmar que os serviços de push aceitos no cadastro cobrem esses aparelhos. Depois, ligar a flag `push_notifications`
 - [ ] Teste de ponta a ponta da fase 1: o superadmin cria um parceiro e uma empresa direta em teste; eles configuram a marca e convidam o RH, que entra com MFA; contratam um plano e pagam por cartão e por PIX; a NFS-e sai pelo Asaas e aparece na fatura
 - [ ] Serviço `clamav` no Railway (1 vCPU, 3 GB, de US$ 12 a 24 por mês), antes de ligar a flag de qualquer módulo com upload para um cliente (D-638)
 - [ ] Spec 20: o PITR (plano do Railway), os outros monitores de job e os externos além do `/up` (plano do Sentry, D-627) e o reenvio ao plantão (RN-20-076, com o plano pago do Sentry e a Twilio, D-629)
@@ -248,7 +252,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 10:** marcação no PWA, cerca, selfie com consentimento, IPs, externos, totem, NSR, marcação imutável (trigger), comprovante assinado, tratamento, AFD e AEJ
 - [ ] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige. Criar antes a chave `alias/catalysthr-a1` no KMS, com rotação anual (RN-20-052), e dar ao usuário da aplicação a permissão de criptografar e descriptografar com ela
 - [ ] **Spec 11:** regras de ponto, jornadas, feriados, apuração, banco de horas, fechamento, espelho, contestação
-- [ ] **Spec 15:** lembrete de marcação
+- [ ] **Spec 15:** lembrete de marcação e silêncio pela jornada (RN-15-032, CA-15-002, CA-15-003, D-654)
 - [ ] **Spec 17:** blocos de ponto e relatório de absenteísmo e jornada
 - [ ] **Spec 18:** importação de jornadas e saldos
 - [ ] **Spec 20:** teste de carga com 2.000 marcações por minuto

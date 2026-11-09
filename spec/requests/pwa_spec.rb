@@ -33,7 +33,7 @@ RSpec.describe "PWA", type: :request do
   it "changes the worker's version when the worker changes (RN-16-064)" do
     get "/service-worker.js"
     first = response.body[/shell-(\w+)/, 1]
-    stub_const("Panel::ServiceWorkersController::WORKER_REVISION", 2)
+    stub_const("Panel::ServiceWorkersController::WORKER_REVISION", Panel::ServiceWorkersController::WORKER_REVISION + 1)
     get "/service-worker.js"
 
     expect(response.body[/shell-(\w+)/, 1]).not_to eq(first)
