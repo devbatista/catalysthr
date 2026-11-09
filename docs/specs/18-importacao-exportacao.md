@@ -1,7 +1,7 @@
 # 18 — Importação e exportação
 
-> Status: aprovado · Última atualização: 2026-10-13
-> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-11-09
+> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469, D-661 ([decisoes.md](decisoes.md))
 > Os itens **[P-18-nn]** foram todos aprovados sem ajuste (D-469, seção 10).
 
 ## 1. Objetivo
@@ -158,8 +158,8 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 
 | Ação | Quem |
 |---|---|
-| Importações de implantação: estrutura, histórico salarial, acumulados, XMLs do eSocial | RH administrador, suporte (assistida) **[P-18-16]** |
-| Colaboradores, dependentes, bancários, gestores, férias, banco de horas, admissões em lote, atualizações em massa | RH administrador (T), RH analista (U) |
+| Importações de implantação: estrutura, colaboradores e vínculos, dependentes, bancários, gestores, histórico salarial, acumulados, XMLs do eSocial | RH administrador, suporte (assistida) **[P-18-16]**, D-661 |
+| Férias, banco de horas, admissões em lote, atualizações em massa | RH administrador (T), RH analista (U) |
 | Lançamentos da folha, coparticipação e benefícios | RH administrador (T), RH analista com o módulo folha (U) |
 | Desfazer importação | RH administrador |
 | Autorizar importação assistida | RH administrador |
@@ -176,7 +176,7 @@ data_imports
   created_by_id, assisted (bool), confirmed_at, undone_at, undone_by_id
 
 data_import_rows
-  id, data_import_id, line_number, status, payload (jsonb), errors (jsonb),
+  id, data_import_id, line_number, status, payload, errors,   -- criptografados (D-086, D-661)
   record_type, record_id, action ('create'|'update'|'none'), version_id (PaperTrail)
   -- payload apagado junto com o arquivo, em 90 dias
 

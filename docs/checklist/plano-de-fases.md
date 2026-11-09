@@ -196,7 +196,13 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 17b. Painel do gestor: equipe ativa e afastada, "Esperando por você" com os itens de processo, vencimentos só com o texto e fins de experiência, com as mesmas consultas do "Minha equipe" do portal (RN-17-004, RN-17-020, RN-17-021, D-659) (PR #134). O CA-17-004 fica para a fase 3, com o banco de horas
   - [x] 17c. Visão consolidada do parceiro na tela inicial dele: carteira e consumo, saúde operacional com os sinais e adoção com o registro do app instalado (RN-17-040 a RN-17-042, CA-17-005, D-660) (PR #135)
   - Ficam com outras specs e fases: a aprovação de solicitações no painel do RH e no do gestor (spec 09), o resumo operacional e as partes de IA da adoção e do consumo (spec 14), o certificado A1 nos vencimentos (spec 13), os blocos e as ausências de ponto, com o CA-17-004 (fase 3), os blocos de folha e eSocial, com o CA-17-003 (fase 4), e a exportação, a comparação entre empresas e os relatórios (fase 5). A flag `dashboards` fica desligada em produção até o responsável ligar
-- [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa
+- [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa, admissões em lote e atualizações em massa. Em 6 PRs (D-661); a implantação é do RH administrador e do suporte:
+  - [ ] 18a. Motor comum: envio em XLSX ou CSV, validação em segundo plano, prévia com os erros linha a linha, confirmação de tudo ou só das válidas, resultado, planilha de erros, modelo XLSX com as listas da empresa, histórico, purga dos 90 dias e fila `imports`, com o tipo Estrutura (RN-18-001 a RN-18-010, RN-18-042, CA-18-001, CA-18-002)
+  - [ ] 18b. Colaboradores e vínculos, sem convite nem eSocial, dependentes e dados bancários e PIX, com a confirmação de senha para salário e conta (RN-18-020, RN-18-041, CA-18-003, CA-18-004)
+  - [ ] 18c. Gestores dos departamentos e histórico salarial e de cargos com vigência (D-207)
+  - [ ] 18d. Desfazer, com a lista do que impede, e importação assistida pela área admin com a autorização do RH administrador (RN-18-050 a RN-18-063, CA-18-009, CA-18-010)
+  - [ ] 18e. Exportação completa da empresa: ZIP com senha AES pelo 7-Zip, mostrada uma vez, partes de 5 GB, link de 7 dias e uma por semana (RN-18-070 a RN-18-075, CA-18-011, CA-18-012)
+  - [ ] 18f. Admissões em lote e atualizações em massa, por planilha e pela tela, com o escopo U do analista (RN-18-030, RN-18-040, CA-18-005, CA-18-008)
 
 **Leva 2, cada uma depois da resposta que muda o desenho:**
 - [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4). Depois da conferência do especialista em DP
@@ -286,7 +292,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
 - [ ] **Spec 13:** construtores de eventos versionados, XSD, XMLDSig, lotes, retorno, painel de revisão, rejeições explicadas pela IA, retificação, S-3000, migração por corte, guias, CPRB
 - [ ] **Spec 09:** férias (pedido, validações, férias coletivas, calendário, aviso com ciência) e rescisão com pagamento
 - [ ] **Spec 07:** S-2190 e S-2200 na admissão
-- [ ] **Spec 18:** acumulados da folha, XMLs do eSocial e conversores de Domínio, Questor e Alterdata
+- [ ] **Spec 18:** acumulados da folha, férias, lançamentos da folha e coparticipação (CA-18-006, CA-18-007), XMLs do eSocial e conversores de Domínio, Questor e Alterdata (D-661)
 - [ ] **Spec 17:** blocos de folha e eSocial no painel do RH e na visão do parceiro (CA-17-003) e relatório de custo de pessoal
 
 ### Pronto quando
