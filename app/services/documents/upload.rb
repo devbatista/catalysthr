@@ -38,6 +38,7 @@ module Documents
         end
       end
       Documents::Followers.sync(@document, by: by)
+      Dashboards::Activity.document_sent(@document, by: by)
       true
     rescue StandardError
       blobs&.each(&:purge_later)

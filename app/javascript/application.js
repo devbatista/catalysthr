@@ -396,3 +396,53 @@ if (installInvite) {
   }
   window.addEventListener("appinstalled", () => { installInvite.hidden = true })
 }
+
+// The HR panel (spec 17, D-657): each block in its own request, all at once, so a slow
+// block never holds the others (RN-17-090, CA-17-012). Each says when its numbers were made;
+// the line shows the oldest, and "Atualizar" asks every block again, past the 60 seconds of
+// the cache (RN-17-091). A block that fails says so and keeps the others.
+const dashboard = document.querySelector("[data-dashboard]")
+
+if (dashboard) {
+  const blocks = dashboard.querySelectorAll("[data-dashboard-block]")
+  const updated = dashboard.querySelector("[data-dashboard-updated]")
+  let generatedAt = []
+
+  const showUpdated = () => {
+    if (generatedAt.length === 0) return
+    const seconds = Math.max(0, Math.round(Date.now() / 1000 - Math.min(...generatedAt)))
+    if (seconds < 5) updated.textContent = dashboard.dataset.updatedNow
+    else if (seconds < 120) updated.textContent = dashboard.dataset.updatedSeconds.replace("COUNT", seconds)
+    else updated.textContent = dashboard.dataset.updatedMinutes.replace("COUNT", Math.floor(seconds / 60))
+  }
+
+  const loadBlock = async (block, refresh) => {
+    const url = new URL(block.dataset.dashboardBlock, window.location.href)
+    if (refresh) url.searchParams.set("refresh", "1")
+    block.setAttribute("aria-busy", "true")
+    try {
+      const response = await fetch(url, { headers: { Accept: "text/html" } })
+      if (!response.ok) throw new Error(response.status)
+      block.innerHTML = await response.text()
+      const at = Number(response.headers.get("X-Generated-At"))
+      if (at) generatedAt.push(at)
+      showUpdated()
+    } catch {
+      const failed = document.createElement("p")
+      failed.className = "card card-body text-sm text-ink-soft"
+      failed.textContent = dashboard.dataset.failed
+      block.replaceChildren(failed)
+    } finally {
+      block.removeAttribute("aria-busy")
+    }
+  }
+
+  const loadAll = (refresh) => {
+    generatedAt = []
+    blocks.forEach((block) => loadBlock(block, refresh))
+  }
+
+  dashboard.querySelector("[data-dashboard-refresh]").addEventListener("click", () => loadAll(true))
+  loadAll(false)
+  setInterval(showUpdated, 5_000)
+}

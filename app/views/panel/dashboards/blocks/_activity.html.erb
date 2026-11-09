@@ -1,0 +1,21 @@
+<%# "Atividade recente" (RN-17-011, P-17-03, D-658): the last 20 happenings of the scope,
+    without sensitive data. %>
+<% events = panel.activity.to_a %>
+<div class="card card-body">
+  <h2 class="card-title"><%= t(".title") %></h2>
+  <% if events.empty? %>
+    <p class="mt-2 text-sm text-ink-soft"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="mt-3 space-y-3">
+      <% events.each do |event| %>
+        <% at = event.occurred_at.in_time_zone(Time.find_zone(Current.company.headquarters&.time_zone || "America/Sao_Paulo")) %>
+        <li class="grid grid-cols-[3.5rem_1fr] gap-3 text-sm">
+          <time class="pt-0.5 font-mono text-xs text-ink-muted" datetime="<%= event.occurred_at.iso8601 %>">
+            <%= at.to_date == panel.filter.today ? l(at, format: "%H:%M") : l(at, format: "%d/%m") %>
+          </time>
+          <span><%= event.url ? link_to(event.text, event.url, class: "link-button") : event.text %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

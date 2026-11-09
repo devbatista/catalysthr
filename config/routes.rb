@@ -293,6 +293,13 @@ Rails.application.routes.draw do
           post :invite_manager, path: "invite-manager"
         end
       end
+      # The HR panel (spec 17, D-657, D-658): each block in its own request (RN-17-090) and
+      # the lists its indicators open (RN-17-002). Before the documents, so "pending" is not
+      # read as a document's id.
+      get "dashboard/blocks/:block", to: "dashboard_blocks#show", as: :dashboard_block
+      get "documents/pending", to: "pending_documents#index", as: :pending_documents
+      get "overdue-items", to: "overdue_items#index", as: :overdue_items
+      get "upcoming-expirations", to: "upcoming_expirations#index", as: :upcoming_expirations
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       # The documents (spec 08, D-642): the review queue, each document with its versions and
       # the review, and the person's folder; the company's types and the platform's settings.

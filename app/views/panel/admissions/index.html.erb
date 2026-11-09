@@ -14,9 +14,11 @@
   <p class="alert-bad mt-5" role="alert"><%= t(".attention", count: @attention) %></p>
 <% end %>
 
+<%= render "panel/dashboards/filter_notice", filter: @filter, clear_path: admissions_path(status: @status) %>
+
 <nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".filters") %>">
   <% ProcessInstance::STATUSES.each do |status| %>
-    <%= link_to "#{t("admissions.statuses.#{status}")} · #{@counts.fetch(status, 0)}", admissions_path(status: status),
+    <%= link_to "#{t("admissions.statuses.#{status}")} · #{@counts.fetch(status, 0)}", admissions_path(@filter.params.merge(status: status)),
       class: "chip #{"chip-active" if @status == status}" %>
   <% end %>
 </nav>

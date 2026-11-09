@@ -137,6 +137,10 @@ RSpec.describe "Admission forward", type: :request do
       in_company do
         expect(forward.reload.status).to eq("sent")
         expect(instance.events.pluck(:action)).to include("item_sent_to_firm")
+        # The HR panel's recent activity (RN-17-011, D-657).
+        event = ActivityEvent.find_by!(kind: "admission_forwarded")
+        expect(event.text).to eq("Juliana Ribeiro encaminhou a admissão de Rafael Campos ao escritório Contábil Exata")
+        expect([ event.module_code, event.url, event.unit_id ]).to eq([ "admissao", "/admissions/#{admission.id}", company.headquarters.id ])
       end
     end
 

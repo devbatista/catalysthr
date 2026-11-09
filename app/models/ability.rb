@@ -37,4 +37,9 @@ class Ability
   def announcement_unit_ids
     @company_ability&.announcement_unit_ids || []
   end
+
+  # The units of the HR panel's numbers, or :all (RN-17-014); none outside a company.
+  def hr_unit_ids
+    @company_ability&.hr_unit_ids || []
+  end
 end

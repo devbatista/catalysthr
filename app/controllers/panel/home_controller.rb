@@ -12,6 +12,7 @@ module Panel
 
       if Current.company
         @admissions_attention = admissions_attention
+        hr_dashboard if FeatureFlags.enabled?(FeatureFlags::DASHBOARDS) && can?(:read, :hr_dashboard)
         return
       end
 
@@ -26,7 +27,16 @@ module Panel
 
     private
 
-    # Until the panels of spec 17, the serious alert of the activation (RN-07-085, D-653).
+    # The HR panel (spec 17, D-657): the page only frames the blocks, which come each in its
+    # own request (RN-17-090).
+    def hr_dashboard
+      @filter = Dashboards::Filter.new(current_ability, Current.company, unit_id: params[:unit_id], client_id: params[:client_id])
+      @new_admission = FeatureFlags.enabled?(FeatureFlags::ADMISSIONS) && can?(:create, Admission)
+      @usage = Dashboards::Usage.shown?(current_ability, Current.company)
+      render "panel/dashboards/show"
+    end
+
+    # The serious alert of the activation (RN-07-085, D-653).
     def admissions_attention
       return 0 unless FeatureFlags.enabled?(FeatureFlags::ADMISSIONS) && can?(:create, Admission)
 

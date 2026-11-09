@@ -1,0 +1,45 @@
+<%# The prototype's indicators (RN-17-010, P-17-02, D-658), each opening its list with the same
+    number and the same filter (RN-17-002). Only those of the modules the person operates
+    (RN-17-014); "Aprovações aguardando" comes with spec 09 (D-657). %>
+<% filter = panel.filter.params %>
+<% cards = [] %>
+<% if panel.admissions? %>
+  <% corrections = panel.admissions_with_correction.count %>
+  <% cards << { key: :admissions, value: panel.admissions.count, path: admissions_path(filter.merge(status: "open")),
+       hint: corrections.positive? ? t(".admissions_hint", count: corrections) : t(".admissions_none") } %>
+<% end %>
+<% if panel.documents? %>
+  <% late = panel.late_requests.count %>
+  <% cards << { key: :documents, value: panel.pending_documents_count, path: pending_documents_path(filter),
+       hint: late.positive? ? t(".documents_hint", count: late) : t(".documents_none"), bad: late.positive? } %>
+<% end %>
+<% if panel.overdue_items? %>
+  <% overdue = panel.overdue_items.count %>
+  <% top = panel.overdue_top_unit if overdue.positive? %>
+  <% cards << { key: :overdue, value: overdue, path: overdue_items_path(filter), bad: overdue.positive?,
+       hint: top ? t(".overdue_hint", unit: top.first&.name || t(".no_unit"), count: top.last) : t(".overdue_none") } %>
+<% end %>
+<% if panel.expirations? %>
+  <% kinds = panel.expiration_kinds %>
+  <% cards << { key: :expirations, value: panel.expirations_count, path: upcoming_expirations_path(filter),
+       hint: kinds.any? ? kinds.map { |name, count| "#{name} · #{count}" }.join(" · ") : t(".expirations_none") } %>
+<% end %>
+<% if panel.employees? %>
+  <% units = panel.employees_by_unit %>
+  <% cards << { key: :employees, value: units.sum(&:last), path: employees_path(filter.merge(situation: "active")),
+       hint: units.any? ? units.first(2).map { |unit, count| "#{unit&.name || t(".no_unit")} · #{count}" }.join(" · ") : t(".employees_none") } %>
+<% end %>
+
+<% if cards.empty? %>
+  <p class="card card-body text-sm text-ink-soft"><%= t(".empty") %></p>
+<% else %>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <% cards.each do |card| %>
+      <%= link_to card[:path], class: "card card-body block transition hover:border-brand-primary", data: { indicator: card[:key] } do %>
+        <p class="eyebrow"><%= t(".#{card[:key]}") %></p>
+        <p class="mt-2 text-2xl font-extrabold <%= card[:bad] ? "text-bad" : "text-ink-strong" %>" data-indicator-value><%= number_with_delimiter(card[:value]) %></p>
+        <p class="field-hint"><%= card[:hint] %></p>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

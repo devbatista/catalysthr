@@ -14,20 +14,33 @@
 </div>
 <p class="page-subtitle"><%= t(".subtitle") %></p>
 
+<%# The situation filter comes from the HR panel's "Colaboradores ativos" (RN-17-002). %>
+<% situation = { situation: @situation }.compact %>
+<% if @situation %>
+  <p class="mt-5 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
+    <span class="pill pill-info"><%= t(".situation_active") %></span>
+    <%= link_to t(".clear_situation"), employees_path(params.permit(:unit_id, :client_id)), class: "link-button" %>
+  </p>
+<% end %>
 <nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".filters") %>">
   <% total = @unit_counts.values.sum %>
-  <%= link_to t(".all", count: total), employees_path, class: "chip #{"chip-active" if params[:unit_id].blank?}" %>
+  <%= link_to t(".all", count: total), employees_path(situation), class: "chip #{"chip-active" if params[:unit_id].blank?}" %>
   <% @units.each do |unit| %>
     <% next unless @unit_counts[unit.id] %>
-    <%= link_to "#{unit.name} · #{@unit_counts[unit.id]}", employees_path(unit_id: unit.id),
+    <%= link_to "#{unit.name} · #{@unit_counts[unit.id]}", employees_path(situation.merge(unit_id: unit.id)),
       class: "chip #{"chip-active" if params[:unit_id] == unit.id.to_s}" %>
   <% end %>
 </nav>
 <% if @client_counts&.keys&.compact&.any? %>
   <nav class="mt-2 flex flex-wrap gap-2" aria-label="<%= t(".client_filters") %>">
     <% @client_counts.keys.compact.sort_by(&:name).each do |client| %>
-      <%= link_to "#{client.name} · #{@client_counts[client]}", employees_path(params.permit(:unit_id).merge(client_id: client.id)),
+      <%= link_to "#{client.name} · #{@client_counts[client]}", employees_path(params.permit(:unit_id).to_h.merge(situation, client_id: client.id)),
         class: "chip #{"chip-active" if params[:client_id] == client.id.to_s}" %>
+    <% end %>
+    <% if @no_client_count.positive? %>
+      <%= link_to "#{t(".no_client")} · #{@no_client_count}",
+        employees_path(params.permit(:unit_id).to_h.merge(situation, client_id: Dashboards::Filter::NO_CLIENT)),
+        class: "chip #{"chip-active" if params[:client_id] == Dashboards::Filter::NO_CLIENT}" %>
     <% end %>
   </nav>
 <% end %>

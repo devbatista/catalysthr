@@ -21,13 +21,16 @@ module Panel
       profiles = WorkerProfile.accessible_by(current_ability)
         .includes(:user, employments: { revisions: [ :position, :unit, :allocation_client, { department: { managers: :user } } ] })
       @units = Unit.ordered.to_a
-      @rows = EmployeeRow.build(profiles)
+      # "Ativos e afastados", the HR panel's indicator (RN-17-010, RN-17-002).
+      @situation = params[:situation].presence_in(%w[active])
+      @rows = EmployeeRow.filter(EmployeeRow.build(profiles), situation: @situation)
       @unit_counts = @rows.group_by { |row| row.unit&.id }.transform_values(&:size)
-      @rows = @rows.select { |row| row.unit&.id.to_s == params[:unit_id] } if params[:unit_id].present?
-      # By client, when the company uses them (story 8, D-570).
+      @rows = EmployeeRow.filter(@rows, unit_id: params[:unit_id])
+      # By client, when the company uses them (story 8, D-570), or without one (RN-17-005).
       if Current.company.uses_allocation_clients
         @client_counts = @rows.group_by { |row| row.revision&.allocation_client }.transform_values(&:size)
-        @rows = @rows.select { |row| row.revision&.allocation_client_id.to_s == params[:client_id] } if params[:client_id].present?
+        @no_client_count = EmployeeRow.filter(@rows, client_id: Dashboards::Filter::NO_CLIENT).size
+        @rows = EmployeeRow.filter(@rows, client_id: params[:client_id])
       end
     end
 

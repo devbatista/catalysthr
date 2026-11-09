@@ -1,0 +1,96 @@
+<%# "Documentos pendentes", opened by the HR panel (RN-17-010, D-658): the versions waiting
+    for the review and the people of a request still without a version, in two tabs whose
+    total is the indicator's (CA-17-001). %>
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle", count: @counts.values.sum) %></p>
+<%= render "panel/dashboards/filter_notice", filter: @filter, clear_path: pending_documents_path(tab: @tab) %>
+
+<nav class="mt-5 flex flex-wrap gap-2" aria-label="<%= t(".tabs") %>">
+  <% Panel::PendingDocumentsController::TABS.each do |tab| %>
+    <%= link_to "#{t(".tab_#{tab}")} · #{@counts.fetch(tab)}", pending_documents_path(@filter.params.merge(tab: tab)),
+      class: "chip #{"chip-active" if tab == @tab}", "aria-current": (tab == @tab ? "page" : nil) %>
+  <% end %>
+</nav>
+
+<section class="card card-body mt-6 space-y-3">
+  <% if @tab == "review" %>
+    <% if @versions.empty? %>
+      <p class="text-sm text-ink-soft"><%= t(".review_empty") %></p>
+    <% else %>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><%= t(".document") %></th>
+              <th class="hidden md:table-cell"><%= t(".person") %></th>
+              <th class="hidden lg:table-cell"><%= t(".sent") %></th>
+              <th><%= t(".status") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @versions.each do |version| %>
+              <% document = version.document %>
+              <tr>
+                <td>
+                  <%= link_to document_title(document), document_path(document, version_id: version.id), class: "link-button font-bold" %>
+                  <p class="mt-1 text-xs text-ink-soft md:hidden"><%= document.worker_profile.display_name %></p>
+                </td>
+                <td class="hidden md:table-cell"><%= document.worker_profile.display_name %></td>
+                <td class="hidden lg:table-cell text-sm text-ink-soft"><%= l(version.uploaded_at, format: "%d/%m/%Y %H:%M") %> · <%= version.uploaded_by.name %></td>
+                <td><%= document_version_pill(version) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% else %>
+    <% if @late.positive? %>
+      <p class="alert-bad" role="alert"><%= t(".late", count: @late) %></p>
+    <% end %>
+    <% if @targets.empty? %>
+      <p class="text-sm text-ink-soft"><%= t(".requests_empty") %></p>
+    <% else %>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><%= t(".document") %></th>
+              <th class="hidden md:table-cell"><%= t(".person") %></th>
+              <th><%= t(".due_on") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @targets.each do |target| %>
+              <% due_on = target.request.due_on %>
+              <tr>
+                <td>
+                  <% if can?(:read, target.request) %>
+                    <%= link_to document_title(target.document), document_request_path(target.request), class: "link-button font-bold" %>
+                  <% else %>
+                    <span class="font-bold"><%= document_title(target.document) %></span>
+                  <% end %>
+                  <p class="mt-1 text-xs text-ink-soft md:hidden"><%= target.worker_profile.display_name %></p>
+                </td>
+                <td class="hidden md:table-cell"><%= target.worker_profile.display_name %></td>
+                <td>
+                  <% if due_on %>
+                    <span class="pill <%= due_on < @today ? "pill-bad" : "pill-mute" %>"><%= l(due_on, format: "%d/%m/%Y") %></span>
+                  <% else %>
+                    <span class="text-sm text-ink-soft"><%= t(".no_due_on") %></span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+  <% shown = @tab == "review" ? @versions.size : @targets.size %>
+  <% if @counts.fetch(@tab) > shown %>
+    <p class="field-hint"><%= t(".more", shown: shown, count: @counts.fetch(@tab)) %></p>
+  <% end %>
+</section>

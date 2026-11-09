@@ -1582,8 +1582,20 @@ pt-BR:
       same_login: "Você entra com o mesmo CPF ou e-mail e a mesma senha."
       old_address: "O endereço antigo deixou de funcionar. Se tiver um atalho salvo, troque pelo novo."
   # The sidebar's menus (D-597)
+  # The HR panel (spec 17, D-657, D-658)
+  dashboards:
+    activity:
+      a_document: "um documento"
+      document_sent: "%{actor} enviou %{document} de %{person}"
+      document_sent_by_person: "%{person} enviou %{document}"
+      admission_forwarded: "%{actor} encaminhou a admissão de %{person} ao escritório %{firm}"
+    hr:
+      experience_end: "Fim da experiência"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    dashboards:
+      name: "Painel do RH"
+      description: "Ligada, a tela inicial do RH vira o painel, com os indicadores, as pendências por unidade, os vencimentos, a atividade recente e o contrato. Desligada, a tela inicial fica como antes (spec 17, D-657)."
     announcements:
       name: "Mural de comunicados"
       description: "Ligada, o RH publica comunicados no painel, e os colaboradores do público veem o mural no portal e recebem o aviso. Desligada, o mural some e os agendados esperam (spec 15, D-656)."
@@ -2630,6 +2642,126 @@ pt-BR:
       index:
         title: "Faturas"
         subtitle: "As faturas do contrato da empresa com a CatalystHR, uma por mês, emitidas 3 dias antes do vencimento."
+    dashboards:
+      show:
+        title: "Painel do RH"
+        new_admission: "Nova admissão"
+        unit: "Unidade"
+        all_units: "Todas as unidades"
+        client: "Cliente"
+        all_clients: "Todos os clientes"
+        no_client: "Sem cliente"
+        filter: "Filtrar"
+        indicators: "Indicadores"
+        loading: "Carregando…"
+        refresh: "Atualizar"
+        updated_now: "Atualizado agora"
+        updated_seconds: "Atualizado há COUNT segundos"
+        updated_minutes: "Atualizado há COUNT min"
+        failed: "Não foi possível carregar este bloco. Clique em Atualizar para tentar de novo."
+        noscript: "O painel precisa do JavaScript ligado no navegador."
+      filter_notice:
+        label: "Filtro do painel:"
+        no_client: "Sem cliente"
+        clear: "Ver tudo"
+      blocks:
+        indicators:
+          admissions: "Admissões em andamento"
+          admissions_hint:
+            one: "1 com correção pendente"
+            other: "%{count} com correção pendente"
+          admissions_none: "Nenhuma com correção pendente"
+          documents: "Documentos pendentes"
+          documents_hint:
+            one: "1 pedido vencido"
+            other: "%{count} pedidos vencidos"
+          documents_none: "Nenhum pedido vencido"
+          overdue: "Tarefas atrasadas"
+          overdue_hint: "Mais atrasos: %{unit} · %{count}"
+          overdue_none: "Nenhum atraso"
+          expirations: "Vencimentos em 30 dias"
+          expirations_none: "Nada vence nos próximos 30 dias"
+          employees: "Colaboradores ativos"
+          employees_none: "Ninguém ativo ainda"
+          no_unit: "Sem unidade"
+          empty: "Nenhum indicador para os módulos que você opera."
+        pending_by_unit:
+          title: "Pendências por unidade"
+          unit: "Unidade"
+          documents: "Documentos"
+          overdue: "Atrasos"
+          empty: "Nenhuma unidade no seu escopo."
+        upcoming:
+          title: "Próximos vencimentos"
+          all: "Ver todos"
+          empty: "Nada vence nos próximos 30 dias."
+        activity:
+          title: "Atividade recente"
+          empty: "Nada aconteceu por aqui nos últimos dias."
+        usage:
+          title_contract: "Contrato"
+          title_usage: "Consumo da empresa"
+          plan: "Plano"
+          status: "Situação"
+          trial_ends: "Teste até %{date}"
+          employees: "Colaboradores no mês"
+          employees_peak:
+            one: "1 no pico do mês"
+            other: "%{count} no pico do mês"
+          employees_pending: "O consumo do mês aparece depois do primeiro dia registrado."
+          invoices: "Ver as faturas"
+    pending_documents:
+      index:
+        title: "Documentos pendentes"
+        subtitle:
+          one: "1 documento aguardando revisão ou envio."
+          other: "%{count} documentos aguardando revisão ou envio."
+        tabs: "Tipos de pendência"
+        tab_review: "Aguardando revisão"
+        tab_requests: "Pedidos não atendidos"
+        document: "Documento"
+        person: "Pessoa"
+        sent: "Enviado em"
+        status: "Situação"
+        due_on: "Prazo"
+        no_due_on: "Sem prazo"
+        late:
+          one: "1 pedido passou do prazo."
+          other: "%{count} pedidos passaram do prazo."
+        review_empty: "Nenhum documento aguardando revisão."
+        requests_empty: "Nenhum pedido esperando envio."
+        more: "Mostrando %{shown} de %{count}. Use o filtro de unidade para ver o resto."
+    overdue_items:
+      index:
+        title: "Tarefas atrasadas"
+        subtitle: "Itens de processos em andamento que passaram do prazo, o mais antigo primeiro."
+        count:
+          zero: "Nenhuma tarefa atrasada"
+          one: "1 tarefa atrasada"
+          other: "%{count} tarefas atrasadas"
+        item: "Item"
+        process: "Processo"
+        responsible: "Responsável"
+        due_on: "Prazo"
+        empty: "Nenhum item passou do prazo."
+        more: "Mostrando %{shown} de %{count}. Use o filtro de unidade para ver o resto."
+    upcoming_expirations:
+      index:
+        title: "Vencimentos"
+        subtitle: "Documentos e contratos de experiência que vencem de %{from} a %{until}, o mais próximo primeiro."
+        count:
+          zero: "Nada vence nos próximos 30 dias"
+          one: "1 vencimento"
+          other: "%{count} vencimentos"
+        what: "O que vence"
+        person: "Pessoa"
+        date: "Vence em"
+        in_days:
+          zero: "hoje"
+          one: "em 1 dia"
+          other: "em %{count} dias"
+        empty: "Nada vence nos próximos 30 dias."
+        expired: "Ver os documentos já vencidos"
     home:
       coming_soon:
         default_welcome: "Acesse sua conta."
@@ -2847,6 +2979,9 @@ pt-BR:
       index:
         title: "Colaboradores"
         subtitle: "As pessoas da empresa, com o cargo e a unidade de hoje."
+        situation_active: "Ativos e afastados"
+        clear_situation: "Ver todas as situações"
+        no_client: "Sem cliente"
         invite_all: "Convidar todos sem acesso"
         invite_all_confirm: "Enviar o convite do portal por e-mail a quem ainda não tem acesso e tem e-mail válido? Quem já tem um convite em aberto não recebe outro."
         new: "Novo colaborador"
@@ -4335,6 +4470,7 @@ pt-BR:
   date:
     formats:
       month_year: "%B de %Y"
+      weekday_long: "%A, %-d de %B"
       with_weekday: "%d/%m/%Y (%a)"
   shared:
     billing_address:
