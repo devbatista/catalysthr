@@ -9,7 +9,8 @@ module Imports
       "dependents" => "Imports::Dependents",
       "bank_accounts" => "Imports::BankAccounts",
       "department_managers" => "Imports::DepartmentManagers",
-      "employment_history" => "Imports::EmploymentHistory"
+      "employment_history" => "Imports::EmploymentHistory",
+      "admissions" => "Imports::Admissions"
     }.freeze
 
     module_function
@@ -22,8 +23,9 @@ module Imports
       ALL.fetch(code).constantize
     end
 
+    # The kinds whose module is on: the admissions wait for their flag (D-648, D-668).
     def all
-      ALL.values.map(&:constantize)
+      ALL.values.map(&:constantize).select { |kind| !kind.respond_to?(:available?) || kind.available? }
     end
   end
 end

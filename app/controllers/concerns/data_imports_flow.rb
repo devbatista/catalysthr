@@ -29,7 +29,7 @@ module DataImportsFlow
   def index
     authorize! :read, DataImport
     return unless import_allowed?(:read, DataImport)
-    @imports = DataImport.includes(:created_by).order(id: :desc).limit(100).to_a
+    @imports = import_scope.includes(:created_by).order(id: :desc).limit(100).to_a
     @kinds = import_kinds
     render "#{VIEWS}/index"
   end
@@ -129,6 +129,9 @@ module DataImportsFlow
   end
 
   private
+
+  # The imports the list shows; the panel narrows them to the person's (D-668).
+  def import_scope = DataImport.all
 
   def declaration?(kind)
     kind.respond_to?(:declaration?) && kind.declaration?

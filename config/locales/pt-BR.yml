@@ -1689,6 +1689,10 @@ pt-BR:
         title: "Histórico salarial e de cargos"
         file: "historico"
         description: "As revisões de cada vínculo com a data e o motivo: promoções, reajustes e transferências. Uma célula vazia mantém o que valia antes."
+      admissions:
+        title: "Admissões em lote"
+        file: "admissoes"
+        description: "Uma admissão por linha, com o cadastro inicial: nome, CPF, e-mail ou celular, cargo, unidade, departamento e a data prevista de início. Cada admissão começa o processo do cargo ou do tipo de vínculo, sem convite; depois, libere o acesso de todos de uma vez."
     structure:
       sheets:
         units: "Unidades"
@@ -1867,6 +1871,31 @@ pt-BR:
         position_code: "Vazio mantém o cargo que valia antes desta data. O mesmo vale para as outras colunas."
         salary: "Em reais, como 2.500,00."
         justification: "Obrigatória quando o salário mensal sai da faixa do cargo."
+    admissions:
+      sheet: "Admissões"
+      columns:
+        cpf: "CPF"
+        name: "Nome completo"
+        email: "E-mail de acesso"
+        mobile_phone: "Celular de acesso"
+        birth_date: "Data de nascimento"
+        social_name: "Nome social"
+        kind: "Tipo de vínculo"
+        category: "Categoria"
+        started_on: "Data prevista de início"
+        position_code: "Código do cargo"
+        unit_code: "Código da unidade"
+        department_code: "Código do departamento"
+        salary: "Salário"
+        salary_unit: "Unidade do salário"
+        weekly_hours: "Horas semanais"
+        justification: "Justificativa do salário fora da faixa"
+      hints:
+        email: "Informe o e-mail ou o celular. O convite do portal sai por e-mail, em \"Liberar acesso de todos\"."
+        kind: "Vazio vale CLT."
+        started_on: "Como 01/12/2026. Hoje ou depois: quem já começou entra pela importação de colaboradores."
+        position_code: "O processo de admissão é o do cargo ou, sem ele, o do tipo de vínculo."
+        salary: "Opcional. Em reais, como 2.500,00. Pode ser completado na revisão da admissão."
     undo:
       employment: "Matrícula %{number} de %{name}"
       blockers:
@@ -1926,6 +1955,9 @@ pt-BR:
       person_missing: "Nenhuma pessoa com este CPF na empresa."
       not_active_manager: "Esta pessoa não é gestor ativo na empresa. Dê o perfil Gestor na tela Usuários; depois que ela aceitar o convite, importe de novo."
       repeated_manager: "Esta pessoa já aparece como gestor deste departamento na linha %{line}."
+      admission_open: "Este CPF já tem uma admissão em andamento na empresa. Corrija pela tela da admissão."
+      repeated_admission: "Este CPF já aparece na linha %{line}."
+      out_of_scope: "%{column}: fora do seu escopo. Você só admite nas suas unidades."
     errors_file:
       column: "Erros"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
@@ -3266,6 +3298,17 @@ pt-BR:
         invite_title: "Próximo passo: liberar o acesso ao portal"
         invite_text: "A importação não enviou nenhum convite. Quando quiser, convide de uma vez quem ainda não tem acesso; quem não tem e-mail aparece na lista para receber o link."
         invite_all: "Convidar todos sem acesso"
+        release_title: "Próximo passo: liberar o acesso das admissões"
+        release_text:
+          one: "A importação não enviou nenhum convite. 1 admissão com e-mail espera a liberação do acesso."
+          other: "A importação não enviou nenhum convite. %{count} admissões com e-mail esperam a liberação do acesso."
+        release_all: "Liberar acesso de todos"
+        release_confirm:
+          one: "Enviar o convite do portal por e-mail a 1 pessoa?"
+          other: "Enviar o convite do portal por e-mail a %{count} pessoas?"
+        release_without_email:
+          one: "1 pessoa não tem e-mail. Libere o acesso pela tela da admissão, com o link ou o QR code:"
+          other: "%{count} pessoas não têm e-mail. Libere o acesso pela tela de cada admissão, com o link ou o QR code:"
         undo_title: "Desfazer a importação"
         undo_text: "Volta tudo o que esta importação mudou: os cadastros criados são excluídos e os atualizados voltam aos valores de antes. Só é possível enquanto nada dela foi usado, e até 90 dias depois do envio."
         undo: "Desfazer a importação"
@@ -3279,6 +3322,8 @@ pt-BR:
         confirmed: "Importação confirmada. As linhas estão sendo gravadas."
       undo:
         not_available: "Esta importação não pode mais ser desfeita."
+      release_admissions:
+        queued: "Os convites estão saindo por e-mail. Esta página mostra quem ainda espera a liberação."
       authorize_assisted:
         acceptance_missing: "Marque o aceite para autorizar a importação assistida."
         authorized: "Importação assistida autorizada até %{date}."

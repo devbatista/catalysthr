@@ -177,6 +177,14 @@ class CompanyAbility
     end
     can %i[read read_summary create update release], Admission, company_id: company.id, process_instance: instances
     can :admit_in, Unit, units
+    # Admissions in batch (spec 18, section 6, D-668): who admits by hand, in the same units,
+    # while the admissions' flag is on (D-648). The HR analyst sees and confirms only their own
+    # imports; the HR administrator has all.
+    return unless FeatureFlags.enabled?(FeatureFlags::ADMISSIONS)
+
+    can :import, :admissions
+    can %i[read create confirm cancel download_errors release_admissions], DataImport, company_id: company.id, kind: "admissions",
+      created_by_id: @user.id
   end
 
   # Who runs an admission sends and reviews that person's documents without the documents
@@ -268,6 +276,8 @@ class CompanyAbility
     can %i[read create confirm cancel download_errors], DataImport, company_id: company.id
     # Undoing a whole import is the HR administrator's (RN-18-050, D-465).
     can :undo, DataImport, company_id: company.id
+    # "Liberar acesso de todos" of an import of admissions (P-07-06, D-668).
+    can :release_admissions, DataImport, company_id: company.id, kind: "admissions"
     # Authorizing the support's assisted import, and revoking it (RN-18-061, D-666).
     can :authorize, AssistedImportAuthorization, company_id: company.id
     can :import, %i[structure employees dependents bank_accounts department_managers employment_history]

@@ -325,6 +325,8 @@ Rails.application.routes.draw do
           patch :cancel
           patch :undo
           get :errors
+          # "Liberar acesso de todos" of the admissions in batch (P-07-06, D-668).
+          post "release-admissions", action: :release_admissions, as: :release_admissions
         end
         # The authorization for the assisted import (RN-18-061, D-666).
         post "assisted-authorization", action: :authorize_assisted, on: :collection, as: :authorize_assisted

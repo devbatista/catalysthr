@@ -110,6 +110,40 @@
   </section>
 <% end %>
 
+<%# The admissions in batch are born without invitation; the HR releases them all by e-mail
+    (P-07-06, D-668). Who has no e-mail is released on the admission's screen. %>
+<% if import_area == :panel && @import.kind == "admissions" && %w[completed completed_with_errors].include?(@import.status) %>
+  <% release = Imports::AdmissionsRelease.new(@import) %>
+  <% pending = release.with_email %>
+  <% without_email = release.without_email %>
+  <% if pending.any? || without_email.any? %>
+    <section class="card card-body mt-6 space-y-3" data-next-step="release">
+      <h2 class="card-title"><%= t(".release_title") %></h2>
+      <% if pending.any? %>
+        <p class="text-sm text-ink-soft"><%= t(".release_text", count: pending.size) %></p>
+        <% if can?(:release_admissions, @import) %>
+          <%= button_to t(".release_all"), release_admissions_data_import_path(@import), method: :post, class: "btn btn-primary",
+            form: { data: { confirm: t(".release_confirm", count: pending.size) } } %>
+        <% end %>
+      <% end %>
+      <% if without_email.any? %>
+        <p class="text-sm text-ink-soft"><%= t(".release_without_email", count: without_email.size) %></p>
+        <ul class="divide-y divide-line-soft text-sm" data-without-email>
+          <% without_email.each do |admission| %>
+            <li class="py-2">
+              <% if can?(:read, admission) %>
+                <%= link_to admission.worker_profile.user.name, admission_path(admission), class: "link-button" %>
+              <% else %>
+                <%= admission.worker_profile.user.name %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </section>
+  <% end %>
+<% end %>
+
 <% if @rows.any? %>
   <section class="card mt-6">
     <div class="flex flex-wrap items-center justify-between gap-3 px-5 pt-5">
