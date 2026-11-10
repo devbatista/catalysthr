@@ -40,6 +40,19 @@ module Panel
       redirect_to data_imports_path, notice: t(".authorized", date: l(authorization.valid_until.to_date))
     end
 
+    # "Liberar acesso de todos" (P-07-06, D-668): the invitation by e-mail to every admission of
+    # the import still open and not released, in the background. Who has no e-mail stays in
+    # the list, to be released on the admission's screen with the link or the QR code.
+    def release_admissions
+      @import = DataImport.find(params[:id])
+      authorize! :release_admissions, @import
+      return redirect_to(data_import_path(@import)) if Simulation.active? || !Imports::AdmissionsRelease.new(@import).releasable?
+
+      AccessEvent.record!(kind: "admin", action: "import_admissions_released", user: current_user, subject: @import)
+      Imports::ReleaseAdmissionsJob.perform_later(@import, current_user)
+      redirect_to data_import_path(@import), notice: t(".queued")
+    end
+
     def revoke_assisted
       authorize! :authorize, AssistedImportAuthorization
       authorization = AssistedImportAuthorization.current
@@ -60,6 +73,9 @@ module Panel
     end
 
     def import_allowed?(_action, _subject) = true
+
+    # The HR analyst sees only their own imports of admissions (D-668).
+    def import_scope = DataImport.accessible_by(current_ability, :read)
 
     # During an impersonate nothing is recorded, and the password is not asked (RN-02-087).
     def sensitive_ready?

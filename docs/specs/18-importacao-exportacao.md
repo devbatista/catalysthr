@@ -1,7 +1,7 @@
 # 18 — Importação e exportação
 
 > Status: aprovado · Última atualização: 2026-11-10
-> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469, D-661 a D-667 ([decisoes.md](decisoes.md))
+> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469, D-661 a D-668 ([decisoes.md](decisoes.md))
 > Os itens **[P-18-nn]** foram todos aprovados sem ajuste (D-469, seção 10).
 
 ## 1. Objetivo
@@ -83,14 +83,14 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 |---|---|---|
 | Lançamentos da folha | CPF ou matrícula + rubrica | Só para competência **aberta** (spec 12). Cria variáveis (`PayrollInput`) com a origem "importação". Reimportar a mesma planilha **substitui** os lançamentos daquela importação, sem duplicar **[P-18-12]** |
 | Coparticipação e benefícios | CPF (titular ou dependente) | Planilha da operadora do plano ou do fornecedor de VR/VA. O RH mapeia as colunas na primeira vez, e o mapa fica salvo por fornecedor (P-12-12) **[P-18-13]** |
-| Admissões em lote | CPF | Uma admissão por linha, com o cadastro inicial mínimo (D-254). Cria as admissões na etapa 1, sem convite (P-07-06) |
-| Atualizações em massa | CPF ou matrícula | Revisões do vínculo com data de vigência e motivo (D-207): salário (valor novo ou percentual), cargo, departamento, unidade, jornada, gestor. Data passada segue a regra de revisão retroativa (RN-04-062) **[P-18-14]** |
+| Admissões em lote | CPF | Uma admissão por linha, com o cadastro inicial mínimo (D-254). Cria as admissões na etapa 1, sem convite (P-07-06). O CPF com uma admissão aberta vira erro, e o resultado tem "Liberar acesso de todos", por e-mail (D-668) |
+| Atualizações em massa | CPF ou matrícula | Revisões do vínculo com data de vigência e motivo (D-207): salário (valor novo ou percentual), cargo, departamento, unidade e jornada; o gestor é o do departamento (D-664, D-668). Data passada segue a regra de revisão retroativa (RN-04-062) **[P-18-14]** |
 
 - **RN-18-030** — As atualizações em massa também podem ser feitas **sem planilha**, por uma tela que filtra as pessoas (unidade, departamento, cargo) e aplica a mesma mudança, com o mesmo fluxo de prévia e confirmação **[P-18-15]**.
 
 ### 4.3 Escopo e permissões (P-03-31)
 
-- **RN-18-040** — O RH administrador importa para a empresa toda. O RH analista importa só nas unidades dele: linhas de outras unidades viram erro "fora do seu escopo".
+- **RN-18-040** — O RH administrador importa para a empresa toda. O RH analista importa só nas unidades dele: linhas de outras unidades viram erro "fora do seu escopo". O analista vê só as próprias importações (D-668).
 - **RN-18-041** — Lançamentos da folha exigem o módulo folha liberado (spec 03). Importações que mexem em salário pedem a confirmação de senha ou passkey (RN-02-052).
 - **RN-18-042** — Estrutura, histórico salarial, acumulados e XMLs do eSocial só pelo RH administrador (e pelo suporte, na importação assistida) **[P-18-16]**.
 
