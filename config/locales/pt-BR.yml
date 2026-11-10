@@ -1419,7 +1419,10 @@ pt-BR:
       code_hint: "Letras minúsculas, números e sublinhado. Não muda depois."
       category: "Categoria"
       description: "Descrição"
-      description_hint: "Ajuda a IA a reconhecer o tipo, quando a leitura entrar (spec 14)."
+      description_hint: "Ajuda a IA a reconhecer o tipo no lote."
+      ai_extraction_profile: "Leitura pela IA"
+      ai_extraction_profile_hint: "Os campos que a IA lê deste tipo para a revisão. Sem leitura, o documento vai direto para a revisão."
+      no_ai_extraction: "Sem leitura"
       max_files: "Arquivos por versão"
       max_files_hint: "Até %{count} imagens, como frente e verso, juntadas num PDF."
       expiration_rule: "Vencimento"
@@ -2464,6 +2467,51 @@ pt-BR:
           probation_line: "%{person}: termina em %{date}. A decisão é do RH."
           expiring_line: "%{document} de %{person} vence em %{date}"
     documents:
+      ai_status:
+        processing_title: "Em leitura pela IA"
+        processing: "A IA está lendo o documento. Os campos lidos aparecem aqui ao lado do cadastro; nada muda na ficha sem a sua confirmação."
+        breaker: "A leitura está pausada até %{until} por instabilidade do provedor e continua em seguida."
+        failed_title: "Falha da IA"
+        failed: "A IA não conseguiu ler o documento. Confira à mão e aprove ou peça a correção."
+        reprocess: "Processar de novo"
+        reprocess_confirm: "Pedir uma nova leitura pela IA? A leitura consome 1 crédito de IA."
+        alerts_title: "Alertas da leitura"
+        authenticity: "A IA não confirma a autenticidade do documento. Os alertas são sinais para a sua conferência."
+        alerts:
+          wrong_type: "Tipo diferente do pedido: o arquivo parece ser %{detected}."
+          flag_illegible: "O documento está ilegível em alguma parte."
+          flag_cropped: "O documento parece cortado."
+          flag_blurred: "A imagem está borrada."
+          flag_missing_back: "Parece faltar o verso do documento."
+          flag_edited: "Há sinais de edição ou montagem no documento."
+          flag_screen_photo: "Parece uma foto de uma tela, e não do documento."
+          other_document: "Divergência com %{type}, já aprovado: %{fields}."
+      ai_fields:
+        title: "Campos lidos pela IA"
+        hint: "Confira cada campo com o documento. Marque o que vai para a ficha; você pode corrigir o valor antes. O nome, o CPF e o nascimento só são comparados."
+        reveal: "Ver os números dos documentos (pede a senha)"
+        read: "Lido:"
+        record: "Na ficha:"
+        page: "página %{page}"
+        confidence:
+          high: "confiança alta"
+          medium: "confiança média"
+          low: "confiança baixa, confira"
+        statuses:
+          matches: "Confere"
+          divergent: "Divergência"
+          new: "Campo novo"
+          missing: "Não lido"
+          no_record: "Sem cadastro"
+          shown: "Para conferir"
+        issues:
+          invalid_cpf: "Os dígitos do CPF não conferem."
+          invalid_pis: "Os dígitos do PIS não conferem."
+          postal_code_not_found: "CEP não encontrado no ViaCEP."
+          expired: "Documento vencido pela data lida."
+          too_old: "Emitido há mais tempo do que o tipo aceita: sugere a correção \"Documento vencido\"."
+        apply: "Aplicar na ficha"
+        value_for: "Valor de %{field} para a ficha"
       tabs:
         label: "Seções de documentos"
         review: "Revisão"
@@ -2783,6 +2831,8 @@ pt-BR:
         approved: "Versão aprovada."
       correction:
         requested: "Correção pedida."
+      reprocess:
+        queued: "A IA vai ler o documento de novo. A página se atualiza quando terminar."
     document_templates:
       index:
         title: "Modelos de contrato"
@@ -4800,6 +4850,55 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   ai:
+    extraction:
+      profiles:
+        rg: "RG"
+        cpf: "CPF"
+        cnh: "CNH"
+        ctps_pis: "CTPS ou PIS"
+        proof_of_address: "Comprovante de residência"
+        certificate: "Certidão"
+        aso: "ASO"
+        medical_certificate: "Atestado médico"
+        other: "outro documento"
+      fields:
+        name: "Nome"
+        cpf: "CPF"
+        birth_date: "Data de nascimento"
+        rg_number: "Número do RG"
+        rg_issuer: "Órgão emissor"
+        rg_state: "UF do RG"
+        rg_issued_on: "Data de emissão do RG"
+        filiation: "Filiação"
+        birth_city: "Naturalidade (cidade)"
+        birth_state: "Naturalidade (UF)"
+        cnh_number: "Número de registro da CNH"
+        cnh_category: "Categoria da CNH"
+        issued_on: "Data de emissão"
+        valid_until: "Validade"
+        first_license_on: "Primeira habilitação"
+        pis_nis: "PIS/NIS"
+        holder_name: "Nome do titular"
+        street: "Endereço"
+        street_number: "Número"
+        complement: "Complemento"
+        district: "Bairro"
+        city: "Cidade"
+        state: "UF"
+        postal_code: "CEP"
+        certificate_kind: "Tipo de certidão"
+        names: "Nomes"
+        event_date: "Data do evento"
+        registration: "Matrícula"
+        exam_type: "Tipo de exame"
+        aso_result: "Resultado (apto ou inapto)"
+        exam_on: "Data do exame"
+        physician: "Médico"
+        crm: "CRM"
+        starts_on: "Data de início"
+        days: "Quantidade de dias"
+        ends_on: "Data final"
+        cid: "CID"
     features:
       document_extraction:
         name: "Leitura de documentos"
@@ -6236,6 +6335,10 @@ pt-BR:
               not_reviewable: "Esta versão não está aguardando revisão"
               aso_result_blank: "Informe o resultado e a data do exame"
               too_old: "Documento vencido: emitido há mais de %{count} dias. Peça a correção com o motivo \"Documento vencido\""
+              not_applicable: "Um dos campos escolhidos não pode ir para a ficha por este documento"
+              record_invalid: "Ficha: %{detail}"
+              not_reprocessable: "Esta versão não pode ser lida de novo pela IA agora"
+              sensitive_unconfirmed: "Confirme a senha para aplicar o número de um documento na ficha"
         acknowledgment:
           attributes:
             base:

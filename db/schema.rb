@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_190100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -219,6 +219,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "date"], name: "index_ai_daily_caps_on_company_id_and_date", unique: true
     t.index ["released_by_id"], name: "index_ai_daily_caps_on_released_by_id"
+  end
+
+  create_table "ai_extractions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "subject_type", null: false
+    t.uuid "subject_id", null: false
+    t.string "profile_code"
+    t.string "status", default: "queued", null: false
+    t.string "detected_type_code"
+    t.text "fields"
+    t.jsonb "checks", default: {}, null: false
+    t.jsonb "flags", default: [], null: false
+    t.uuid "ai_request_id"
+    t.integer "attempts", default: 0, null: false
+    t.string "failed_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ai_request_id"], name: "index_ai_extractions_on_ai_request_id"
+    t.index ["company_id", "created_at"], name: "index_ai_extractions_on_company_id_and_created_at"
+    t.index ["subject_type", "subject_id"], name: "index_ai_extractions_on_subject_type_and_subject_id", unique: true
   end
 
   create_table "ai_requests", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -804,6 +824,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "ai_extraction_profile"
     t.index ["code"], name: "index_document_types_platform_code", unique: true, where: "(company_id IS NULL)"
     t.index ["company_id"], name: "index_document_types_on_company_id"
   end
@@ -1433,7 +1454,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
     t.string "stage"
     t.index ["company_id"], name: "index_process_items_on_company_id"
     t.index ["completed_by_id"], name: "index_process_items_on_completed_by_id"
-    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY ((ARRAY['blocked'::character varying, 'pending'::character varying])::text[]))"
+    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY (ARRAY[('blocked'::character varying)::text, ('pending'::character varying)::text]))"
     t.index ["process_instance_id", "position"], name: "index_process_items_on_process_instance_id_and_position"
     t.index ["responsible_membership_ids"], name: "index_process_items_on_responsible_membership_ids", using: :gin
     t.index ["source_template_item_id"], name: "index_process_items_on_source_template_item_id"
@@ -1877,6 +1898,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
   add_foreign_key "ai_credit_weights", "users", column: "created_by_id"
   add_foreign_key "ai_daily_caps", "companies"
   add_foreign_key "ai_daily_caps", "users", column: "released_by_id"
+  add_foreign_key "ai_extractions", "ai_requests"
+  add_foreign_key "ai_extractions", "companies"
   add_foreign_key "ai_requests", "companies"
   add_foreign_key "ai_requests", "users"
   add_foreign_key "allocation_client_managers", "allocation_clients", on_delete: :cascade

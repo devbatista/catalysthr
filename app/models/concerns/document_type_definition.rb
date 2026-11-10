@@ -21,6 +21,7 @@ module DocumentTypeDefinition
 
     normalizes :name, with: ->(name) { name.to_s.squish.presence }
     normalizes :description, with: ->(text) { text.to_s.strip.presence }
+    normalizes :ai_extraction_profile, with: ->(code) { code.to_s.strip.presence }
 
     before_validation :clean_expiration
 
@@ -28,6 +29,9 @@ module DocumentTypeDefinition
     validates :description, length: { maximum: 1000 }
     validates :category, inclusion: { in: DocumentCategory::ALL }
     validates :max_files, numericality: { only_integer: true, in: 1..MAX_FILES }
+    # Only the platform's types are read by the AI (RN-08-002, RN-14-025).
+    validates :ai_extraction_profile, inclusion: { in: ->(_) { Ai::ExtractionProfiles.codes } }, allow_nil: true
+    validates :ai_extraction_profile, absence: true, unless: -> { company_id.nil? }
     validates :alert_days, numericality: { only_integer: true, in: 1..MAX_ALERT_DAYS }
     validates :expiration_months, numericality: { only_integer: true, in: 1..120 }, if: :expires_by_periodicity?
     validates :max_age_days, numericality: { only_integer: true, in: 1..3650 }, if: :expires_by_age?

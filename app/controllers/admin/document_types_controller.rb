@@ -1,10 +1,10 @@
 module Admin
   # The platform's document types (spec 08, RN-08-001, D-270, D-642), kept by the superadmin
-  # and the support in the admin's content (RN-19-080). The extraction by the AI comes with
-  # spec 14. A type is archived, never deleted: documents point to it.
+  # and the support in the admin's content (RN-19-080), with the fields the AI reads from each
+  # one (RN-14-021, D-670). A type is archived, never deleted: documents point to it.
   class DocumentTypesController < BaseController
     PERMITTED = %i[code name description category internal requires_acknowledgment expiration_rule expiration_months
-      max_age_days alert_days max_files status].freeze
+      max_age_days alert_days max_files status ai_extraction_profile].freeze
 
     before_action :load_type, only: %i[edit update]
 

@@ -49,8 +49,14 @@ module Panel
       require_sensitive_confirmation if @document.sensitive?
       return if performed?
 
+      # The numbers of documents read by the AI, and the record's, only after the password
+      # (RN-02-052, D-086).
+      reveal_sections(%w[documents])
+      return if performed?
+
       @versions = @document.versions.includes(:uploaded_by, :reviewed_by, pdf_attachment: { blob: :file_scan }).to_a
       @version = @versions.find { |version| version.id == params[:version_id] } || @document.latest_version
+      @reading = Ai::ExtractionReview.new(@version) if @version
     end
 
     def destroy

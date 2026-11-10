@@ -1,0 +1,32 @@
+<%# The AI's state of a version (spec 14, D-670): reading, failed with "Processar de novo"
+    (RN-14-121, CA-14-004), the queue paused (RN-14-123) and the alerts of the reading:
+    another type than the asked one (CA-14-002), the visual signs and the other documents
+    (RN-14-022, RN-14-023); the review's card says the AI does not confirm authenticity
+    (RN-08-024). locals: version, reading %>
+<% if version.ai_processing? %>
+  <section class="card card-body space-y-2" data-ai-reading="processing">
+    <h2 class="card-title"><%= t(".processing_title") %></h2>
+    <p class="text-sm text-ink-soft" role="status" data-reload-after="5000"><%= t(".processing") %></p>
+    <% if (until_time = Ai::Breaker.open_until) %>
+      <p class="alert-info text-sm"><%= t(".breaker", until: l(until_time, format: "%H:%M")) %></p>
+    <% end %>
+  </section>
+<% elsif version.ai_failed? %>
+  <section class="card card-body space-y-3" role="alert" data-ai-reading="failed">
+    <h2 class="card-title text-bad"><%= t(".failed_title") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".failed") %></p>
+    <% if can?(:review, version.document) && Ai::Reprocess.possible?(version) %>
+      <%= button_to t(".reprocess"), reprocess_document_version_path(version.document, version), method: :post, class: "btn btn-secondary",
+        form: { data: { confirm: t(".reprocess_confirm") } } %>
+    <% end %>
+  </section>
+<% elsif reading.read? && reading.alerts.any? %>
+  <section class="card card-body space-y-2" data-ai-alerts>
+    <h2 class="card-title"><%= t(".alerts_title") %></h2>
+    <ul class="space-y-2">
+      <% reading.alerts.each do |alert| %>
+        <li class="alert-bad text-sm" data-ai-alert="<%= alert.key %>"><%= t(".alerts.#{alert.key}", **alert.params) %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

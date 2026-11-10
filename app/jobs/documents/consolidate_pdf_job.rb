@@ -2,10 +2,11 @@ require "vips"
 
 module Documents
   # Once every file of a version is clean, joins the images in one PDF, a page each, with
-  # Prawn (RN-08-011, CA-08-002); a PDF is already the single file. The version then waits
-  # for the HR's review: the reading by the AI comes with spec 14 (D-642). A published one
-  # is approved by who published it (D-643). A file with a virus rejects the version
-  # (RN-08-020). Runs once per version, whichever scan ends last.
+  # Prawn (RN-08-011, CA-08-002); a PDF is already the single file. A platform type with an
+  # extraction profile is then read by the AI before the review (RN-14-020, D-670); otherwise,
+  # or with the AI off or paused, the version goes straight to the review (CA-14-003). A
+  # published one is approved by who published it (D-643). A file with a virus rejects the
+  # version (RN-08-020). Runs once per version, whichever scan ends last.
   class ConsolidatePdfJob < ApplicationJob
     queue_as :default
 
@@ -13,6 +14,7 @@ module Documents
     MAX_SIDE = 3508
 
     def perform(version)
+      reading = false
       version.with_lock do
         next unless version.scanning?
 
@@ -21,19 +23,13 @@ module Documents
           version.update!(status: "rejected_by_scan")
         elsif scans.all? { |scan| scan&.clean? }
           attach_pdf(version)
-          version.update!(status: "awaiting_review")
+          reading = ReadyForReview.ai_reading?(version)
+          version.update!(status: reading ? "ai_processing" : "awaiting_review")
         end
       end
-      document = version.document
-      if version.awaiting_review? && (publication = document.publication)
-        Review.new(version, by: publication.published_by).approve
-        document.acknowledgments.awaiting.find_each do |acknowledgment|
-          Notices.employee("documents.acknowledgment_pending", document, subject: acknowledgment, title: publication.title,
-            due: I18n.l(acknowledgment.due_on))
-        end
-      else
-        Followers.sync(document, by: version.uploaded_by)
-      end
+      # Only the run that moved the version asks for the reading, so it is never read twice.
+      Ai::ExtractDocumentJob.perform_later(version) if reading
+      ReadyForReview.call(version)
     end
 
     private

@@ -1,0 +1,50 @@
+<%# The fields the AI read, beside the record, inside the approval form (spec 14, RN-14-022,
+    RN-14-024, RN-08-021, CA-14-001): "confere", "divergência" or "campo novo"; a low confidence
+    highlighted; the HR chooses what goes to the record and may correct the value. The name,
+    the CPF and the birth date are only compared (D-670). The numbers of documents show only
+    after the password (RN-02-052). locals: reading, profile %>
+<% revealed = revealed_sections.include?("documents") %>
+<fieldset class="space-y-3 border-b border-line-soft pb-4" data-ai-fields>
+  <legend class="text-sm font-bold text-ink-strong"><%= t(".title") %></legend>
+  <p class="field-hint"><%= t(".hint") %></p>
+  <% if reading.rows.any?(&:sensitive?) && !revealed %>
+    <p class="text-sm"><%= link_to t(".reveal"), url_for(reveal: "documents", version_id: params[:version_id]), class: "link-button" %></p>
+  <% end %>
+  <ul class="divide-y divide-line-soft">
+    <% reading.rows.each do |row| %>
+      <% key = row.field.key %>
+      <% hidden_value = row.sensitive? && !revealed %>
+      <li class="space-y-1 py-3 <%= "rounded-lg bg-warn-bg px-2" if row.low_confidence? %>" data-ai-field="<%= key %>" data-ai-status="<%= row.status %>">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-sm font-semibold text-ink-strong"><%= t("ai.extraction.fields.#{key}") %></span>
+          <span class="pill <%= { matches: "pill-ok", divergent: "pill-bad", new: "pill-info" }.fetch(row.status, "pill-mute") %>"><%= t(".statuses.#{row.status}") %></span>
+        </div>
+        <p class="text-sm">
+          <span class="text-ink-muted"><%= t(".read") %></span>
+          <span class="font-mono"><%= hidden_value ? SensitiveData::HIDDEN : (row.value.presence || "—") %></span>
+          <% if row.page %><span class="text-xs text-ink-muted"> · <%= t(".page", page: row.page) %></span><% end %>
+          <% if row.confidence %><span class="text-xs <%= row.low_confidence? ? "font-bold text-bad" : "text-ink-muted" %>"> · <%= t(".confidence.#{row.confidence}") %></span><% end %>
+        </p>
+        <% if row.field.compare || row.field.apply %>
+          <p class="text-sm">
+            <span class="text-ink-muted"><%= t(".record") %></span>
+            <span class="font-mono"><%= (row.sensitive? ? reveal_confirmed(profile, row.field.apply, as: :text, section: :documents) : row.record_value).presence || "—" %></span>
+          </p>
+        <% end %>
+        <% row.issues.each do |issue| %>
+          <p class="text-xs font-semibold text-bad" data-ai-issue="<%= issue %>"><%= t(".issues.#{issue}") %></p>
+        <% end %>
+        <% if row.applicable? && !hidden_value %>
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <label class="flex items-center gap-2 text-sm">
+              <%= check_box_tag "apply[]", row.field.apply, false, id: "apply_#{key}", class: "size-4" %>
+              <%= t(".apply") %>
+            </label>
+            <%= text_field_tag "values[#{row.field.apply}]", row.value, id: "value_#{key}", class: "input flex-1 min-w-40",
+              "aria-label": t(".value_for", field: t("ai.extraction.fields.#{key}")) %>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</fieldset>

@@ -365,6 +365,8 @@ Rails.application.routes.draw do
             get :file
             patch :approve
             patch :correction
+            # "Processar de novo" by the AI (spec 14, RN-14-121, D-670).
+            post :reprocess
           end
         end
       end
