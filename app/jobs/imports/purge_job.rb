@@ -22,7 +22,7 @@ module Imports
       import.rows.find_each do |row|
         row.update!(payload: nil, diff: nil, undo_data: nil, issues: row.issues.map { |issue| issue.slice("column", "message") })
       end
-      import.update!(purged_at: Time.current)
+      import.update!(purged_at: Time.current, screen: nil)
     end
   end
 end

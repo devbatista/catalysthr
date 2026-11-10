@@ -115,6 +115,7 @@ class CompanyAbility
     can %i[read read_personal read_health update], WorkerProfile, people
     can :read_pay, WorkerProfile, people if modules.include?("folha")
     unit_ids = units == :all ? :all : ActsAsTenant.with_tenant(company) { MembershipUnit.where(membership: units).pluck(:unit_id) }
+    mass_updates(company, unit_ids)
     hr_dashboard(unit_ids)
     processes(company, unit_ids: unit_ids, modules: modules)
     admissions(company, unit_ids: unit_ids) if modules.include?("admissao")
@@ -124,6 +125,16 @@ class CompanyAbility
       folders[:worker_profile_id] = people[:id] if people.key?(:id)
       documents(folders, pay: modules.include?("folha"))
     end
+  end
+
+  # Mass updates (spec 18, section 6, RN-18-040, D-668, D-669): the HR analyst updates the
+  # employments of their units, moves them only to their units, and sees and confirms only
+  # their own imports; the salary needs the payroll module (read_pay).
+  def mass_updates(company, unit_ids)
+    can :import, :mass_updates
+    can %i[read create confirm cancel download_errors], DataImport, company_id: company.id, kind: "mass_updates",
+      created_by_id: @user.id
+    can :revise_in, Unit, unit_ids == :all ? { company_id: company.id } : { company_id: company.id, id: unit_ids }
   end
 
   # The HR panel (spec 17, section 6): the HR administrator with the whole company, the HR
@@ -280,7 +291,9 @@ class CompanyAbility
     can :release_admissions, DataImport, company_id: company.id, kind: "admissions"
     # Authorizing the support's assisted import, and revoking it (RN-18-061, D-666).
     can :authorize, AssistedImportAuthorization, company_id: company.id
-    can :import, %i[structure employees dependents bank_accounts department_managers employment_history]
+    can :import, %i[structure employees dependents bank_accounts department_managers employment_history mass_updates]
+    # Where the mass updates move the employments to (RN-18-040, D-669).
+    can :revise_in, Unit, company_id: company.id
     # The company's full export (RN-18-070, D-466, D-667): any HR administrator asks for it and
     # sees the list; only who asked opens the password and downloads it.
     can %i[read create], CompanyExport, company_id: company.id

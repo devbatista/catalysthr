@@ -142,13 +142,14 @@ module Imports
       revision = employment.revisions.new(base&.slice(*INHERITED) || {})
       ATTRIBUTES.each { |column, attribute| revision[attribute] = value(parsed[column]) if parsed.given?(column) }
       revision.assign_attributes(effective_on: date, reason: parsed["reason"], justification: parsed["justification"], created_by: @by)
+      adjusted = adjust(parsed, revision, base)
+      return [ nil, "none", adjusted, {} ] if adjusted.any?
 
       if same_date
         changes = changed(same_date, revision)
         return [ same_date, "none", [], {} ] if changes.empty?
 
-        revision.reason = "correction"
-        diff = changes.merge("reason" => [ reason_label(same_date.reason), reason_label("correction") ])
+        action, diff = on_same_date(revision, same_date, changes)
       end
 
       issues = []
@@ -158,7 +159,17 @@ module Imports
           raise ActiveRecord::Rollback
         end
       end
-      [ revision, same_date ? "update" : "create", issues, diff ]
+      [ revision, action || "create", issues, diff ]
+    end
+
+    # What a kind changes in the revision before it is recorded; the errors, if any.
+    def adjust(_parsed, _revision, _base) = []
+
+    # Other conditions on the date of a revision: here a "Correção" that prevails (D-603,
+    # D-664). Returns the action and what changes.
+    def on_same_date(revision, same_date, changes)
+      revision.reason = "correction"
+      [ "update", changes.merge("reason" => [ reason_label(same_date.reason), reason_label("correction") ]) ]
     end
 
     def reason_label(reason) = I18n.t("employment_revisions.reasons.#{reason}")

@@ -28,6 +28,9 @@
       <div class="mt-auto flex flex-wrap gap-3">
         <%= link_to t(".template"), import_path_for(:template, kind: kind.code), class: "btn btn-secondary" %>
         <%= link_to t(".send"), import_path_for(:new, kind: kind.code), class: "btn btn-primary" %>
+        <% if kind.code == "mass_updates" && import_area == :panel %>
+          <%= link_to t(".mass_update_screen"), new_mass_update_data_imports_path, class: "btn btn-secondary" %>
+        <% end %>
       </div>
     </div>
   <% end %>

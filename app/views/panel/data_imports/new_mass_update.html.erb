@@ -1,0 +1,98 @@
+<%# The mass update from the screen (RN-18-030, D-669): filter the people of the scope and
+    choose the change. It becomes an import with one line per employment, with the same
+    preview and confirmation; an empty field keeps what is in force. The salary only with the
+    payroll module (P-03-16). %>
+<% content_for :title, t(".title") %>
+
+<p class="text-sm"><%= link_to t(".back"), data_imports_path, class: "link-button" %></p>
+<h1 class="page-title mt-2"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<%= form_with url: mass_update_data_imports_path, method: :post, class: "mt-6 space-y-6" do %>
+  <% if @error %>
+    <p class="alert-bad" role="alert"><%= t(".errors.#{@error}") %></p>
+  <% end %>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".who") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".who_hint") %></p>
+    <div class="form-grid">
+      <div>
+        <%= label_tag "filters_unit_id", t(".unit"), class: "field-label" %>
+        <%= select_tag "filters[unit_id]", options_for_select(@units.map { |unit| [ unit.name, unit.id ] }, params.dig(:filters, :unit_id)),
+          include_blank: t(".all"), class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "filters_department_id", t(".department"), class: "field-label" %>
+        <%= select_tag "filters[department_id]",
+          options_for_select(@departments.map { |department| [ "#{department.name} (#{department.unit.name})", department.id ] }, params.dig(:filters, :department_id)),
+          include_blank: t(".all"), class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "filters_position_id", t(".position"), class: "field-label" %>
+        <%= select_tag "filters[position_id]", options_for_select(@positions.map { |position| [ position.name, position.id ] }, params.dig(:filters, :position_id)),
+          include_blank: t(".all"), class: "input" %>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-body space-y-4">
+    <h2 class="card-title"><%= t(".what") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".what_hint") %></p>
+    <div class="form-grid">
+      <div>
+        <%= label_tag "changes_effective_on", t(".effective_on"), class: "field-label" %>
+        <%= date_field_tag "changes[effective_on]", params.dig(:changes, :effective_on), required: true, class: "input" %>
+        <p class="field-hint"><%= t(".effective_on_hint") %></p>
+      </div>
+      <div>
+        <%= label_tag "changes_reason", t(".reason"), class: "field-label" %>
+        <%= select_tag "changes[reason]", options_for_select(@reasons.map { |reason| [ t("employment_revisions.reasons.#{reason}"), reason ] },
+          params.dig(:changes, :reason) || "collective_raise"), required: true, class: "input" %>
+      </div>
+      <% if @pay %>
+        <div>
+          <%= label_tag "changes_percent", t(".percent"), class: "field-label" %>
+          <%= text_field_tag "changes[percent]", params.dig(:changes, :percent), inputmode: "decimal", class: "input" %>
+          <p class="field-hint"><%= t(".percent_hint") %></p>
+        </div>
+        <div>
+          <%= label_tag "changes_salary", t(".salary"), class: "field-label" %>
+          <%= text_field_tag "changes[salary]", params.dig(:changes, :salary), inputmode: "decimal", class: "input" %>
+          <p class="field-hint"><%= t(".salary_hint") %></p>
+        </div>
+      <% end %>
+      <div>
+        <%= label_tag "changes_position_id", t(".new_position"), class: "field-label" %>
+        <%= select_tag "changes[position_id]", options_for_select(@positions.map { |position| [ position.name, position.id ] }, params.dig(:changes, :position_id)),
+          include_blank: t(".keep"), class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "changes_unit_id", t(".new_unit"), class: "field-label" %>
+        <%= select_tag "changes[unit_id]", options_for_select(@units.map { |unit| [ unit.name, unit.id ] }, params.dig(:changes, :unit_id)),
+          include_blank: t(".keep"), class: "input" %>
+      </div>
+      <div>
+        <%= label_tag "changes_department_id", t(".new_department"), class: "field-label" %>
+        <%= select_tag "changes[department_id]",
+          options_for_select(@departments.map { |department| [ "#{department.name} (#{department.unit.name})", department.id ] }, params.dig(:changes, :department_id)),
+          include_blank: t(".keep"), class: "input" %>
+        <p class="field-hint"><%= t(".new_department_hint") %></p>
+      </div>
+      <div>
+        <%= label_tag "changes_weekly_hours", t(".weekly_hours"), class: "field-label" %>
+        <%= text_field_tag "changes[weekly_hours]", params.dig(:changes, :weekly_hours), inputmode: "decimal", class: "input" %>
+      </div>
+      <div class="field-full">
+        <%= label_tag "changes_justification", t(".justification"), class: "field-label" %>
+        <%= text_field_tag "changes[justification]", params.dig(:changes, :justification), maxlength: 500, class: "input" %>
+        <p class="field-hint"><%= t(".justification_hint") %></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="flex flex-wrap gap-3">
+    <%= submit_tag t(".submit"), class: "btn btn-primary" %>
+    <%= link_to t(".cancel"), data_imports_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
