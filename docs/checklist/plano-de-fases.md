@@ -4,7 +4,7 @@
 > Base: specs 00 a 22 e `docs/specs/decisoes.md`.
 > Definições do responsável: ponto antes de folha e eSocial; IA de documentos no núcleo e o restante da IA no fim; cobrança completa já na fundação; 1 desenvolvedor com apoio de agentes de IA; sem piloto definido; estimativa pedida, sem data-alvo.
 
-Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o que precisa estar resolvido antes), as entregas e o critério de pronto.
+Marque `[x]` quando o item estiver pronto, no mesmo PR que o conclui, com "(PR #N)" no fim (o número entra num commit logo depois de abrir o PR). Cada fase tem os pré-requisitos (o que precisa estar resolvido antes), as entregas e o critério de pronto.
 
 ## Resumo
 
@@ -196,7 +196,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 17b. Painel do gestor: equipe ativa e afastada, "Esperando por você" com os itens de processo, vencimentos só com o texto e fins de experiência, com as mesmas consultas do "Minha equipe" do portal (RN-17-004, RN-17-020, RN-17-021, D-659) (PR #134). O CA-17-004 fica para a fase 3, com o banco de horas
   - [x] 17c. Visão consolidada do parceiro na tela inicial dele: carteira e consumo, saúde operacional com os sinais e adoção com o registro do app instalado (RN-17-040 a RN-17-042, CA-17-005, D-660) (PR #135)
   - Ficam com outras specs e fases: a aprovação de solicitações no painel do RH e no do gestor (spec 09), o resumo operacional e as partes de IA da adoção e do consumo (spec 14), o certificado A1 nos vencimentos (spec 13), os blocos e as ausências de ponto, com o CA-17-004 (fase 3), os blocos de folha e eSocial, com o CA-17-003 (fase 4), e a exportação, a comparação entre empresas e os relatórios (fase 5). A flag `dashboards` fica desligada em produção até o responsável ligar
-- [ ] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa, admissões em lote e atualizações em massa. Em 8 PRs (D-661, D-665, D-668); a implantação é do RH administrador e do suporte:
+- [x] **Spec 18 (parte):** importação da implantação (estrutura, pessoas, dependentes, bancários, gestores, histórico), desfazer, importação assistida, exportação completa, admissões em lote e atualizações em massa. Em 8 PRs (D-661, D-665, D-668); a implantação é do RH administrador e do suporte:
   - [x] 18a. Motor comum: envio em XLSX ou CSV, validação em segundo plano, prévia com os erros linha a linha, confirmação de tudo ou só das válidas, resultado, planilha de erros, modelo XLSX com as listas da empresa, histórico, purga dos 90 dias e fila `imports`, com o tipo Estrutura (RN-18-001 a RN-18-010, RN-18-042, CA-18-001, CA-18-002, D-662) (PR #138)
   - [x] 18b. Colaboradores e vínculos, sem convite nem eSocial, dependentes e dados bancários e PIX, com a confirmação de senha para salário e conta (RN-18-020, RN-18-041, CA-18-003, CA-18-004, D-663). A marca "já enviado por outro sistema" fica para a spec 13 (PR #139)
   - [x] 18c. Gestores dos departamentos e histórico salarial e de cargos com vigência, com a correção na data de uma revisão existente (D-207, D-603, D-664) (PR #140)
@@ -204,7 +204,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 18d-2. Importação assistida pela área admin, com a autorização do RH administrador por 30 dias (RN-18-060 a RN-18-063, CA-18-010, D-665, D-666) (PR #142)
   - [x] 18e. Exportação completa da empresa: ZIP com senha AES pelo 7-Zip, mostrada uma vez, partes de 5 GB, link de 7 dias e uma por semana (RN-18-070 a RN-18-075, CA-18-011, CA-18-012, D-667) (PR #144)
   - [x] 18f-1. Admissões em lote, sem convite e com "Liberar acesso de todos" por e-mail, com o escopo U do analista (RN-18-040, CA-18-005, D-254, P-07-06, D-668) (PR #145)
-  - [ ] 18f-2. Atualizações em massa por planilha e pela tela, com o motivo "Reajuste coletivo" e o escopo U do analista (RN-18-030, RN-18-040, CA-18-005, CA-18-008, D-668, D-669)
+  - [x] 18f-2. Atualizações em massa por planilha e pela tela, com o motivo "Reajuste coletivo" e o escopo U do analista (RN-18-030, RN-18-040, CA-18-005, CA-18-008, D-668, D-669) (PR #146)
 
 **Leva 2, cada uma depois da resposta que muda o desenho:**
 - [ ] **Spec 09:** solicitações e aprovações, **sem férias** (que ficam na fase 4). Depois da conferência do especialista em DP

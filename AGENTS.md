@@ -177,6 +177,8 @@ Para propostas, revisões de PR e decisões técnicas, classifique como:
   - o que ficou de fora;
   - os riscos que continuam.
 
+**Plano de fases no mesmo PR:** o PR que conclui um item de `docs/checklist/plano-de-fases.md` já leva esse item marcado `[x]`, com "(PR #N)" no fim. Como o número só existe depois que o PR é aberto, acrescente-o num commit logo em seguida, na mesma branch. Não deixe a marcação para um PR avulso nem para o PR do bloco seguinte.
+
 Não termine com uma lista neutra de opções quando houver informação suficiente para recomendar uma direção.
 
 ## 11. Adaptação por tarefa
