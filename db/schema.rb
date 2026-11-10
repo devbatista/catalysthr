@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -404,6 +404,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_150000) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "document_type_id"], name: "index_company_document_type_settings_unique", unique: true
     t.index ["document_type_id"], name: "index_company_document_type_settings_on_document_type_id"
+  end
+
+  create_table "company_exports", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "kind", default: "full", null: false
+    t.string "status", default: "queued", null: false
+    t.uuid "requested_by_id", null: false
+    t.text "password"
+    t.datetime "password_shown_at"
+    t.datetime "started_at"
+    t.datetime "ready_at"
+    t.datetime "expires_at"
+    t.datetime "failed_at"
+    t.integer "records_count"
+    t.integer "files_count"
+    t.bigint "size_bytes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "kind", "created_at"], name: "index_company_exports_on_company_id_and_kind_and_created_at"
+    t.index ["company_id"], name: "index_company_exports_on_company_id"
+    t.index ["requested_by_id"], name: "index_company_exports_on_requested_by_id"
   end
 
   create_table "company_module_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1332,7 +1353,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_150000) do
     t.string "stage"
     t.index ["company_id"], name: "index_process_items_on_company_id"
     t.index ["completed_by_id"], name: "index_process_items_on_completed_by_id"
-    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY ((ARRAY['blocked'::character varying, 'pending'::character varying])::text[]))"
+    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY (ARRAY[('blocked'::character varying)::text, ('pending'::character varying)::text]))"
     t.index ["process_instance_id", "position"], name: "index_process_items_on_process_instance_id_and_position"
     t.index ["responsible_membership_ids"], name: "index_process_items_on_responsible_membership_ids", using: :gin
     t.index ["source_template_item_id"], name: "index_process_items_on_source_template_item_id"
@@ -1795,6 +1816,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_150000) do
   add_foreign_key "companies", "partners"
   add_foreign_key "company_document_type_settings", "companies"
   add_foreign_key "company_document_type_settings", "document_types"
+  add_foreign_key "company_exports", "companies"
+  add_foreign_key "company_exports", "users", column: "requested_by_id"
   add_foreign_key "company_module_settings", "companies"
   add_foreign_key "company_module_settings", "users", column: "changed_by_id"
   add_foreign_key "company_notification_settings", "companies"

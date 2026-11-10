@@ -1616,6 +1616,41 @@ pt-BR:
   structure_code:
     label: "Código"
     hint: "Opcional. Único na empresa, em letras maiúsculas, números, ponto, hífen ou sublinhado. A importação usa o código para achar este cadastro."
+  # The company's full export (spec 18, D-667)
+  exports:
+    statuses:
+      queued: "Na fila"
+      generating: "Gerando"
+      ready: "Pronta"
+      expired: "Vencida"
+      failed: "Falhou"
+    company:
+      readme: |
+        Exportação completa da empresa %{company}
+        Gerada pelo CatalystHR em %{date} (horário de Brasília). Versão do formato: %{version}.
+        Filtros: nenhum. A exportação traz todos os dados da empresa que estão no sistema.
+
+        Os dados sensíveis (documentos pessoais, salários, contas bancárias e dados de saúde) estão legíveis,
+        porque esta cópia é da empresa. Guarde o ZIP e a senha com o mesmo cuidado.
+
+        Pastas e arquivos
+        - indice.json: a lista das tabelas, com a quantidade de registros, e de todos os arquivos, com o tamanho
+          e o SHA-256, para conferir que nada foi alterado.
+        - dados/json/<tabela>.json: os registros de cada tabela, em JSON.
+        - dados/csv/<tabela>.csv: os mesmos registros, em CSV (UTF-8 com BOM, separador ";"), para abrir numa
+          planilha. Listas e objetos vêm em JSON dentro da célula.
+        - arquivos/<cpf>/<categoria>/<documento>-v<versão>.pdf: cada versão legível dos documentos de cada
+          pessoa. Os documentos dos dependentes ficam na pasta do titular.
+
+        Datas e horas estão no formato ISO 8601, com o fuso. Valores em dinheiro estão em centavos.
+        Os campos "id" e os terminados em "_id" ligam as tabelas entre si.
+
+        Tabelas
+        %{entities}
+
+        Ficam de fora: senhas, MFA, passkeys e outros segredos de acesso, sessões e aparelhos, notificações,
+        a cobrança do CatalystHR e os registros internos da plataforma. Solicitações, ponto, folha e eSocial
+        entram quando esses módulos estiverem no sistema.
   # The imports (spec 18, D-661, D-662)
   imports:
     statuses:
@@ -1895,6 +1930,9 @@ pt-BR:
       column: "Erros"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    company_export:
+      name: "Exportação de dados"
+      description: "Ligada, o RH administrador pede a exportação completa da empresa, em ZIP com senha, uma vez por semana. Desligada, o menu não mostra a exportação, e uma exportação já pedida termina (spec 18, D-667)."
     data_imports:
       name: "Importações"
       description: "Ligada, o RH administrador importa a estrutura e os cadastros da implantação pela planilha modelo, com prévia e confirmação. Desligada, o menu não mostra as importações (spec 18, D-661)."
@@ -1957,6 +1995,7 @@ pt-BR:
     home: "Painel"
     users: "Usuários"
     data_imports: "Importações"
+    company_exports: "Exportação de dados"
     accounting_firm: "Escritório contábil"
     companies: "Empresas"
     portfolio: "Carteira"
@@ -3102,6 +3141,46 @@ pt-BR:
           other: "em %{count} dias"
         empty: "Nada vence nos próximos 30 dias."
         expired: "Ver os documentos já vencidos"
+    company_exports:
+      index:
+        title: "Exportação de dados"
+        subtitle: "Uma cópia de todos os dados e documentos da empresa, num ZIP protegido por senha. Pode ser pedida uma vez por semana."
+        contents_title: "O que vai no ZIP"
+        contents: "Cadastros da empresa, unidades, departamentos e cargos; usuários e perfis de acesso, sem senhas; fichas, dependentes, contas bancárias, vínculos e revisões; documentos com todas as versões em PDF; processos, admissões, comunicados e ciências; o histórico das importações e a trilha de auditoria. Os dados de solicitações, ponto, folha e eSocial entram quando esses módulos estiverem no sistema."
+        password_title: "A senha"
+        password: "Os dados sensíveis saem legíveis, porque a cópia é da empresa. Por isso o ZIP tem uma senha gerada pelo sistema, que aparece uma única vez para quem pediu, junto do download. Guarde a senha num lugar seguro: sem ela o ZIP não abre, e o sistema não guarda uma cópia."
+        how_to_open: "Para abrir, use o 7-Zip ou outro programa que leia ZIP com AES-256. Exportações acima de 5 GB vêm em partes (.zip.001, .zip.002…): baixe todas e abra a primeira."
+        request: "Pedir a exportação"
+        next_allowed: "A próxima exportação pode ser pedida a partir de %{date}."
+        history: "Exportações pedidas"
+        empty: "Nenhuma exportação ainda."
+        requested: "Pedida em"
+        requested_by: "Por"
+        status: "Situação"
+        size: "Tamanho"
+      show:
+        title: "Exportação de %{date}"
+        back: "Exportação de dados"
+        requested_by: "Pedida por %{name} em %{date}."
+        queued: "A exportação está na fila. Você recebe um aviso quando ficar pronta."
+        generating: "A exportação está sendo gerada. Você recebe um aviso quando ficar pronta."
+        failed: "A exportação não pôde ser gerada. A equipe CatalystHR foi avisada. Você pode pedir outra."
+        expired: "O prazo de 7 dias para baixar terminou e os arquivos foram apagados."
+        only_requester: "Só quem pediu vê a senha e baixa a exportação."
+        impersonating: "Durante o acesso como outra pessoa, a senha não é mostrada e o download não é feito."
+        ready: "Pronta. O link vale até %{date}."
+        counts: "%{records} registros e %{files} arquivos, %{size}."
+        reveal_title: "Senha do ZIP"
+        reveal_explanation: "A senha aparece uma única vez. Depois de mostrada, o sistema não a guarda mais."
+        reveal: "Mostrar a senha"
+        password_label: "Senha do ZIP"
+        password_warning: "Copie e guarde a senha agora. Ela não aparece de novo, e sem ela o ZIP não abre."
+        password_seen: "A senha já foi mostrada em %{date}."
+        parts: "Arquivos para baixar"
+        download: "Baixar"
+      create:
+        queued: "Exportação pedida. Você recebe um aviso quando ficar pronta."
+        weekly_limit: "A empresa já pediu uma exportação nesta semana. A próxima pode ser pedida a partir de %{date}."
     data_imports:
       index:
         title: "Importações"
@@ -4517,6 +4596,13 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    exports:
+      company_ready:
+        grouped: "%{count} exportações prontas"
+        name: "Exportação da empresa pronta"
+        hint: "Quando a exportação completa que você pediu fica pronta para baixar."
+        title: "Exportação da empresa pronta"
+        body: "Abra a exportação para ver a senha do ZIP, que aparece uma única vez, e baixar. O link vale até %{date}."
     imports:
       assisted_completed:
         grouped: "%{count} importações do suporte gravadas"

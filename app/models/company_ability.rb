@@ -271,6 +271,10 @@ class CompanyAbility
     # Authorizing the support's assisted import, and revoking it (RN-18-061, D-666).
     can :authorize, AssistedImportAuthorization, company_id: company.id
     can :import, %i[structure employees dependents bank_accounts department_managers employment_history]
+    # The company's full export (RN-18-070, D-466, D-667): any HR administrator asks for it and
+    # sees the list; only who asked opens the password and downloads it.
+    can %i[read create], CompanyExport, company_id: company.id
+    can :download, CompanyExport, company_id: company.id, requested_by_id: user.id
     # The company's usage on the panel (RN-17-030, RN-17-031): with the contract and its
     # billing in a direct company, only the company's own usage in a partner's.
     can :read_usage, Company, id: company.id

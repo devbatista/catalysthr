@@ -330,6 +330,14 @@ Rails.application.routes.draw do
         post "assisted-authorization", action: :authorize_assisted, on: :collection, as: :authorize_assisted
         delete "assisted-authorization", action: :revoke_assisted, on: :collection, as: :revoke_assisted
       end
+      # The company's full export (spec 18, RN-18-070 to RN-18-075, D-667): the request, the
+      # password once and the download of each part.
+      resources :company_exports, path: "data-exports", only: %i[index create show] do
+        member do
+          post "password", action: :reveal_password, as: :reveal_password
+          get "parts/:part_id", action: :download, as: :download
+        end
+      end
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       # The documents (spec 08, D-642): the review queue, each document with its versions and
       # the review, and the person's folder; the company's types and the platform's settings.

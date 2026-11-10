@@ -182,3 +182,9 @@ imports_purge:
   cron: "10 4 * * * America/Sao_Paulo"
   class: "Imports::PurgeJob"
   queue: "imports"
+
+# The full exports past their 7 days (spec 18, RN-18-073, P-18-22, D-667).
+exports_purge:
+  cron: "20 4 * * * America/Sao_Paulo"
+  class: "Exports::PurgeJob"
+  queue: "imports"
