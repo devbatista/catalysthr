@@ -1,0 +1,19 @@
+<%# The team's password before people's data, in the assisted import (RN-02-052, D-666). %>
+<% content_for :title, t(".title") %>
+
+<div class="card card-body mx-auto mt-6 max-w-md">
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <p class="mt-2 text-sm text-ink-soft"><%= t(".explanation") %></p>
+
+  <%= form_with url: admin_sensitive_confirmation_path, method: :post, class: "mt-5 space-y-4" do |form| %>
+    <%= form.hidden_field :return_to, value: @return_to %>
+    <div>
+      <%= form.label :password, t(".password"), class: "field-label" %>
+      <%= form.password_field :password, required: true, autofocus: true, autocomplete: "current-password", class: "input" %>
+    </div>
+    <div class="flex items-center gap-4">
+      <%= form.submit t(".submit"), class: "btn btn-primary" %>
+      <%= link_to t(".cancel"), admin_assisted_imports_path, class: "link-button text-sm" %>
+    </div>
+  <% end %>
+</div>

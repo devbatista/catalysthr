@@ -73,6 +73,13 @@ class PlatformAbility
     can %i[read create update], SharedProcessTemplate, partner_id: nil if user.superadmin? || user.support?
     # The platform's document types (spec 08, RN-08-001, section 6).
     can %i[read create update], PlatformDocumentType if user.superadmin? || user.support?
+    # The assisted import, on the company's behalf and with its HR administrator's
+    # authorization, which the controller checks (RN-18-060, RN-18-061, D-666). Undoing
+    # stays with the HR administrator (RN-18-050).
+    if user.superadmin? || user.support?
+      can :assist, :data_imports
+      can %i[read create confirm cancel download_errors], DataImport
+    end
     # Sidekiq Web, for the superadmin and the support (RN-20-077).
     can :read, :sidekiq_web if user.superadmin? || user.support?
   end

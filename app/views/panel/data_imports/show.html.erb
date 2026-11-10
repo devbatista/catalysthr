@@ -4,12 +4,16 @@
     and the result with the file of errors to fix and send again (P-18-04). %>
 <% content_for :title, data_import_kind_title(@import.kind) %>
 
-<p class="text-sm"><%= link_to t(".back"), data_imports_path, class: "link-button" %></p>
+<p class="text-sm"><%= link_to t(".back"), import_path_for(:index), class: "link-button" %></p>
 <div class="mt-2 flex flex-wrap items-start justify-between gap-4">
   <div>
     <h1 class="page-title"><%= data_import_kind_title(@import.kind) %></h1>
     <p class="page-subtitle">
-      <%= t(".sent", file: @import.original_filename, name: @import.created_by.name, at: l(@import.created_at, format: "%d/%m/%Y %H:%M")) %>
+      <% if @import.assisted? && import_area == :panel %>
+        <%= t(".sent_assisted", file: @import.original_filename, at: l(@import.created_at, format: "%d/%m/%Y %H:%M")) %>
+      <% else %>
+        <%= t(".sent", file: @import.original_filename, name: @import.created_by.name, at: l(@import.created_at, format: "%d/%m/%Y %H:%M")) %>
+      <% end %>
     </p>
   </div>
   <%= data_import_status_pill(@import) %>
@@ -53,19 +57,19 @@
     <div class="flex flex-wrap items-end gap-3">
       <% if @import.importable? %>
         <% only_valid = !@import.all_valid? %>
-        <%= form_with url: confirm_data_import_path(@import), method: :patch, class: "flex flex-wrap items-end gap-3",
+        <%= form_with url: import_path_for(:confirm, @import), method: :patch, class: "flex flex-wrap items-end gap-3",
           data: (only_valid ? { confirm: t(".import_valid_confirm", count: @import.error_count) } : {}) do %>
           <%= hidden_field_tag :only_valid, "1" if only_valid %>
           <% if declaration?(@import.kind_class) %>
             <label class="flex items-start gap-2 text-sm field-full">
               <%= check_box_tag :declaration, "1", false, required: true, class: "mt-1" %>
-              <span><%= t(".declaration") %></span>
+              <span><%= t(import_area == :admin ? ".declaration_assisted" : ".declaration") %></span>
             </label>
           <% end %>
           <%= submit_tag only_valid ? t(".import_valid", count: @import.valid_count) : t(".import_all"), class: "btn btn-primary" %>
         <% end %>
       <% end %>
-      <%= button_to t(".cancel"), cancel_data_import_path(@import), method: :patch, class: "btn btn-secondary" %>
+      <%= button_to t(".cancel"), import_path_for(:cancel, @import), method: :patch, class: "btn btn-secondary" %>
     </div>
   </section>
 <% end %>
@@ -86,7 +90,7 @@
   <p class="alert-info mt-6" role="status">
     <%= t(".undone", name: @import.undone_by&.name, at: l(@import.undone_at, format: "%d/%m/%Y %H:%M")) %>
   </p>
-<% elsif can?(:undo, @import) && Imports::Undo.available?(@import) %>
+<% elsif import_area == :panel && can?(:undo, @import) && Imports::Undo.available?(@import) %>
   <section class="card card-body mt-6 space-y-3" data-undo>
     <h2 class="card-title"><%= t(".undo_title") %></h2>
     <p class="text-sm text-ink-soft"><%= t(".undo_text") %></p>
@@ -95,7 +99,7 @@
   </section>
 <% end %>
 
-<% if @import.kind == "employees" && @import.created_count.positive? && %w[completed completed_with_errors].include?(@import.status) %>
+<% if import_area == :panel && @import.kind == "employees" && @import.created_count.positive? && %w[completed completed_with_errors].include?(@import.status) %>
   <section class="card card-body mt-6 space-y-3" data-next-step="invite">
     <h2 class="card-title"><%= t(".invite_title") %></h2>
     <p class="text-sm text-ink-soft"><%= t(".invite_text") %></p>
@@ -111,7 +115,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3 px-5 pt-5">
       <h2 class="card-title"><%= t(".errors_title") %></h2>
       <% if can?(:download_errors, @import) && Imports::ErrorsFile.new(@import).available? %>
-        <%= link_to t(".errors_file"), errors_data_import_path(@import), class: "btn btn-secondary btn-sm" %>
+        <%= link_to t(".errors_file"), import_path_for(:errors, @import), class: "btn btn-secondary btn-sm" %>
       <% end %>
     </div>
     <div class="mt-3 overflow-x-auto">

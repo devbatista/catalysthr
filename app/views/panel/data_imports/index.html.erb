@@ -1,24 +1,39 @@
 <%# The company's imports (spec 18, D-661): the kinds the person may use, each with its
-    template, and the history with the counts, without the data (RN-18-010). %>
+    template, and the history with the counts, without the data (RN-18-010). In the panel,
+    the HR administrator's authorization of the assisted import; in the admin area, the
+    same screen for the support, only with that authorization in force (D-666). %>
 <% content_for :title, t(".title") %>
 
-<h1 class="page-title"><%= t(".title") %></h1>
-<p class="page-subtitle"><%= t(".subtitle") %></p>
+<% if import_area == :admin %>
+  <p class="text-sm"><%= link_to t(".back_admin"), admin_assisted_imports_path, class: "link-button" %></p>
+  <h1 class="page-title mt-2"><%= t(".title_admin", company: @company.name) %></h1>
+  <p class="page-subtitle"><%= t(".subtitle_admin") %></p>
+  <% if @authorization %>
+    <p class="alert-info mt-6" role="status"><%= t(".authorized_until", name: @authorization.authorized_by.name, date: l(@authorization.valid_until.to_date)) %></p>
+  <% else %>
+    <p class="alert-bad mt-6" role="alert" data-unauthorized><%= t(".not_authorized") %></p>
+  <% end %>
+<% else %>
+  <h1 class="page-title"><%= t(".title") %></h1>
+  <p class="page-subtitle"><%= t(".subtitle") %></p>
+  <%= render "panel/data_imports/assisted_authorization" if can?(:authorize, AssistedImportAuthorization) %>
+<% end %>
 
 <section class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3" aria-label="<%= t(".kinds") %>">
-  <% @kinds.each_with_index do |kind, index| %>
+  <% (import_area == :admin && @authorization.nil? ? [] : @kinds).each_with_index do |kind, index| %>
     <div class="card card-body flex flex-col gap-3">
       <p class="eyebrow"><%= t(".step", number: index + 1) %></p>
       <h2 class="card-title"><%= data_import_kind_title(kind.code) %></h2>
       <p class="text-sm text-ink-soft"><%= t("imports.kinds.#{kind.code}.description") %></p>
       <div class="mt-auto flex flex-wrap gap-3">
-        <%= link_to t(".template"), template_data_imports_path(kind.code), class: "btn btn-secondary" %>
-        <%= link_to t(".send"), new_data_import_path(kind: kind.code), class: "btn btn-primary" %>
+        <%= link_to t(".template"), import_path_for(:template, kind: kind.code), class: "btn btn-secondary" %>
+        <%= link_to t(".send"), import_path_for(:new, kind: kind.code), class: "btn btn-primary" %>
       </div>
     </div>
   <% end %>
 </section>
 
+<% unless import_area == :admin && @authorization.nil? %>
 <section class="card mt-6">
   <h2 class="card-title px-5 pt-5"><%= t(".history") %></h2>
   <% if @imports.empty? %>
@@ -39,8 +54,8 @@
           <% @imports.each do |import| %>
             <tr>
               <td>
-                <%= link_to l(import.created_at, format: "%d/%m/%Y %H:%M"), data_import_path(import), class: "link-button font-bold" %>
-                <p class="mt-1 text-xs text-ink-soft"><%= import.created_by.name %></p>
+                <%= link_to l(import.created_at, format: "%d/%m/%Y %H:%M"), import_path_for(:show, import), class: "link-button font-bold" %>
+                <p class="mt-1 text-xs text-ink-soft"><%= data_import_author(import) %></p>
               </td>
               <td><%= data_import_kind_title(import.kind) %></td>
               <td class="hidden md:table-cell text-sm text-ink-soft"><%= import.original_filename %></td>
@@ -55,3 +70,4 @@
     </div>
   <% end %>
 </section>
+<% end %>

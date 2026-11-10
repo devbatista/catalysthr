@@ -3,7 +3,7 @@
     preview and the confirmation (D-462). %>
 <% content_for :title, data_import_kind_title(@kind.code) %>
 
-<p class="text-sm"><%= link_to t(".back"), data_imports_path, class: "link-button" %></p>
+<p class="text-sm"><%= link_to t(".back"), import_path_for(:index), class: "link-button" %></p>
 <h1 class="page-title mt-2"><%= data_import_kind_title(@kind.code) %></h1>
 <p class="page-subtitle"><%= t("imports.kinds.#{@kind.code}.description") %></p>
 
@@ -12,10 +12,10 @@
   <ol class="list-decimal space-y-1 pl-5 text-sm">
     <% t(".steps").each do |step| %><li><%= step %></li><% end %>
   </ol>
-  <p><%= link_to t(".template"), template_data_imports_path(@kind.code), class: "btn btn-secondary" %></p>
+  <p><%= link_to t(".template"), import_path_for(:template, kind: @kind.code), class: "btn btn-secondary" %></p>
 </section>
 
-<%= form_with url: data_imports_path, method: :post, multipart: true, class: "card card-body mt-6 space-y-5" do |form| %>
+<%= form_with url: import_path_for(:create), method: :post, multipart: true, class: "card card-body mt-6 space-y-5" do |form| %>
   <%= hidden_field_tag :kind, @kind.code %>
   <% if @error %>
     <p class="alert-bad" role="alert">

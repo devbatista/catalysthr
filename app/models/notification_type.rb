@@ -138,6 +138,10 @@ NotificationType::CATALOG = [
   # (RN-15-074, D-656). WhatsApp comes with its block.
   NotificationType.new(code: "announcements.published", mandatory: false, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
+  # The support imported on the company's behalf (RN-18-062, D-666): the kind and the counts,
+  # never people's data (RN-15-005).
+  NotificationType.new(code: "imports.assisted_completed", mandatory: false, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
   # A version the employee sent, to the unit's HR (D-645).

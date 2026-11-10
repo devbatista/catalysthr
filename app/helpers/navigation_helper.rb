@@ -65,7 +65,8 @@ module NavigationHelper
       ]),
       nav_group(:support, [
         (nav_item(t("navigation.impersonate"), new_admin_impersonation_path, controller_path == "admin/impersonations") if can?(:create, ImpersonationSession)),
-        (nav_item(t("navigation.support_access"), new_admin_support_access_path, controller_path == "admin/support_accesses") if can?(:create, SupportAccess))
+        (nav_item(t("navigation.support_access"), new_admin_support_access_path, controller_path == "admin/support_accesses") if can?(:create, SupportAccess)),
+        (nav_item(t("navigation.assisted_imports"), admin_assisted_imports_path, controller_path.in?(%w[admin/assisted_imports admin/data_imports])) if assisted_imports_allowed?)
       ]),
       nav_group(:legal, [
         (nav_item(t("navigation.legal_documents"), admin_legal_documents_path, controller_path == "admin/legal_documents") if can?(:read, LegalDocument))
@@ -79,6 +80,11 @@ module NavigationHelper
   end
 
   private
+
+  # The assisted import, behind the imports' flag (D-661, D-666).
+  def assisted_imports_allowed?
+    FeatureFlags.enabled?(FeatureFlags::DATA_IMPORTS) && can?(:assist, :data_imports)
+  end
 
   def company_transfer_allowed?
     FeatureFlags.enabled?(FeatureFlags::COMPANY_TRANSFER) && can?(:create, CompanyTransfer)

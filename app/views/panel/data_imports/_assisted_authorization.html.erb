@@ -1,0 +1,23 @@
+<%# The HR administrator's authorization for the support's assisted import (RN-18-061,
+    P-18-18, D-666): 30 days from the acceptance, with the password, revocable. %>
+<% authorization = AssistedImportAuthorization.current %>
+<section class="card card-body mt-6 space-y-3" data-assisted-authorization>
+  <h2 class="card-title"><%= t("panel.data_imports.assisted.title") %></h2>
+  <% if authorization %>
+    <p class="text-sm text-ink-soft">
+      <%= t("panel.data_imports.assisted.in_force", name: authorization.authorized_by.name,
+        at: l(authorization.authorized_at.to_date), date: l(authorization.valid_until.to_date)) %>
+    </p>
+    <%= button_to t("panel.data_imports.assisted.revoke"), revoke_assisted_data_imports_path, method: :delete, class: "btn btn-secondary",
+      form: { data: { confirm: t("panel.data_imports.assisted.revoke_confirm") } } %>
+  <% else %>
+    <p class="text-sm text-ink-soft"><%= t("panel.data_imports.assisted.text") %></p>
+    <%= form_with url: authorize_assisted_data_imports_path, method: :post, class: "space-y-3" do %>
+      <label class="flex items-start gap-2 text-sm">
+        <%= check_box_tag :acceptance, "1", false, required: true, class: "mt-1" %>
+        <span><%= t("panel.data_imports.assisted.acceptance", days: AssistedImportAuthorization::VALIDITY.in_days.to_i) %></span>
+      </label>
+      <%= submit_tag t("panel.data_imports.assisted.authorize"), class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+</section>

@@ -268,6 +268,8 @@ class CompanyAbility
     can %i[read create confirm cancel download_errors], DataImport, company_id: company.id
     # Undoing a whole import is the HR administrator's (RN-18-050, D-465).
     can :undo, DataImport, company_id: company.id
+    # Authorizing the support's assisted import, and revoking it (RN-18-061, D-666).
+    can :authorize, AssistedImportAuthorization, company_id: company.id
     can :import, %i[structure employees dependents bank_accounts department_managers employment_history]
     # The company's usage on the panel (RN-17-030, RN-17-031): with the contract and its
     # billing in a direct company, only the company's own usage in a partner's.

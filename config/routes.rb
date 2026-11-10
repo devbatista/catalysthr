@@ -99,6 +99,22 @@ Rails.application.routes.draw do
         resource :brand, only: %i[edit update], controller: "company_brands"
       end
       resources :support_accesses, only: %i[new create], path: "support-accesses"
+      # The assisted import (spec 18, RN-18-060 to RN-18-062, D-666): the company's search and,
+      # with its HR administrator's authorization, the same flow as the panel's.
+      get "assisted-imports", to: "assisted_imports#index", as: :assisted_imports
+      resources :companies, only: [] do
+        resources :data_imports, path: "imports", only: %i[index new create show] do
+          get "templates/:kind", action: :template, on: :collection, as: :template
+          member do
+            patch :confirm
+            patch :cancel
+            get :errors
+          end
+        end
+      end
+      # The team's password before people's data (RN-02-052, D-666).
+      get "confirm-password", to: "sensitive_confirmations#new", as: :new_sensitive_confirmation
+      post "confirm-password", to: "sensitive_confirmations#create", as: :sensitive_confirmation
       # Company transfer (RN-01-050 to RN-01-053, D-599).
       resources :company_transfers, only: %i[new create], path: "company-transfers"
       # Plans, modules and add-ons, with price versions (spec 19, RN-19-010 to RN-19-014, D-611).
@@ -310,6 +326,9 @@ Rails.application.routes.draw do
           patch :undo
           get :errors
         end
+        # The authorization for the assisted import (RN-18-061, D-666).
+        post "assisted-authorization", action: :authorize_assisted, on: :collection, as: :authorize_assisted
+        delete "assisted-authorization", action: :revoke_assisted, on: :collection, as: :revoke_assisted
       end
       # The people, their employments and revisions (spec 04, RN-04-040 to RN-04-064).
       # The documents (spec 08, D-642): the review queue, each document with its versions and

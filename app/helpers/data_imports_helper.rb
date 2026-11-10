@@ -21,6 +21,14 @@ module DataImportsHelper
     sensitive ? SensitiveData.mask(value, as: sensitive) : value
   end
 
+  # Who sent the import: in the company's panel, an assisted one shows the support, without
+  # the person's name, which the admin area and the trail keep (RN-18-062, D-666).
+  def data_import_author(import)
+    return t("imports.assisted_author") if import.assisted? && import_area != :admin
+
+    import.created_by.name
+  end
+
   # The column's header in the sheet, for an error or a change.
   def data_import_column(sheets, row, column)
     sheets[row.sheet]&.column(column)&.header || column
