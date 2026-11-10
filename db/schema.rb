@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -235,6 +235,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_140000) do
     t.index ["company_id"], name: "index_announcements_on_company_id"
     t.index ["status", "publish_at"], name: "index_announcements_on_status_and_publish_at"
     t.index ["withdrawn_by_id"], name: "index_announcements_on_withdrawn_by_id"
+  end
+
+  create_table "assisted_import_authorizations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "authorized_by_id", null: false
+    t.datetime "authorized_at", null: false
+    t.datetime "valid_until", null: false
+    t.datetime "revoked_at"
+    t.uuid "revoked_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authorized_by_id"], name: "index_assisted_import_authorizations_on_authorized_by_id"
+    t.index ["company_id"], name: "index_assisted_import_authorizations_on_company_id"
+    t.index ["revoked_by_id"], name: "index_assisted_import_authorizations_on_revoked_by_id"
   end
 
   create_table "backup_runs", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1765,6 +1779,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_140000) do
   add_foreign_key "announcements", "companies"
   add_foreign_key "announcements", "users", column: "author_id"
   add_foreign_key "announcements", "users", column: "withdrawn_by_id"
+  add_foreign_key "assisted_import_authorizations", "companies"
+  add_foreign_key "assisted_import_authorizations", "users", column: "authorized_by_id"
+  add_foreign_key "assisted_import_authorizations", "users", column: "revoked_by_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_accounts", "users", column: "declared_by_id"
   add_foreign_key "bank_accounts", "worker_profiles"

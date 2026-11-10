@@ -150,6 +150,27 @@ pt-BR:
         slug_confirm: "Trocar o endereço da marca? Avise os clientes: o antigo redireciona só por 90 dias."
       slug:
         changed: "Endereço trocado. O antigo redireciona por 90 dias."
+    assisted_imports:
+      index:
+        title: "Importação assistida"
+        instructions: "Para subir a base de um cliente em nome dele, com os mesmos modelos e a mesma validação da empresa. Só com a autorização do RH administrador da empresa, que vale 30 dias. A auditoria guarda o seu nome."
+        query: "Nome, CNPJ ou CPF da empresa"
+        search: "Buscar"
+        not_found: "Nenhuma empresa encontrada."
+        authorized: "Autorizada por %{name} até %{date}."
+        not_authorized: "Sem autorização do RH administrador. Peça para ele autorizar na tela Importações da empresa."
+        open: "Abrir as importações"
+    data_imports:
+      unauthorized: "A empresa não autorizou a importação assistida, ou a autorização venceu. Peça ao RH administrador para autorizar na tela Importações."
+    sensitive_confirmations:
+      new:
+        title: "Confirme a sua senha"
+        explanation: "A importação traz salários, documentos e contas. Confirme a sua senha para continuar; ela vale por 5 minutos."
+        password: "Senha"
+        submit: "Confirmar"
+        cancel: "Cancelar"
+      create:
+        invalid_password: "Senha incorreta."
     support_accesses:
       new:
         title: "Entrar numa empresa direta"
@@ -1669,6 +1690,7 @@ pt-BR:
         amount: "Em reais, como 2.500,00 ou 2500.00."
     "yes": "Sim"
     "no": "Não"
+    assisted_author: "Importado pelo suporte CatalystHR"
     employees:
       sheet: "Colaboradores"
       columns:
@@ -1952,6 +1974,7 @@ pt-BR:
     admin_users: "Usuários"
     impersonate: "Ver como um usuário"
     support_access: "Entrar numa empresa direta"
+    assisted_imports: "Importação assistida"
     legal_documents: "Termos e política"
     company_transfer: "Transferir empresa"
     feature_flags: "Flags"
@@ -3095,6 +3118,11 @@ pt-BR:
         status: "Situação"
         counts: "Linhas"
         counts_line: "%{rows} linhas · %{created} criadas · %{updated} atualizadas · %{errors} com erro"
+        back_admin: "Importação assistida"
+        title_admin: "Importações de %{company}"
+        subtitle_admin: "Em nome da empresa, com os mesmos modelos e a mesma validação. A empresa vê \"Importado pelo suporte CatalystHR\" e o RH administrador recebe um aviso a cada importação gravada."
+        authorized_until: "Autorizada por %{name} até %{date}."
+        not_authorized: "A empresa não autorizou a importação assistida, ou a autorização venceu. Peça ao RH administrador para autorizar na tela Importações."
       new:
         back: "Importações"
         steps_title: "Como funciona"
@@ -3154,6 +3182,8 @@ pt-BR:
         after: "Depois"
         sensitive: "Salários, documentos, contas e chaves PIX aparecem mascarados. Os valores completos ficam no arquivo com os erros, que pede a sua senha."
         declaration: "Declaro que as contas e as chaves PIX estão no CPF de cada pessoa, conforme os comprovantes apresentados."
+        declaration_assisted: "Declaro que as contas e as chaves PIX estão no CPF de cada pessoa, conforme os arquivos enviados pela empresa, que autorizou a importação e declarou a titularidade."
+        sent_assisted: "%{file}, importado pelo suporte CatalystHR em %{at}."
         invite_title: "Próximo passo: liberar o acesso ao portal"
         invite_text: "A importação não enviou nenhum convite. Quando quiser, convide de uma vez quem ainda não tem acesso; quem não tem e-mail aparece na lista para receber o link."
         invite_all: "Convidar todos sem acesso"
@@ -3170,6 +3200,19 @@ pt-BR:
         confirmed: "Importação confirmada. As linhas estão sendo gravadas."
       undo:
         not_available: "Esta importação não pode mais ser desfeita."
+      authorize_assisted:
+        acceptance_missing: "Marque o aceite para autorizar a importação assistida."
+        authorized: "Importação assistida autorizada até %{date}."
+      revoke_assisted:
+        revoked: "Autorização da importação assistida revogada."
+      assisted:
+        title: "Importação assistida pelo suporte CatalystHR"
+        text: "Na implantação, o suporte CatalystHR pode subir os arquivos da empresa por você, com os mesmos modelos e a mesma validação. Cada importação gravada gera um aviso para você, e só você pode desfazê-la."
+        acceptance: "Autorizo o suporte CatalystHR a importar dados em nome da empresa por %{days} dias, inclusive dados pessoais, salários e contas para pagamento. Declaro que as contas e as chaves PIX dos arquivos que a empresa enviar estão no CPF de cada pessoa."
+        authorize: "Autorizar por 30 dias"
+        in_force: "Autorizada por %{name} em %{at}, até %{date}."
+        revoke: "Revogar a autorização"
+        revoke_confirm: "Revogar a autorização? O suporte não poderá mais importar em nome da empresa."
       cancel:
         cancelled: "Importação cancelada. Nada foi gravado."
     home:
@@ -4474,6 +4517,13 @@ pt-BR:
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
   notification_types:
+    imports:
+      assisted_completed:
+        grouped: "%{count} importações do suporte gravadas"
+        name: "Importação do suporte gravada"
+        hint: "Quando o suporte CatalystHR grava uma importação em nome da empresa."
+        title: "Importação do suporte: %{kind}"
+        body: "%{created} criados, %{updated} atualizados e %{errors} com erro. Confira o resultado e, se precisar, desfaça."
     announcements:
       published:
         grouped: "%{count} comunicados novos no mural"

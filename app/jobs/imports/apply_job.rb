@@ -5,6 +5,8 @@ module Imports
 
     def perform(import)
       Recording.call(import)
+      # The HR administrators hear of the support's import (RN-18-062, D-666).
+      AssistedNotice.call(import.reload)
     end
   end
 end

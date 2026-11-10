@@ -109,7 +109,7 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 ### 4.5 Importação assistida (D-468)
 
 - **RN-18-060** — O suporte e o superadmin importam pela área admin, **em nome da empresa**, com o mesmo fluxo e os mesmos tipos.
-- **RN-18-061** — Antes da primeira importação assistida, o RH administrador da empresa **autoriza** pelo sistema (aceite com data e validade, por exemplo, 30 dias da implantação). Sem autorização válida, a área admin não deixa importar **[P-18-18]**.
+- **RN-18-061** — Antes da primeira importação assistida, o RH administrador da empresa **autoriza** pelo sistema (aceite com data e validade, por exemplo, 30 dias da implantação). Sem autorização válida, a área admin não deixa importar **[P-18-18]**. A autorização vale 30 dias a partir do aceite, pode ser revogada e inclui a declaração de titularidade das contas dos arquivos enviados (D-666).
 - **RN-18-062** — A auditoria registra o nome do suporte, e o histórico de importações da empresa mostra "Importado pelo suporte CatalystHR". O RH administrador recebe um aviso a cada importação confirmada.
 - **RN-18-063** — Os **conversores** de outros sistemas são scripts mantidos pela equipe CatalystHR fora da aplicação, que transformam os arquivos do cliente na planilha modelo. Assim, tudo passa pela mesma validação. No MVP, há conversores para **Domínio, Questor e Alterdata** (D-094) **[P-18-19]**.
 
