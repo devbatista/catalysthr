@@ -1,0 +1,56 @@
+<%# A company's AI: the day against the cap, the release, the team's cap and the use of the
+    last 30 days (spec 14, RN-14-114, D-670). %>
+<% content_for :title, @company.name %>
+
+<%= link_to t(".back"), admin_ai_path, class: "link-button text-sm" %>
+<h1 class="page-title mt-2"><%= @company.name %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+  <div class="card card-body" data-ai-today>
+    <p class="eyebrow"><%= t(".today") %></p>
+    <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= t(".used_of", used: number_with_delimiter(@cap&.used_credits.to_i), cap: number_with_delimiter(@cap_credits)) %></p>
+    <p class="mt-2"><%= @cap ? ai_cap_pill(@cap) : tag.span(t("admin.ai.caps.active"), class: "pill pill-ok") %></p>
+  </div>
+  <div class="card card-body">
+    <p class="eyebrow"><%= t(".computed") %></p>
+    <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= number_with_delimiter(@computed) %></p>
+    <p class="mt-1 text-sm text-ink-soft"><%= t(".computed_hint") %></p>
+  </div>
+  <div class="card card-body">
+    <p class="eyebrow"><%= t(".override") %></p>
+    <p class="mt-2 text-2xl font-extrabold text-ink-strong"><%= @company.ai_daily_cap_credits ? number_with_delimiter(@company.ai_daily_cap_credits) : t(".no_override") %></p>
+  </div>
+</section>
+
+<% if @cap&.paused? && can?(:release, @cap) %>
+  <section class="card card-body mt-6 space-y-3" data-ai-release>
+    <h2 class="card-title text-bad"><%= t(".paused_title") %></h2>
+    <p class="text-sm text-ink-soft"><%= t(".paused_text", at: l(@cap.paused_at, format: "%H:%M")) %></p>
+    <%= button_to t(".release"), admin_ai_company_release_path(@company), method: :post, class: "btn btn-primary",
+      form: { data: { confirm: t(".release_confirm") } } %>
+  </section>
+<% elsif @cap&.released? %>
+  <p class="alert-info mt-6" role="status"><%= t(".released", name: @cap.released_by&.name, at: l(@cap.released_at, format: "%H:%M")) %></p>
+<% end %>
+
+<% if can?(:update_caps, :ai_admin) %>
+  <section class="card card-body mt-6 space-y-3">
+    <h2 class="card-title"><%= t(".cap_title") %></h2>
+    <p class="field-hint"><%= t(".cap_hint") %></p>
+    <%= form_with url: admin_ai_company_cap_path(@company), method: :patch, class: "form-grid" do |form| %>
+      <div>
+        <%= form.label :ai_daily_cap_credits, t(".cap_field"), class: "field-label" %>
+        <%= form.number_field :ai_daily_cap_credits, value: @company.ai_daily_cap_credits, min: 0, max: 999_999, class: "input" %>
+      </div>
+      <div class="field-full">
+        <%= form.submit t(".save_cap"), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </section>
+<% end %>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".use_title") %></h2>
+  <%= render "use", use: @use %>
+</section>

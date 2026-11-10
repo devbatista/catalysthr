@@ -84,6 +84,13 @@ Rails.application.routes.draw do
       end
       # The platform's document types (spec 08, RN-08-001, D-642).
       resources :document_types, path: "document-types", except: %i[show destroy]
+      # The AI: the credits' weights, the companies' daily caps and the pauses (spec 14,
+      # RN-14-110, RN-14-114, D-670).
+      get "ai", to: "ai#index", as: :ai
+      post "ai/weights", to: "ai#create_weight", as: :ai_weights
+      get "ai/companies/:id", to: "ai#company", as: :ai_company
+      patch "ai/companies/:id/cap", to: "ai#update_cap", as: :ai_company_cap
+      post "ai/companies/:id/release", to: "ai#release", as: :ai_company_release
       # The feature flags (RN-20-030, D-617).
       resources :feature_flags, path: "feature-flags", param: :name, only: %i[index update destroy] do
         post :declare, on: :collection
@@ -232,6 +239,8 @@ Rails.application.routes.draw do
       resource :cancellation, path: "contract/cancellation", only: %i[show create destroy]
       # The notices' channels: the company's defaults and each person's (spec 15, RN-15-020, RN-15-021).
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
+      # The company's AI functions and the day's cap (spec 14, RN-14-010, RN-14-114, D-670).
+      resource :company_ai_settings, path: "settings/ai", only: %i[edit update]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
       # This browser's push subscription (spec 15, RN-15-003, D-654).
       resource :push_subscription, path: "push-subscriptions", only: %i[create destroy]

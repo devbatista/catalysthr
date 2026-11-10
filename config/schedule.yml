@@ -188,3 +188,9 @@ exports_purge:
   cron: "20 4 * * * America/Sao_Paulo"
   class: "Exports::PurgeJob"
   queue: "imports"
+
+# The 80% and 100% notices of the month's AI credits, every hour (spec 14, RN-14-112, D-670).
+ai_usage_alerts:
+  cron: "5 * * * * America/Sao_Paulo"
+  class: "Ai::UsageAlertsJob"
+  queue: "default"

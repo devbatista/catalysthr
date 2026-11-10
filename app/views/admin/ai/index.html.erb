@@ -1,0 +1,118 @@
+<%# The AI for the CatalystHR team (spec 14, section 6, D-670): weights, use and cost, the
+    companies' day against the cap. %>
+<% content_for :title, t(".title") %>
+
+<h1 class="page-title"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @breaker_until %>
+  <p class="alert-bad mt-6" role="alert" data-ai-breaker><%= t(".breaker", until: l(@breaker_until, format: "%H:%M")) %></p>
+<% end %>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".use_title") %></h2>
+  <p class="field-hint"><%= t(".use_hint") %></p>
+  <%= render "use", use: @use %>
+</section>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".today_title") %></h2>
+  <% if @today.empty? %>
+    <p class="text-sm text-ink-soft"><%= t(".today_empty") %></p>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= t(".company") %></th>
+            <th class="text-right"><%= t(".used") %></th>
+            <th class="text-right hidden md:table-cell"><%= t(".cap") %></th>
+            <th><%= t(".status") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @today.each do |cap| %>
+            <tr data-ai-cap="<%= cap.company_id %>">
+              <td><%= link_to cap.company.name, admin_ai_company_path(cap.company), class: "link-button" %></td>
+              <td class="text-right"><%= number_with_delimiter(cap.used_credits) %><span class="text-ink-muted md:hidden"> / <%= number_with_delimiter(cap.cap_credits) %></span></td>
+              <td class="text-right hidden md:table-cell"><%= number_with_delimiter(cap.cap_credits) %></td>
+              <td><%= ai_cap_pill(cap) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <%= form_with url: admin_ai_path, method: :get, class: "flex flex-wrap items-end gap-3 pt-2" do |form| %>
+    <div class="field-wide">
+      <%= form.label :q, t(".search"), class: "field-label" %>
+      <%= form.search_field :q, value: @query, class: "input", minlength: 2 %>
+    </div>
+    <%= form.submit t(".search_submit"), class: "btn btn-secondary", name: nil %>
+  <% end %>
+  <% if @query.present? %>
+    <% if @companies.empty? %>
+      <p class="text-sm text-ink-soft"><%= t(".search_empty") %></p>
+    <% else %>
+      <ul class="divide-y divide-line-soft text-sm" data-ai-search>
+        <% @companies.each do |company| %>
+          <li class="py-2"><%= link_to company.name, admin_ai_company_path(company), class: "link-button" %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+</section>
+
+<section class="card card-body mt-6 space-y-3">
+  <h2 class="card-title"><%= t(".weights_title") %></h2>
+  <p class="field-hint"><%= t(".weights_hint") %></p>
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t(".feature") %></th>
+          <th class="text-right"><%= t(".credits_now") %></th>
+          <th class="hidden md:table-cell"><%= t(".unit") %></th>
+          <th><%= t(".changes") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Ai::Features::ALL.each_value do |feature| %>
+          <tr data-ai-weight="<%= feature.code %>">
+            <td><%= t("ai.features.#{feature.code}.name") %></td>
+            <td class="text-right font-bold"><%= AiCreditWeight.credits_on(feature.code) %></td>
+            <td class="hidden md:table-cell text-sm text-ink-soft"><%= t(".units.#{feature.unit}") %></td>
+            <td class="text-sm text-ink-soft">
+              <% changes = @weights.fetch(feature.code, []) %>
+              <% if changes.empty? %>
+                <%= t(".spec_weight") %>
+              <% else %>
+                <%= safe_join(changes.map { |weight| t(".change", credits: weight.credits, date: l(weight.valid_from)) }, tag.br) %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% if can?(:update_weights, :ai_admin) %>
+    <%= form_with model: @weight, url: admin_ai_weights_path, class: "form-grid pt-2" do |form| %>
+      <div>
+        <%= form.label :feature, class: "field-label" %>
+        <%= form.select :feature, Ai::Features::ALL.keys.map { |code| [ t("ai.features.#{code}.name"), code ] }, {}, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :credits, class: "field-label" %>
+        <%= form.number_field :credits, min: 0, max: 1000, required: true, class: "input" %>
+      </div>
+      <div>
+        <%= form.label :valid_from, class: "field-label" %>
+        <%= form.date_field :valid_from, min: Date.current.tomorrow, required: true, class: "input" %>
+      </div>
+      <div class="field-full">
+        <%= form.submit t(".create_weight"), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  <% end %>
+</section>

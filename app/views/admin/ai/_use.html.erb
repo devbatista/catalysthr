@@ -1,0 +1,29 @@
+<%# The calls, failures, credits and cost by function of the last 30 days (RN-14-110). locals: use %>
+<% if use.empty? %>
+  <p class="text-sm text-ink-soft"><%= t("admin.ai.use.empty") %></p>
+<% else %>
+  <div class="overflow-x-auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><%= t("admin.ai.use.feature") %></th>
+          <th class="text-right"><%= t("admin.ai.use.calls") %></th>
+          <th class="text-right"><%= t("admin.ai.use.failed") %></th>
+          <th class="text-right"><%= t("admin.ai.use.credits") %></th>
+          <th class="text-right"><%= t("admin.ai.use.cost") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% use.each do |row| %>
+          <tr data-ai-use="<%= row[:feature] %>">
+            <td><%= t("ai.features.#{row[:feature]}.name") %></td>
+            <td class="text-right"><%= number_with_delimiter(row[:calls]) %></td>
+            <td class="text-right <%= "text-bad" if row[:failed].positive? %>"><%= number_with_delimiter(row[:failed]) %></td>
+            <td class="text-right"><%= number_with_delimiter(row[:credits]) %></td>
+            <td class="text-right font-mono text-sm"><%= number_to_currency(row[:cost] / 1_000_000.0, unit: "US$ ", precision: 2) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -146,6 +146,9 @@ NotificationType::CATALOG = [
   # lasts; the password is never in the notice (RN-15-005).
   NotificationType.new(code: "exports.company_ready", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[hr_admin]),
+  # The company reached its daily AI cap and the AI paused until midnight (RN-14-114, D-670).
+  NotificationType.new(code: "ai.daily_cap_reached", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
   # A version the employee sent, to the unit's HR (D-645).
@@ -177,5 +180,11 @@ NotificationType::CATALOG = [
     roles: %w[superadmin]),
   # The national holidays brought from BrasilAPI, waiting for the team's review (P-11-06, D-638).
   NotificationType.new(code: "platform.holidays_review", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin support]),
+  # A company reached its daily AI cap, for the team to look and release (RN-14-114, D-670).
+  NotificationType.new(code: "platform.ai_daily_cap_reached", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[superadmin support]),
+  # The AI queue paused by the circuit breaker (RN-14-123, D-670).
+  NotificationType.new(code: "platform.ai_breaker_open", mandatory: true, urgent: true, channels: %w[system email],
     roles: %w[superadmin support])
 ].index_by(&:code).freeze

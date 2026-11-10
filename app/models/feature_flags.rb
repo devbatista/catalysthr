@@ -46,8 +46,13 @@ module FeatureFlags
   # the pages answer 404; an export already asked still finishes.
   COMPANY_EXPORT = :company_export
 
+  # The AI (spec 14, D-670), off until the zero data retention is confirmed in writing and the
+  # legal basis is approved (plan of phases, phase 2). Off, every function stays in the manual
+  # flow, nothing is sent to the AI and the settings screens answer 404.
+  AI = :ai
+
   ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL, PUSH_NOTIFICATIONS,
-    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS, COMPANY_EXPORT ].freeze
+    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS, COMPANY_EXPORT, AI ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze
