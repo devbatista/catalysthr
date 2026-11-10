@@ -2596,7 +2596,7 @@ pt-BR:
     document_batches:
       index:
         title: "Lotes"
-        subtitle: "Vários arquivos enviados de uma vez. Você escolhe o tipo e a pessoa de cada um e confirma antes de distribuir nas pastas."
+        subtitle: "Vários arquivos enviados de uma vez. A IA sugere o tipo e o sistema procura a pessoa; você confere, corrige e confirma cada um antes de distribuir nas pastas."
         new: "Novo lote"
         empty: "Nenhum lote enviado por você."
         batch: "Lote"
@@ -2625,7 +2625,29 @@ pt-BR:
         save: "Salvar escolhas"
         distribute: "Distribuir confirmados"
         distribute_confirm: "Distribuir os arquivos confirmados nas pastas? Cada um entra para a revisão do RH."
-        distribute_hint: "Salve as escolhas antes de distribuir. Só vão para as pastas os arquivos confirmados e já liberados pela varredura; os outros ficam no lote."
+        distribute_hint: "Salve as escolhas antes de distribuir. Só vão para as pastas os arquivos confirmados, já liberados pela varredura e que a IA terminou de ler; os outros ficam no lote."
+        reading:
+          one: "A IA está lendo %{count} arquivo. As sugestões aparecem quando a leitura terminar."
+          other: "A IA está lendo %{count} arquivos. As sugestões aparecem quando a leitura terminar."
+        refresh: "Atualizar"
+        ai_reading: "Em leitura pela IA"
+        ai_failed: "Falha da IA"
+        alike: "Nomes parecidos com o do documento"
+        everyone: "Todas as pessoas"
+        candidate: "%{name} (%{score}%)"
+      suggestion:
+        type: "Tipo sugerido pela IA: %{type}"
+        no_type: "A IA não reconheceu o tipo. Escolha à mão."
+        confidences:
+          high: "confiança alta"
+          medium: "confiança média"
+          low: "confiança baixa"
+        by_cpf: "Pessoa encontrada pelo CPF do documento: %{name}."
+        by_name: "Sem CPF que encontre alguém no seu escopo. Os nomes parecidos aparecem primeiro na escolha, com a semelhança; escolha a pessoa."
+        nobody: "Nenhuma pessoa do seu escopo encontrada pelo CPF nem pelo nome. Escolha a pessoa ou descarte o arquivo."
+        name_read: "Nome no documento: %{name}."
+        authenticity: "A IA só lê o documento: ela não confirma a autenticidade nem identifica a pessoa."
+        failed: "A IA não conseguiu ler este arquivo. Escolha o tipo e a pessoa à mão."
       files:
         added:
           one: "%{count} arquivo acrescentado."

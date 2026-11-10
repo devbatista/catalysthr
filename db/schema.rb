@@ -10,9 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_190100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
+  enable_extension "unaccent"
   enable_extension "vector"
 
   create_table "access_events", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -719,6 +721,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_190100) do
     t.uuid "document_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "type_confidence"
+    t.string "person_match"
+    t.jsonb "person_candidates", default: [], null: false
     t.index ["company_id"], name: "index_document_batch_items_on_company_id"
     t.index ["confirmed_type_id"], name: "index_document_batch_items_on_confirmed_type_id"
     t.index ["confirmed_worker_profile_id"], name: "index_document_batch_items_on_confirmed_worker_profile_id"

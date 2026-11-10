@@ -2,8 +2,8 @@ module Panel
   # The HR's batches (spec 08, RN-08-060 to RN-08-063, D-277, D-644): a batch is created,
   # gets files in rounds of up to 20, up to 100, and each file gets its type and person,
   # only of the scope of who sent it, and is confirmed or discarded before the confirmed
-  # ones are distributed (CA-08-006). The AI's suggestions come with spec 14 (D-642). Each
-  # person sees only their own batches.
+  # ones are distributed (CA-08-006). The AI suggests the type and the system the person, in
+  # the same scope (RN-14-030, RN-14-031, D-672). Each person sees only their own batches.
   class DocumentBatchesController < BaseController
     include DocumentAudienceForm
 
@@ -23,7 +23,8 @@ module Panel
 
     def show
       authorize! :read, @batch
-      @items = @batch.items.includes(:confirmed_type, :confirmed_worker_profile, file_attachment: { blob: :file_scan }).to_a
+      @items = @batch.items.includes(:confirmed_type, :confirmed_worker_profile, :suggested_type, :ai_extraction,
+        suggested_worker_profile: :user, file_attachment: { blob: :file_scan }).to_a
     end
 
     def files

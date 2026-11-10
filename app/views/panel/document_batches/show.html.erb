@@ -1,12 +1,16 @@
 <%# A batch (RN-08-060 to RN-08-063, D-644), as the spec's table "arquivo → tipo → pessoa":
     files added in rounds of up to 20, each one's type and person, only of the scope of
     who sent it, and whether it waits, is confirmed or discarded. Only the confirmed and
-    clean ones are distributed; nothing reaches a folder before (CA-08-006). The AI's
-    suggestions come with spec 14 (D-642). One form for the table, without JavaScript
-    (D-022). %>
+    clean ones are distributed; nothing reaches a folder before (CA-08-006). The AI suggests
+    the type, with its confidence, and the system the person: the CPF found preselects it,
+    the names alike come first in the choice, with the score (RN-14-030, RN-14-031, D-672).
+    A file still being read stays in the batch. One form for the table, without JavaScript
+    (D-022); the page does not reload by itself, so no choice is lost. %>
 <% content_for :title, t(".title") %>
 <% open = @batch.open? %>
 <% people = audience_people.map { |profile| [ profile.display_name, profile.id ] } %>
+<% names = people.to_h(&:reverse) %>
+<% reading_count = @items.count { |item| !item.distributed? && Documents::BatchReading.reading?(item) } %>
 <% types = audience_types.group_by(&:category).sort_by { |category, _| DocumentCategory::ALL.index(category) }
   .map { |category, list| [ t("documents.categories.#{category}"), list.map { |type| [ type.name, type.id ] } ] } %>
 
@@ -36,6 +40,11 @@
 
 <section class="card card-body mt-6 space-y-4">
   <h2 class="card-title"><%= t(".items", count: @items.size) %></h2>
+  <% if reading_count.positive? %>
+    <p class="alert-info text-sm" role="status" data-batch-reading>
+      <%= t(".reading", count: reading_count) %> <%= link_to t(".refresh"), document_batch_path(@batch), class: "link-button" %>
+    </p>
+  <% end %>
   <% if @items.empty? %>
     <p class="text-sm text-ink-soft"><%= t(".empty") %></p>
   <% else %>
@@ -48,6 +57,13 @@
               <span class="min-w-0 break-all text-sm font-bold text-ink-strong"><%= item.file.filename %></span>
               <span class="flex flex-wrap gap-1">
                 <% unless item.clean? %><%= material_scan_pill(item) %><% end %>
+                <% if !item.distributed? && (reading = item.ai_extraction) %>
+                  <% if Documents::BatchReading.reading?(item) %>
+                    <span class="pill pill-info" data-ai-item="reading"><%= t(".ai_reading") %></span>
+                  <% elsif reading.failed? %>
+                    <span class="pill pill-bad" data-ai-item="failed"><%= t(".ai_failed") %></span>
+                  <% end %>
+                <% end %>
                 <span class="pill <%= item.distributed? || item.confirmed? ? "pill-ok" : item.discarded? ? "pill-mute" : "pill-warn" %>"><%= t("documents.batch_item_statuses.#{item.status}") %></span>
               </span>
             </div>
@@ -57,15 +73,25 @@
                 <%= link_to t(".open_document"), document_path(item.document_id), class: "link-button" %>
               </p>
             <% elsif editable %>
+              <%= render "suggestion", item: item, names: names %>
+              <% candidates = item.person_match == "name" ? item.person_candidates.select { |candidate| names.key?(candidate["id"]) } : [] %>
+              <% person_options = if candidates.any?
+                   grouped_options_for_select({
+                     t(".alike") => candidates.map { |candidate| [ t(".candidate", name: names[candidate["id"]], score: (candidate["score"] * 100).round), candidate["id"] ] },
+                     t(".everyone") => people
+                   }, item.confirmed_worker_profile_id)
+                 else
+                   options_for_select(people, item.confirmed_worker_profile_id || item.suggested_worker_profile_id)
+                 end %>
               <div class="mt-2 grid gap-3 md:grid-cols-3">
                 <div>
                   <%= label_tag "items_#{item.id}_document_type_id", t(".type"), class: "field-label" %>
-                  <%= select_tag "items[#{item.id}][document_type_id]", grouped_options_for_select(types, item.confirmed_type_id),
+                  <%= select_tag "items[#{item.id}][document_type_id]", grouped_options_for_select(types, item.confirmed_type_id || item.suggested_type_id),
                     include_blank: true, id: "items_#{item.id}_document_type_id", class: "input" %>
                 </div>
                 <div>
                   <%= label_tag "items_#{item.id}_worker_profile_id", t(".person"), class: "field-label" %>
-                  <%= select_tag "items[#{item.id}][worker_profile_id]", options_for_select(people, item.confirmed_worker_profile_id),
+                  <%= select_tag "items[#{item.id}][worker_profile_id]", person_options,
                     include_blank: true, id: "items_#{item.id}_worker_profile_id", class: "input" %>
                 </div>
                 <div>

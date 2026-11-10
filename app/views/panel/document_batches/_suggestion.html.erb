@@ -1,0 +1,38 @@
+<%# What the AI read from a batch's file and what the system found (RN-14-030, RN-14-031,
+    D-672): the type suggested with the AI's confidence, how the person was found (the CPF in
+    the scope, names alike or nobody), the name read when the CPF did not find anyone, and the
+    visual signs as alerts (RN-14-023). The AI does not confirm authenticity (RN-08-024) nor
+    identify the person. locals: item, names %>
+<% reading = item.ai_extraction %>
+<% if reading&.succeeded? %>
+  <div class="mt-2 space-y-1 text-xs text-ink-soft" data-ai-suggestion>
+    <p>
+      <% if item.suggested_type %>
+        <%= t(".type", type: item.suggested_type.name) %>
+        <span class="pill <%= item.type_confidence == "high" ? "pill-ok" : item.type_confidence == "low" ? "pill-bad" : "pill-warn" %>"
+          data-type-confidence="<%= item.type_confidence %>"><%= t(".confidences.#{item.type_confidence || "low"}") %></span>
+      <% else %>
+        <%= t(".no_type") %>
+      <% end %>
+    </p>
+    <p data-person-match="<%= item.person_match %>">
+      <% case item.person_match %>
+      <% when "cpf" %>
+        <%= t(".by_cpf", name: names[item.suggested_worker_profile_id] || item.suggested_worker_profile&.display_name) %>
+      <% when "name" %>
+        <%= t(".by_name") %>
+      <% else %>
+        <%= t(".nobody") %>
+      <% end %>
+      <% if item.person_match != "cpf" && (read_name = reading.value("name") || reading.value("holder_name")).present? %>
+        <%= t(".name_read", name: read_name) %>
+      <% end %>
+    </p>
+    <% reading.flags.each do |flag| %>
+      <p class="alert-bad" data-ai-flag="<%= flag %>"><%= t("panel.documents.ai_status.alerts.flag_#{flag}") %></p>
+    <% end %>
+    <p><%= t(".authenticity") %></p>
+  </div>
+<% elsif reading&.failed? %>
+  <p class="mt-2 text-xs text-ink-soft"><%= t(".failed") %></p>
+<% end %>

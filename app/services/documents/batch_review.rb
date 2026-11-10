@@ -2,8 +2,9 @@ module Documents
   # The HR's choices on a batch (RN-08-061 to RN-08-063, D-644): each file's type and person,
   # only of the scope of who sent the batch, and whether it is confirmed, discarded or still
   # waiting. Distributing puts each confirmed and clean file in the person's folder, as a
-  # document whose single version follows the normal review (RN-08-063). Nothing reaches a
-  # folder without the confirmation (CA-08-006).
+  # document whose single version follows the normal review (RN-08-063), with the AI's reading
+  # of the batch reused, without a new call (RN-14-032). A file the AI is still reading stays in
+  # the batch (D-672). Nothing reaches a folder without the confirmation (CA-08-006).
   class BatchReview
     ACTIONS = %w[pending confirmed discarded].freeze
 
@@ -36,8 +37,9 @@ module Documents
       return closed unless @batch.open?
 
       count = 0
-      @batch.items.confirmed.includes(:confirmed_type, :confirmed_worker_profile, file_attachment: :blob).each do |item|
+      @batch.items.confirmed.includes(:confirmed_type, :confirmed_worker_profile, :ai_extraction, file_attachment: :blob).each do |item|
         next unless item.clean?
+        next if BatchReading.reading?(item)
 
         version = ActiveRecord::Base.transaction do
           document = Document.create!(worker_profile: item.confirmed_worker_profile, document_type: item.confirmed_type,
@@ -45,6 +47,7 @@ module Documents
           item.update!(status: "distributed", document: document)
           document.versions.create!(number: 1, status: "scanning", uploaded_by: @batch.uploaded_by, uploaded_at: item.created_at)
             .tap { |created| created.files.attach(item.file.blob) }
+            .tap { |created| BatchReading.transfer(item, created) }
         end
         # Already clean, so no scan will wake it up (D-640).
         ConsolidatePdfJob.perform_later(version)
