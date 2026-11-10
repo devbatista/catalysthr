@@ -45,6 +45,7 @@ module NavigationHelper
         (nav_item(t("navigation.admin_users"), admin_users_path, controller_path == "admin/users") if can?(:read, User.new)),
         (nav_item(t("navigation.company_transfer"), new_admin_company_transfer_path, controller_path == "admin/company_transfers") if company_transfer_allowed?),
         (nav_item(t("navigation.feature_flags"), admin_feature_flags_path, controller_path == "admin/feature_flags") if can?(:read, :feature_flags)),
+        (nav_item(t("navigation.ai"), admin_ai_path, controller_path == "admin/ai") if ai_admin_allowed?),
         (nav_item(t("navigation.sidekiq"), admin_sidekiq_web_path, false) if can?(:read, :sidekiq_web))
       ]),
       nav_group(:billing, [
@@ -92,6 +93,11 @@ module NavigationHelper
 
   def billing_allowed?(action = :read, subject)
     FeatureFlags.enabled?(FeatureFlags::BILLING) && can?(action, subject)
+  end
+
+  # The AI's admin screen, behind the AI's flag (D-670).
+  def ai_admin_allowed?
+    FeatureFlags.enabled?(FeatureFlags::AI) && can?(:read, :ai_admin)
   end
 
   # The NFS-e's screens, behind their own flag (D-633).

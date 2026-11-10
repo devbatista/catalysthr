@@ -98,6 +98,10 @@ gem "aws-sdk-sesv2", "~> 1.117"
 # The signature of the SES events that SNS posts to the app (spec 15, P-15-24, D-609)
 gem "aws-sdk-sns", "~> 1.126"
 
+# The official Claude SDK, with structured outputs and prompt caching, only with the
+# features under zero data retention: no Batch API, no Files API (spec 14, P-14-39, D-385)
+gem "anthropic", "~> 2.3.0"
+
 # The partner's usage report (spec 19, RN-19-024). Out of the default gems since Ruby 3.4.
 gem "csv", "~> 3.3"
 

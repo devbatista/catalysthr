@@ -80,6 +80,11 @@ GEM
     addressable (2.9.2)
       public_suffix (>= 2.0.2, < 8.0)
     android_key_attestation (0.3.0)
+    anthropic (2.3.0)
+      base64 (~> 0.1)
+      connection_pool (>= 2, < 4)
+      opentelemetry-api (>= 1.2.4, < 2)
+      standardwebhooks (~> 1.0)
     ast (2.4.3)
     aws-actionmailer-ses (1.2.0)
       actionmailer (>= 7.1.0)
@@ -265,6 +270,8 @@ GEM
     openssl (4.0.2)
     openssl-signature_algorithm (1.3.0)
       openssl (> 2.0)
+    opentelemetry-api (1.11.1)
+      logger
     orm_adapter (0.5.0)
     paper_trail (17.0.0)
       activerecord (>= 7.1)
@@ -455,6 +462,7 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
+    standardwebhooks (1.1.0)
     strong_migrations (2.8.0)
       activerecord (>= 7.2)
     tailwindcss-rails (4.7.0)
@@ -530,6 +538,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_tenant (~> 2.2)
+  anthropic (~> 2.3.0)
   aws-actionmailer-ses (~> 1.2)
   aws-sdk-s3 (~> 1.237)
   aws-sdk-sesv2 (~> 1.117)
@@ -595,6 +604,7 @@ CHECKSUMS
   acts_as_tenant (2.2.2) sha256=f238de7b849f33bd01f4c9d35bec8f07b9635f2c3f82b7cbf86608329a30b4f9
   addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
   android_key_attestation (0.3.0) sha256=467eb01a99d2bb48ef9cf24cc13712669d7056cba5a52d009554ff037560570b
+  anthropic (2.3.0) sha256=6b863da7bf40ca5f5416beb45ac0ecf779fd979ce66b3a37d3b6b9ef17479900
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-actionmailer-ses (1.2.0) sha256=e01ccfcc5bf1449abb91bb8b15e7945e97310144c7f67fee8d9b76de2e89107f
   aws-eventstream (1.4.1) sha256=ceb6a99c61df4bb00344e54aed0351574beca24f87a0d1487d1d2ed80929ce96
@@ -685,6 +695,7 @@ CHECKSUMS
   nokogiri (1.19.7-x86_64-linux-musl) sha256=464d1f3dfb0d53cf54c0c6a7e23e8e91cf68ec3cafc2b27dc4a7682f2d9bf546
   openssl (4.0.2) sha256=1037ad2868ae58df9ad917891c0c0f9815a1172f6846d4bcdd508e4c2ee747c2
   openssl-signature_algorithm (1.3.0) sha256=a3b40b5e8276162d4a6e50c7c97cdaf1446f9b2c3946a6fa2c14628e0c957e80
+  opentelemetry-api (1.11.1) sha256=d07f9987ea6240b3fd5ed5dd7450f93c58e403e0553e804069c23ae18ba61ff7
   orm_adapter (0.5.0) sha256=aa5d0be5d540cbb46d3a93e88061f4ece6a25f6e97d6a47122beb84fe595e9b9
   paper_trail (17.0.0) sha256=1c2842061d3874ca7015908e821e2aa14f9b982af2acb2a7974713bf79021c85
   parallel (2.3.0) sha256=f75a3e904101ce6a1ccb6b8dc800cbafd42166d83330192438dcf29395167a6f
@@ -753,6 +764,7 @@ CHECKSUMS
   sidekiq-cron (2.4.0) sha256=25595c5aee0c16d13a89466e5108af047fa4cfbf388199b39e1a600ca39472d4
   simplecov (1.3.2) sha256=2a22ec1759f1b8db60881a2e038758956fc69ef93ed669be0bde0678de6d0e85
   solid_cache (1.0.10) sha256=bc05a2fb3ac78a6f43cbb5946679cf9db67dd30d22939ededc385cb93e120d41
+  standardwebhooks (1.1.0) sha256=356ba711c14def4fb27310e4163b26bd5cccf325212c3440cabadd825e4be11f
   strong_migrations (2.8.0) sha256=cb9c0f8160e60f3e9c0e76098d57a6f61825b9618e8eb41cebbd1c1079874439
   tailwindcss-rails (4.7.0) sha256=9b09bd677d7cd226fc8ff3f7d2d91c6dc6c3da75dd74dc4cab5f94711f69ba41
   tailwindcss-ruby (4.3.3) sha256=ee0a64030749862deb501acab4c4aaf5adbee13865746a33299d46d7b5d0952a

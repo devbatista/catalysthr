@@ -1,5 +1,71 @@
 pt-BR:
   admin:
+    ai:
+      use:
+        empty: "Nenhuma chamada à IA nos últimos 30 dias."
+        feature: "Função"
+        calls: "Chamadas"
+        failed: "Falhas"
+        credits: "Créditos"
+        cost: "Custo"
+      caps:
+        active: "Ativa"
+        paused: "Pausada pelo teto"
+        released: "Liberada"
+      index:
+        title: "IA"
+        subtitle: "Pesos dos créditos, uso e custo da IA, e o teto diário de cada empresa."
+        breaker: "A fila da IA está pausada até %{until}, porque mais da metade das chamadas falhou em 5 minutos. Os documentos esperam a pausa terminar."
+        use_title: "Uso dos últimos 30 dias"
+        use_hint: "Todas as empresas. O custo é o real, em dólares, para revisar os pesos; as chamadas que falharam não consomem créditos."
+        today_title: "Empresas hoje"
+        today_empty: "Nenhuma empresa usou a IA hoje."
+        company: "Empresa"
+        used: "Créditos usados"
+        cap: "Teto do dia"
+        status: "Situação"
+        search: "Buscar uma empresa"
+        search_submit: "Buscar"
+        search_empty: "Nenhuma empresa com esse nome."
+        weights_title: "Pesos dos créditos"
+        weights_hint: "Quantos créditos cada função consome. Um peso novo vale a partir da data escolhida, sempre depois de hoje; antes dele, vale o da spec."
+        feature: "Função"
+        credits_now: "Créditos hoje"
+        unit: "Por"
+        units:
+          request: "chamada"
+          page_block: "10 páginas"
+        changes: "Mudanças"
+        spec_weight: "Peso da spec, sem mudanças"
+        change: "%{credits} a partir de %{date}"
+        create_weight: "Agendar o peso"
+      create_weight:
+        created: "Peso agendado."
+      company:
+        back: "Voltar para IA"
+        subtitle: "Uso da IA da empresa e o teto de segurança do dia."
+        today: "Uso de hoje"
+        used_of: "%{used} de %{cap} créditos"
+        computed: "Teto calculado"
+        computed_hint: "O maior entre 5 vezes a média diária dos últimos 30 dias e 200 créditos."
+        override: "Teto definido pela equipe"
+        no_override: "Nenhum"
+        paused_title: "IA pausada pelo teto"
+        paused_text: "A empresa chegou ao teto às %{at}. Até a meia-noite, os documentos seguem para a conferência manual. Libere se o uso for normal."
+        release: "Liberar a pausa de hoje"
+        release_confirm: "Liberar a IA da empresa até a meia-noite? O uso de hoje continua contando no consumo do mês."
+        released: "Liberada por %{name} às %{at}. A IA da empresa não pausa mais hoje."
+        cap_title: "Teto da empresa"
+        cap_hint: "Deixe vazio para voltar ao teto calculado. Vale a partir de agora, também para hoje."
+        cap_field: "Teto diário, em créditos"
+        save_cap: "Salvar o teto"
+        use_title: "Uso dos últimos 30 dias"
+      update_cap:
+        updated: "Teto salvo."
+        reset: "A empresa voltou ao teto calculado."
+        invalid: "O teto precisa ser um número inteiro de créditos."
+      release:
+        released: "IA da empresa liberada até a meia-noite."
     document_types:
       index:
         title: "Tipos de documento"
@@ -1999,6 +2065,9 @@ pt-BR:
       column: "Erros"
   # The feature flags declared in the code (FeatureFlags::ALL), on the admin's screen (D-617).
   feature_flags:
+    ai:
+      name: "IA"
+      description: "Ligada, a IA lê os documentos e distribui o lote, com o liga/desliga do RH administrador, os créditos e o teto diário, e o admin mostra a tela IA. Desligada, tudo segue na conferência manual e nada vai para a IA. Só ligar depois da retenção zero confirmada por escrito e da base legal do jurídico (spec 14, D-670)."
     company_export:
       name: "Exportação de dados"
       description: "Ligada, o RH administrador pede a exportação completa da empresa, em ZIP com senha, uma vez por semana. Desligada, o menu não mostra a exportação, e uma exportação já pedida termina (spec 18, D-667)."
@@ -2093,6 +2162,7 @@ pt-BR:
     fiscal_settings: "Notas fiscais"
     holidays: "Feriados"
     document_types: "Tipos de documento"
+    ai: "IA"
     documents: "Documentos"
     announcements: "Comunicados"
     my_portal: "Meu portal"
@@ -4135,6 +4205,23 @@ pt-BR:
         cancel: "Cancelar"
       update:
         updated: "Canais dos avisos salvos."
+    company_ai_settings:
+      edit:
+        title: "Funções de IA"
+        subtitle: "O que a IA faz na empresa. A IA só sugere: nada muda no cadastro, nos documentos ou nas pastas sem a confirmação de uma pessoa."
+        back: "Voltar para Configurações"
+        today: "Uso de hoje"
+        used_of: "%{used} de %{cap} créditos"
+        cap_hint: "É o teto de segurança do dia. Ao chegar nele, a IA pausa até a meia-noite, e tudo segue na conferência manual."
+        paused: "A IA da empresa está pausada até a meia-noite, porque chegou ao teto de segurança de %{cap} créditos de hoje. Os documentos seguem para a conferência manual. A equipe de suporte pode liberar a pausa antes."
+        breaker: "A IA está pausada até %{until} por instabilidade do provedor. Os documentos esperam a pausa terminar e são lidos em seguida."
+        "on": "Ligada"
+        "off": "Desligada"
+        notice: "Desligar uma função não apaga o que ela já leu. Os créditos de IA usados entram no consumo do mês do contrato."
+        save: "Salvar"
+        cancel: "Cancelar"
+      update:
+        updated: "Funções de IA salvas."
     notification_preferences:
       edit:
         title: "Minhas notificações"
@@ -4151,6 +4238,7 @@ pt-BR:
         title: "Configurações"
         subtitle: "Dados e regras da empresa."
         notifications: "Canais dos avisos da empresa"
+        ai: "Funções de IA"
         company: "Dados da empresa"
         legal_name: "Razão social"
         name: "Nome fantasia"
@@ -4711,7 +4799,39 @@ pt-BR:
     link: "Link ou QR code para entregar em mãos"
   # The notices of the catalog (spec 15, RN-15-012, D-607). Never sensitive data
   # (RN-15-005).
+  ai:
+    features:
+      document_extraction:
+        name: "Leitura de documentos"
+        hint: "A IA lê o RG, a CNH, o comprovante e os outros documentos da plataforma e mostra os campos na revisão, ao lado do cadastro. 1 crédito por documento."
+        "off": "Desligada, o documento vai direto para a revisão, sem os campos lidos."
+      batch_classification:
+        name: "Distribuição do lote"
+        hint: "A IA sugere o tipo de cada arquivo do lote e o CPF ou o nome encontrado; o sistema sugere a pessoa. 1 crédito por arquivo."
+        "off": "Desligada, o RH escolhe o tipo e a pessoa de cada arquivo."
+      guide_reading:
+        name: "Leitura de guias e notas fiscais"
+      esocial_explanation:
+        name: "Explicação do eSocial"
+      operational_summary:
+        name: "Resumo operacional"
+      assistant:
+        name: "Assistente"
+      material_ocr:
+        name: "Leitura de material escaneado"
+      writing:
+        name: "Redação para o RH"
+      recruitment:
+        name: "Recrutamento"
+      performance:
+        name: "Avaliação de desempenho"
   notification_types:
+    ai:
+      daily_cap_reached:
+        name: "Teto diário da IA"
+        hint: "Quando a empresa chega ao teto diário de créditos de IA e a IA pausa até a meia-noite."
+        title: "A IA de %{name} pausou até a meia-noite"
+        body: "A empresa chegou ao teto de segurança de %{cap} créditos de IA hoje. Até a meia-noite, ou até a equipe de suporte liberar, os documentos seguem para a conferência manual."
     exports:
       company_ready:
         grouped: "%{count} exportações prontas"
@@ -4908,6 +5028,12 @@ pt-BR:
         employees_100:
           title: "%{name} chegou ao limite da faixa de colaboradores"
           body: "Em %{month}, o pico foi de %{used} colaboradores ativos, para uma faixa de %{limit}. Nada é bloqueado: cada colaborador acima da faixa entra como excedente na fatura seguinte."
+        ai_80:
+          title: "%{name} chegou a 80% dos créditos de IA do mês"
+          body: "Em %{month}, foram usados %{used} de %{limit} créditos de IA. Nada é bloqueado: se passar da cota, os créditos a mais entram como excedente na fatura seguinte."
+        ai_100:
+          title: "%{name} chegou ao limite dos créditos de IA do mês"
+          body: "Em %{month}, foram usados %{used} créditos de IA, para uma cota de %{limit}. Nada é bloqueado: os créditos acima da cota entram como excedente na fatura seguinte."
       overdue:
         name: "Fatura vencida"
         hint: "No 1º, no 5º e no 10º dia de atraso, e quando a conta entra em somente leitura."
@@ -4963,6 +5089,16 @@ pt-BR:
         title: "O preço do plano %{plan} muda em %{date}"
         body: "A partir do ciclo que começa em %{date}, o contrato de %{name} passa a valer %{price}. Até lá, nada muda. Dúvidas? Fale com a equipe da CatalystHR."
     platform:
+      ai_daily_cap_reached:
+        name: "Teto diário da IA de uma empresa"
+        hint: "Quando uma empresa chega ao teto diário de créditos de IA."
+        title: "%{name} chegou ao teto diário da IA"
+        body: "A empresa usou os %{cap} créditos do teto de hoje, e a IA dela pausou até a meia-noite. Confira se o uso é normal e, se for, libere a pausa em IA."
+      ai_breaker_open:
+        name: "IA pausada por falhas"
+        hint: "Quando mais da metade das chamadas à IA falha em 5 minutos e a fila da IA pausa por 10 minutos."
+        title: "A fila da IA pausou até %{until}"
+        body: "Mais da metade das chamadas à Anthropic falhou nos últimos 5 minutos. Os documentos esperam a pausa terminar; veja os erros no Sentry e o status da Anthropic."
       nfse_error:
         name: "Nota fiscal com erro"
         hint: "Quando o Asaas ou a prefeitura recusam uma NFS-e ou o cancelamento dela."
@@ -5659,6 +5795,10 @@ pt-BR:
       add_on_price:
         monthly_price_cents: "Mensalidade"
         valid_from: "Data de início"
+      ai_credit_weight:
+        feature: "Função"
+        credits: "Créditos"
+        valid_from: "Data de início"
       company_notification_setting:
         channels: "Canais"
       notification_preference:
@@ -5942,6 +6082,10 @@ pt-BR:
               past: "não pode ser uma data passada"
             monthly_price_cents:
               invalid_amount: "precisa ser um valor em reais, como 2.500,00"
+        ai_credit_weight:
+          attributes:
+            valid_from:
+              after_today: "precisa ser a partir de amanhã, porque o peso em vigor não muda"
         company_notification_setting:
           attributes:
             channels:

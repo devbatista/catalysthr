@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -179,6 +179,73 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.index ["employment_id"], name: "index_admissions_on_employment_id", unique: true
     t.index ["invite_released_by_id"], name: "index_admissions_on_invite_released_by_id"
     t.index ["process_instance_id"], name: "index_admissions_on_process_instance_id"
+  end
+
+  create_table "ai_credit_entries", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "billing_account_id"
+    t.uuid "company_id", null: false
+    t.uuid "ai_request_id"
+    t.string "period", null: false
+    t.integer "credits", null: false
+    t.string "kind", default: "usage", null: false
+    t.datetime "created_at", null: false
+    t.index ["ai_request_id"], name: "index_ai_credit_entries_on_ai_request_id", unique: true
+    t.index ["billing_account_id", "period"], name: "index_ai_credit_entries_on_billing_account_id_and_period"
+    t.index ["company_id", "created_at"], name: "index_ai_credit_entries_on_company_id_and_created_at"
+    t.index ["company_id"], name: "index_ai_credit_entries_on_company_id"
+  end
+
+  create_table "ai_credit_weights", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.string "feature", null: false
+    t.integer "credits", null: false
+    t.string "unit", default: "request", null: false
+    t.date "valid_from", null: false
+    t.uuid "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_ai_credit_weights_on_created_by_id"
+    t.index ["feature", "valid_from"], name: "index_ai_credit_weights_on_feature_and_valid_from", unique: true
+  end
+
+  create_table "ai_daily_caps", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.date "date", null: false
+    t.integer "cap_credits", null: false
+    t.integer "used_credits", default: 0, null: false
+    t.datetime "paused_at"
+    t.datetime "released_at"
+    t.uuid "released_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "date"], name: "index_ai_daily_caps_on_company_id_and_date", unique: true
+    t.index ["released_by_id"], name: "index_ai_daily_caps_on_released_by_id"
+  end
+
+  create_table "ai_requests", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id"
+    t.uuid "user_id"
+    t.string "feature", null: false
+    t.string "provider", default: "anthropic", null: false
+    t.string "model", null: false
+    t.string "prompt_version"
+    t.string "subject_type"
+    t.uuid "subject_id"
+    t.string "status", null: false
+    t.integer "attempt", default: 1, null: false
+    t.integer "input_tokens", default: 0, null: false
+    t.integer "output_tokens", default: 0, null: false
+    t.integer "cache_read_tokens", default: 0, null: false
+    t.integer "cache_write_tokens", default: 0, null: false
+    t.bigint "cost_usd_micros", default: 0, null: false
+    t.integer "credits", default: 0, null: false
+    t.integer "latency_ms"
+    t.string "provider_request_id"
+    t.string "error_code"
+    t.datetime "created_at", null: false
+    t.index ["company_id", "created_at"], name: "index_ai_requests_on_company_id_and_created_at"
+    t.index ["provider", "created_at"], name: "index_ai_requests_on_provider_and_created_at"
+    t.index ["subject_type", "subject_id"], name: "index_ai_requests_on_subject_type_and_subject_id"
+    t.index ["user_id"], name: "index_ai_requests_on_user_id"
   end
 
   create_table "allocation_client_managers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -391,8 +458,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.boolean "uses_allocation_clients", default: false, null: false
     t.boolean "uses_accounting_step", default: false, null: false
     t.integer "experience_alert_days", default: 10, null: false
+    t.integer "ai_daily_cap_credits"
     t.index ["document"], name: "index_companies_on_document", unique: true
     t.index ["partner_id"], name: "index_companies_on_partner_id"
+  end
+
+  create_table "company_ai_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "feature", null: false
+    t.boolean "enabled", default: true, null: false
+    t.uuid "updated_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "feature"], name: "index_company_ai_settings_on_company_id_and_feature", unique: true
+    t.index ["updated_by_id"], name: "index_company_ai_settings_on_updated_by_id"
   end
 
   create_table "company_document_type_settings", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1620,6 +1699,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "ai_alerted_percent"
     t.index ["billing_account_id", "period", "company_id"], name: "index_usage_periods_on_account_period_company", unique: true, nulls_not_distinct: true
     t.index ["company_id", "period"], name: "index_usage_periods_on_company_id_and_period"
   end
@@ -1791,6 +1871,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
   add_foreign_key "admissions", "process_instances"
   add_foreign_key "admissions", "users", column: "completed_by_id"
   add_foreign_key "admissions", "users", column: "invite_released_by_id"
+  add_foreign_key "ai_credit_entries", "ai_requests"
+  add_foreign_key "ai_credit_entries", "billing_accounts"
+  add_foreign_key "ai_credit_entries", "companies"
+  add_foreign_key "ai_credit_weights", "users", column: "created_by_id"
+  add_foreign_key "ai_daily_caps", "companies"
+  add_foreign_key "ai_daily_caps", "users", column: "released_by_id"
+  add_foreign_key "ai_requests", "companies"
+  add_foreign_key "ai_requests", "users"
   add_foreign_key "allocation_client_managers", "allocation_clients", on_delete: :cascade
   add_foreign_key "allocation_client_managers", "companies"
   add_foreign_key "allocation_client_managers", "memberships", on_delete: :cascade
@@ -1815,6 +1903,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
   add_foreign_key "brand_subdomains", "brands"
   add_foreign_key "brands", "users", column: "email_domain_registered_by_id", on_delete: :nullify
   add_foreign_key "companies", "partners"
+  add_foreign_key "company_ai_settings", "companies"
+  add_foreign_key "company_ai_settings", "users", column: "updated_by_id"
   add_foreign_key "company_document_type_settings", "companies"
   add_foreign_key "company_document_type_settings", "document_types"
   add_foreign_key "company_exports", "companies"

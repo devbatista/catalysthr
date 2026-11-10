@@ -81,6 +81,17 @@ class Subscription < ApplicationRecord
     trialing? || trial_expired? || pre_activation?
   end
 
+  # The month's quotas of the contract: the reduced ones in the trial and the pre-activation,
+  # the partner's plan, or the direct company's per employee, by the month's peak (RN-19-010,
+  # RN-19-031).
+  def monthly_quotas(peak_employees)
+    return { ai_credits: REDUCED_AI_CREDITS, whatsapp_messages: REDUCED_WHATSAPP_MESSAGES } if reduced_quotas?
+    return partner_quotas if billing_account.partner?
+
+    { ai_credits: plan_version.ai_credits_per_employee * peak_employees.to_i,
+      whatsapp_messages: plan_version.whatsapp_messages_per_employee * peak_employees.to_i }
+  end
+
   def add_on_prices(date = Date.current)
     items.select { |item| item.kind_add_on? && item.current?(date) }.map(&:add_on_price)
   end

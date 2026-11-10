@@ -65,17 +65,8 @@ module Billing
 
     private
 
-    # The plan's quotas, or the reduced ones in the trial and the pre-activation; the direct
-    # company's are per employee, by the month's peak (RN-19-010, RN-19-031).
     def quotas(subscription, usage)
-      if subscription.reduced_quotas?
-        return { ai_credits: Subscription::REDUCED_AI_CREDITS, whatsapp_messages: Subscription::REDUCED_WHATSAPP_MESSAGES }
-      end
-      return subscription.partner_quotas if subscription.billing_account.partner?
-
-      version = subscription.plan_version
-      peak = usage&.peak_employees.to_i
-      { ai_credits: version.ai_credits_per_employee * peak, whatsapp_messages: version.whatsapp_messages_per_employee * peak }
+      subscription.monthly_quotas(usage&.peak_employees)
     end
 
     def sign_ins

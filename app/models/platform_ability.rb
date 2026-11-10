@@ -80,6 +80,12 @@ class PlatformAbility
       can :assist, :data_imports
       can %i[read create confirm cancel download_errors], DataImport
     end
+    # The AI (spec 14, section 6, P-14-36, D-670): the superadmin changes the weights and the
+    # companies' caps; the superadmin and the support release a pause; the finance team reads
+    # the use of every contract.
+    can :read, :ai_admin if user.superadmin? || user.support? || user.finance?
+    can %i[update_weights update_caps], :ai_admin if user.superadmin?
+    can :release, AiDailyCap if user.superadmin? || user.support?
     # Sidekiq Web, for the superadmin and the support (RN-20-077).
     can :read, :sidekiq_web if user.superadmin? || user.support?
   end

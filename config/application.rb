@@ -71,6 +71,11 @@ module CatalystHr
     # upload stays in scanning and nothing is released.
     config.x.clamav_host = ENV["CLAMAV_HOST"].presence
     config.x.clamav_port = ENV.fetch("CLAMAV_PORT", 3310).to_i
+    # Claude (spec 14, D-104, P-14-01): the key of the organization with zero data retention
+    # (D-380) and the model, changed here without changing code. Without the key, every AI
+    # function stays in the manual flow (RN-14-010).
+    config.x.anthropic_api_key = ENV["ANTHROPIC_API_KEY"].presence
+    config.x.ai_model = ENV.fetch("AI_MODEL", "claude-sonnet-5-5")
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.
