@@ -11,7 +11,9 @@ module Documents
       end
     end
 
+    # The files and what the AI read from them (RN-08-062).
     def purge(items)
+      BatchReading.forget(items)
       items.includes(file_attachment: :blob).find_each { |item| item.file.purge_later if item.file.attached? }
     end
   end

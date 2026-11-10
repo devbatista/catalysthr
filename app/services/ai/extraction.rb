@@ -8,8 +8,9 @@ module Ai
 
     module_function
 
+    # profile nil: the fields of any profile, as a batch's file is read without its type (RN-14-030).
     def normalize(fields, profile)
-      by_key = ExtractionProfiles.fields(profile).index_by(&:key)
+      by_key = (profile ? ExtractionProfiles.fields(profile) : ExtractionProfiles.all_fields).index_by(&:key)
       Array(fields).each_with_object({}) do |field, kept|
         definition = by_key[field["key"]]
         next if definition.nil? || kept.key?(definition.key)
@@ -31,6 +32,13 @@ module Ai
       when :aso_result then { "apto" => "fit", "inapto" => "unfit" }.fetch(text.downcase, text.downcase.presence_in(%w[fit unfit]))
       else text.first(500)
       end
+    end
+
+    # Only the fields of a profile, for a batch's reading reused on the version of another type
+    # (RN-14-032, D-672): what the two have in common stays, the rest goes.
+    def restrict(fields, profile)
+      keys = ExtractionProfiles.fields(profile).map(&:key)
+      Array(fields).select { |field| keys.include?(field["key"]) }
     end
 
     # The CEP read is looked up once, so the review does not wait for ViaCEP.

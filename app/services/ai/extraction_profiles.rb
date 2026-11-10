@@ -60,6 +60,7 @@ module Ai
 
     def codes = ALL.keys
     def fields(code) = ALL.fetch(code.to_s)
-    def keys = ALL.values.flatten.map(&:key).uniq
+    def keys = all_fields.map(&:key)
+    def all_fields = ALL.values.flatten.uniq(&:key)
   end
 end
