@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -555,6 +555,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_160000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "undo_blockers"
+    t.text "screen"
     t.index ["company_id", "created_at"], name: "index_data_imports_on_company_id_and_created_at"
     t.index ["created_by_id"], name: "index_data_imports_on_created_by_id"
     t.index ["status", "created_at"], name: "index_data_imports_on_status_and_created_at"
@@ -1353,7 +1354,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_160000) do
     t.string "stage"
     t.index ["company_id"], name: "index_process_items_on_company_id"
     t.index ["completed_by_id"], name: "index_process_items_on_completed_by_id"
-    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY (ARRAY[('blocked'::character varying)::text, ('pending'::character varying)::text]))"
+    t.index ["due_on"], name: "index_process_items_open_due_on", where: "((status)::text = ANY ((ARRAY['blocked'::character varying, 'pending'::character varying])::text[]))"
     t.index ["process_instance_id", "position"], name: "index_process_items_on_process_instance_id_and_position"
     t.index ["responsible_membership_ids"], name: "index_process_items_on_responsible_membership_ids", using: :gin
     t.index ["source_template_item_id"], name: "index_process_items_on_source_template_item_id"

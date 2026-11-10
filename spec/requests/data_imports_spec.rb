@@ -204,15 +204,18 @@ RSpec.describe "Data imports", type: :request do
     expect(missing.failure_reason).to eq("Faltam colunas obrigatórias na aba Cargos: CBO. Use os nomes do modelo no cabeçalho.")
   end
 
+  # The HR analyst opens the imports only for the mass updates of their units (section 6,
+  # RN-18-040, D-669); the implementation's kinds stay the HR administrator's.
   it "is only the HR administrator's (RN-18-042, D-661)" do
     analyst = enable_mfa(create(:user, name: "Paula Souza", cpf: "86288366757"))
     create(:membership, user: analyst, organization: company, roles: %w[hr_analyst], enabled_modules: %w[admissao documentos])
     sign_in_hr(analyst)
-    get "/"
-    expect(response.body).not_to include("/imports")
     get "/imports"
-    expect(response).not_to have_http_status(:ok)
+    expect(response.body).to include("Atualizações em massa")
+    expect(response.body).not_to include("Estrutura", "Colaboradores e vínculos")
     get "/imports/templates/structure"
+    expect(response).not_to have_http_status(:ok)
+    get "/imports/new", params: { kind: "structure" }
     expect(response).not_to have_http_status(:ok)
   end
 

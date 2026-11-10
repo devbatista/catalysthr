@@ -162,8 +162,11 @@ RSpec.describe "Admissions in batch", type: :request do
     analyst_user = enable_mfa(create(:user, name: "Rui Costa", cpf: "39053344705"))
     create(:membership, user: analyst_user, organization: company, roles: %w[hr_analyst], status: "active", enabled_modules: %w[documentos])
     sign_in_as(analyst_user)
+    # The analyst still has the mass updates of their units (D-669), not the admissions.
     get "/imports"
-    expect(response).to have_http_status(:forbidden)
+    expect(response.body).not_to include("Admissões em lote")
+    get "/imports/templates/admissions"
+    expect(response).to have_http_status(:not_found)
 
     delete "/sign-out"
     Flipper.disable(FeatureFlags::ADMISSIONS)

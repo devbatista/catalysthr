@@ -86,7 +86,7 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
 | Admissões em lote | CPF | Uma admissão por linha, com o cadastro inicial mínimo (D-254). Cria as admissões na etapa 1, sem convite (P-07-06). O CPF com uma admissão aberta vira erro, e o resultado tem "Liberar acesso de todos", por e-mail (D-668) |
 | Atualizações em massa | CPF ou matrícula | Revisões do vínculo com data de vigência e motivo (D-207): salário (valor novo ou percentual), cargo, departamento, unidade e jornada; o gestor é o do departamento (D-664, D-668). Data passada segue a regra de revisão retroativa (RN-04-062) **[P-18-14]** |
 
-- **RN-18-030** — As atualizações em massa também podem ser feitas **sem planilha**, por uma tela que filtra as pessoas (unidade, departamento, cargo) e aplica a mesma mudança, com o mesmo fluxo de prévia e confirmação **[P-18-15]**.
+- **RN-18-030** — As atualizações em massa também podem ser feitas **sem planilha**, por uma tela que filtra as pessoas (unidade, departamento, cargo) e aplica a mesma mudança, com o mesmo fluxo de prévia e confirmação **[P-18-15]**. O percentual vale sobre o salário em vigor na data, arredondado para o centavo com o meio para cima; o RH analista sem o módulo folha não muda salário (D-669).
 
 ### 4.3 Escopo e permissões (P-03-31)
 

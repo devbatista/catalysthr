@@ -22,7 +22,10 @@ class DataImport < ApplicationRecord
   # What kept the last attempt from undoing it (RN-18-051, D-665): [{ "record", "message" }].
   # Encrypted: it names people.
   serialize :undo_blockers, coder: JSON
-  encrypts :undo_blockers
+  # A mass update from the screen (RN-18-030, D-669): { "filters" => {...}, "changes" => {...} },
+  # with no file. Encrypted, since the change may carry a salary (D-086).
+  serialize :screen, coder: JSON
+  encrypts :undo_blockers, :screen
 
   validates :kind, inclusion: { in: ->(_) { Imports::Kinds.codes } }
   validates :original_filename, presence: true, length: { maximum: 255 }

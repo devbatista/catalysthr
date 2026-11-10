@@ -12,7 +12,8 @@
 # 11 and the eSocial pending item (RN-04-063) with spec 13.
 class EmploymentRevision < ApplicationRecord
   SALARY_UNITS = %w[hour day week fortnight month task variable_only].freeze
-  REASONS = %w[admission promotion salary_change transfer schedule_change collective_agreement correction other].freeze
+  # "Reajuste coletivo" comes with the mass updates (CA-18-008, D-668).
+  REASONS = %w[admission promotion salary_change collective_raise transfer schedule_change collective_agreement correction other].freeze
   # The reasons the HR picks for a new revision; the admission one is the first's.
   CHANGE_REASONS = (REASONS - %w[admission]).freeze
 

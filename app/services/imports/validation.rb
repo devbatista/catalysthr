@@ -9,11 +9,21 @@ module Imports
       return unless import.uploaded? || import.validating?
 
       import.update!(status: "validating")
-      lines = import.file.open { |io| Reader.new(import.kind_class, io, import.original_filename).read }
+      lines = read(import)
       record(import, import.kind_class.new(import).validate(lines))
     rescue Reader::Error => error
       import.rows.delete_all
       import.update!(status: "failed", failure_reason: I18n.t("imports.reader.#{error.key}", **error.details), validated_at: Time.current)
+    end
+
+    # The file's lines or, for a mass update from the screen, the filter's (RN-18-030, D-669).
+    def read(import)
+      if import.screen.present?
+        ability = Ability.new(import.created_by, area: :panel, company: import.company)
+        return import.kind_class.screen_lines(import, ability)
+      end
+
+      import.file.open { |io| Reader.new(import.kind_class, io, import.original_filename).read }
     end
 
     # The preview's rows and counts (RN-18-006). Each row goes through the model, so its data

@@ -10,7 +10,8 @@ module Imports
       "bank_accounts" => "Imports::BankAccounts",
       "department_managers" => "Imports::DepartmentManagers",
       "employment_history" => "Imports::EmploymentHistory",
-      "admissions" => "Imports::Admissions"
+      "admissions" => "Imports::Admissions",
+      "mass_updates" => "Imports::MassUpdates"
     }.freeze
 
     module_function

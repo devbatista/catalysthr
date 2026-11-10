@@ -53,6 +53,37 @@ module Panel
       redirect_to data_import_path(@import), notice: t(".queued")
     end
 
+    # The mass update from the screen (RN-18-030, D-669): filter the people of the scope and
+    # choose the change; the import has one line per employment found, with the same
+    # preview and confirmation as the file. The salary only with the payroll module (P-03-16).
+    def new_mass_update
+      authorize! :create, DataImport
+      return head(:not_found) unless Imports::MassUpdates.allowed?(current_ability)
+      return ask_sensitive_confirmation(request.fullpath) unless sensitive_ready?
+
+      mass_update_options
+    end
+
+    def create_mass_update
+      authorize! :create, DataImport
+      return head(:not_found) unless Imports::MassUpdates.allowed?(current_ability)
+      return redirect_to(new_mass_update_data_imports_path) unless sensitive_ready?
+
+      screen = mass_update_params
+      if Imports::MassUpdates.screen_lines(DataImport.new(screen: screen), current_ability)[:mass_updates].empty?
+        mass_update_options
+        @error = :empty
+        return render(:new_mass_update, status: :unprocessable_content)
+      end
+      return redirect_to(data_imports_path) if Simulation.active?
+
+      import = DataImport.create!(kind: Imports::MassUpdates.code, created_by: current_user, screen: screen,
+        original_filename: t(".screen_filename"))
+      AccessEvent.record!(kind: "import", action: "upload", user: current_user, subject: import, metadata: { kind: import.kind, screen: true })
+      Imports::ValidateJob.perform_later(import)
+      redirect_to data_import_path(import)
+    end
+
     def revoke_assisted
       authorize! :authorize, AssistedImportAuthorization
       authorization = AssistedImportAuthorization.current
@@ -73,6 +104,22 @@ module Panel
     end
 
     def import_allowed?(_action, _subject) = true
+
+    def mass_update_options
+      @pay = current_ability.can?(:read_pay, WorkerProfile)
+      @units = Unit.active.accessible_by(current_ability, :revise_in).ordered.to_a
+      @departments = Department.active.where(unit: @units).includes(:unit).ordered.to_a
+      @positions = Position.active.ordered.to_a
+      @reasons = EmploymentRevision::CHANGE_REASONS
+    end
+
+    # Only the screen's fields; the salary only with the payroll module (P-03-16, D-669).
+    def mass_update_params
+      filters = params.fetch(:filters, {}).permit(*Imports::MassUpdates::SCREEN_FILTERS).to_h.compact_blank
+      allowed = Imports::MassUpdates::SCREEN_CHANGES - (current_ability.can?(:read_pay, WorkerProfile) ? [] : %w[salary percent])
+      changes = params.fetch(:changes, {}).permit(*allowed).to_h.compact_blank
+      { "filters" => filters, "changes" => changes }
+    end
 
     # The HR analyst sees only their own imports of admissions (D-668).
     def import_scope = DataImport.accessible_by(current_ability, :read)
