@@ -76,6 +76,8 @@ module CatalystHr
     # function stays in the manual flow (RN-14-010).
     config.x.anthropic_api_key = ENV["ANTHROPIC_API_KEY"].presence
     config.x.ai_model = ENV.fetch("AI_MODEL", "claude-sonnet-5-5")
+    # The effort of the documents' reading (D-670): low, checked by the evaluation set (RN-14-140).
+    config.x.ai_document_effort = ENV.fetch("AI_DOCUMENT_EFFORT", "low")
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

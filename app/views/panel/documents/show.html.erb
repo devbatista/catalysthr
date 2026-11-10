@@ -1,6 +1,7 @@
 <%# A document, as in the prototype's review: the version's PDF beside the review, the
     versions with the reason each one was replaced (RN-08-023, D-280) and what happened to
-    each one. The reading by the AI and its fields come with spec 14 (D-642). During an
+    each one. The AI's reading shows its state, its alerts and the fields beside the record
+    (spec 14, D-670), hidden with the file when it is (RN-02-086). During an
     impersonate a sensitive file stays hidden (RN-02-086). Inline forms use <details>,
     without JavaScript (D-022). %>
 <% title = document_title(@document) %>
@@ -85,33 +86,36 @@
     </section>
 
     <div class="space-y-6 lg:col-span-2">
+      <% unless hidden %><%= render "ai_status", version: @version, reading: @reading %><% end %>
       <% if @version.reviewable? && can?(:review, @document) %>
+        <% prefill = hidden ? {} : @reading.prefill %>
         <section class="card card-body space-y-4">
           <div>
             <h2 class="card-title"><%= t(".review") %></h2>
-            <p class="field-hint"><%= t(".authenticity") %></p>
+            <p class="field-hint"><%= @reading.read? ? t("panel.documents.ai_status.authenticity") : t(".authenticity") %></p>
           </div>
           <%= form_with url: approve_document_version_path(@document, @version), method: :patch, class: "space-y-3" do |form| %>
+            <% if !hidden && @reading.read? %><%= render "ai_fields", reading: @reading, profile: profile %><% end %>
             <% if type.expires_by_document_date? %>
               <div>
                 <%= form.label :valid_until, t(".valid_until"), class: "field-label" %>
-                <%= form.date_field :valid_until, class: "input" %>
+                <%= form.date_field :valid_until, value: prefill[:valid_until], class: "input" %>
               </div>
             <% elsif type.expires_by_periodicity? || type.expires_by_age? %>
               <div>
                 <%= form.label :issued_on, t(".issued_on"), class: "field-label" %>
-                <%= form.date_field :issued_on, max: Date.current, class: "input" %>
+                <%= form.date_field :issued_on, value: prefill[:issued_on], max: Date.current, class: "input" %>
               </div>
             <% end %>
-            <%# The HR records the ASO's result, in place of the AI until spec 14 (RN-07-061, D-651). %>
+            <%# The HR records the ASO's result, which the AI's reading suggests (RN-07-061, D-651, D-670). %>
             <% if Admissions::Aso.admission_for(@document) %>
               <div>
                 <%= form.label :issued_on, t(".aso_exam_on"), class: "field-label" %>
-                <%= form.date_field :issued_on, required: true, max: Date.current, class: "input" %>
+                <%= form.date_field :issued_on, value: prefill[:issued_on], required: true, max: Date.current, class: "input" %>
               </div>
               <div>
                 <%= form.label :aso_result, t(".aso_result"), class: "field-label" %>
-                <%= form.select :aso_result, %w[fit unfit].map { |result| [ t(".aso_results.#{result}"), result ] }, { prompt: t(".aso_choose") }, required: true, class: "input" %>
+                <%= form.select :aso_result, %w[fit unfit].map { |result| [ t(".aso_results.#{result}"), result ] }, { prompt: t(".aso_choose"), selected: prefill[:aso_result] }, required: true, class: "input" %>
                 <p class="field-hint"><%= t(".aso_hint") %></p>
               </div>
             <% end %>

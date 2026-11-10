@@ -1,8 +1,8 @@
 # One upload of a document (spec 08, RN-08-020, P-08-08): up to 5 images or one PDF, scanned
 # for viruses before anything else (P-05-30), then joined in one PDF (RN-08-011) that the HR
-# reviews. The reading by the AI comes with spec 14 (D-642), so for now a clean version
-# goes straight to the review. Approving it replaces the previous one, which only the HR
-# still sees (RN-08-023, D-280).
+# reviews. A platform type with an extraction profile is read by the AI before the review
+# (spec 14, D-670); the others go straight to it. Approving it replaces the previous one, which
+# only the HR still sees (RN-08-023, D-280).
 class DocumentVersion < ApplicationRecord
   STATUSES = %w[submitted scanning ai_processing ai_failed awaiting_review approved correction_requested replaced
     rejected_by_scan].freeze
@@ -20,6 +20,8 @@ class DocumentVersion < ApplicationRecord
   has_many_attached :files
   # The single PDF the HR reviews and the employee opens (RN-08-011).
   has_one_attached :pdf
+  # What the AI read, for the review (spec 14, RN-14-020).
+  has_one :ai_extraction, as: :subject, dependent: :destroy
 
   enum :status, STATUSES.index_by(&:itself), validate: true
 

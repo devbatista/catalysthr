@@ -7,7 +7,7 @@ module Panel
 
     before_action :require_current_company
     before_action :load_document
-    before_action :load_version, only: %i[file approve correction]
+    before_action :load_version, only: %i[file approve correction reprocess]
 
     content_security_policy only: :file do |policy|
       policy.frame_ancestors :self
@@ -49,9 +49,27 @@ module Panel
 
     def approve
       authorize! :review, @document
+      apply = chosen_fields
+      if apply.keys.intersect?(WorkerProfile::DOCUMENT_FIELDS) && !(sensitive_confirmed? && !impersonating?)
+        @version.errors.add(:base, :sensitive_unconfirmed)
+        return reviewed(false, ".approved")
+      end
+
       done = Documents::Review.new(@version, by: current_user)
-        .approve(issued_on: parse_date(params[:issued_on]), valid_until: parse_date(params[:valid_until]), aso_result: params[:aso_result])
+        .approve(issued_on: parse_date(params[:issued_on]), valid_until: parse_date(params[:valid_until]), aso_result: params[:aso_result],
+          apply: apply)
       reviewed(done, ".approved")
+    end
+
+    # "Processar de novo": the AI reads the version again, using credits (RN-14-121, RN-14-113).
+    def reprocess
+      authorize! :review, @document
+      if Ai::Reprocess.call(@version, by: current_user)
+        redirect_to document_path(@document, version_id: @version.id), notice: t(".queued")
+      else
+        @version.errors.add(:base, :not_reprocessable)
+        reviewed(false, ".queued")
+      end
     end
 
     def correction
@@ -78,6 +96,15 @@ module Panel
       else
         redirect_to document_path(@document, version_id: @version.id), alert: @version.errors.full_messages.to_sentence
       end
+    end
+
+    # The fields the HR chose to put in the record, with the values as corrected (RN-08-021):
+    # only the record's attributes a reading may fill; the review checks they belong to the type.
+    def chosen_fields
+      chosen = Array(params[:apply]).map(&:to_s)
+      values = params.fetch(:values, {})
+      Ai::ExtractionProfiles::APPLICABLE.select { |attribute| chosen.include?(attribute.to_s) }
+        .to_h { |attribute| [ attribute, values[attribute].to_s.strip.presence ] }
     end
 
     def parse_date(value)

@@ -29,6 +29,15 @@
       <%= form.text_area :description, rows: 2, maxlength: 1000, class: "input" %>
       <p class="field-hint"><%= t("document_types.form.description_hint") %></p>
     </div>
+    <% if platform %>
+      <%# The fields the AI reads from the type (spec 14, RN-08-001, RN-14-021, D-670). %>
+      <div>
+        <%= form.label :ai_extraction_profile, t("document_types.form.ai_extraction_profile"), class: "field-label" %>
+        <%= form.select :ai_extraction_profile, Ai::ExtractionProfiles.codes.map { |code| [ t("ai.extraction.profiles.#{code}"), code ] },
+          { include_blank: t("document_types.form.no_ai_extraction") }, class: "input" %>
+        <p class="field-hint"><%= t("document_types.form.ai_extraction_profile_hint") %></p>
+      </div>
+    <% end %>
     <div>
       <%= form.label :max_files, t("document_types.form.max_files"), class: "field-label" %>
       <%= form.number_field :max_files, required: true, min: 1, max: DocumentTypeDefinition::MAX_FILES, class: "input" %>
