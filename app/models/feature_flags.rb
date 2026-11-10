@@ -42,8 +42,12 @@ module FeatureFlags
   # The imports (spec 18, D-661). Off, the menu has no "Importações" and the pages answer 404.
   DATA_IMPORTS = :data_imports
 
+  # The company's full export (spec 18, D-667). Off, the menu has no "Exportação de dados" and
+  # the pages answer 404; an export already asked still finishes.
+  COMPANY_EXPORT = :company_export
+
   ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL, PUSH_NOTIFICATIONS,
-    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS ].freeze
+    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS, COMPANY_EXPORT ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

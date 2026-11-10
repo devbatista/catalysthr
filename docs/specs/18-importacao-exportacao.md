@@ -1,7 +1,7 @@
 # 18 — Importação e exportação
 
-> Status: aprovado · Última atualização: 2026-11-09
-> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469, D-661 ([decisoes.md](decisoes.md))
+> Status: aprovado · Última atualização: 2026-11-10
+> Decisões: D-085, D-087, D-093, D-094, D-186, D-207, D-222, D-377, D-460 a D-469, D-661 a D-667 ([decisoes.md](decisoes.md))
 > Os itens **[P-18-nn]** foram todos aprovados sem ajuste (D-469, seção 10).
 
 ## 1. Objetivo
@@ -136,10 +136,10 @@ Os relatórios e suas exportações ficam na spec 17. A portabilidade do titular
     ponto/afd/<unidade>-<período>.txt  -- AFD e AEJ oficiais (spec 10)
   ```
 
-- **RN-18-072** — Entram cadastros, vínculos e revisões, documentos e versões, solicitações, processos, marcações e espelhos, folhas e holerites, eventos e recibos do eSocial, e a trilha de auditoria. **Não entram**: segredos (senhas, MFA, passkeys), embeddings da IA e registros internos da plataforma **[P-18-21]**.
-- **RN-18-073** — Gerada em segundo plano. Exportações grandes são divididas em partes de até **5 GB**. Ao terminar, o RH administrador recebe o aviso `exports.company_ready`, e o link vale **7 dias**. Pedir exige confirmação de senha ou passkey, e cada download gera evento de acesso **[P-18-22]**.
-- **RN-18-074** — No máximo **uma exportação completa por semana** por empresa, para não pesar no sistema. O encerramento não conta nesse limite **[P-18-23]**.
-- **RN-18-075** — Os campos criptografados (D-086) saem **legíveis** na exportação, porque ela é a cópia da empresa. Por isso o ZIP é protegido com uma **senha gerada pelo sistema**, mostrada uma única vez a quem pediu ou, no encerramento, ao RH administrador no primeiro download (AES-256) **[P-18-24]**.
+- **RN-18-072** — Entram cadastros, vínculos e revisões, documentos e versões, solicitações, processos, marcações e espelhos, folhas e holerites, eventos e recibos do eSocial, e a trilha de auditoria. **Não entram**: segredos (senhas, MFA, passkeys), embeddings da IA e registros internos da plataforma **[P-18-21]**. A cobrança do CatalystHR (contrato, faturas, pagamentos e NFS-e) fica de fora, e os documentos excluídos que esperam a recuperação também (D-667).
+- **RN-18-073** — Gerada em segundo plano. Exportações grandes são divididas em partes de até **5 GB**. Ao terminar, o RH administrador recebe o aviso `exports.company_ready`, e o link vale **7 dias**. Pedir exige confirmação de senha ou passkey, e cada download gera evento de acesso **[P-18-22]**. As partes são volumes do 7-Zip (`.zip.001`, `.zip.002`...), e só quem pediu recebe o aviso, vê a senha e baixa (D-667).
+- **RN-18-074** — No máximo **uma exportação completa por semana** por empresa, para não pesar no sistema. O encerramento não conta nesse limite **[P-18-23]**. A semana conta do pedido da última exportação que não falhou (D-667).
+- **RN-18-075** — Os campos criptografados (D-086) saem **legíveis** na exportação, porque ela é a cópia da empresa. Por isso o ZIP é protegido com uma **senha gerada pelo sistema**, mostrada uma única vez a quem pediu ou, no encerramento, ao RH administrador no primeiro download (AES-256) **[P-18-24]**. A senha fica criptografada até quem pediu abrir a exportação pronta e é apagada depois de mostrada (D-667).
 
 ### 4.7 Fora do MVP (D-461, D-467)
 
@@ -187,9 +187,11 @@ assisted_import_authorizations
   id, company_id, authorized_by_id, authorized_at, valid_until, revoked_at
 
 company_exports
-  id, company_id, kind ('full'|'closing'|'portability'), subject_worker_profile_id,
-  status, parts (Active Storage, 1..n), password_digest_shown_at,
-  requested_by_id, expires_at
+  id, company_id, kind ('full'; 'closing' e 'portability' com a spec 05), status,
+  parts (Active Storage, 1..n), password (criptografada, apagada ao mostrar),
+  password_shown_at, requested_by_id, started_at, ready_at, expires_at, failed_at,
+  records_count, files_count, size_bytes                -- D-667
+  -- subject_worker_profile_id entra com a portabilidade (spec 05)
 ```
 
 ## 8. Jobs e integrações

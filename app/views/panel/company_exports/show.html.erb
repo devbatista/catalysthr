@@ -1,0 +1,63 @@
+<%# One full export (RN-18-073, RN-18-075, D-667): while it is made, the page refreshes
+    itself; ready, only who asked sees the ZIP's password, once, and downloads each part,
+    with the password confirmed again and an access event per download. %>
+<% date = l(@export.created_at, format: "%d/%m/%Y") %>
+<% content_for :title, t(".title", date: date) %>
+
+<p class="text-sm"><%= link_to t(".back"), company_exports_path, class: "link-button" %></p>
+<div class="mt-2 flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <h1 class="page-title"><%= t(".title", date: date) %></h1>
+    <p class="page-subtitle"><%= t(".requested_by", name: @export.requested_by.name, date: l(@export.created_at, format: "%d/%m/%Y %H:%M")) %></p>
+  </div>
+  <%= company_export_status_pill(@export) %>
+</div>
+
+<% if @export.queued? || @export.generating? %>
+  <p class="alert-info mt-6" role="status" data-reload-after="5000"><%= t(".#{@export.status}") %></p>
+<% elsif @export.failed? %>
+  <p class="alert-bad mt-6" role="alert"><%= t(".failed") %></p>
+<% elsif @export.expired? || (@export.ready? && !@export.available?) %>
+  <p class="alert-info mt-6" role="status"><%= t(".expired") %></p>
+<% else %>
+  <p class="alert-ok mt-6" role="status"><%= t(".ready", date: l(@export.expires_at.in_time_zone.to_date)) %></p>
+  <p class="mt-3 text-sm text-ink-soft">
+    <%= t(".counts", records: number_with_delimiter(@export.records_count), files: number_with_delimiter(@export.files_count),
+      size: number_to_human_size(@export.size_bytes)) %>
+  </p>
+
+  <% if !can?(:download, @export) %>
+    <p class="alert-info mt-6" role="status"><%= t(".only_requester") %></p>
+  <% elsif impersonating? %>
+    <p class="alert-info mt-6" role="status"><%= t(".impersonating") %></p>
+  <% else %>
+    <section class="card card-body mt-6 space-y-3" data-export-password>
+      <h2 class="card-title"><%= t(".reveal_title") %></h2>
+      <% if @password %>
+        <label class="sr-only" for="export-password"><%= t(".password_label") %></label>
+        <input id="export-password" type="text" readonly value="<%= @password %>" class="input font-mono text-lg" autocomplete="off" spellcheck="false">
+        <p class="alert-bad" role="alert"><%= t(".password_warning") %></p>
+      <% elsif @export.password_pending? %>
+        <p class="text-sm text-ink-soft"><%= t(".reveal_explanation") %></p>
+        <%= button_to t(".reveal"), reveal_password_company_export_path(@export), method: :post, class: "btn btn-primary" %>
+      <% elsif @export.password_shown_at %>
+        <p class="text-sm text-ink-soft"><%= t(".password_seen", date: l(@export.password_shown_at, format: "%d/%m/%Y %H:%M")) %></p>
+      <% end %>
+    </section>
+
+    <section class="card mt-6">
+      <h2 class="card-title px-5 pt-5"><%= t(".parts") %></h2>
+      <ul class="mt-3 divide-y divide-line-soft">
+        <% @export.ordered_parts.each do |part| %>
+          <li class="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
+            <span class="text-sm font-bold break-all"><%= part.filename %></span>
+            <span class="flex items-center gap-3">
+              <span class="text-sm text-ink-soft"><%= number_to_human_size(part.byte_size) %></span>
+              <%= link_to t(".download"), download_company_export_path(@export, part_id: part.id), class: "btn btn-secondary" %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+<% end %>

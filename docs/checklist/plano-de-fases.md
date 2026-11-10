@@ -202,7 +202,7 @@ Marque `[x]` quando o item estiver pronto. Cada fase tem os pré-requisitos (o q
   - [x] 18c. Gestores dos departamentos e histórico salarial e de cargos com vigência, com a correção na data de uma revisão existente (D-207, D-603, D-664) (PR #140)
   - [x] 18d-1. Desfazer a importação inteira, com a lista do que impede (RN-18-050 a RN-18-052, CA-18-009, D-665) (PR #141)
   - [x] 18d-2. Importação assistida pela área admin, com a autorização do RH administrador por 30 dias (RN-18-060 a RN-18-063, CA-18-010, D-665, D-666) (PR #142)
-  - [ ] 18e. Exportação completa da empresa: ZIP com senha AES pelo 7-Zip, mostrada uma vez, partes de 5 GB, link de 7 dias e uma por semana (RN-18-070 a RN-18-075, CA-18-011, CA-18-012)
+  - [ ] 18e. Exportação completa da empresa: ZIP com senha AES pelo 7-Zip, mostrada uma vez, partes de 5 GB, link de 7 dias e uma por semana (RN-18-070 a RN-18-075, CA-18-011, CA-18-012, D-667)
   - [ ] 18f. Admissões em lote e atualizações em massa, por planilha e pela tela, com o escopo U do analista (RN-18-030, RN-18-040, CA-18-005, CA-18-008)
 
 **Leva 2, cada uma depois da resposta que muda o desenho:**

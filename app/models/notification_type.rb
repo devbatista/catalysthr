@@ -142,6 +142,10 @@ NotificationType::CATALOG = [
   # never people's data (RN-15-005).
   NotificationType.new(code: "imports.assisted_completed", mandatory: false, urgent: false, channels: %w[system email],
     roles: %w[hr_admin]),
+  # The company's full export is ready, to who asked (RN-18-073, D-667): only the date the link
+  # lasts; the password is never in the notice (RN-15-005).
+  NotificationType.new(code: "exports.company_ready", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   NotificationType.new(code: "documents.acknowledgment_pending", mandatory: true, urgent: false, channels: %w[system email push],
     roles: %w[employee]),
   # A version the employee sent, to the unit's HR (D-645).

@@ -161,6 +161,8 @@ module NavigationHelper
           controller_path.in?(%w[panel/document_types panel/position_document_expirations])) if can?(:create, DocumentType)),
         # The implementation's imports (spec 18, D-661), before the accounting firm.
         (nav_item(t("navigation.data_imports"), data_imports_path, controller_path == "panel/data_imports") if FeatureFlags.enabled?(FeatureFlags::DATA_IMPORTS) && can?(:read, DataImport)),
+        # The company's full export (spec 18, D-667), after the imports.
+        (nav_item(t("navigation.company_exports"), company_exports_path, controller_path == "panel/company_exports") if FeatureFlags.enabled?(FeatureFlags::COMPANY_EXPORT) && can?(:create, CompanyExport)),
         (nav_item(t("navigation.accounting_firm"), accounting_firm_path, controller_path == "panel/accounting_firms") if can?(:read, AccountingFirmCompany.new(company: company))),
         (nav_item(t("navigation.contract"), new_contract_path, controller_path == "panel/contracts") if checkout_allowed?(company)),
         (nav_item(t("navigation.invoices"), invoices_path, controller_path == "panel/invoices") if billing_allowed?(:read_invoices, company)),
