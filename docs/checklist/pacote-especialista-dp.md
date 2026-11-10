@@ -1,6 +1,6 @@
 # CatalystHR — Regras para conferência do especialista em DP
 
-> Data: 2026-10-13 · Áreas: departamento pessoal, folha, eSocial e contabilidade trabalhista
+> Data: 2026-10-13 · Atualizado: 2026-11-10 · Áreas: departamento pessoal, folha, eSocial e contabilidade trabalhista
 
 ## Sobre o produto
 
@@ -96,7 +96,7 @@ Para cada item: **correto**, **incorreto** (com a regra certa e o fundamento) ou
 - [ ] **3.7 Ponto facultativo** é dia normal, a menos que a empresa dispense o trabalho.
 - [ ] **3.8 Feriados nacionais** usados nos prazos em dias úteis e no ponto: 1/1, 21/4, 1/5, 7/9, 12/10, 2/11, 15/11, 20/11 (Lei 14.759/2023) e 25/12, mais a Sexta-feira da Paixão, que é feriado religioso municipal (Lei 9.093/1995), mas entra como nacional, e o RH pode desmarcá-la na unidade. Carnaval e Corpus Christi ficam fora, como ponto facultativo. Está correto? Falta algum?
 
-## 4. Folha — prioridade C
+## 4. Folha — prioridade C, salvo indicação no item
 
 - [ ] **4.1 Tabelas legais**, mantidas pela plataforma com vigência: INSS do empregado e teto; IRRF mensal com deduções e desconto simplificado; IR exclusivo da PLR; salário mínimo; salário-família; dedução por dependente; alíquotas patronais; transição da desoneração (CPRB) até 2028. Qual data vale para cada tabela: a competência ou a data de pagamento (regime de caixa do IRRF)?
 - [ ] **4.2 Tipos de folha:**
@@ -127,6 +127,7 @@ Para cada item: **correto**, **incorreto** (com a regra certa e o fundamento) ou
 - [ ] **4.12 Relatórios contábeis:** resumo por rubrica e centro de custo; encargos (INSS patronal, RAT ajustado, terceiros, FGTS); provisões de férias e 13º; lançamentos contábeis por rubrica. Falta algo que a contabilidade costuma pedir?
 - [ ] **4.13 NF de prestador PJ:** sem retenções nem EFD-Reinf (D-359). Isso vale para todos os casos?
 - [ ] **4.14 Desoneração:** a plataforma gera a base e o valor da CPRB, e a contabilidade envia o R-2060 da EFD-Reinf (D-370). Está correto?
+- [ ] **4.15 (A) Reajuste coletivo por percentual:** no reajuste em massa (por exemplo, um dissídio), o percentual incide sobre o salário em vigor na data da revisão, e o resultado é arredondado para o centavo mais próximo, com o meio para cima: R$ 2.345,67 com 5% dá R$ 2.462,95 (D-669). Está correto? Existe regra legal ou costume de convenção coletiva que mande arredondar de outro jeito, por exemplo sempre para cima ou para o real inteiro?
 
 ## 5. Indicadores — prioridade C
 
@@ -147,6 +148,7 @@ Para cada item: **correto**, **incorreto** (com a regra certa e o fundamento) ou
 - [ ] **6.4 S-2190:** é oferecido quando a admissão está perto do prazo e os dados ainda estão incompletos. Está correto?
 - [ ] **6.5 Migração:** a empresa importa os XMLs já transmitidos e escolhe a competência de corte. A partir dela, a plataforma transmite. Retificações de competências anteriores usam os recibos importados. Há algum risco?
 - [ ] **6.6 Guias:** FGTS Digital e DCTFWeb são emitidas no portal oficial, e o sistema confere os valores com o esperado. Está correto?
+- [ ] **6.7 Colaboradores alocados em clientes:** a empresa pode ser a empregadora e alocar colaboradores em clientes dela, e o vínculo indica o cliente (D-570). Essa alocação exige informar o tomador em algum evento do eSocial ou em outra obrigação, por exemplo no trabalho temporário ou na cessão de mão de obra? Em quais casos?
 
 ---
 
