@@ -103,7 +103,7 @@ gem "aws-sdk-kms", "~> 1.138", require: false
 
 # The official Claude SDK, with structured outputs and prompt caching, only with the
 # features under zero data retention: no Batch API, no Files API (spec 14, P-14-39, D-385)
-gem "anthropic", "~> 2.3.0"
+gem "anthropic", "~> 2.6.0"
 
 # The partner's usage report (spec 19, RN-19-024). Out of the default gems since Ruby 3.4.
 gem "csv", "~> 3.3"
