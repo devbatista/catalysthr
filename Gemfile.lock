@@ -372,7 +372,7 @@ GEM
       actionpack (>= 7.0)
       railties (>= 7.0)
     rexml (3.4.4)
-    roo (3.0.0)
+    roo (4.0.0)
       base64 (~> 0.2)
       csv (~> 3)
       logger (~> 1)
@@ -568,7 +568,7 @@ DEPENDENCIES
   rack-attack (~> 6.8)
   rails (~> 8.1.4)
   rails-i18n
-  roo (~> 3.0)
+  roo (~> 4.0)
   rqrcode (~> 3.1)
   rspec-rails
   rubocop-rails-omakase
@@ -739,7 +739,7 @@ CHECKSUMS
   request_store (1.7.0) sha256=e1b75d5346a315f452242a68c937ef8e48b215b9453a77a6c0acdca2934c88cb
   responders (3.2.1) sha256=c2772970cbda654c0e772d852e5a851e82cd8e96f5fa958650861ba75b8ffa84
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
-  roo (3.0.0) sha256=6fdd7a9158d657c69768b4168754ff2110cc21fdc01a1bec1010820cb05c91b1
+  roo (4.0.0) sha256=83e25e85add9313fcf9d1e6c88720ce2bba2fa22590375eca23092be1d0690e8
   rotp (6.3.0) sha256=75d40087e65ed0d8022c33055a6306c1c400d1c12261932533b5d6cbcd868854
   rqrcode (3.2.0) sha256=64c1494ca6bb67d731330f38b50e3fd09eeab4f5dcd04b608e21218d1d0b9542
   rqrcode_core (2.1.0) sha256=f303b85df89c1b8fc5ee8dc19808c9dc4330e6329b660d99d4a8cbb36ca13051
