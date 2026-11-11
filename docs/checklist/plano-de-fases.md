@@ -266,7 +266,7 @@ Marque `[x]` quando o item estiver pronto, no mesmo PR que o conclui, com "(PR #
 
 ### Entregas
 - [ ] **Spec 10:** marcação no PWA, cerca, selfie com consentimento, IPs, externos, totem, NSR, marcação imutável (trigger), comprovante assinado, tratamento, AFD e AEJ
-- [x] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige, adiantado na fase 2 (D-673): envio pelo RH administrador com a senha confirmada, leitura do titular e da validade, empregador ou procurador, cifragem por envelope com a chave do KMS, troca que apaga o anterior, avisos de 30, 15 e 5 dias e o A1 nos próximos vencimentos do painel, atrás da flag `a1_certificate` (RN-13-020 a RN-13-022, CA-13-007, D-075, D-319, D-673)
+- [x] **Spec 13 (parte):** upload do certificado A1 no KMS, que o ponto já exige, adiantado na fase 2 (D-673): envio pelo RH administrador com a senha confirmada, leitura do titular e da validade, empregador ou procurador, cifragem por envelope com a chave do KMS, troca que apaga o anterior, avisos de 30, 15 e 5 dias e o A1 nos próximos vencimentos do painel, atrás da flag `a1_certificate` (RN-13-020 a RN-13-022, CA-13-007, D-075, D-319, D-673) (PR #157)
   - [ ] Antes de ligar a flag: a chave `alias/catalysthr-a1` no KMS, com rotação anual (RN-20-052), a política `catalysthr-app-a1` com só `GenerateDataKey` e `Decrypt` e a variável `A1_KMS_KEY_ID` (`contas-infraestrutura.md`)
   - A cadeia ICP-Brasil é conferida com o eSocial (spec 13, resto)
 - [ ] **Spec 11:** regras de ponto, jornadas, feriados, apuração, banco de horas, fechamento, espelho, contestação
