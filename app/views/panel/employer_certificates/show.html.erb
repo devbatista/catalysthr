@@ -1,0 +1,108 @@
+<%# The company's A1 certificate (spec 13, RN-13-020 to RN-13-022, D-673): the current one with
+    its holder and validity, the sending of a new one and the removal. The file and the password
+    are never shown. %>
+<% content_for :title, t(".title") %>
+
+<%= link_to t(".back"), edit_company_settings_path, class: "link-button text-sm" %>
+<h1 class="page-title mt-2"><%= t(".title") %></h1>
+<p class="page-subtitle"><%= t(".subtitle") %></p>
+
+<% if @certificate %>
+  <% days = @certificate.days_left %>
+  <section class="card card-body mt-6 space-y-4" data-certificate="<%= @certificate.status %>">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="card-title"><%= t(".current") %></h2>
+      <% if @certificate.expired? %>
+        <span class="pill pill-bad"><%= t(".expired") %></span>
+      <% elsif days <= EmployerCertificate::ALERT_DAYS.max %>
+        <span class="pill pill-warn"><%= t(".expiring", count: days) %></span>
+      <% else %>
+        <span class="pill pill-ok"><%= t(".valid") %></span>
+      <% end %>
+    </div>
+    <dl class="form-grid text-sm">
+      <div class="field-wide">
+        <dt class="field-label"><%= t(".holder") %></dt>
+        <dd><%= @certificate.holder_name.presence || "—" %></dd>
+      </div>
+      <div>
+        <dt class="field-label"><%= t(".document") %></dt>
+        <dd class="font-mono"><%= @certificate.formatted_holder_document %></dd>
+      </div>
+      <div>
+        <dt class="field-label"><%= t(".owner") %></dt>
+        <dd><%= t(".owner_kinds.#{@certificate.owner_kind}") %></dd>
+      </div>
+      <div>
+        <dt class="field-label"><%= t(".valid_to") %></dt>
+        <dd><%= l(@certificate.valid_to.in_time_zone, format: "%d/%m/%Y %H:%M") %></dd>
+      </div>
+      <div>
+        <dt class="field-label"><%= t(".sent") %></dt>
+        <dd><%= t(".sent_by", name: @certificate.uploaded_by.name, at: l(@certificate.created_at, format: "%d/%m/%Y %H:%M")) %></dd>
+      </div>
+    </dl>
+    <p class="field-hint"><%= t(".uses") %></p>
+    <% if can?(:destroy, @certificate) %>
+      <%= button_to t(".remove"), employer_certificate_path, method: :delete, class: "btn btn-danger",
+        form: { data: { confirm: t(".remove_confirm") } } %>
+    <% end %>
+  </section>
+<% else %>
+  <p class="alert-info mt-6" role="status" data-certificate="none"><%= t(".none") %></p>
+<% end %>
+
+<% if can?(:create, EmployerCertificate) %>
+  <%= form_with url: employer_certificate_path, method: :post, scope: :certificate, multipart: true, class: "card card-body mt-6 space-y-5" do |form| %>
+    <h2 class="card-title"><%= t(@certificate ? ".replace_title" : ".send_title") %></h2>
+    <% if @upload.errors.any? %>
+      <div class="alert-bad" role="alert">
+        <ul class="list-disc space-y-1 pl-5">
+          <% @upload.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="form-grid">
+      <div class="field-wide">
+        <%= form.label :file, t(".file"), class: "field-label" %>
+        <%= form.file_field :file, accept: ".pfx,.p12,application/x-pkcs12", required: true, class: "input" %>
+        <p class="field-hint"><%= t(".file_hint") %></p>
+      </div>
+      <div>
+        <%= form.label :pfx_password, t(".password"), class: "field-label" %>
+        <%= form.password_field :pfx_password, required: true, autocomplete: "off", class: "input" %>
+      </div>
+      <fieldset class="field-full space-y-2">
+        <legend class="field-label"><%= t(".owner") %></legend>
+        <% EmployerCertificate::OWNER_KINDS.each do |kind| %>
+          <label class="flex items-start gap-2 text-sm">
+            <%= form.radio_button :owner_kind, kind, checked: @upload.owner_kind == kind, class: "mt-1" %>
+            <span>
+              <span class="font-semibold text-ink-strong"><%= t(".owner_kinds.#{kind}") %></span>
+              <span class="block text-ink-soft"><%= t(".owner_hints.#{kind}") %></span>
+            </span>
+          </label>
+        <% end %>
+      </fieldset>
+    </div>
+    <% if @certificate %><p class="text-sm text-ink-soft"><%= t(".replace_notice") %></p><% end %>
+    <div>
+      <%= form.submit t(".save"), class: "btn btn-primary" %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @history.any? %>
+  <section class="card card-body mt-6 space-y-3">
+    <h2 class="card-title"><%= t(".history") %></h2>
+    <ul class="divide-y divide-line-soft text-sm">
+      <% @history.each do |old| %>
+        <li class="py-2">
+          <span class="font-semibold text-ink-strong"><%= old.holder_name.presence || old.formatted_holder_document %></span>
+          · <%= t(".history_valid", date: l(old.valid_to.in_time_zone.to_date)) %>
+          · <%= t(".statuses.#{old.status}", name: old.removed_by&.name, at: l(old.replaced_at || old.removed_at || old.updated_at, format: "%d/%m/%Y")) %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

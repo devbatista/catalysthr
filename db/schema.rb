@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -897,6 +897,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_120000) do
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_emergency_contacts_on_company_id"
     t.index ["worker_profile_id"], name: "index_emergency_contacts_on_worker_profile_id"
+  end
+
+  create_table "employer_certificates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.string "owner_kind", null: false
+    t.string "status", default: "active", null: false
+    t.string "holder_name"
+    t.string "holder_document"
+    t.datetime "valid_from", null: false
+    t.datetime "valid_to", null: false
+    t.string "kms_key_id"
+    t.text "sealed_key"
+    t.text "sealed_pfx"
+    t.text "sealed_password"
+    t.integer "alerted_days"
+    t.uuid "uploaded_by_id", null: false
+    t.uuid "removed_by_id"
+    t.datetime "replaced_at"
+    t.datetime "removed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "created_at"], name: "index_employer_certificates_on_company_id_and_created_at"
+    t.index ["company_id"], name: "index_employer_certificates_one_active", unique: true, where: "((status)::text = 'active'::text)"
+    t.index ["removed_by_id"], name: "index_employer_certificates_on_removed_by_id"
+    t.index ["uploaded_by_id"], name: "index_employer_certificates_on_uploaded_by_id"
+    t.index ["valid_to"], name: "index_employer_certificates_on_valid_to", where: "((status)::text = 'active'::text)"
   end
 
   create_table "employment_revisions", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -1999,6 +2025,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_120000) do
   add_foreign_key "documents", "worker_profiles"
   add_foreign_key "emergency_contacts", "companies"
   add_foreign_key "emergency_contacts", "worker_profiles"
+  add_foreign_key "employer_certificates", "companies"
+  add_foreign_key "employer_certificates", "users", column: "removed_by_id"
+  add_foreign_key "employer_certificates", "users", column: "uploaded_by_id"
   add_foreign_key "employment_revisions", "allocation_clients"
   add_foreign_key "employment_revisions", "companies"
   add_foreign_key "employment_revisions", "departments"

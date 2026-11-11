@@ -241,6 +241,8 @@ Rails.application.routes.draw do
       resource :company_notification_settings, path: "settings/notifications", only: %i[edit update]
       # The company's AI functions and the day's cap (spec 14, RN-14-010, RN-14-114, D-670).
       resource :company_ai_settings, path: "settings/ai", only: %i[edit update]
+      # The company's A1 certificate (spec 13, RN-13-020 to RN-13-022, D-673).
+      resource :employer_certificate, path: "settings/certificate", only: %i[show create destroy]
       resource :notification_preferences, path: "notification-preferences", only: %i[edit update]
       # This browser's push subscription (spec 15, RN-15-003, D-654).
       resource :push_subscription, path: "push-subscriptions", only: %i[create destroy]

@@ -298,6 +298,8 @@ class CompanyAbility
     # sees the list; only who asked opens the password and downloads it.
     can %i[read create], CompanyExport, company_id: company.id
     can :download, CompanyExport, company_id: company.id, requested_by_id: user.id
+    # The company's A1 certificate (spec 13, section 6, RN-13-020, D-673).
+    can %i[read create destroy], EmployerCertificate, company_id: company.id
     # The company's usage on the panel (RN-17-030, RN-17-031): with the contract and its
     # billing in a direct company, only the company's own usage in a partner's.
     can :read_usage, Company, id: company.id

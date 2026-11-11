@@ -2,7 +2,7 @@
 # inside the request so nothing is lost if the queue fails. Insert only: nobody edits
 # or deletes them; only the retention job removes them after 5 years (D-219).
 class AccessEvent < ApplicationRecord
-  KINDS = %w[sensitive_read download export auth impersonation admin import].freeze
+  KINDS = %w[sensitive_read download export auth impersonation admin import certificate].freeze
 
   belongs_to :company, optional: true
   belongs_to :user

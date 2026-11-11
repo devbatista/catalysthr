@@ -540,6 +540,7 @@ DEPENDENCIES
   acts_as_tenant (~> 2.2)
   anthropic (~> 2.3.0)
   aws-actionmailer-ses (~> 1.2)
+  aws-sdk-kms (~> 1.138)
   aws-sdk-s3 (~> 1.237)
   aws-sdk-sesv2 (~> 1.117)
   aws-sdk-sns (~> 1.126)

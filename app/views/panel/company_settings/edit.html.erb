@@ -5,6 +5,7 @@
 <p class="mt-3 flex flex-wrap gap-4 text-sm">
   <%= link_to t(".notifications"), edit_company_notification_settings_path, class: "link-button" %>
   <% if FeatureFlags.enabled?(FeatureFlags::AI) %><%= link_to t(".ai"), edit_company_ai_settings_path, class: "link-button" %><% end %>
+  <% if FeatureFlags.enabled?(FeatureFlags::A1_CERTIFICATE) && can?(:read, EmployerCertificate) %><%= link_to t(".certificate"), employer_certificate_path, class: "link-button" %><% end %>
 </p>
 
 <%= form_with model: @company, url: company_settings_path, method: :patch, scope: :company, class: "mt-6 space-y-6" do |form| %>

@@ -90,11 +90,21 @@ module Dashboards
       unit_id && [ filter.units.find { |unit| unit.id == unit_id } || Unit.find_by(id: unit_id), count ]
     end
 
-    # Expirations in 30 days (RN-17-010, D-658): documents with validity and experience
-    # periods ending from today on, never the expired ones. The A1 certificate comes with
-    # spec 13 (D-657).
+    # Expirations in 30 days (RN-17-010, D-658): documents with validity, experience periods
+    # and the company's A1 certificate ending from today on, never the expired ones (D-673).
     def expirations?
-      documents? || ability.can?(:read, WorkerProfile)
+      documents? || ability.can?(:read, WorkerProfile) || certificate?
+    end
+
+    # The A1 is the company's, so the units' filter does not apply to it (D-673).
+    def certificate?
+      FeatureFlags.enabled?(FeatureFlags::A1_CERTIFICATE) && ability.can?(:read, EmployerCertificate)
+    end
+
+    def expiring_certificate
+      return unless certificate?
+
+      EmployerCertificate.active.where(valid_to: Time.current..(today + EXPIRATION_DAYS).end_of_day).first
     end
 
     def expiring_documents
@@ -111,7 +121,7 @@ module Dashboards
     end
 
     def expirations_count
-      expiring_documents.count + experience_endings.count
+      expiring_documents.count + experience_endings.count + (expiring_certificate ? 1 : 0)
     end
 
     # Every expiration of the 30 days, the nearest first: the list and the panel's block,
@@ -125,7 +135,11 @@ module Dashboards
       end
       rows = documents.map { |document| Expiration.new(document.expires_on, :document, document, document.worker_profile) } +
         endings.map { |employment| Expiration.new(employment.experience_ends_on, :experience, employment, employment.worker_profile) }
-      rows = rows.sort_by { |row| [ row.date, row.kind == :document ? 0 : 1, row.record.id ] }
+      if (certificate = expiring_certificate)
+        rows << Expiration.new(certificate.valid_to.in_time_zone.to_date, :certificate, certificate, nil)
+      end
+      order = { certificate: 0, document: 1, experience: 2 }
+      rows = rows.sort_by { |row| [ row.date, order.fetch(row.kind), row.record.id ] }
       limit ? rows.first(limit) : rows
     end
 
@@ -134,6 +148,7 @@ module Dashboards
       kinds = expiring_documents.joins(:document_type).group("document_types.name").count
       endings = experience_endings.count
       kinds[I18n.t("dashboards.hr.experience_end")] = endings if endings.positive?
+      kinds[I18n.t("dashboards.hr.certificate")] = 1 if expiring_certificate
       kinds.sort_by { |name, count| [ -count, name ] }.first(2)
     end
 

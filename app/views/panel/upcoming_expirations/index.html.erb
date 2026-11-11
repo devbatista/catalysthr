@@ -24,11 +24,10 @@
           <% @rows.each do |row| %>
             <tr>
               <td>
-                <%= link_to row.kind == :document ? document_title(row.record) : t("dashboards.hr.experience_end"), expiration_path(row),
-                  class: "link-button font-bold" %>
-                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= row.person.display_name %></p>
+                <%= link_to expiration_title(row), expiration_path(row), class: "link-button font-bold" %>
+                <p class="mt-1 text-xs text-ink-soft md:hidden"><%= expiration_owner(row) %></p>
               </td>
-              <td class="hidden md:table-cell"><%= row.person.display_name %></td>
+              <td class="hidden md:table-cell"><%= expiration_owner(row) %></td>
               <td>
                 <%= l(row.date, format: "%d/%m/%Y") %>
                 <span class="field-hint"><%= t(".in_days", count: (row.date - @today).to_i) %></span>
