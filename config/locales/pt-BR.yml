@@ -1682,6 +1682,7 @@ pt-BR:
       admission_forwarded: "%{actor} encaminhou a admissão de %{person} ao escritório %{firm}"
     hr:
       experience_end: "Fim da experiência"
+      certificate: "Certificado digital A1"
   # The code of units, departments and positions (spec 18, D-662)
   structure_code:
     label: "Código"
@@ -2071,6 +2072,9 @@ pt-BR:
     ai:
       name: "IA"
       description: "Ligada, a IA lê os documentos e distribui o lote, com o liga/desliga do RH administrador, os créditos e o teto diário, e o admin mostra a tela IA. Desligada, tudo segue na conferência manual e nada vai para a IA. Só ligar depois da retenção zero confirmada por escrito e da base legal do jurídico (spec 14, D-670)."
+    a1_certificate:
+      name: "Certificado digital A1"
+      description: "Ligada, o RH administrador envia o certificado A1 da empresa, guardado cifrado com a chave do KMS, e recebe os avisos de 30, 15 e 5 dias antes de vencer. Só ligar depois de criar a chave alias/catalysthr-a1 e definir A1_KMS_KEY_ID (spec 13, D-673)."
     company_export:
       name: "Exportação de dados"
       description: "Ligada, o RH administrador pede a exportação completa da empresa, em ZIP com senha, uma vez por semana. Desligada, o menu não mostra a exportação, e uma exportação já pedida termina (spec 18, D-667)."
@@ -4277,6 +4281,52 @@ pt-BR:
         cancel: "Cancelar"
       update:
         updated: "Canais dos avisos salvos."
+    employer_certificates:
+      confirm_first: "Confirme a sua senha para enviar ou remover o certificado."
+      show:
+        title: "Certificado digital A1"
+        subtitle: "O certificado da empresa assina os eventos do eSocial e os comprovantes e o AFD do ponto. Ele fica cifrado e nunca é mostrado nem baixado."
+        back: "Voltar para Configurações"
+        current: "Certificado em uso"
+        valid: "Válido"
+        expired: "Vencido"
+        expiring:
+          one: "Vence em %{count} dia"
+          other: "Vence em %{count} dias"
+        holder: "Titular"
+        document: "CNPJ ou CPF do titular"
+        owner: "De quem é"
+        owner_kinds:
+          employer: "Do próprio empregador"
+          proxy: "De um procurador"
+        owner_hints:
+          employer: "O e-CNPJ da empresa ou, para um empregador pessoa física, o e-CPF dele."
+          proxy: "De quem tem procuração eletrônica da empresa para o eSocial, como o escritório contábil."
+        valid_to: "Validade"
+        sent: "Enviado"
+        sent_by: "Por %{name} em %{at}"
+        uses: "Avisamos o RH administrador 30, 15 e 5 dias antes de vencer. Sem um certificado válido, o eSocial e a assinatura dos comprovantes do ponto param."
+        remove: "Remover o certificado"
+        remove_confirm: "Remover o certificado? Ele é apagado na hora, e o eSocial e os comprovantes do ponto ficam sem assinatura até um novo ser enviado."
+        none: "A empresa ainda não tem certificado digital. O eSocial e os comprovantes do ponto vão precisar dele."
+        send_title: "Enviar o certificado"
+        replace_title: "Enviar um certificado novo"
+        file: "Arquivo do certificado (.pfx ou .p12)"
+        file_hint: "O certificado A1, com a chave privada. O tipo A3, em cartão ou token, não serve."
+        password: "Senha do certificado"
+        replace_notice: "O certificado novo substitui o atual, que é apagado na hora."
+        save: "Enviar o certificado"
+        history: "Certificados anteriores"
+        history_valid: "validade até %{date}"
+        statuses:
+          replaced: "substituído em %{at}"
+          removed: "removido por %{name} em %{at}"
+      create:
+        created: "Certificado salvo. Ele já vale para o eSocial e o ponto."
+        impersonating: "No modo de visualização como usuário, o certificado não é enviado."
+      destroy:
+        removed: "Certificado removido."
+        impersonating: "No modo de visualização como usuário, o certificado não é removido."
     company_ai_settings:
       edit:
         title: "Funções de IA"
@@ -4311,6 +4361,7 @@ pt-BR:
         subtitle: "Dados e regras da empresa."
         notifications: "Canais dos avisos da empresa"
         ai: "Funções de IA"
+        certificate: "Certificado digital A1"
         company: "Dados da empresa"
         legal_name: "Razão social"
         name: "Nome fantasia"
@@ -4947,6 +4998,14 @@ pt-BR:
       performance:
         name: "Avaliação de desempenho"
   notification_types:
+    certificates:
+      expiring:
+        name: "Certificado digital vencendo"
+        hint: "30, 15 e 5 dias antes de o certificado A1 da empresa vencer."
+        title:
+          one: "O certificado digital de %{name} vence em %{count} dia"
+          other: "O certificado digital de %{name} vence em %{count} dias"
+        body: "O certificado A1 vence em %{date}. Ele assina os eventos do eSocial e os comprovantes e o AFD do ponto; sem ele, os dois param. Envie o certificado novo em Configurações → Certificado digital A1."
     ai:
       daily_cap_reached:
         name: "Teto diário da IA"
@@ -6659,6 +6718,9 @@ pt-BR:
       documents/upload:
         files: "Arquivos"
         document_type: "Tipo de documento"
+      certificates/upload:
+        file: "Arquivo do certificado"
+        owner_kind: "Titular"
       documents/batch_upload:
         files: "Arquivos"
       documents/request_form:
@@ -6722,6 +6784,23 @@ pt-BR:
             base:
               audience_blank: "Escolha uma pessoa ou marque ao menos um filtro do grupo"
               nobody: "Nenhuma pessoa do seu escopo, com vínculo aberto, atende a esses filtros"
+        certificates/upload:
+          attributes:
+            file:
+              blank: "não foi escolhido"
+              format: "precisa ser um arquivo .pfx ou .p12"
+              too_large: "é grande demais para um certificado A1"
+              unreadable: "não abriu: confira a senha ou se o arquivo é mesmo um certificado A1"
+              no_key: "não traz a chave privada do certificado. Exporte o A1 com a chave privada"
+              not_yet_valid: "ainda não está no prazo de validade"
+              expired: "está vencido. Envie um certificado dentro da validade"
+              no_holder: "não informa o CNPJ ou o CPF do titular"
+            owner_kind:
+              inclusion: "precisa ser escolhido"
+              not_employer: "não é o da empresa: o certificado é de %{document}. Se for de um procurador, como o escritório contábil, escolha \"De um procurador\""
+              is_employer: "é o da própria empresa. Escolha \"Do próprio empregador\""
+            base:
+              not_configured: "O cofre dos certificados ainda não está configurado. Fale com o suporte"
         documents/upload:
           attributes:
             files:

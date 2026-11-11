@@ -51,8 +51,14 @@ module FeatureFlags
   # flow, nothing is sent to the AI and the settings screens answer 404.
   AI = :ai
 
+  # The employer's A1 certificate (spec 13, D-673), off until the A1's KMS key exists in
+  # production. Off, the settings have no "Certificado digital", its page answers 404 and the
+  # notices of expiration are not sent.
+  A1_CERTIFICATE = :a1_certificate
+
   ALL = [ SIGN_IN, BRAND_EMAIL_DOMAIN, COMPANY_TRANSFER, BILLING, NFSE, PASSKEYS, ADMISSIONS, ESOCIAL, PUSH_NOTIFICATIONS,
-    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS, COMPANY_EXPORT, AI ].freeze
+    NOTIFICATION_DIGEST, ANNOUNCEMENTS, DASHBOARDS, DATA_IMPORTS, COMPANY_EXPORT, AI,
+    A1_CERTIFICATE ].freeze
   # Flags the admin's screen never turns off: without sign-in, every page answers 404,
   # the screen included, and only the console turns it on again (D-617).
   NOT_OFF_ON_SCREEN = [ SIGN_IN ].freeze

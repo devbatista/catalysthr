@@ -1,7 +1,7 @@
 # 13 — eSocial e obrigações
 
-> Status: aprovado (leiaute, MOS e prazos pendentes de conferência na documentação oficial) · Última atualização: 2026-10-12
-> Decisões: D-071, D-073, D-075, D-093, D-101, D-201, D-206, D-255, D-257, D-298, D-359, D-370 a D-378 ([decisoes.md](decisoes.md))
+> Status: aprovado (leiaute, MOS e prazos pendentes de conferência na documentação oficial) · Última atualização: 2026-11-11
+> Decisões: D-071, D-073, D-075, D-093, D-101, D-201, D-206, D-255, D-257, D-298, D-359, D-370 a D-378, D-673 ([decisoes.md](decisoes.md))
 > Os itens **[P-13-nn]** foram todos aprovados sem ajuste (D-378, seção 10).
 > **Atenção:** os eventos, campos, prazos e regras de envio seguem o que conheço do eSocial (leiaute S-1.x). **A versão vigente do leiaute, os XSD, o Manual de Orientação (MOS) e as notas técnicas precisam ser conferidos na documentação oficial** antes e durante a implementação. Os prazos ficam numa tabela mantida pela equipe CatalystHR, validada por especialista.
 
@@ -64,6 +64,8 @@ A spec também cobre o acompanhamento das guias do **FGTS Digital** e da **DCTFW
   - guarda tudo criptografado com o KMS.
 - **RN-13-021** — O certificado pode ser **do próprio empregador** ou de um **procurador** com procuração eletrônica para o eSocial (por exemplo, o escritório contábil). O RH indica qual é o caso, e o sistema confere se o titular é o empregador ou outro CNPJ ou CPF **[P-13-06]**.
 - **RN-13-022** — Alertas de vencimento do certificado 30, 15 e 5 dias antes ao RH administrador. O mesmo certificado assina comprovantes e AFD do ponto (D-319), e o alerta lembra disso **[P-13-07]**.
+
+  A validação, o cofre por envelope com o KMS, a troca que apaga o anterior e os avisos estão na D-673. A cadeia ICP-Brasil é conferida com o eSocial.
 
 ### 4.3 Ambientes (D-374)
 

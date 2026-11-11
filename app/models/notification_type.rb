@@ -146,6 +146,10 @@ NotificationType::CATALOG = [
   # lasts; the password is never in the notice (RN-15-005).
   NotificationType.new(code: "exports.company_ready", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[hr_admin]),
+  # The A1 certificate expires in 30, 15 or 5 days: the eSocial and the time receipts stop
+  # being signed when it ends (RN-13-022, CA-13-007, D-319, D-673).
+  NotificationType.new(code: "certificates.expiring", mandatory: true, urgent: false, channels: %w[system email],
+    roles: %w[hr_admin]),
   # The company reached its daily AI cap and the AI paused until midnight (RN-14-114, D-670).
   NotificationType.new(code: "ai.daily_cap_reached", mandatory: true, urgent: false, channels: %w[system email],
     roles: %w[hr_admin]),

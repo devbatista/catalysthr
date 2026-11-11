@@ -78,6 +78,10 @@ module CatalystHr
     config.x.ai_model = ENV.fetch("AI_MODEL", "claude-sonnet-5-5")
     # The effort of the documents' reading (D-670): low, checked by the evaluation set (RN-14-140).
     config.x.ai_document_effort = ENV.fetch("AI_DOCUMENT_EFFORT", "low")
+    # The A1 certificate's KMS key in São Paulo (spec 13, D-075, RN-20-052, D-673): its ARN or
+    # alias. Without it, production refuses the certificates; development and the specs seal
+    # with a local key.
+    config.x.a1_kms_key_id = ENV["A1_KMS_KEY_ID"].presence
     config.middleware.use HostResolver
     # Files are only served by the application's own controllers, after checking who
     # asks (RN-01-014, P-01-09). Active Storage's public blob routes stay off.

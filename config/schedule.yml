@@ -194,3 +194,9 @@ ai_usage_alerts:
   cron: "5 * * * * America/Sao_Paulo"
   class: "Ai::UsageAlertsJob"
   queue: "default"
+
+# The A1 certificate's notices of 30, 15 and 5 days (spec 13, RN-13-022, D-673).
+certificates_expiration:
+  cron: "0 8 * * * America/Sao_Paulo"
+  class: "Certificates::ExpirationJob"
+  queue: "notifications"

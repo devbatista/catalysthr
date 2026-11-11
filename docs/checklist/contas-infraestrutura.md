@@ -101,9 +101,35 @@ No plano gratuito há um monitor externo (já usado pelo `/up`) e um de job (o `
 - [ ] **[Claude]** S3 `catalysthr-backups` (nome a confirmar): privado, SSE-KMS com S3 Bucket Key, regra de ciclo de vida que apaga aos 35 dias (D-502)
 - [ ] **[Claude]** IAM: usuários `catalysthr-app`, `catalysthr-backup` (só gravar) e `catalysthr-restore` (só ler), com as políticas mínimas (P-20-21). Cada um também precisa da permissão de KMS na chave do seu bucket (`GenerateDataKey` para gravar, `Decrypt` para ler), senão o SSE-KMS recusa a operação. O usuário da aplicação recebe também o envio pelo SES (feito em 2026-10-19, política `catalysthr-app-email`). Faltam o `catalysthr-backup` e o `catalysthr-restore`, com o pg_dump
 
-*Fase 3, junto com o certificado A1 (cerca de US$ 1 por mês):*
+*Fase 3, junto com o certificado A1 (D-673). Custo, conferido em aws.amazon.com/kms/pricing em 2026-11-11: US$ 1 por mês pela chave, mais US$ 1 por mês em cada uma das duas primeiras rotações (no máximo US$ 3 por mês a partir do segundo ano). Nas chamadas, 20.000 por mês são grátis, somadas todas as regiões; o preço por chamada em São Paulo não aparecia na página e precisa ser conferido na calculadora da AWS. Cada envio de certificado faz uma chamada, e cada assinatura do eSocial ou do ponto fará uma:*
 
-- [ ] **[Claude]** KMS: chave do certificado A1, com rotação anual (D-075, P-20-22)
+- [ ] **[você]** KMS na conta `catalysthr` (464986173446), região **São Paulo (sa-east-1)** → Customer managed keys → **Create key**:
+  - tipo **Symmetric**, uso **Encrypt and decrypt**, origem **KMS**, **Single-Region key**;
+  - alias **`catalysthr-a1`**, descrição **"Certificado A1 dos empregadores - CatalystHR"** (com hífen, sem travessão);
+  - administradores da chave: só o seu perfil do IAM Identity Center; usuários da chave: **nenhum** (a permissão do app vem da política do passo seguinte);
+  - mantenha a política padrão da chave, que tem a instrução "Enable IAM User Permissions";
+  - depois de criada, em **Key rotation**, ligue a rotação automática a cada **365 dias** (RN-20-052, P-20-22);
+  - anote o **ARN** da chave.
+- [ ] **[você]** IAM → Users → **`catalysthr-app`** → Add permissions → Create inline policy, em JSON, com o nome **`catalysthr-app-a1`** (troque `<ID-DA-CHAVE>` pelo id da chave criada):
+
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "A1CertificatesSealAndOpen",
+        "Effect": "Allow",
+        "Action": ["kms:GenerateDataKey", "kms:Decrypt"],
+        "Resource": "arn:aws:kms:sa-east-1:464986173446:key/<ID-DA-CHAVE>",
+        "Condition": { "StringEquals": { "kms:EncryptionContext:purpose": "a1_certificate" } }
+      }
+    ]
+  }
+  ```
+
+  O app só pede chaves de dados e as abre; não consegue cifrar nem decifrar outra coisa com a chave, nem usá-la sem o contexto do certificado.
+- [ ] **[você]** Railway: variável **`A1_KMS_KEY_ID`** com o ARN da chave nos serviços `web`, `worker` e `worker-time` (o ponto vai assinar os comprovantes no `worker-time`). Sem ela, a produção recusa os certificados
+- [ ] **[Claude]** Conferir pela CLI, só com leitura, que a chave existe, tem a rotação ligada e que a política do `catalysthr-app` é a de cima; depois, ligar a flag `a1_certificate` com a sua confirmação
 
 ## 5. Railway (US East — D-500)
 
