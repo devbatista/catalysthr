@@ -96,7 +96,7 @@ gem "aws-actionmailer-ses", "~> 1.2"
 gem "aws-sdk-sesv2", "~> 1.117"
 
 # The signature of the SES events that SNS posts to the app (spec 15, P-15-24, D-609)
-gem "aws-sdk-sns", "~> 1.126"
+gem "aws-sdk-sns", "~> 1.128"
 
 # The employer's A1 certificate, sealed with its own KMS key in São Paulo (spec 13, D-075, RN-20-052)
 gem "aws-sdk-kms", "~> 1.138", require: false
