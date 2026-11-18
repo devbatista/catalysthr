@@ -99,7 +99,7 @@ gem "aws-sdk-sesv2", "~> 1.117"
 gem "aws-sdk-sns", "~> 1.126"
 
 # The employer's A1 certificate, sealed with its own KMS key in São Paulo (spec 13, D-075, RN-20-052)
-gem "aws-sdk-kms", "~> 1.138", require: false
+gem "aws-sdk-kms", "~> 1.143", require: false
 
 # The official Claude SDK, with structured outputs and prompt caching, only with the
 # features under zero data retention: no Batch API, no Files API (spec 14, P-14-39, D-385)
